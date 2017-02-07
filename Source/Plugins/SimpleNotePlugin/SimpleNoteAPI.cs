@@ -128,6 +128,16 @@ namespace CommonNote.Plugins.SimpleNote
 			return GetNoteFromQuery(r, web);
 		}
 
+		public void DeleteNote(string authToken, SimpleNote note)
+		{
+			if (note.ID == "") throw new Exception("Cannot delete a not uploaded note");
+			note.ModificationDate = DateTimeOffset.Now;
+
+			var uri = new Uri($"https://api.simperium.com/1/{APP_ID}/note/i/{note.ID}");
+			
+			web.UploadString(uri, "DELETE", string.Empty);
+		}
+
 		private SimpleNote GetNoteFromQuery(APIResultNoteData r, WebClient c)
 		{
 			return new SimpleNote
