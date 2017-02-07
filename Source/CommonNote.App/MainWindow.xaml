@@ -1,8 +1,34 @@
 ﻿<Window x:Class="CommonNote.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		Title="Common Note" Height="350" Width="525">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="150"/>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="2*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="1*"/>
+		</Grid.RowDefinitions>
+
+		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+			<MenuItem Header="File" />
+			<MenuItem Header="Edit" />
+			<MenuItem Header="View" />
+			<MenuItem Header="Help" />
+		</Menu>
+
+		<ListView Grid.Row="1" Grid.Column="0" Margin="1">
+			
+		</ListView>
+
+		<GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Width="3" />
+		
+		<TextBox Grid.Row="1" Grid.Column="2" Margin="1">
+			
+		</TextBox>
+		
+	</Grid>
 </Window>

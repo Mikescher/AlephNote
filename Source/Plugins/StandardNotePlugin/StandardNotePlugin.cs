@@ -1,13 +1,13 @@
 ﻿using CommonNote.PluginInterface;
 using System;
 
-namespace CommonNote.Plugins.SimpleNote
+namespace CommonNote.Plugins.StandardNote
 {
-	public class SimpleNotePlugin : ICommonNoteProvider
+	public class StandardNotePlugin : ICommonNoteProvider
 	{
 		public string GetName()
 		{
-			return "Simplenote";
+			return "Standard Notes";
 		}
 
 		public Version GetVersion()
@@ -24,5 +24,5 @@ namespace CommonNote.Plugins.SimpleNote
 		{
 			throw new NotImplementedException();
 		}
-	}
+    }
 }

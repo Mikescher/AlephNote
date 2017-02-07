@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AA8A52AA-2A00-46DC-9649-BDB801A48380}</ProjectGuid>
+    <ProjectGuid>{7F674975-7A10-458E-BDF9-82AEC27CAFAA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CommonNote.Plugins.SimpleNote</RootNamespace>
-    <AssemblyName>SimpleNotePlugin</AssemblyName>
+    <RootNamespace>CommonNote.Plugins.LocalStorage</RootNamespace>
+    <AssemblyName>LocalStoragePlugin</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,7 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SimpleNotePlugin.cs" />
+    <Compile Include="LocalStoragePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

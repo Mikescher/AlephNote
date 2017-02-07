@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{0B76
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonNote.PluginInterface", "CommonNote.PluginInterface\CommonNote.PluginInterface.csproj", "{A18F5E8C-5894-41F1-9B4C-F66C66490E2D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandardNotePlugin", "Plugins\StandardNotePlugin\StandardNotePlugin.csproj", "{D4F7E915-D101-4500-A01D-B9C366575662}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalStoragePlugin", "Plugins\LocalStoragePlugin\LocalStoragePlugin.csproj", "{7F674975-7A10-458E-BDF9-82AEC27CAFAA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,11 +33,21 @@ Global
 		{A18F5E8C-5894-41F1-9B4C-F66C66490E2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A18F5E8C-5894-41F1-9B4C-F66C66490E2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A18F5E8C-5894-41F1-9B4C-F66C66490E2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4F7E915-D101-4500-A01D-B9C366575662}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4F7E915-D101-4500-A01D-B9C366575662}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4F7E915-D101-4500-A01D-B9C366575662}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4F7E915-D101-4500-A01D-B9C366575662}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F674975-7A10-458E-BDF9-82AEC27CAFAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F674975-7A10-458E-BDF9-82AEC27CAFAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F674975-7A10-458E-BDF9-82AEC27CAFAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F674975-7A10-458E-BDF9-82AEC27CAFAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AA8A52AA-2A00-46DC-9649-BDB801A48380} = {0B76231E-AA47-46DF-A894-ACBE698F2ECE}
+		{D4F7E915-D101-4500-A01D-B9C366575662} = {0B76231E-AA47-46DF-A894-ACBE698F2ECE}
+		{7F674975-7A10-458E-BDF9-82AEC27CAFAA} = {0B76231E-AA47-46DF-A894-ACBE698F2ECE}
 	EndGlobalSection
 EndGlobal

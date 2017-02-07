@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CommonNote</RootNamespace>
     <AssemblyName>CommonNote</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -71,6 +71,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -102,6 +103,23 @@
       <Project>{a18f5e8c-5894-41f1-9b4c-f66c66490e2d}</Project>
       <Name>CommonNote.PluginInterface</Name>
     </ProjectReference>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Plugins\LocalStoragePlugin\LocalStoragePlugin.csproj">
+			<Project>{e7eb113a-4dff-4f96-b767-f9731e2c4979}</Project>
+			<Name>LocalStoragePlugin</Name>
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
+		<ProjectReference Include="..\Plugins\SimpleNotePlugin\SimpleNotePlugin.csproj">
+			<Project>{AA8A52AA-2A00-46DC-9649-BDB801A48380}</Project>
+			<Name>SimpleNotePlugin</Name>
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
+		<ProjectReference Include="..\Plugins\StandardNotePlugin\StandardNotePlugin.csproj">
+			<Project>{D4F7E915-D101-4500-A01D-B9C366575662}</Project>
+			<Name>StandardNotePlugin</Name>
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
