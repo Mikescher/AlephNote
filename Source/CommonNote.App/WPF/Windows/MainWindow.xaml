@@ -1,6 +1,11 @@
-﻿<Window x:Class="CommonNote.MainWindow"
+﻿<Window x:Class="CommonNote.WPF.Windows.MainWindow"
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:windows="clr-namespace:CommonNote.WPF.Windows"
+		mc:Ignorable="d" 
+		d:DataContext="{d:DesignInstance windows:MainWindowViewmodel}"
 		Title="Common Note" Height="350" Width="525">
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -14,10 +19,19 @@
 		</Grid.RowDefinitions>
 
 		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
-			<MenuItem Header="File" />
-			<MenuItem Header="Edit" />
-			<MenuItem Header="View" />
-			<MenuItem Header="Help" />
+			<MenuItem Header="File">
+				<MenuItem Header="New Note" />
+				<MenuItem Header="Exit" />
+			</MenuItem>
+			<MenuItem Header="Edit">
+				<MenuItem Header="Settings" Command="{Binding SettingsCommand}" />
+			</MenuItem>
+			<MenuItem Header="View">
+			</MenuItem>
+			<MenuItem Header="Help">
+				<MenuItem Header="Check for Updates" />
+				<MenuItem Header="About" />
+			</MenuItem>
 		</Menu>
 
 		<ListView Grid.Row="1" Grid.Column="0" Margin="1">

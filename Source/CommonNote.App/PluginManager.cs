@@ -11,15 +11,19 @@ namespace CommonNote
 	public static class PluginManager
 	{
 		private static List<ICommonNoteProvider> _provider = new List<ICommonNoteProvider>();
+		public static IEnumerable<ICommonNoteProvider> LoadedPlugins { get { return _provider; } }
 
 		public static void LoadPlugins()
 		{
+			_provider = new List<ICommonNoteProvider>();
+
 			var pluginPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"plugins\");
+			var pluginfiles = Directory.GetFiles(pluginPath, "*.dll");
 
-			var pluginPaths = Directory.GetFiles(@".\plugins\", "*.dll");
-
-			foreach (var path in pluginPaths)
+			foreach (var path in pluginfiles)
 			{
+				if (path.Contains("StandardNote")) continue; //TODO ONLY FOR DEBUGGING !! 
+
 				try
 				{
 					LoadPlugin(path);
@@ -58,6 +62,21 @@ namespace CommonNote
 					}
 				}
 			}
+		}
+
+		public static ICommonNoteProvider GetDefaultPlugin()
+		{
+			foreach (var plugin in LoadedPlugins)
+			{
+				if (plugin.GetUniqueID() == Guid.Parse("37de6de1-26b0-41f5-b252-5e625d9ecfa3")) return plugin; // Local Storage
+			}
+
+			return LoadedPlugins.First();
+		}
+
+		public static ICommonNoteProvider GetPlugin(Guid uuid)
+		{
+			return LoadedPlugins.FirstOrDefault(p => p.GetUniqueID() == uuid);
 		}
 	}
 }
