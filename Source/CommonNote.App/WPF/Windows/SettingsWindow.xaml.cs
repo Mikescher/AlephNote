@@ -11,7 +11,7 @@ namespace CommonNote.WPF.Windows
 		private readonly SettingsWindowViewmodel viewmodel;
 		private readonly MainWindowViewmodel ownerVM;
 
-		public SettingsWindow(MainWindowViewmodel owner, CommonNoteSettings data)
+		public SettingsWindow(MainWindowViewmodel owner, AppSettings data)
 		{
 			InitializeComponent();
 

@@ -11,6 +11,7 @@ namespace CommonNote
 	public partial class App : Application
 	{
 		public static readonly string PATH_SETTINGS = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"common_note.settings");
+		public static readonly string PATH_LOCALDB  = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".notes");
 
 		public App()
 		{

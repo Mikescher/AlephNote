@@ -1,12 +1,12 @@
-﻿using System;
+﻿using CommonNote.PluginInterface;
+using CommonNote.Settings;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using CommonNote.PluginInterface;
-using CommonNote.Settings;
-using MSHC.WPFControls;
+using MSHC.WPF.Controls;
 
 namespace CommonNote.WPF.Converter
 {
@@ -16,8 +16,8 @@ namespace CommonNote.WPF.Converter
 		{
 			if (values.Length != 2 || values.Any(p => p == DependencyProperty.UnsetValue)) return DependencyProperty.UnsetValue;
 
-			var provider = values[0] as ICommonNoteProvider;
-			var settings = values[1] as CommonNoteSettings;
+			var provider = values[0] as IRemoteProvider;
+			var settings = values[1] as AppSettings;
 
 			if (provider == null) return DependencyProperty.UnsetValue;
 			if (settings == null) return DependencyProperty.UnsetValue;

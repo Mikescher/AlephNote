@@ -1,6 +1,7 @@
-﻿using CommonNote.Settings;
-using MSHC.MVVM;
+﻿using CommonNote.Repository;
+using CommonNote.Settings;
 using System.Windows.Input;
+using MSHC.WPF.MVVM;
 
 namespace CommonNote.WPF.Windows
 {
@@ -8,12 +9,18 @@ namespace CommonNote.WPF.Windows
 	{
 		public ICommand SettingsCommand { get { return new RelayCommand(ShowSettings); } }
 
-		private CommonNoteSettings _settings;
-		public CommonNoteSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); } }
+		private AppSettings _settings;
+		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); } }
+		
+		private NoteRepository _repository;
+		public NoteRepository Repository { get { return _repository; } private set { _repository = value; OnPropertyChanged(); } }
 
-		public MainWindowViewmodel(CommonNoteSettings settings)
+		public MainWindowViewmodel(AppSettings settings)
 		{
 			_settings = settings;
+			_repository = new NoteRepository(App.PATH_LOCALDB, settings.NoteProvider, settings.PluginSettings[settings.NoteProvider.GetUniqueID()]);
+
+			Repository.Init();
 		}
 
 		private void ShowSettings()
@@ -21,7 +28,7 @@ namespace CommonNote.WPF.Windows
 			new SettingsWindow(this, Settings).ShowDialog();
 		}
 
-		public void ChangeSettings(CommonNoteSettings newSettings)
+		public void ChangeSettings(AppSettings newSettings)
 		{
 			Settings = newSettings;
 			Settings.Save();

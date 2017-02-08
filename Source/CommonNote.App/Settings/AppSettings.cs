@@ -1,23 +1,23 @@
-﻿using System.IO;
+﻿using CommonNote.PluginInterface;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using CommonNote.PluginInterface;
-using MSHC.Encryption;
-using MSHC.Extensions;
-using MSHC.Helper;
-using MSHC.MVVM;
-using System;
-using System.Collections.Generic;
+using MSHC.Lang.Extensions;
+using MSHC.Math.Encryption;
+using MSHC.Util.Helper;
+using MSHC.WPF.MVVM;
 
 namespace CommonNote.Settings
 {
-	public class CommonNoteSettings : ObservableObject
+	public class AppSettings : ObservableObject
 	{
 		private const string ENCRYPTION_KEY = @"jcgkZJvoykjpoGkDWHqiNoXoLZRJxpdb";
 
-		private SynchronizationFrequency _synchronizationFreq = SynchronizationFrequency.Sync05Min;
-		public SynchronizationFrequency SynchronizationFrequency { get { return _synchronizationFreq; } set { _synchronizationFreq = value; OnPropertyChanged(); } }
+		private ConfigInterval _synchronizationFreq = ConfigInterval.Sync05Min;
+		public ConfigInterval SynchronizationFrequency { get { return _synchronizationFreq; } set { _synchronizationFreq = value; OnPropertyChanged(); } }
 
 		private bool _proxyEnabled = false;
 		public bool ProxyEnabled { get { return _proxyEnabled; } set { _proxyEnabled = value; OnPropertyChanged(); } }
@@ -34,19 +34,19 @@ namespace CommonNote.Settings
 		private string _proxyPassword = string.Empty;
 		public string ProxyPassword { get { return _proxyPassword; } set { _proxyPassword = value; OnPropertyChanged(); } }
 
-		private ICommonNoteProvider _noteProvider = null;
-		public ICommonNoteProvider NoteProvider { get { return _noteProvider; } set { _noteProvider = value; OnPropertyChanged(); } }
+		private IRemoteProvider _noteProvider = null;
+		public IRemoteProvider NoteProvider { get { return _noteProvider; } set { _noteProvider = value; OnPropertyChanged(); } }
 
 		public Dictionary<Guid, IRemoteStorageConfiguration> PluginSettings = new Dictionary<Guid, IRemoteStorageConfiguration>(); 
 
-		private CommonNoteSettings()
+		private AppSettings()
 		{
 			
 		}
 
-		public static CommonNoteSettings CreateEmpty()
+		public static AppSettings CreateEmpty()
 		{
-			var r = new CommonNoteSettings();
+			var r = new AppSettings();
 			r._noteProvider = PluginManager.GetDefaultPlugin();
 
 			foreach (var plugin in PluginManager.LoadedPlugins)
@@ -63,7 +63,7 @@ namespace CommonNote.Settings
 			File.WriteAllText(App.PATH_SETTINGS, Serialize());
 		}
 
-		public static CommonNoteSettings Load()
+		public static AppSettings Load()
 		{
 			return Deserialize(File.ReadAllText(App.PATH_SETTINGS));
 		}
@@ -91,21 +91,23 @@ namespace CommonNote.Settings
 			return XHelper.ConvertToString(new XDocument(root));
 		}
 
-		public static CommonNoteSettings Deserialize(string xml)
+		public static AppSettings Deserialize(string xml)
 		{
 			var xd = XDocument.Parse(xml);
 			var root = xd.Root;
 			if (root == null) throw new Exception("XDocument needs root");
 			
-			var r = new CommonNoteSettings();
+			var r = new AppSettings();
 
-			r.SynchronizationFrequency = XHelper.GetChildValue(root, "SynchronizationFrequency", SynchronizationFrequency.Sync05Min);
+			r.SynchronizationFrequency = XHelper.GetChildValue(root, "SynchronizationFrequency", ConfigInterval.Sync05Min);
 			r.ProxyEnabled = XHelper.GetChildValue(root, "ProxyEnabled", false);
 			r.ProxyHost = XHelper.GetChildValue(root, "ProxyHost", string.Empty);
 			r.ProxyPort = XHelper.GetChildValue(root, "ProxyPort", (int?)null);
 			r.ProxyUsername = XHelper.GetChildValue(root, "ProxyUsername", string.Empty);
 			r.ProxyPassword = Decrypt(XHelper.GetChildValue(root, "ProxyPassword", string.Empty));
 			r.NoteProvider = PluginManager.GetPlugin(XHelper.GetChildValue(root, "NoteProvider", PluginManager.GetDefaultPlugin().GetUniqueID()));
+
+			r.PluginSettings = new Dictionary<Guid, IRemoteStorageConfiguration>();
 
 			foreach (var pluginNode in root.Descendants("Plugin"))
 			{
@@ -131,18 +133,20 @@ namespace CommonNote.Settings
 		private static string Encrypt(string data)
 		{
 			if (string.IsNullOrWhiteSpace(data)) return string.Empty;
+
 			return Convert.ToBase64String(AESThenHMAC.SimpleEncryptWithPassword(Encoding.UTF32.GetBytes(data), ENCRYPTION_KEY));
 		}
 
 		private static string Decrypt(string data)
 		{
 			if (string.IsNullOrWhiteSpace(data)) return string.Empty;
+
 			return Encoding.UTF32.GetString(AESThenHMAC.SimpleDecryptWithPassword(Convert.FromBase64String(data), ENCRYPTION_KEY));
 		}
 
-		public CommonNoteSettings Clone()
+		public AppSettings Clone()
 		{
-			var r = new CommonNoteSettings();
+			var r = new AppSettings();
 			r.SynchronizationFrequency = this.SynchronizationFrequency;
 			r.ProxyEnabled = this.ProxyEnabled;
 			r.ProxyHost = this.ProxyHost;
@@ -159,7 +163,7 @@ namespace CommonNote.Settings
 			return r;
 		}
 
-		public bool IsEqual(CommonNoteSettings other)
+		public bool IsEqual(AppSettings other)
 		{
 			if (this.SynchronizationFrequency != other.SynchronizationFrequency) return false;
 			if (this.ProxyEnabled != other.ProxyEnabled) return false;

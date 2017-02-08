@@ -37,5 +37,10 @@ namespace CommonNote.Plugins.LocalStorage
 		{
 			return new LocalStorageConfig();
 		}
+
+		public string GetUniqueName()
+		{
+			return "local";
+		}
 	}
 }

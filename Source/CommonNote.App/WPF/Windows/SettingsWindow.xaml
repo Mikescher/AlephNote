@@ -1,14 +1,14 @@
-﻿<wpfControls:DialogWindow x:Class="CommonNote.WPF.Windows.SettingsWindow"
+﻿<controls:DialogWindow x:Class="CommonNote.WPF.Windows.SettingsWindow"
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:wpfControls="clr-namespace:MSHC.WPFControls;assembly=CSharpUtils"
-		xmlns:mext="clr-namespace:MSHC.MVVM.MarkupExtensions;assembly=CSharpUtils"
-		xmlns:settings="clr-namespace:CommonNote.Settings"
-                          xmlns:converter="clr-namespace:CommonNote.WPF.Converter"
-                          xmlns:windows="clr-namespace:CommonNote.WPF.Windows"
-                          mc:Ignorable="d" 
+                          xmlns:settings="clr-namespace:CommonNote.Settings"
+						  xmlns:converter="clr-namespace:CommonNote.WPF.Converter"
+						  xmlns:windows="clr-namespace:CommonNote.WPF.Windows"
+						  xmlns:controls="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
+						  xmlns:markupExtensions="clr-namespace:MSHC.WPF.Extensions.MarkupExtensions;assembly=CSharpUtils"
+						  mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance windows:SettingsWindowViewmodel}"
 		Title="Common Note - Configuration" MinHeight="400" MinWidth="300" Height="400" Width="535">
 		<Window.Resources>
@@ -36,9 +36,9 @@
 					</Grid.ColumnDefinitions>
 
 					<TextBlock Grid.Row="0" Grid.Column="0" Text="Storage provider:" VerticalAlignment="Center" />
-					<ComboBox Grid.Row="0" Grid.Column="2" Margin="2" ItemsSource="{Binding AvailableProvider}" SelectedValue="{Binding Settings.NoteProvider}" />
+					<ComboBox Grid.Row="0" Grid.Column="2" Margin="2" ItemsSource="{Binding AvailableProvider}" SelectedValue="{Binding Settings.NoteProvider}" DisplayMemberPath="DisplayTitleShort" />
 
-					<GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Header="Storage options" Margin="2" Padding="5">
+					<GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Header="Storage options" Margin="2" MinHeight="100">
 						<ContentControl>
 							<ContentControl.Content>
 								<MultiBinding Converter="{StaticResource CreateGridConv}">
@@ -50,7 +50,7 @@
 					</GroupBox>
 
 					<TextBlock Grid.Row="2" Grid.Column="0" Text="Synchronization frequency:" VerticalAlignment="Center" />
-					<ComboBox Grid.Row="2" Grid.Column="2" Margin="2" ItemsSource="{mext:EnumSource {x:Type settings:SynchronizationFrequency}}" SelectedValue="{Binding Settings.SynchronizationFrequency}" />
+					<ComboBox Grid.Row="2" Grid.Column="2" Margin="2" ItemsSource="{markupExtensions:EnumSource {x:Type settings:ConfigInterval}}" SelectedValue="{Binding Settings.SynchronizationFrequency}" />
 					
 					<GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Header="Connection" Margin="2" Padding="5">
 						<Grid>
@@ -83,7 +83,7 @@
 							<TextBox   Grid.Row="3" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Text="{Binding Settings.ProxyUsername}" />
 
 							<TextBlock Grid.Row="4" Grid.Column="1" Margin="3" Text="Password:" VerticalAlignment="Center" />
-							<wpfControls:BindablePasswordBox Grid.Row="4" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Password="{Binding Settings.ProxyPassword}" />
+							<controls:BindablePasswordBox Grid.Row="4" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Password="{Binding Settings.ProxyPassword}" />
 						</Grid>
 					</GroupBox>
 				</Grid>
@@ -99,4 +99,4 @@
 		</WrapPanel>
 
 	</Grid>
-</wpfControls:DialogWindow>
+</controls:DialogWindow>

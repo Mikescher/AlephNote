@@ -14,5 +14,7 @@ namespace CommonNote.PluginInterface
 
 		bool IsEqual(IRemoteStorageConfiguration other);
 		IRemoteStorageConfiguration Clone();
+
+		string GetUniqueName();
 	}
 }

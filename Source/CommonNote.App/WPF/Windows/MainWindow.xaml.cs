@@ -16,23 +16,23 @@ namespace CommonNote.WPF.Windows
 
 			PluginManager.LoadPlugins();
 
-			CommonNoteSettings settings;
+			AppSettings settings;
 			try
 			{
 				if (File.Exists(App.PATH_SETTINGS))
 				{
-					settings = CommonNoteSettings.Load();
+					settings = AppSettings.Load();
 				}
 				else
 				{
-					settings = CommonNoteSettings.CreateEmpty();
+					settings = AppSettings.CreateEmpty();
 					settings.Save();
 				}
 			}
 			catch (Exception e)
 			{
 				MessageBox.Show("Could not load settings from " + App.PATH_SETTINGS + "\r\n\r\n" + e, "Could not load settings");
-				settings = CommonNoteSettings.CreateEmpty();
+				settings = AppSettings.CreateEmpty();
 			}
 
 			DataContext = new MainWindowViewmodel(settings);

@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using CommonNote.PluginInterface;
-using MSHC.Encryption;
+﻿using CommonNote.PluginInterface;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
-using MSHC.Helper;
+using MSHC.Math.Encryption;
+using MSHC.Util.Helper;
 
 namespace CommonNote.Plugins.SimpleNote
 {
@@ -92,6 +92,9 @@ namespace CommonNote.Plugins.SimpleNote
 			return Encoding.UTF32.GetString(AESThenHMAC.SimpleDecryptWithPassword(Convert.FromBase64String(data), ENCRYPTION_KEY));
 		}
 
-
+		public string GetUniqueName()
+		{
+			return SimpleNoteUsername;
+		}
 	}
 }

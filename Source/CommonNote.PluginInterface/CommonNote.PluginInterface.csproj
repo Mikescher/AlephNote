@@ -43,8 +43,7 @@
     <Compile Include="DynamicSettingValue.cs" />
     <Compile Include="IRemoteStorageConfiguration.cs" />
     <Compile Include="IRemoteStorageConnection.cs" />
-    <Compile Include="ITag.cs" />
-    <Compile Include="ICommonNoteProvider.cs" />
+    <Compile Include="IRemoteProvider.cs" />
     <Compile Include="INote.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

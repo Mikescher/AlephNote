@@ -10,12 +10,12 @@ namespace CommonNote
 {
 	public static class PluginManager
 	{
-		private static List<ICommonNoteProvider> _provider = new List<ICommonNoteProvider>();
-		public static IEnumerable<ICommonNoteProvider> LoadedPlugins { get { return _provider; } }
+		private static List<IRemoteProvider> _provider = new List<IRemoteProvider>();
+		public static IEnumerable<IRemoteProvider> LoadedPlugins { get { return _provider; } }
 
 		public static void LoadPlugins()
 		{
-			_provider = new List<ICommonNoteProvider>();
+			_provider = new List<IRemoteProvider>();
 
 			var pluginPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"plugins\");
 			var pluginfiles = Directory.GetFiles(pluginPath, "*.dll");
@@ -52,9 +52,9 @@ namespace CommonNote
 				{
 					if (type.IsInterface || type.IsAbstract) continue;
 
-					if (type.GetInterface(typeof(ICommonNoteProvider).FullName) != null)
+					if (type.GetInterface(typeof(IRemoteProvider).FullName) != null)
 					{
-						ICommonNoteProvider instance = (ICommonNoteProvider)Activator.CreateInstance(type);
+						IRemoteProvider instance = (IRemoteProvider)Activator.CreateInstance(type);
 
 						if (instance == null) throw new Exception("Could not instantiate ICommonNotePlugin '" + type.FullName + "'");
 
@@ -64,7 +64,7 @@ namespace CommonNote
 			}
 		}
 
-		public static ICommonNoteProvider GetDefaultPlugin()
+		public static IRemoteProvider GetDefaultPlugin()
 		{
 			foreach (var plugin in LoadedPlugins)
 			{
@@ -74,7 +74,7 @@ namespace CommonNote
 			return LoadedPlugins.First();
 		}
 
-		public static ICommonNoteProvider GetPlugin(Guid uuid)
+		public static IRemoteProvider GetPlugin(Guid uuid)
 		{
 			return LoadedPlugins.FirstOrDefault(p => p.GetUniqueID() == uuid);
 		}

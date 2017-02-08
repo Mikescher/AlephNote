@@ -4,6 +4,7 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:windows="clr-namespace:CommonNote.WPF.Windows"
+		xmlns:services="clr-namespace:MSHC.WPF.Extensions.Services;assembly=CSharpUtils"
 		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance windows:MainWindowViewmodel}"
 		Title="Common Note" Height="350" Width="525">
@@ -26,6 +27,10 @@
 			<MenuItem Header="Edit">
 				<MenuItem Header="Settings" Command="{Binding SettingsCommand}" />
 			</MenuItem>
+			<MenuItem Header="Note">
+				<MenuItem Header="Export" />
+				<MenuItem Header="Delete" />
+			</MenuItem>
 			<MenuItem Header="View">
 			</MenuItem>
 			<MenuItem Header="Help">
@@ -34,15 +39,61 @@
 			</MenuItem>
 		</Menu>
 
-		<ListView Grid.Row="1" Grid.Column="0" Margin="1">
+		<Grid Margin="1" Grid.Column="0" Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*"/>
+				<ColumnDefinition Width="26"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="1*"/>
+			</Grid.RowDefinitions>
+
+			<TextBox Grid.Row="0" Margin="0,2"  >
+				<services:WatermarkService.Watermark>
+					<TextBlock Text="Search" Padding="5,0"/>
+				</services:WatermarkService.Watermark>
+			</TextBox>
 			
-		</ListView>
+			<Button Grid.Row="0" Grid.Column="1" Content="+" Margin="2" Background="Transparent" BorderThickness="0" FontWeight="Bold"/>
+
+			<ListView Grid.Column="0" ItemsSource="{Binding Repository.Notes}" Grid.Row="1" Grid.ColumnSpan="2"/>
+
+		</Grid>
 
 		<GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Width="3" />
-		
-		<TextBox Grid.Row="1" Grid.Column="2" Margin="1">
-			
-		</TextBox>
-		
+
+		<Grid Grid.Column="2" Margin="1" Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="1*"/>
+			</Grid.RowDefinitions>
+
+			<TextBox Grid.Row="0" BorderBrush="Transparent" BorderThickness="0" FontSize="16" Foreground="CornflowerBlue" FontWeight="Bold" Text="Title" />
+
+			<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="2,4">
+				<Border VerticalAlignment="Center" Background="SeaShell" BorderThickness="1" BorderBrush="LightGray" Margin="2,0" Padding="1">
+					<TextBlock>Tag 2</TextBlock>
+				</Border>
+				<Border VerticalAlignment="Center" Background="SeaShell" BorderThickness="1" BorderBrush="LightGray" Margin="2,0" Padding="1">
+					<TextBlock>Tag 44</TextBlock>
+				</Border>
+				<Border VerticalAlignment="Center" Background="SeaShell" BorderThickness="1" BorderBrush="LightGray" Margin="2,0" Padding="1">
+					<TextBlock>Tag xxx</TextBlock>
+				</Border>
+			</StackPanel>
+
+			<TextBlock Grid.Row="1" Grid.Column="1" Text="2017/01/03" Foreground="DarkGray" VerticalAlignment="Bottom" Margin="8,2" />
+
+			<TextBox Grid.Row="2" Grid.ColumnSpan="2"/>
+
+		</Grid>
+
 	</Grid>
 </Window>
+

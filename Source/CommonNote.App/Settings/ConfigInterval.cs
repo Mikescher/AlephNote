@@ -2,7 +2,7 @@
 
 namespace CommonNote.Settings
 {
-	public enum SynchronizationFrequency
+	public enum ConfigInterval
 	{
 		[Description("1 minute")]
 		Sync01Min,
