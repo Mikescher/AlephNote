@@ -24,7 +24,7 @@ namespace CommonNote.Plugins.SimpleNote
 
 		public override INote CreateEmptyNode()
 		{
-			return new SimpleNote();
+			return new SimpleNote(Guid.NewGuid().ToString("N").ToUpper());
 		}
 	}
 }

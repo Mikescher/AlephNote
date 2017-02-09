@@ -1,10 +1,10 @@
 ﻿using CommonNote.PluginInterface;
+using MSHC.Math.Encryption;
+using MSHC.Util.Helper;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
-using MSHC.Math.Encryption;
-using MSHC.Util.Helper;
 
 namespace CommonNote.Plugins.SimpleNote
 {
@@ -27,7 +27,8 @@ namespace CommonNote.Plugins.SimpleNote
 			};
 
 			var r = new XElement("config", data);
-			r.SetAttributeValue("version", SimpleNotePlugin.Version.ToString());
+			r.SetAttributeValue("plugin", "SimpleNotePlugin");
+			r.SetAttributeValue("pluginversion", SimpleNotePlugin.Version.ToString());
 			return r;
 		}
 
@@ -42,7 +43,7 @@ namespace CommonNote.Plugins.SimpleNote
 		public IEnumerable<DynamicSettingValue> ListProperties()
 		{
 			yield return DynamicSettingValue.CreateText(ID_USERNAME, "Username", SimpleNoteUsername);
-			yield return DynamicSettingValue.CreateText(ID_PASSWORD, "Password", SimpleNotePassword);
+			yield return DynamicSettingValue.CreatePassword(ID_PASSWORD, "Password", SimpleNotePassword);
 		}
 
 		public void SetProperty(int id, string value)

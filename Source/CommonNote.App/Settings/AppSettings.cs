@@ -1,14 +1,14 @@
 ﻿using CommonNote.PluginInterface;
+using MSHC.Lang.Extensions;
+using MSHC.Math.Encryption;
+using MSHC.Util.Helper;
+using MSHC.WPF.MVVM;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using MSHC.Lang.Extensions;
-using MSHC.Math.Encryption;
-using MSHC.Util.Helper;
-using MSHC.WPF.MVVM;
 
 namespace CommonNote.Settings
 {
@@ -16,7 +16,7 @@ namespace CommonNote.Settings
 	{
 		private const string ENCRYPTION_KEY = @"jcgkZJvoykjpoGkDWHqiNoXoLZRJxpdb";
 
-		private ConfigInterval _synchronizationFreq = ConfigInterval.Sync05Min;
+		private ConfigInterval _synchronizationFreq = ConfigInterval.Sync15Min;
 		public ConfigInterval SynchronizationFrequency { get { return _synchronizationFreq; } set { _synchronizationFreq = value; OnPropertyChanged(); } }
 
 		private bool _proxyEnabled = false;
@@ -99,7 +99,7 @@ namespace CommonNote.Settings
 			
 			var r = new AppSettings();
 
-			r.SynchronizationFrequency = XHelper.GetChildValue(root, "SynchronizationFrequency", ConfigInterval.Sync05Min);
+			r.SynchronizationFrequency = XHelper.GetChildValue(root, "SynchronizationFrequency", ConfigInterval.Sync15Min);
 			r.ProxyEnabled = XHelper.GetChildValue(root, "ProxyEnabled", false);
 			r.ProxyHost = XHelper.GetChildValue(root, "ProxyHost", string.Empty);
 			r.ProxyPort = XHelper.GetChildValue(root, "ProxyPort", (int?)null);

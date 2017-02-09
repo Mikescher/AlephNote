@@ -63,7 +63,11 @@
     </ApplicationDefinition>
     <Compile Include="Repository\NoteRepository.cs" />
     <Compile Include="Settings\AppSettings.cs" />
+    <Compile Include="WPF\Converter\DateTimeToDisplayConverter.cs" />
+    <Compile Include="WPF\Converter\IsNullToVisibilityConverter.cs" />
     <Compile Include="WPF\Converter\CreatePluginSettingsGridConverter.cs" />
+    <Compile Include="WPF\Converter\BoolToVisibilityConverter.cs" />
+    <Compile Include="WPF\Converter\DateToDisplayConverter.cs" />
     <Compile Include="WPF\Windows\MainWindowViewmodel.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>

@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using MSHC.Lang.Extensions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 
 namespace CommonNote.Plugins.SimpleNote
@@ -15,10 +17,14 @@ namespace CommonNote.Plugins.SimpleNote
 
 		private static readonly DateTimeOffset TIMESTAMP_ORIGIN = new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0));
 
+#pragma warning disable 0649
+		// ReSharper disable All
 		public class APIResultAuthorize { public string username, access_token, userid; }
 		public class APIResultIndex { public string current, mark; public List<APIResultIndexObj> index = new List<APIResultIndexObj>(); }
 		public class APIResultIndexObj { public string id; public int v; }
 		public class APIResultNoteData { public List<string> tags = new List<string>(); public bool deleted; public string shareURL, content, publishURL; public List<string> systemTags = new List<string>(); public double modificationDate, creationDate; }
+		// ReSharper restore All
+#pragma warning restore 0649
 
 		private static WebClient CreateClient(IWebProxy proxy, string authToken)
 		{
@@ -70,7 +76,7 @@ namespace CommonNote.Plugins.SimpleNote
 			var value = web.DownloadString(url);
 			var r = JsonConvert.DeserializeObject<APIResultNoteData>(value);
 
-			return GetNoteFromQuery(r, web);
+			return GetNoteFromQuery(r, web, nodeID);
 		}
 
 		public static SimpleNote UploadNote(IWebProxy proxy, string authToken, SimpleNote note)
@@ -78,7 +84,6 @@ namespace CommonNote.Plugins.SimpleNote
 			var web = CreateClient(proxy, authToken);
 
 			note.Deleted = false;
-			note.ID = Guid.NewGuid().ToString("N").ToUpper();
 			note.CreationDate = DateTimeOffset.Now;
 			note.ModificationDate = DateTimeOffset.Now;
 
@@ -86,7 +91,7 @@ namespace CommonNote.Plugins.SimpleNote
 
 			APIResultNoteData data = new APIResultNoteData
 			{
-				tags = note.Tags,
+				tags = note.Tags.ToList(),
 				deleted = false,
 				shareURL = note.ShareURL,
 				publishURL = note.PublishURL,
@@ -100,7 +105,7 @@ namespace CommonNote.Plugins.SimpleNote
 			var value = web.UploadString(uri, rawdata);
 			var r = JsonConvert.DeserializeObject<APIResultNoteData>(value);
 
-			return GetNoteFromQuery(r, web);
+			return GetNoteFromQuery(r, web, note.ID);
 		}
 
 		public static SimpleNote ChangeNote(IWebProxy proxy, string authToken, SimpleNote note)
@@ -115,7 +120,7 @@ namespace CommonNote.Plugins.SimpleNote
 
 			APIResultNoteData data = new APIResultNoteData
 			{
-				tags = note.Tags,
+				tags = note.Tags.ToList(),
 				deleted = false,
 				shareURL = note.ShareURL,
 				publishURL = note.PublishURL,
@@ -129,7 +134,7 @@ namespace CommonNote.Plugins.SimpleNote
 			var value = web.UploadString(uri, rawdata);
 			var r = JsonConvert.DeserializeObject<APIResultNoteData>(value);
 
-			return GetNoteFromQuery(r, web);
+			return GetNoteFromQuery(r, web, note.ID);
 		}
 
 		public static void DeleteNote(IWebProxy proxy, string authToken, SimpleNote note)
@@ -144,11 +149,10 @@ namespace CommonNote.Plugins.SimpleNote
 			web.UploadString(uri, "DELETE", string.Empty);
 		}
 
-		private static SimpleNote GetNoteFromQuery(APIResultNoteData r, WebClient c)
+		private static SimpleNote GetNoteFromQuery(APIResultNoteData r, WebClient c, string id)
 		{
-			return new SimpleNote
+			var n = new SimpleNote(id)
 			{
-				Tags = r.tags,
 				Deleted = r.deleted,
 				ShareURL = r.shareURL,
 				PublishURL = r.publishURL,
@@ -158,6 +162,10 @@ namespace CommonNote.Plugins.SimpleNote
 				CreationDate = ConvertFromEpochDate(r.creationDate),
 				Version = int.Parse(c.ResponseHeaders["X-Simperium-Version"]),
 			};
+
+			n.Tags.Synchronize(r.tags);
+
+			return n;
 		}
 
 		private static DateTimeOffset ConvertFromEpochDate(double seconds)

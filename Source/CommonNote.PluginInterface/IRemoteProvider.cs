@@ -22,8 +22,8 @@ namespace CommonNote.PluginInterface
 		private readonly string name;
 		private readonly Version version;
 
-		public string DisplayTitleLong => GetName() + " v" + GetVersion();
-		public string DisplayTitleShort => GetName();
+		public string DisplayTitleLong { get { return GetName() + " v" + GetVersion(); } }
+		public string DisplayTitleShort { get { return GetName(); } }
 
 		protected RemoteBasicProvider(string name, Version version, Guid uuid)
 		{

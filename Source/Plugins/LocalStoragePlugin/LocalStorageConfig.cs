@@ -10,7 +10,15 @@ namespace CommonNote.Plugins.LocalStorage
 	{
 		public XElement Serialize()
 		{
-			return new XElement("config");
+			var data = new object[]
+			{
+				//
+			};
+
+			var r = new XElement("config", data);
+			r.SetAttributeValue("plugin", "LocalStoragePlugin");
+			r.SetAttributeValue("pluginversion", LocalStoragePlugin.Version.ToString());
+			return r;
 		}
 
 		public void Deserialize(XElement input)

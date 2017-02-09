@@ -24,7 +24,7 @@ namespace CommonNote.Plugins.LocalStorage
 
 		public override INote CreateEmptyNode()
 		{
-			return new LocalNote();
+			return new LocalNote(Guid.NewGuid());
 		}
 	}
 }

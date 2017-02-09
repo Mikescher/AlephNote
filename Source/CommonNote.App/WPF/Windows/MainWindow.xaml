@@ -5,8 +5,10 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:windows="clr-namespace:CommonNote.WPF.Windows"
 		xmlns:services="clr-namespace:MSHC.WPF.Extensions.Services;assembly=CSharpUtils"
+		xmlns:conv="clr-namespace:CommonNote.WPF.Converter"
 		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance windows:MainWindowViewmodel}"
+		ResizeMode="CanResizeWithGrip"
 		Title="Common Note" Height="350" Width="525">
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -17,6 +19,7 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="1*"/>
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
 		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
@@ -54,16 +57,23 @@
 					<TextBlock Text="Search" Padding="5,0"/>
 				</services:WatermarkService.Watermark>
 			</TextBox>
-			
-			<Button Grid.Row="0" Grid.Column="1" Content="+" Margin="2" Background="Transparent" BorderThickness="0" FontWeight="Bold"/>
 
-			<ListView Grid.Column="0" ItemsSource="{Binding Repository.Notes}" Grid.Row="1" Grid.ColumnSpan="2"/>
+			<Button Grid.Row="0" Grid.Column="1" Content="+" Margin="2" Background="Transparent" BorderThickness="0" FontWeight="Bold" Command="{Binding CreateNewNoteCommand}"/>
+
+			<ListView Grid.Column="0" ItemsSource="{Binding Repository.Notes}" SelectedValue="{Binding SelectedNote}" Grid.Row="1" Grid.ColumnSpan="2">
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Title}" />
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
 
 		</Grid>
 
 		<GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Width="3" />
 
-		<Grid Grid.Column="2" Margin="1" Grid.Row="1">
+		<Grid Grid.Column="2" Margin="1" Grid.Row="1" >
+			<!-- TODO Visibility="{Binding SelectedNote, Converter={conv:IsNullToVisibilityConverter}, ConverterParameter=Hidden;Visible}" -->
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="1*"/>
 				<ColumnDefinition Width="Auto"/>
@@ -74,25 +84,48 @@
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
 
-			<TextBox Grid.Row="0" BorderBrush="Transparent" BorderThickness="0" FontSize="16" Foreground="CornflowerBlue" FontWeight="Bold" Text="Title" />
+			<TextBox Grid.Row="0" BorderBrush="Transparent" BorderThickness="0" FontSize="16" Foreground="CornflowerBlue" FontWeight="Bold" Text="{Binding SelectedNote.Title, UpdateSourceTrigger=PropertyChanged}" />
 
-			<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="2,4">
-				<Border VerticalAlignment="Center" Background="SeaShell" BorderThickness="1" BorderBrush="LightGray" Margin="2,0" Padding="1">
-					<TextBlock>Tag 2</TextBlock>
-				</Border>
-				<Border VerticalAlignment="Center" Background="SeaShell" BorderThickness="1" BorderBrush="LightGray" Margin="2,0" Padding="1">
-					<TextBlock>Tag 44</TextBlock>
-				</Border>
-				<Border VerticalAlignment="Center" Background="SeaShell" BorderThickness="1" BorderBrush="LightGray" Margin="2,0" Padding="1">
-					<TextBlock>Tag xxx</TextBlock>
-				</Border>
+			<ItemsControl Grid.Row="1" Grid.Column="0" Margin="2,2" ItemsSource="{Binding SelectedNote.Tags}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<WrapPanel Orientation="Horizontal" MinHeight="24" />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Border VerticalAlignment="Center" Background="SeaShell" BorderThickness="1" BorderBrush="LightGray" Margin="2" Padding="1">
+							<TextBlock Text="{Binding .}" />
+						</Border>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+
+			<StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="8,2">
+				<TextBlock Text="*" Foreground="DarkGray" Visibility="{Binding SelectedNote.IsLocalSaved, Converter={conv:BoolToVisibilityConverter}, ConverterParameter=Collapsed;Visible}" />
+				<TextBlock Text="{Binding SelectedNote.ModificationDate, Converter={conv:DateToDisplayConverter}}" ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DateTimeToDisplayConverter}}" Foreground="DarkGray" />
 			</StackPanel>
 
-			<TextBlock Grid.Row="1" Grid.Column="1" Text="2017/01/03" Foreground="DarkGray" VerticalAlignment="Bottom" Margin="8,2" />
-
-			<TextBox Grid.Row="2" Grid.ColumnSpan="2"/>
+			<TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding SelectedNote.Text, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
 
 		</Grid>
+
+		<StatusBar Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
+			<StatusBar.Resources>
+				<Style TargetType="StatusBarItem">
+					<Setter Property="FontSize" Value="10" />
+				</Style>
+			</StatusBar.Resources>
+
+			<StatusBarItem  Content="Last Synchronized: " />
+			<StatusBarItem Content="5 minutes ago" />
+			<Separator Margin="5,2" Foreground="Beige" />
+			<StatusBarItem Content="Length: " />
+			<StatusBarItem Content="2268"/>
+			<StatusBarItem Content="Lines: " />
+			<StatusBarItem Content="925"/>
+			<StatusBarItem Content="Local Storage" HorizontalAlignment="Right" Margin="0,0,15,0"/>
+		</StatusBar>
 
 	</Grid>
 </Window>

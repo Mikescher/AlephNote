@@ -20,7 +20,7 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 		<TabControl Grid.Row="0">
-			<TabItem Header="Options">
+			<TabItem Header="General">
 				<Grid Margin="4">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto"/>
@@ -89,6 +89,9 @@
 				</Grid>
 			</TabItem>
 			<TabItem Header="View">
+
+			</TabItem>
+			<TabItem Header="Remote Encryption">
 
 			</TabItem>
 		</TabControl>
