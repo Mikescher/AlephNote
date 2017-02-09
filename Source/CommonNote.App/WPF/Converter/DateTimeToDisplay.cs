@@ -3,9 +3,9 @@ using System;
 
 namespace CommonNote.WPF.Converter
 {
-	class DateTimeToDisplayConverter : OneWayConverter<DateTimeOffset, string>
+	class DateTimeToDisplay : OneWayConverter<DateTimeOffset, string>
 	{
-		public DateTimeToDisplayConverter() { }
+		public DateTimeToDisplay() { }
 
 		protected override string Convert(DateTimeOffset value, object parameter)
 		{

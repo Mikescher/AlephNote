@@ -42,8 +42,14 @@
       <HintPath>..\..\Lib\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="ScintillaNET">
+      <HintPath>..\..\Lib\jacobslusser.ScintillaNET.3.5.10\lib\net40\ScintillaNET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -55,6 +61,7 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -63,11 +70,17 @@
     </ApplicationDefinition>
     <Compile Include="Repository\NoteRepository.cs" />
     <Compile Include="Settings\AppSettings.cs" />
-    <Compile Include="WPF\Converter\DateTimeToDisplayConverter.cs" />
-    <Compile Include="WPF\Converter\IsNullToVisibilityConverter.cs" />
-    <Compile Include="WPF\Converter\CreatePluginSettingsGridConverter.cs" />
-    <Compile Include="WPF\Converter\BoolToVisibilityConverter.cs" />
-    <Compile Include="WPF\Converter\DateToDisplayConverter.cs" />
+    <Compile Include="Settings\FontSize.cs" />
+    <Compile Include="Settings\FontModifier.cs" />
+    <Compile Include="WPF\Controls\NoteEditor.xaml.cs">
+      <DependentUpon>NoteEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Converter\StringCoalesce.cs" />
+    <Compile Include="WPF\Converter\DateTimeToDisplay.cs" />
+    <Compile Include="WPF\Converter\IsNullToVisibility.cs" />
+    <Compile Include="WPF\Converter\CreatePluginSettingsGrid.cs" />
+    <Compile Include="WPF\Converter\BoolToVisibility.cs" />
+    <Compile Include="WPF\Converter\DateToDisplay.cs" />
     <Compile Include="WPF\Windows\MainWindowViewmodel.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -78,6 +91,10 @@
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\ConfigInterval.cs" />
+    <Page Include="WPF\Controls\NoteEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WPF\Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

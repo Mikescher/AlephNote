@@ -4,9 +4,9 @@ using System.Windows;
 
 namespace CommonNote.WPF.Converter
 {
-	class BoolToVisibilityConverter : OneWayConverter<bool, Visibility>
+	class BoolToVisibility : OneWayConverter<bool, Visibility>
 	{
-		public BoolToVisibilityConverter() { }
+		public BoolToVisibility() { }
 
 		protected override Visibility Convert(bool value, object parameter)
 		{

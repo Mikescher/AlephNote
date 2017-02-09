@@ -6,6 +6,8 @@
 		xmlns:windows="clr-namespace:CommonNote.WPF.Windows"
 		xmlns:services="clr-namespace:MSHC.WPF.Extensions.Services;assembly=CSharpUtils"
 		xmlns:conv="clr-namespace:CommonNote.WPF.Converter"
+		xmlns:scinet="clr-namespace:ScintillaNET;assembly=ScintillaNET"
+		xmlns:proxy="clr-namespace:MSHC.WPF.Extensions.BindingProxies;assembly=CSharpUtils"
 		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance windows:MainWindowViewmodel}"
 		ResizeMode="CanResizeWithGrip"
@@ -63,7 +65,7 @@
 			<ListView Grid.Column="0" ItemsSource="{Binding Repository.Notes}" SelectedValue="{Binding SelectedNote}" Grid.Row="1" Grid.ColumnSpan="2">
 				<ListView.ItemTemplate>
 					<DataTemplate>
-						<TextBlock Text="{Binding Title}" />
+						<TextBlock Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" />
 					</DataTemplate>
 				</ListView.ItemTemplate>
 			</ListView>
@@ -102,11 +104,17 @@
 			</ItemsControl>
 
 			<StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="8,2">
-				<TextBlock Text="*" Foreground="DarkGray" Visibility="{Binding SelectedNote.IsLocalSaved, Converter={conv:BoolToVisibilityConverter}, ConverterParameter=Collapsed;Visible}" />
-				<TextBlock Text="{Binding SelectedNote.ModificationDate, Converter={conv:DateToDisplayConverter}}" ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DateTimeToDisplayConverter}}" Foreground="DarkGray" />
+				<TextBlock Text="*" Foreground="DarkGray" Visibility="{Binding SelectedNote.IsLocalSaved, Converter={conv:BoolToVisibility}, ConverterParameter=Collapsed;Visible}" />
+				<TextBlock Text="{Binding SelectedNote.ModificationDate, Converter={conv:DateToDisplay}}" ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DateTimeToDisplay}}" Foreground="DarkGray" />
 			</StackPanel>
 
-			<TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding SelectedNote.Text, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+			<WindowsFormsHost Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+				<WindowsFormsHost.Child>
+					<scinet:Scintilla x:Name="NoteEdit" />
+				</WindowsFormsHost.Child>
+			</WindowsFormsHost>
+
+			<proxy:LegacyStringBinding Grid.Row="0" Grid.Column="0" Element="{Binding ElementName=NoteEdit}" PropertyPath="Text" ChangedEventPath="TextChanged" TargetBinding="{Binding SelectedNote.Text}" />
 
 		</Grid>
 

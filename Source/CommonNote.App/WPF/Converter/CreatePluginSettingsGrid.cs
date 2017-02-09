@@ -10,7 +10,7 @@ using MSHC.WPF.Controls;
 
 namespace CommonNote.WPF.Converter
 {
-	class CreatePluginSettingsGridConverter : IMultiValueConverter
+	class CreatePluginSettingsGrid : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{

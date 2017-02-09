@@ -1,9 +1,9 @@
-﻿using System.Linq;
-using CommonNote.PluginInterface;
+﻿using CommonNote.PluginInterface;
 using CommonNote.Repository;
 using CommonNote.Settings;
 using MSHC.WPF.MVVM;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -21,11 +21,14 @@ namespace CommonNote.WPF.Windows
 		public NoteRepository Repository { get { return _repository; } private set { _repository = value; OnPropertyChanged(); } }
 
 		private INote _selectedNote;
-		public INote SelectedNote { get { return _selectedNote; } private set { _selectedNote = value; OnPropertyChanged(); } }
+		public INote SelectedNote { get { return _selectedNote; } private set { _selectedNote = value; OnPropertyChanged(); SelectedNoteChanged(); } }
 
-		public MainWindowViewmodel(AppSettings settings)
+		private readonly MainWindow _owner;
+
+		public MainWindowViewmodel(AppSettings settings, MainWindow parent)
 		{
 			_settings = settings;
+			_owner = parent;
 			_repository = new NoteRepository(App.PATH_LOCALDB, settings.NoteProvider, settings.PluginSettings[settings.NoteProvider.GetUniqueID()]);
 
 			Repository.Init();
@@ -71,6 +74,11 @@ namespace CommonNote.WPF.Windows
 
 				SelectedNote = Repository.Notes.FirstOrDefault();
 			}
+		}
+
+		private void SelectedNoteChanged()
+		{
+			_owner.ResetScintillaScroll();
 		}
 	}
 }

@@ -4,9 +4,9 @@ using System.Windows;
 
 namespace CommonNote.WPF.Converter
 {
-	class IsNullToVisibilityConverter : OneWayConverter<object, Visibility>
+	class IsNullToVisibility : OneWayConverter<object, Visibility>
 	{
-		public IsNullToVisibilityConverter() { }
+		public IsNullToVisibility() { }
 
 		protected override Visibility Convert(object value, object parameter)
 		{

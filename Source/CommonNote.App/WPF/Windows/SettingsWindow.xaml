@@ -3,17 +3,18 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                          xmlns:settings="clr-namespace:CommonNote.Settings"
+						  xmlns:settings="clr-namespace:CommonNote.Settings"
 						  xmlns:converter="clr-namespace:CommonNote.WPF.Converter"
 						  xmlns:windows="clr-namespace:CommonNote.WPF.Windows"
 						  xmlns:controls="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
-						  xmlns:markupExtensions="clr-namespace:MSHC.WPF.Extensions.MarkupExtensions;assembly=CSharpUtils"
+						  xmlns:mext="clr-namespace:MSHC.WPF.Extensions.MarkupExtensions;assembly=CSharpUtils"
+						  xmlns:draw="clr-namespace:System.Drawing;assembly=System.Drawing"
 						  mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance windows:SettingsWindowViewmodel}"
 		Title="Common Note - Configuration" MinHeight="400" MinWidth="300" Height="400" Width="535">
-		<Window.Resources>
-			<converter:CreatePluginSettingsGridConverter x:Key="CreateGridConv" /> 
-		</Window.Resources>
+	<Window.Resources>
+		<converter:CreatePluginSettingsGrid x:Key="CreateGridConv" />
+	</Window.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="1*"/>
@@ -50,8 +51,8 @@
 					</GroupBox>
 
 					<TextBlock Grid.Row="2" Grid.Column="0" Text="Synchronization frequency:" VerticalAlignment="Center" />
-					<ComboBox Grid.Row="2" Grid.Column="2" Margin="2" ItemsSource="{markupExtensions:EnumSource {x:Type settings:ConfigInterval}}" SelectedValue="{Binding Settings.SynchronizationFrequency}" />
-					
+					<ComboBox Grid.Row="2" Grid.Column="2" Margin="2" ItemsSource="{mext:EnumSource {x:Type settings:ConfigInterval}}" SelectedValue="{Binding Settings.SynchronizationFrequency}" />
+
 					<GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Header="Connection" Margin="2" Padding="5">
 						<Grid>
 							<Grid.RowDefinitions>
@@ -89,7 +90,58 @@
 				</Grid>
 			</TabItem>
 			<TabItem Header="View">
+				<StackPanel Orientation="Vertical">
+					<GroupBox Header="Font" Padding="4">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" MinWidth="100"/>
+								<ColumnDefinition Width="2*"/>
+								<ColumnDefinition Width="1*"/>
+								<ColumnDefinition Width="1*"/>
+							</Grid.ColumnDefinitions>
 
+							<TextBlock Margin="2" Grid.Row="2" Grid.Column="0" Text="Title:" VerticalAlignment="Center" />
+							<ComboBox  Margin="2" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Source={x:Static draw:FontFamily.Families}, Mode=OneTime}" DisplayMemberPath="Name" SelectedValue="{Binding TitleFontName}" />
+							<ComboBox  Margin="2" Grid.Row="2" Grid.Column="2" ItemsSource="{mext:EnumSource settings:FontModifier}" SelectedValue="{Binding TitleFontModifier}"/>
+							<ComboBox  Margin="2" Grid.Row="2" Grid.Column="3" ItemsSource="{mext:EnumSource settings:FontSize}" SelectedValue="{Binding TitleFontSize}"/>
+
+							<TextBlock Margin="2" Grid.Row="0" Grid.Column="0" Text="Note:" VerticalAlignment="Center" />
+							<ComboBox  Margin="2" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Source={x:Static draw:FontFamily.Families}, Mode=OneTime}" DisplayMemberPath="Name" SelectedValue="{Binding NoteFontName}" />
+							<ComboBox  Margin="2" Grid.Row="0" Grid.Column="2" ItemsSource="{mext:EnumSource settings:FontModifier}" SelectedValue="{Binding NoteFontModifier}"/>
+							<ComboBox  Margin="2" Grid.Row="0" Grid.Column="3" ItemsSource="{mext:EnumSource settings:FontSize}" SelectedValue="{Binding NoteFontSize}"/>
+
+							<TextBlock Margin="2" Grid.Row="1" Grid.Column="0" Text="List:" VerticalAlignment="Center" />
+							<ComboBox  Margin="2" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Source={x:Static draw:FontFamily.Families}, Mode=OneTime}" DisplayMemberPath="Name" SelectedValue="{Binding ListFontName}" />
+							<ComboBox  Margin="2" Grid.Row="1" Grid.Column="2" ItemsSource="{mext:EnumSource settings:FontModifier}" SelectedValue="{Binding ListFontModifier}"/>
+							<ComboBox  Margin="2" Grid.Row="1" Grid.Column="3" ItemsSource="{mext:EnumSource settings:FontSize}" SelectedValue="{Binding ListFontSize}"/>
+							
+						</Grid>
+					</GroupBox>
+					<GroupBox Header="Scintilla" Padding="4">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="1*" />
+								<ColumnDefinition Width="1*" />
+							</Grid.ColumnDefinitions>
+							<StackPanel Grid.Column="0">
+								<CheckBox Margin="2" Content="Display Line numbers" />
+								<CheckBox Margin="2" Content="Highlight current line" />
+								<CheckBox Margin="2" Content="Enable rectangular selection" />
+							</StackPanel>
+							<StackPanel Grid.Column="1">
+								<CheckBox Margin="2" Content="Word wrap" />
+								<CheckBox Margin="2" Content="Show Whitespaces" />
+								<CheckBox Margin="2" Content="Show EOL" />
+							</StackPanel>
+						</Grid>
+					</GroupBox>
+				</StackPanel>
 			</TabItem>
 			<TabItem Header="Remote Encryption">
 
