@@ -12,18 +12,33 @@ namespace CommonNote.Plugins.SimpleNote
 {
 	class SimpleNote : BasicNote
 	{
-		public string ID;
-		public bool Deleted = false;
-		public string ShareURL = "";
-		public string PublishURL = "";
-		public List<string> SystemTags = new List<string>();
-		public string Content = "";
-		public DateTimeOffset CreationDate = DateTime.MinValue;
-		public int Version;
+		private string _id;
+		public string ID { get { return _id; } set { _id = value; OnPropertyChanged(); } }
+
+		private bool _deleted = false;
+		public bool Deleted { get { return _deleted; } set { _deleted = value; OnPropertyChanged(); } }
+
+		private string _shareURL = "";
+		public string ShareURL { get { return _shareURL; } set { _shareURL = value; OnPropertyChanged(); } }
+
+		private string _publicURL = "";
+		public string PublicURL { get { return _publicURL; } set { _publicURL = value; OnPropertyChanged(); } }
+
+		private List<string> _systemTags = new List<string>();
+		public List<string> SystemTags { get { return _systemTags; } set { _systemTags = value; OnPropertyChanged(); } }
+
+		private string _content = "";
+		public string Content { get { return _content; } set { _content = value; OnPropertyChanged(); } }
+
+		private DateTimeOffset _creationDate = DateTimeOffset.MinValue;
+		public DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
+
+		private int _version;
+		public int Version { get { return _version; } set { _version = value; OnPropertyChanged(); } }
 
 		public SimpleNote(string uid)
 		{
-			ID = uid;
+			_id = uid;
 		}
 
 		private readonly ObservableCollection<string> _tags = new ObservableCollection<string>();
@@ -33,21 +48,21 @@ namespace CommonNote.Plugins.SimpleNote
 		{
 			get
 			{
-				var lines = Content.Split('\n');
+				var lines = _content.Split('\n');
 				if (lines.Length <= 1) return string.Empty;
 
 				return string.Join("\n", lines.Skip(1));
 			}
 			set
 			{
-				var lines = Content.Split('\n');
+				var lines = _content.Split('\n');
 				if (lines.Length == 0)
 				{
-					Content = value;
+					_content = value;
 				}
 				else
 				{
-					Content = lines[0] + "\n" + value;
+					_content = lines[0] + "\n" + value;
 				}
 				OnPropertyChanged();
 			}
@@ -57,19 +72,19 @@ namespace CommonNote.Plugins.SimpleNote
 		{
 			get
 			{
-				return Content.Split('\n').FirstOrDefault() ?? string.Empty;
+				return _content.Split('\n').FirstOrDefault() ?? string.Empty;
 			}
 			set
 			{
-				var lines = Content.Split('\n');
+				var lines = _content.Split('\n');
 				if (lines.Length == 0)
 				{
-					Content = value;
+					_content = value;
 				}
 				else
 				{
 					lines[0] = value;
-					Content = string.Join("\n", lines);
+					_content = string.Join("\n", lines);
 				}
 				OnPropertyChanged();
 			}
@@ -79,25 +94,25 @@ namespace CommonNote.Plugins.SimpleNote
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
 		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
 
-		public override string GetLocalUniqueName()
+		public override string GetUniqueName()
 		{
-			return ID;
+			return _id;
 		}
 
 		public override XElement Serialize()
 		{
 			var data = new object[]
 			{
-				new XElement("ID", ID),
+				new XElement("ID", _id),
 				new XElement("Tags", Tags.Select(p => new XElement("Tag", p)).Cast<object>().ToArray()),
-				new XElement("Deleted", Deleted),
-				new XElement("ShareURL", ShareURL),
-				new XElement("PublishURL", PublishURL),
+				new XElement("Deleted", _deleted),
+				new XElement("ShareURL", _shareURL),
+				new XElement("PublishURL", _publicURL),
 				new XElement("SystemTags", Tags.Select(p => new XElement("Tag", p)).Cast<object>().ToArray()),
-				new XElement("Content", Convert.ToBase64String(Encoding.UTF8.GetBytes(Content))),
+				new XElement("Content", Convert.ToBase64String(Encoding.UTF8.GetBytes(_content))),
 				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
-				new XElement("CreationDate", CreationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
-				new XElement("Version", Version),
+				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
+				new XElement("Version", _version),
 			};
 
 			var r = new XElement("simplenote", data);
@@ -109,16 +124,66 @@ namespace CommonNote.Plugins.SimpleNote
 
 		public override void Deserialize(XElement input)
 		{
-			ID = XHelper.GetChildValueString(input, "ID");
-			Tags.Synchronize(XHelper.GetChildValueStringList(input, "Tags", "Tag"));
-			Deleted = XHelper.GetChildValueBool(input, "Deleted");
-			ShareURL = XHelper.GetChildValueString(input, "ShareURL");
-			PublishURL = XHelper.GetChildValueString(input, "PublishURL");
-			SystemTags = XHelper.GetChildValueStringList(input, "SystemTags", "Tag");
-			Content = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Content")));
-			CreationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
-			ModificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
-			Version = XHelper.GetChildValueInt(input, "Version");
+			using (SuppressDirtyChanges())
+			{
+				_id = XHelper.GetChildValueString(input, "ID");
+				_tags.Synchronize(XHelper.GetChildValueStringList(input, "Tags", "Tag"));
+				_deleted = XHelper.GetChildValueBool(input, "Deleted");
+				_shareURL = XHelper.GetChildValueString(input, "ShareURL");
+				_publicURL = XHelper.GetChildValueString(input, "PublishURL");
+				_systemTags = XHelper.GetChildValueStringList(input, "SystemTags", "Tag");
+				_content = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Content")));
+				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
+				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
+				_version = XHelper.GetChildValueInt(input, "Version");
+			}
+		}
+
+		protected override BasicNote CreateClone()
+		{
+			var n = new SimpleNote(_id);
+			n._tags.Synchronize(_tags.ToList());
+			n._content = _content;
+			n._deleted = _deleted;
+			n._shareURL = _shareURL;
+			n._publicURL = _publicURL;
+			n._systemTags = _systemTags.ToList();
+			n._creationDate = _creationDate;
+			n._modificationDate = _modificationDate;
+			n._version = _version;
+			return n;
+		}
+
+		public override void OnAfterUpload(INote clonenote)
+		{
+			var other = (SimpleNote) clonenote;
+
+			using (SuppressDirtyChanges())
+			{
+				_modificationDate = other.ModificationDate;
+				_creationDate = other.CreationDate;
+				_version = other.Version;
+				_systemTags = other.SystemTags;
+				_publicURL = other.PublicURL;
+				_shareURL = other.ShareURL;
+				_deleted = other.Deleted;
+			}
+		}
+
+		public override void ApplyUpdatedData(INote clonenote)
+		{
+			var other = (SimpleNote)clonenote;
+
+			using (SuppressDirtyChanges())
+			{
+				_modificationDate = other.ModificationDate;
+				_version = other.Version;
+				_systemTags = other.SystemTags;
+				_publicURL = other.PublicURL;
+				_shareURL = other.ShareURL;
+				_deleted = other.Deleted;
+				_content = other.Content;
+			}
 		}
 	}
 }

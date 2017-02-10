@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Xml.Linq;
 
@@ -182,6 +183,57 @@ namespace CommonNote.Settings
 			}
 
 			return true;
+		}
+
+		public IWebProxy CreateProxy()
+		{
+			if (ProxyEnabled)
+			{
+				if (string.IsNullOrWhiteSpace(ProxyUsername) && string.IsNullOrWhiteSpace(ProxyPassword))
+				{
+					return new WebProxy(ProxyHost, ProxyPort ?? 443);
+				}
+				else
+				{
+					return new WebProxy(ProxyHost, ProxyPort ?? 443)
+					{
+						Credentials = new NetworkCredential(ProxyUsername, ProxyPassword)
+					};
+				}
+			}
+			else
+			{
+				return new WebProxy();
+			}
+		}
+
+		public int GetSyncDelay()
+		{
+			switch (SynchronizationFrequency)
+			{
+				case ConfigInterval.Sync01Min:
+					return 1 * 60 * 1000;
+				case ConfigInterval.Sync02Min:
+					return 2 * 60 * 1000;
+				case ConfigInterval.Sync05Min:
+					return 5 * 60 * 1000;
+				case ConfigInterval.Sync10Min:
+					return 10 * 60 * 1000;
+				case ConfigInterval.Sync15Min:
+					return 15 * 60 * 1000;
+				case ConfigInterval.Sync30Min:
+					return 30 * 60 * 1000;
+				case ConfigInterval.Sync01Hour:
+					return 1 * 60 * 60 * 1000;
+				case ConfigInterval.Sync02Hour:
+					return 1 * 60 * 60 * 1000;
+				case ConfigInterval.Sync06Hour:
+					return 6 * 60 * 60 * 1000;
+				case ConfigInterval.Sync12Hour:
+					return 12 * 60 * 60 * 1000;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 		}
 	}
 }

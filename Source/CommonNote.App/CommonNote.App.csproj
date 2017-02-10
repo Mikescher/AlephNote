@@ -68,7 +68,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Repository\ISynchronizationFeedback.cs" />
     <Compile Include="Repository\NoteRepository.cs" />
+    <Compile Include="Repository\SynchronizationThread.cs" />
     <Compile Include="Settings\AppSettings.cs" />
     <Compile Include="Settings\FontSize.cs" />
     <Compile Include="Settings\FontModifier.cs" />

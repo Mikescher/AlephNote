@@ -3,16 +3,18 @@ using CommonNote.Repository;
 using CommonNote.Settings;
 using MSHC.WPF.MVVM;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
 namespace CommonNote.WPF.Windows
 {
-	public class MainWindowViewmodel : ObservableObject
+	public class MainWindowViewmodel : ObservableObject, ISynchronizationFeedback
 	{
 		public ICommand SettingsCommand { get { return new RelayCommand(ShowSettings); } }
 		public ICommand CreateNewNoteCommand { get { return new RelayCommand(CreateNote);} }
+		public ICommand ResyncCommand { get { return new RelayCommand(Resync);} }
 
 		private AppSettings _settings;
 		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); } }
@@ -23,13 +25,16 @@ namespace CommonNote.WPF.Windows
 		private INote _selectedNote;
 		public INote SelectedNote { get { return _selectedNote; } private set { _selectedNote = value; OnPropertyChanged(); SelectedNoteChanged(); } }
 
+		private string _lastSynchronizedText = "never";
+		public string LastSynchronizedText { get { return _lastSynchronizedText; } set { _lastSynchronizedText = value; OnPropertyChanged(); } }
+
 		private readonly MainWindow _owner;
 
 		public MainWindowViewmodel(AppSettings settings, MainWindow parent)
 		{
 			_settings = settings;
 			_owner = parent;
-			_repository = new NoteRepository(App.PATH_LOCALDB, settings.NoteProvider, settings.PluginSettings[settings.NoteProvider.GetUniqueID()]);
+			_repository = new NoteRepository(App.PATH_LOCALDB, this, settings, settings.NoteProvider, settings.PluginSettings[settings.NoteProvider.GetUniqueID()]);
 
 			Repository.Init();
 
@@ -67,7 +72,7 @@ namespace CommonNote.WPF.Windows
 
 			if (reconnectRepo)
 			{
-				_repository = new NoteRepository(App.PATH_LOCALDB, Settings.NoteProvider, Settings.PluginSettings[Settings.NoteProvider.GetUniqueID()]);
+				_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.NoteProvider, Settings.PluginSettings[Settings.NoteProvider.GetUniqueID()]);
 				_repository.Init();
 
 				OnExplicitPropertyChanged("Repository");
@@ -79,6 +84,27 @@ namespace CommonNote.WPF.Windows
 		private void SelectedNoteChanged()
 		{
 			_owner.ResetScintillaScroll();
+			_owner.FocusScintilla();
+		}
+
+		private void Resync()
+		{
+			Repository.SyncNow();
+		}
+
+		public void StartSync()
+		{
+			LastSynchronizedText = "[SYNCING]";
+		}
+
+		public void SyncSuccess(DateTimeOffset now)
+		{
+			LastSynchronizedText = now.ToLocalTime().ToString("HH:mm:ss");
+		}
+
+		public void SyncError(List<Tuple<string, Exception>> errors)
+		{
+			LastSynchronizedText = "[ERROR]"; //TODO
 		}
 	}
 }

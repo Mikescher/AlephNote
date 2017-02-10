@@ -46,6 +46,7 @@
     <Compile Include="IRemoteProvider.cs" />
     <Compile Include="INote.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\External\CSharpUtils\CSharpUtils.csproj">

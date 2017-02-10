@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 
 namespace CommonNote.PluginInterface
 {
@@ -12,7 +13,7 @@ namespace CommonNote.PluginInterface
 		Version GetVersion();
 
 		IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
-		IRemoteStorageConnection CreateRemoteStorageConnection(IRemoteStorageConfiguration config);
+		IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config);
 		INote CreateEmptyNode();
 	}
 
@@ -48,7 +49,7 @@ namespace CommonNote.PluginInterface
 		}
 
 		public abstract IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
-		public abstract IRemoteStorageConnection CreateRemoteStorageConnection(IRemoteStorageConfiguration config);
+		public abstract IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config);
 		public abstract INote CreateEmptyNode();
 	}
 }

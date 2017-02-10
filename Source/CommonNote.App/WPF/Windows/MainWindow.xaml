@@ -8,6 +8,7 @@
 		xmlns:conv="clr-namespace:CommonNote.WPF.Converter"
 		xmlns:scinet="clr-namespace:ScintillaNET;assembly=ScintillaNET"
 		xmlns:proxy="clr-namespace:MSHC.WPF.Extensions.BindingProxies;assembly=CSharpUtils"
+		xmlns:controls="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
 		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance windows:MainWindowViewmodel}"
 		ResizeMode="CanResizeWithGrip"
@@ -108,7 +109,7 @@
 				<TextBlock Text="{Binding SelectedNote.ModificationDate, Converter={conv:DateToDisplay}}" ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DateTimeToDisplay}}" Foreground="DarkGray" />
 			</StackPanel>
 
-			<WindowsFormsHost Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+			<WindowsFormsHost Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="NoteEditHost">
 				<WindowsFormsHost.Child>
 					<scinet:Scintilla x:Name="NoteEdit" />
 				</WindowsFormsHost.Child>
@@ -126,13 +127,16 @@
 			</StatusBar.Resources>
 
 			<StatusBarItem  Content="Last Synchronized: " />
-			<StatusBarItem Content="5 minutes ago" />
+			<StatusBarItem Content="{Binding LastSynchronizedText}" />
+			<Button Content="R" Padding="0" Command="{Binding ResyncCommand}">
+				<Button.LayoutTransform><ScaleTransform ScaleX="1" ScaleY="0.6" /></Button.LayoutTransform>
+			</Button>
 			<Separator Margin="5,2" Foreground="Beige" />
 			<StatusBarItem Content="Length: " />
 			<StatusBarItem Content="2268"/>
 			<StatusBarItem Content="Lines: " />
 			<StatusBarItem Content="925"/>
-			<StatusBarItem Content="Local Storage" HorizontalAlignment="Right" Margin="0,0,15,0"/>
+			<StatusBarItem Content="{Binding Repository.ConnectionName}" HorizontalAlignment="Right" Margin="0,0,15,0"/>
 		</StatusBar>
 
 	</Grid>

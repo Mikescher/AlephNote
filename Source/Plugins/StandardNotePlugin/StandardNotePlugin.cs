@@ -1,5 +1,6 @@
 ﻿using CommonNote.PluginInterface;
 using System;
+using System.Net;
 
 namespace CommonNote.Plugins.StandardNote
 {
@@ -17,7 +18,7 @@ namespace CommonNote.Plugins.StandardNote
 			throw new NotImplementedException();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IRemoteStorageConfiguration config)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config)
 		{
 			throw new NotImplementedException();
 		}

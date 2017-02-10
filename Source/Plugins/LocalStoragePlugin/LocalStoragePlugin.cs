@@ -1,5 +1,6 @@
 ﻿using CommonNote.PluginInterface;
 using System;
+using System.Net;
 
 namespace CommonNote.Plugins.LocalStorage
 {
@@ -17,7 +18,7 @@ namespace CommonNote.Plugins.LocalStorage
 			return new LocalStorageConfig();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IRemoteStorageConfiguration config)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config)
 		{
 			return new LocalStorageConnection();
 		}

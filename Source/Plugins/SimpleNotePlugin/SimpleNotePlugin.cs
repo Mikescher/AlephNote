@@ -1,4 +1,5 @@
-﻿using CommonNote.PluginInterface;
+﻿using System.Net;
+using CommonNote.PluginInterface;
 using System;
 
 namespace CommonNote.Plugins.SimpleNote
@@ -17,9 +18,9 @@ namespace CommonNote.Plugins.SimpleNote
 			return new SimpleNoteConfig();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IRemoteStorageConfiguration config)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config)
 		{
-			return new SimpleNoteConnection((SimpleNoteConfig)config);
+			return new SimpleNoteConnection(proxy, (SimpleNoteConfig)config);
 		}
 
 		public override INote CreateEmptyNode()

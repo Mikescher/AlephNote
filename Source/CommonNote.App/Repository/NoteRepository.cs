@@ -1,4 +1,6 @@
-﻿using CommonNote.PluginInterface;
+﻿using System.Collections.Generic;
+using CommonNote.PluginInterface;
+using CommonNote.Settings;
 using MSHC.Util.Threads;
 using MSHC.WPF.MVVM;
 using System;
@@ -16,17 +18,27 @@ namespace CommonNote.Repository
 		private readonly string pathLocal;
 		private readonly IRemoteProvider provider;
 		private readonly IRemoteStorageConnection conn;
+		private readonly AppSettings appconfig;
+		private readonly SynchronizationThread thread;
+
+		public readonly List<INote> LocalDeletedNotes = new List<INote>(); // deleted local but not on remote
 
 		private readonly ObservableCollection<INote> _notes = new ObservableCollectionNoReset<INote>();
 		public ObservableCollection<INote> Notes { get { return _notes; } }
 
 		private readonly DelayedCombiningInvoker invSaveNotesLocal;
 
-		public NoteRepository(string path, IRemoteProvider prov, IRemoteStorageConfiguration config)
+		public IRemoteStorageConnection Connection { get { return conn; } }
+
+		public string ConnectionName { get { return provider.DisplayTitleShort; } }
+
+		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, IRemoteProvider prov, IRemoteStorageConfiguration config)
 		{
 			pathLocal = Path.Combine(path, prov.GetUniqueID().ToString("B"), config.GetUniqueName());
-			conn = prov.CreateRemoteStorageConnection(config);
+			conn = prov.CreateRemoteStorageConnection(cfg.CreateProxy(), config);
 			provider = prov;
+			appconfig = cfg;
+			thread = new SynchronizationThread(this, fb);
 
 			invSaveNotesLocal = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.Invoke(SaveAllDirtyNotes), 1*1000, 60*1000);
 
@@ -38,12 +50,16 @@ namespace CommonNote.Repository
 			if (!Directory.Exists(pathLocal)) Directory.CreateDirectory(pathLocal);
 
 			LoadNotesFromLocal();
+
+			thread.Start(appconfig.GetSyncDelay());
 		}
 
 		public void Shutdown()
 		{
 			invSaveNotesLocal.CancelPendingRequests();
 			SaveAllDirtyNotes();
+
+			thread.Stop();
 		}
 
 		private void LoadNotesFromLocal()
@@ -95,7 +111,7 @@ namespace CommonNote.Repository
 
 		public void SaveNote(INote note)
 		{
-			var path = Path.Combine(pathLocal, note.GetLocalUniqueName() + ".xml");
+			var path = Path.Combine(pathLocal, note.GetUniqueName() + ".xml");
 
 			var root = new XElement("note");
 
@@ -133,6 +149,33 @@ namespace CommonNote.Repository
 		private void NoteChanged(object sender, EventArgs e)
 		{
 			invSaveNotesLocal.Request();
+		}
+
+		public void DeleteNote(INote note, bool updateRemote)
+		{
+			var found = Notes.Remove(note);
+
+			if (found && updateRemote)
+			{
+				LocalDeletedNotes.Add(note);
+				thread.SyncNow();
+			}
+		}
+
+		public void AddNote(INote note, bool updateRemote)
+		{
+			Notes.Add(note);
+			invSaveNotesLocal.Request();
+
+			if (updateRemote)
+			{
+				thread.SyncNow();
+			}
+		}
+
+		public void SyncNow()
+		{
+			thread.SyncNow();
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using CommonNote.Settings;
+﻿using System.Windows.Input;
+using CommonNote.Settings;
 using ScintillaNET;
 using System;
 using System.Drawing;
@@ -71,6 +72,13 @@ namespace CommonNote.WPF.Windows
 		{
 			NoteEdit.ScrollWidth = 1;
 			NoteEdit.ScrollWidthTracking = true;
+		}
+
+		public void FocusScintilla()
+		{
+			NoteEditHost.Focus();
+			Keyboard.Focus(NoteEditHost);
+			NoteEdit.Focus();
 		}
 	}
 }
