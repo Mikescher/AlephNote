@@ -1,6 +1,5 @@
 ﻿using CommonNote.PluginInterface;
 using MSHC.Lang.Extensions;
-using MSHC.Math.Encryption;
 using MSHC.Util.Helper;
 using MSHC.WPF.MVVM;
 using System;
@@ -9,7 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
+using System.Reflection;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -19,96 +18,155 @@ namespace CommonNote.Settings
 	// ReSharper disable CompareOfFloatsByEqualityOperator
 	public class AppSettings : ObservableObject
 	{
-		private const string ENCRYPTION_KEY = @"jcgkZJvoykjpoGkDWHqiNoXoLZRJxpdb";
+		public const string ENCRYPTION_KEY = @"jcgkZJvoykjpoGkDWHqiNoXoLZRJxpdb";
 
-		private ConfigInterval _synchronizationFreq = ConfigInterval.Sync15Min;
+		[Setting]
 		public ConfigInterval SynchronizationFrequency { get { return _synchronizationFreq; } set { _synchronizationFreq = value; OnPropertyChanged(); } }
+		private ConfigInterval _synchronizationFreq = ConfigInterval.Sync15Min;
 
-		private bool _proxyEnabled = false;
+		[Setting]
 		public bool ProxyEnabled { get { return _proxyEnabled; } set { _proxyEnabled = value; OnPropertyChanged(); } }
+		private bool _proxyEnabled = false;
 
-		private string _proxyHost = string.Empty;
+		[Setting]
 		public string ProxyHost { get { return _proxyHost; } set { _proxyHost = value; OnPropertyChanged(); } }
+		private string _proxyHost = string.Empty;
 
-		private int? _proxyPort = null;
+		[Setting]
 		public int? ProxyPort { get { return _proxyPort; } set { _proxyPort = value; OnPropertyChanged(); } }
+		private int? _proxyPort = null;
 
-		private string _proxyUsername = string.Empty;
+		[Setting]
 		public string ProxyUsername { get { return _proxyUsername; } set { _proxyUsername = value; OnPropertyChanged(); } }
+		private string _proxyUsername = string.Empty;
 
-		private string _proxyPassword = string.Empty;
+		[Setting(Encrypted=true)]
 		public string ProxyPassword { get { return _proxyPassword; } set { _proxyPassword = value; OnPropertyChanged(); } }
+		private string _proxyPassword = string.Empty;
 
-		private IRemoteProvider _noteProvider = null;
+		[Setting]
 		public IRemoteProvider NoteProvider { get { return _noteProvider; } set { _noteProvider = value; OnPropertyChanged(); } }
+		private IRemoteProvider _noteProvider = null;
 
-		private bool _minimizeToTray = true;
+		[Setting]
 		public bool MinimizeToTray { get { return _minimizeToTray; } set { _minimizeToTray = value; OnPropertyChanged(); } }
+		private bool _minimizeToTray = true;
 
-		private bool _closeToTray = false;
+		[Setting]
 		public bool CloseToTray { get { return _closeToTray; } set { _closeToTray = value; OnPropertyChanged(); } }
+		private bool _closeToTray = false;
 
-		private FontFamily _titleFontName = FontFamily.Families.FirstOrDefault(p => p.Name == "Segoe UI") ?? FontFamily.GenericSansSerif;
+		[Setting]
 		public FontFamily TitleFontName { get { return _titleFontName; } set { _titleFontName = value; OnPropertyChanged(); } }
+		private FontFamily _titleFontName = FontFamily.Families.FirstOrDefault(p => p.Name == "Segoe UI") ?? FontFamily.GenericSansSerif;
 
-		private FontModifier _titleFontModifier = FontModifier.Bold;
+		[Setting]
 		public FontModifier TitleFontModifier { get { return _titleFontModifier; } set { _titleFontModifier = value; OnPropertyChanged(); } }
+		private FontModifier _titleFontModifier = FontModifier.Bold;
 
-		private FontSize _titleFontSize = FontSize.Size16;
+		[Setting]
 		public FontSize TitleFontSize { get { return _titleFontSize; } set { _titleFontSize = value; OnPropertyChanged(); } }
+		private FontSize _titleFontSize = FontSize.Size16;
 
-		private FontFamily _noteFontName = FontFamily.Families.FirstOrDefault(p => p.Name == "Segoe UI") ?? FontFamily.GenericSansSerif;
+		[Setting]
 		public FontFamily NoteFontName { get { return _noteFontName; } set { _noteFontName = value; OnPropertyChanged(); } }
+		private FontFamily _noteFontName = FontFamily.Families.FirstOrDefault(p => p.Name == "Segoe UI") ?? FontFamily.GenericSansSerif;
 
-		private FontModifier _noteFontModifier = FontModifier.Normal;
+		[Setting]
 		public FontModifier NoteFontModifier { get { return _noteFontModifier; } set { _noteFontModifier = value; OnPropertyChanged(); } }
+		private FontModifier _noteFontModifier = FontModifier.Normal;
 
-		private FontSize _noteFontSize = FontSize.Size08;
+		[Setting]
 		public FontSize NoteFontSize { get { return _noteFontSize; } set { _noteFontSize = value; OnPropertyChanged(); } }
+		private FontSize _noteFontSize = FontSize.Size08;
 
-		private FontFamily _listFontName = FontFamily.Families.FirstOrDefault(p => p.Name == "Segoe UI") ?? FontFamily.GenericSansSerif;
+		[Setting]
 		public FontFamily ListFontName { get { return _listFontName; } set { _listFontName = value; OnPropertyChanged(); } }
+		private FontFamily _listFontName = FontFamily.Families.FirstOrDefault(p => p.Name == "Segoe UI") ?? FontFamily.GenericSansSerif;
 
-		private FontModifier _listFontModifier = FontModifier.Normal;
+		[Setting]
 		public FontModifier ListFontModifier { get { return _listFontModifier; } set { _listFontModifier = value; OnPropertyChanged(); } }
+		private FontModifier _listFontModifier = FontModifier.Normal;
 
-		private FontSize _listFontSize = FontSize.Size12;
+		[Setting]
 		public FontSize ListFontSize { get { return _listFontSize; } set { _listFontSize = value; OnPropertyChanged(); } }
+		private FontSize _listFontSize = FontSize.Size12;
 
-		private bool _sciLineNumbers = false;
+		[Setting]
 		public bool SciLineNumbers { get { return _sciLineNumbers; } set { _sciLineNumbers = value; OnPropertyChanged(); } }
+		private bool _sciLineNumbers = false;
 
-		private bool _sciRectSelection = false;
+		[Setting]
 		public bool SciRectSelection { get { return _sciRectSelection; } set { _sciRectSelection = value; OnPropertyChanged(); } }
+		private bool _sciRectSelection = false;
 
-		private bool _sciWordWrap = false;
+		[Setting]
 		public bool SciWordWrap { get { return _sciWordWrap; } set { _sciWordWrap = value; OnPropertyChanged(); } }
+		private bool _sciWordWrap = false;
 
-		private bool _sciShowWhitespace = false;
+		[Setting]
 		public bool SciShowWhitespace { get { return _sciShowWhitespace; } set { _sciShowWhitespace = value; OnPropertyChanged(); } }
+		private bool _sciShowWhitespace = false;
 
-		private bool _sciShowEOL = false;
+		[Setting]
 		public bool SciShowEOL { get { return _sciShowEOL; } set { _sciShowEOL = value; OnPropertyChanged(); } }
+		private bool _sciShowEOL = false;
 
-		private int _startupPositionX = 64;
+		[Setting]
 		public int StartupPositionX { get { return _startupPositionX; } set { _startupPositionX = value; OnPropertyChanged(); } }
+		private int _startupPositionX = 64;
 
-		private int _startupPositionY = 64;
+		[Setting]
 		public int StartupPositionY { get { return _startupPositionY; } set { _startupPositionY = value; OnPropertyChanged(); } }
+		private int _startupPositionY = 64;
 
-		private int _startupPositionWidth = 350;
+		[Setting]
 		public int StartupPositionWidth { get { return _startupPositionWidth; } set { _startupPositionWidth = value; OnPropertyChanged(); } }
+		private int _startupPositionWidth = 525;
 
-		private int _startupPositionHeight = 525;
+		[Setting]
 		public int StartupPositionHeight { get { return _startupPositionHeight; } set { _startupPositionHeight = value; OnPropertyChanged(); } }
+		private int _startupPositionHeight = 350;
 
-		private WindowStartupLocation _startupLocation = WindowStartupLocation.CenterScreen;
+		[Setting]
 		public WindowStartupLocation StartupLocation { get { return _startupLocation; } set { _startupLocation = value; OnPropertyChanged(); } }
+		private WindowStartupLocation _startupLocation = WindowStartupLocation.CenterScreen;
 
-		private WindowState _startupState = WindowState.Normal;
+		[Setting]
 		public WindowState StartupState { get { return _startupState; } set { _startupState = value; OnPropertyChanged(); } }
+		private WindowState _startupState = WindowState.Normal;
 
-		public Dictionary<Guid, IRemoteStorageConfiguration> PluginSettings = new Dictionary<Guid, IRemoteStorageConfiguration>(); 
+		[Setting]
+		public bool LaunchOnBoot { get { return _launchOnBoot; } set { _launchOnBoot = value; OnPropertyChanged(); } }
+		private bool _launchOnBoot = false;
+
+		public Dictionary<Guid, IRemoteStorageConfiguration> PluginSettings = new Dictionary<Guid, IRemoteStorageConfiguration>();
+
+		private static readonly List<Tuple<SettingType, SettingAttribute, PropertyInfo>> _settingProperties;
+
+		static AppSettings()
+		{
+			_settingProperties = typeof(AppSettings)
+				.GetProperties()
+				.Select(p => new {P = p, A = p.GetCustomAttributes(typeof(SettingAttribute), false) })
+				.Where(p => p.A.Length == 1)
+				.Select(p => Tuple.Create(GetSettingType(p.P, (SettingAttribute)p.A.Single()), (SettingAttribute)p.A.Single(), p.P))
+				.ToList();
+		}
+
+		private static SettingType GetSettingType(PropertyInfo prop, SettingAttribute a)
+		{
+			if (prop.PropertyType == typeof(int)) return SettingType.Integer;
+			if (prop.PropertyType == typeof(int?)) return SettingType.NullableInteger;
+			if (prop.PropertyType == typeof(string)) return a.Encrypted ? SettingType.EncryptedString : SettingType.String;
+			if (prop.PropertyType == typeof(bool)) return SettingType.Boolean;
+			if (prop.PropertyType == typeof(Guid)) return SettingType.Guid;
+			if (prop.PropertyType == typeof(FontFamily)) return SettingType.FontFamily;
+			if (prop.PropertyType.IsEnum) return SettingType.Enum;
+			if (typeof(IRemoteProvider).IsAssignableFrom(prop.PropertyType)) return SettingType.RemoteProvider;
+
+			throw new NotSupportedException("Setting of type " + prop.PropertyType + " not supported");
+		}
 
 		private AppSettings()
 		{
@@ -143,38 +201,10 @@ namespace CommonNote.Settings
 		{
 			var root = new XElement("configuration");
 
-			root.Add(new XElement("SynchronizationFrequency", SynchronizationFrequency));
-			root.Add(new XElement("ProxyEnabled",             ProxyEnabled));
-			root.Add(new XElement("ProxyHost",                ProxyHost));
-			root.Add(new XElement("ProxyPort",                ProxyPort == null ? "" : ProxyPort.ToString()));
-			root.Add(new XElement("ProxyUsername",            ProxyUsername));
-			root.Add(new XElement("ProxyPassword",            Encrypt(ProxyPassword)));
-			root.Add(new XElement("NoteProvider",             NoteProvider.GetUniqueID().ToString("B")));
-			root.Add(new XElement("CloseToTray",              CloseToTray));
-			root.Add(new XElement("MinimizeToTray",           MinimizeToTray));
-
-			root.Add(new XElement("TitleFontName",            TitleFontName.Name));
-			root.Add(new XElement("TitleFontModifier",        TitleFontModifier));
-			root.Add(new XElement("TitleFontSize",            TitleFontSize));
-			root.Add(new XElement("NoteFontName",             NoteFontName.Name));
-			root.Add(new XElement("NoteFontModifier",         NoteFontModifier));
-			root.Add(new XElement("NoteFontSize",             NoteFontSize));
-			root.Add(new XElement("ListFontName",             ListFontName.Name));
-			root.Add(new XElement("ListFontModifier",         ListFontModifier));
-			root.Add(new XElement("ListFontSize",             ListFontSize));
-
-			root.Add(new XElement("SciLineNumbers",           SciLineNumbers));
-			root.Add(new XElement("SciRectSelection",         SciRectSelection));
-			root.Add(new XElement("SciWordWrap",              SciWordWrap));
-			root.Add(new XElement("SciShowWhitespace",        SciShowWhitespace));
-			root.Add(new XElement("SciShowEOL",               SciShowEOL));
-
-			root.Add(new XElement("StartupLocation",          StartupLocation));
-			root.Add(new XElement("StartupState",             StartupState));
-			root.Add(new XElement("StartupPositionX",         StartupPositionX));
-			root.Add(new XElement("StartupPositionY",         StartupPositionY));
-			root.Add(new XElement("StartupPositionWidth",     StartupPositionWidth));
-			root.Add(new XElement("StartupPositionHeight",    StartupPositionHeight));
+			foreach (var prop in _settingProperties)
+			{
+				prop.Item2.Serialize(prop.Item1, prop.Item3, this, root);
+			}
 
 			foreach (var setting in PluginSettings)
 			{
@@ -195,40 +225,11 @@ namespace CommonNote.Settings
 			
 			var r = new AppSettings();
 
-			r.SynchronizationFrequency = XHelper.GetChildValue(root, "SynchronizationFrequency", r.SynchronizationFrequency);
-			r.ProxyEnabled             = XHelper.GetChildValue(root, "ProxyEnabled", r.ProxyEnabled);
-			r.ProxyHost                = XHelper.GetChildValue(root, "ProxyHost", r.ProxyHost);
-			r.ProxyPort                = XHelper.GetChildValue(root, "ProxyPort", r.ProxyPort);
-			r.ProxyUsername            = XHelper.GetChildValue(root, "ProxyUsername", r.ProxyUsername);
-			r.ProxyPassword            = Decrypt(XHelper.GetChildValue(root, "ProxyPassword", string.Empty));
-			r.NoteProvider             = PluginManager.GetPlugin(XHelper.GetChildValue(root, "NoteProvider", PluginManager.GetDefaultPlugin().GetUniqueID()));
-			r.MinimizeToTray           = XHelper.GetChildValue(root, "MinimizeToTray", r.MinimizeToTray);
-			r.CloseToTray              = XHelper.GetChildValue(root, "CloseToTray", r.CloseToTray);
-
-			r.TitleFontName            = GetFontByNameOrDefault(XHelper.GetChildValue(root, "TitleFontName", r.TitleFontName.Name), r.TitleFontName);
-			r.TitleFontModifier        = XHelper.GetChildValue(root, "TitleFontModifier", r.TitleFontModifier);
-			r.TitleFontSize            = XHelper.GetChildValue(root, "TitleFontSize", r.TitleFontSize);
-			r.NoteFontName             = GetFontByNameOrDefault(XHelper.GetChildValue(root, "NoteFontName", r.NoteFontName.Name), r.NoteFontName);
-			r.NoteFontModifier         = XHelper.GetChildValue(root, "NoteFontModifier", r.NoteFontModifier);
-			r.NoteFontSize             = XHelper.GetChildValue(root, "NoteFontSize", r.NoteFontSize);
-			r.ListFontName             = GetFontByNameOrDefault(XHelper.GetChildValue(root, "ListFontName", r.ListFontName.Name), r.ListFontName);
-			r.ListFontModifier         = XHelper.GetChildValue(root, "ListFontModifier", r.ListFontModifier);
-			r.ListFontSize             = XHelper.GetChildValue(root, "ListFontSize", r.ListFontSize);
-
-			r.SciLineNumbers           = XHelper.GetChildValue(root, "SciLineNumbers", r.SciLineNumbers);
-			r.SciRectSelection         = XHelper.GetChildValue(root, "SciRectSelection", r.SciRectSelection);
-			r.SciWordWrap              = XHelper.GetChildValue(root, "SciWordWrap", r.SciWordWrap);
-			r.SciShowWhitespace        = XHelper.GetChildValue(root, "SciShowWhitespace", r.SciShowWhitespace);
-			r.SciShowEOL               = XHelper.GetChildValue(root, "SciShowEOL", r.SciShowEOL);
-
-			r.StartupLocation          = XHelper.GetChildValue(root, "StartupLocation", r.StartupLocation);
-			r.StartupState             = XHelper.GetChildValue(root, "StartupState", r.StartupState);
-			r.StartupPositionX         = XHelper.GetChildValue(root, "StartupPositionX", r.StartupPositionX);
-			r.StartupPositionY         = XHelper.GetChildValue(root, "StartupPositionY", r.StartupPositionY);
-			r.StartupPositionWidth     = XHelper.GetChildValue(root, "StartupPositionWidth", r.StartupPositionWidth);
-			r.StartupPositionHeight    = XHelper.GetChildValue(root, "StartupPositionHeight", r.StartupPositionHeight);
-
-
+			foreach (var prop in _settingProperties)
+			{
+				prop.Item2.Deserialize(prop.Item1, prop.Item3, r, root);
+			}
+			
 			r.PluginSettings = new Dictionary<Guid, IRemoteStorageConfiguration>();
 
 			foreach (var pluginNode in root.Descendants("Plugin"))
@@ -251,62 +252,17 @@ namespace CommonNote.Settings
 
 			return r;
 		}
-
-		private static FontFamily GetFontByNameOrDefault(string name, FontFamily defaultFamily)
-		{
-			return FontFamily.Families.FirstOrDefault(p => p.Name == name) ?? defaultFamily;
-		}
-
-		private static string Encrypt(string data)
-		{
-			if (string.IsNullOrWhiteSpace(data)) return string.Empty;
-
-			return Convert.ToBase64String(AESThenHMAC.SimpleEncryptWithPassword(Encoding.UTF32.GetBytes(data), ENCRYPTION_KEY));
-		}
-
-		private static string Decrypt(string data)
-		{
-			if (string.IsNullOrWhiteSpace(data)) return string.Empty;
-
-			return Encoding.UTF32.GetString(AESThenHMAC.SimpleDecryptWithPassword(Convert.FromBase64String(data), ENCRYPTION_KEY));
-		}
-
+		
 		public AppSettings Clone()
 		{
 			var r = new AppSettings();
-			r.SynchronizationFrequency = this.SynchronizationFrequency;
-			r.ProxyEnabled             = this.ProxyEnabled;
-			r.ProxyHost                = this.ProxyHost;
-			r.ProxyPort                = this.ProxyPort;
-			r.ProxyUsername            = this.ProxyUsername;
-			r.ProxyPassword            = this.ProxyPassword;
-			r.NoteProvider             = this.NoteProvider;
-			r.MinimizeToTray           = this.MinimizeToTray;
-			r.CloseToTray              = this.CloseToTray;
 
-			r.TitleFontName            = this.TitleFontName;
-			r.TitleFontModifier        = this.TitleFontModifier;
-			r.TitleFontSize            = this.TitleFontSize;
-			r.NoteFontName             = this.NoteFontName;
-			r.NoteFontModifier         = this.NoteFontModifier;
-			r.NoteFontSize             = this.NoteFontSize;
-			r.ListFontName             = this.ListFontName;
-			r.ListFontModifier         = this.ListFontModifier;
-			r.ListFontSize             = this.ListFontSize;
-
-			r.SciLineNumbers           = this.SciLineNumbers;
-			r.SciRectSelection         = this.SciRectSelection;
-			r.SciWordWrap              = this.SciWordWrap;
-			r.SciShowWhitespace        = this.SciShowWhitespace;
-			r.SciShowEOL               = this.SciShowEOL;
-
-			r.StartupLocation          = this.StartupLocation;
-			r.StartupState             = this.StartupState;
-			r.StartupPositionX         = this.StartupPositionX;
-			r.StartupPositionY         = this.StartupPositionY;
-			r.StartupPositionWidth     = this.StartupPositionWidth;
-			r.StartupPositionHeight    = this.StartupPositionHeight;
-
+			foreach (var prop in _settingProperties)
+			{
+				var v = prop.Item3.GetValue(this);
+				prop.Item3.SetValue(r, v);
+			}
+			
 			foreach (var setting in PluginSettings)
 			{
 				r.PluginSettings[setting.Key] = setting.Value.Clone();
@@ -317,39 +273,10 @@ namespace CommonNote.Settings
 
 		public bool IsEqual(AppSettings other)
 		{
-			if (this.SynchronizationFrequency != other.SynchronizationFrequency) return false;
-			if (this.ProxyEnabled             != other.ProxyEnabled)             return false;
-			if (this.ProxyHost                != other.ProxyHost)                return false;
-			if (this.ProxyPort                != other.ProxyPort)                return false;
-			if (this.ProxyUsername            != other.ProxyUsername)            return false;
-			if (this.ProxyPassword            != other.ProxyPassword)            return false;
-			if (this.NoteProvider             != other.NoteProvider)             return false;
-			if (this.CloseToTray              != other.CloseToTray)              return false;
-			if (this.MinimizeToTray           != other.MinimizeToTray)           return false;
-			if (this.MinimizeToTray           != other.MinimizeToTray)           return false;
-
-			if (this.TitleFontName.Name       != other.TitleFontName.Name)       return false;
-			if (this.TitleFontModifier        != other.TitleFontModifier)        return false;
-			if (this.TitleFontSize            != other.TitleFontSize)            return false;
-			if (this.NoteFontName.Name        != other.NoteFontName.Name)        return false;
-			if (this.NoteFontModifier         != other.NoteFontModifier)         return false;
-			if (this.NoteFontSize             != other.NoteFontSize)             return false;
-			if (this.ListFontName.Name        != other.ListFontName.Name)        return false;
-			if (this.ListFontModifier         != other.ListFontModifier)         return false;
-			if (this.ListFontSize             != other.ListFontSize)             return false;
-
-			if (this.SciLineNumbers           != other.SciLineNumbers)           return false;
-			if (this.SciRectSelection         != other.SciRectSelection)         return false;
-			if (this.SciWordWrap              != other.SciWordWrap)              return false;
-			if (this.SciShowWhitespace        != other.SciShowWhitespace)        return false;
-			if (this.SciShowEOL               != other.SciShowEOL)               return false;
-
-			if (this.StartupLocation          != other.StartupLocation)          return false;
-			if (this.StartupState             != other.StartupState)             return false;
-			if (this.StartupPositionX         != other.StartupPositionX)         return false;
-			if (this.StartupPositionY         != other.StartupPositionY)         return false;
-			if (this.StartupPositionWidth     != other.StartupPositionWidth)     return false;
-			if (this.StartupPositionHeight    != other.StartupPositionHeight)    return false;
+			foreach (var prop in _settingProperties)
+			{
+				if (!prop.Item2.TestEquality(prop.Item1, prop.Item3, this, other)) return false;
+			}
 
 			foreach (var key in PluginSettings.Keys.Union(other.PluginSettings.Keys))
 			{

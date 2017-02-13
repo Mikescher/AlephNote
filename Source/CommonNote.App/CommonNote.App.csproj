@@ -78,6 +78,8 @@
     <Compile Include="Settings\AppSettings.cs" />
     <Compile Include="Settings\FontSize.cs" />
     <Compile Include="Settings\FontModifier.cs" />
+    <Compile Include="Settings\SettingAttribute.cs" />
+    <Compile Include="Settings\SettingType.cs" />
     <Compile Include="WPF\Controls\NoteEditor.xaml.cs">
       <DependentUpon>NoteEditor.xaml</DependentUpon>
     </Compile>

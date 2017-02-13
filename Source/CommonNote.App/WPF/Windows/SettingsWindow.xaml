@@ -172,7 +172,7 @@
 									<ColumnDefinition Width="1*"/>
 								</Grid.ColumnDefinitions>
 
-								<CheckBox Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Start with windows" />
+								<CheckBox Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Start with windows" IsChecked="{Binding Settings.LaunchOnBoot}" />
 								
 								<TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Startup" />
 								

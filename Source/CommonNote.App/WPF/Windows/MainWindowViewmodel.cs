@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.IO;
-using System.Text;
-using CommonNote.PluginInterface;
+﻿using CommonNote.PluginInterface;
 using CommonNote.Repository;
 using CommonNote.Settings;
 using Hardcodet.Wpf.TaskbarNotification;
@@ -9,7 +6,10 @@ using Microsoft.Win32;
 using MSHC.WPF.MVVM;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 
@@ -103,6 +103,14 @@ namespace CommonNote.WPF.Windows
 
 			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
 
+			if (Settings.LaunchOnBoot)
+			{
+				//TODO
+			}
+			else
+			{
+				//TODO
+			}
 
 			Owner.SetupScintilla(Settings);
 		}

@@ -67,7 +67,7 @@ namespace CommonNote.WPF.Windows
 			NoteEdit.ViewWhitespace = s.SciShowWhitespace ? WhitespaceMode.VisibleAlways : WhitespaceMode.Invisible;
 			NoteEdit.SetWhitespaceForeColor(true, Color.Orange);
 
-			NoteEdit.Margins[0].Width = 0;
+			NoteEdit.Margins[0].Width = s.SciLineNumbers ? 32 : 0;
 			NoteEdit.Margins[1].Width = 0;
 			NoteEdit.Margins[2].Width = 0;
 			NoteEdit.Margins[3].Width = 0;
