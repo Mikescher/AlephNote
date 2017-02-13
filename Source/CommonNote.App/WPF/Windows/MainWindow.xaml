@@ -9,9 +9,16 @@
 		xmlns:scinet="clr-namespace:ScintillaNET;assembly=ScintillaNET"
 		xmlns:proxy="clr-namespace:MSHC.WPF.Extensions.BindingProxies;assembly=CSharpUtils"
 		xmlns:controls="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
+		xmlns:ctrl="clr-namespace:CommonNote.WPF.Controls"
+		xmlns:tb="http://www.hardcodet.net/taskbar"
+		xmlns:mext="clr-namespace:MSHC.WPF.Extensions.MarkupExtensions;assembly=CSharpUtils"
 		mc:Ignorable="d" 
+		WindowState="{Binding WindowState}"
 		d:DataContext="{d:DesignInstance windows:MainWindowViewmodel}"
 		ResizeMode="CanResizeWithGrip"
+		StateChanged="{mext:EventBinding StateChangedEvent, CommandParameter=$e}"
+		Closing="{mext:EventBinding ClosingEvent, CommandParameter=$e}"
+		Closed="{mext:EventBinding CloseEvent, CommandParameter=$e}"
 		Title="Common Note" Height="350" Width="525">
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -27,17 +34,16 @@
 
 		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
 			<MenuItem Header="File">
-				<MenuItem Header="New Note" />
-				<MenuItem Header="Exit" />
+				<MenuItem Header="New Note" Command="{Binding CreateNewNoteCommand}" />
+				<Separator />
+				<MenuItem Header="Export Note" Command="{Binding ExportCommand}" />
+				<MenuItem Header="Delete Note" Command="{Binding DeleteCommand}" />
+				<Separator />
+				<MenuItem Header="Exit" Command="{Binding ExitCommand}" />
 			</MenuItem>
 			<MenuItem Header="Edit">
 				<MenuItem Header="Settings" Command="{Binding SettingsCommand}" />
-			</MenuItem>
-			<MenuItem Header="Note">
-				<MenuItem Header="Export" />
-				<MenuItem Header="Delete" />
-			</MenuItem>
-			<MenuItem Header="View">
+				<MenuItem Header="Synchronize now" Command="{Binding ResyncCommand}" />
 			</MenuItem>
 			<MenuItem Header="Help">
 				<MenuItem Header="Check for Updates" />
@@ -55,7 +61,7 @@
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
 
-			<TextBox Grid.Row="0" Margin="0,2"  >
+			<TextBox Grid.Row="0" Margin="0,2">
 				<services:WatermarkService.Watermark>
 					<TextBlock Text="Search" Padding="5,0"/>
 				</services:WatermarkService.Watermark>
@@ -63,7 +69,13 @@
 
 			<Button Grid.Row="0" Grid.Column="1" Content="+" Margin="2" Background="Transparent" BorderThickness="0" FontWeight="Bold" Command="{Binding CreateNewNoteCommand}"/>
 
-			<ListView Grid.Column="0" ItemsSource="{Binding Repository.Notes}" SelectedValue="{Binding SelectedNote}" Grid.Row="1" Grid.ColumnSpan="2">
+			<ListView Grid.Column="0"  Grid.Row="1" Grid.ColumnSpan="2"  
+					  ItemsSource="{Binding Repository.Notes}" 
+					  SelectedValue="{Binding SelectedNote}"
+					  FontSize="{Binding Settings.ListFontSize, Converter={conv:FontSizeToInt}}" 
+					  FontFamily="{Binding Settings.ListFontName.Name, Converter={conv:FontNameToFamily}}" 
+					  FontWeight="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontWeight}}" 
+					  FontStyle="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontStyle}}">
 				<ListView.ItemTemplate>
 					<DataTemplate>
 						<TextBlock Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" />
@@ -87,22 +99,38 @@
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
 
-			<TextBox Grid.Row="0" BorderBrush="Transparent" BorderThickness="0" FontSize="16" Foreground="CornflowerBlue" FontWeight="Bold" Text="{Binding SelectedNote.Title, UpdateSourceTrigger=PropertyChanged}" />
+			<TextBox Grid.Row="0" BorderBrush="Transparent" BorderThickness="0"  
+					 Foreground="CornflowerBlue" 
+					 FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
+					 FontFamily="{Binding Settings.TitleFontName.Name, Converter={conv:FontNameToFamily}}" 
+					 FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
+					 FontStyle="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontStyle}}" 
+					 Text="{Binding SelectedNote.Title, UpdateSourceTrigger=PropertyChanged}" >
+				<services:WatermarkService.Watermark>
+					<TextBlock Text="Empty Title..." VerticalAlignment="Center" Padding="6,0"
+					 FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
+					 FontFamily="{Binding Settings.TitleFontName.Name, Converter={conv:FontNameToFamily}}" 
+					 FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
+					 FontStyle="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontStyle}}" />
+				</services:WatermarkService.Watermark>
+			</TextBox>
 
-			<ItemsControl Grid.Row="1" Grid.Column="0" Margin="2,2" ItemsSource="{Binding SelectedNote.Tags}">
-				<ItemsControl.ItemsPanel>
-					<ItemsPanelTemplate>
-						<WrapPanel Orientation="Horizontal" MinHeight="24" />
-					</ItemsPanelTemplate>
-				</ItemsControl.ItemsPanel>
-				<ItemsControl.ItemTemplate>
+			<ctrl:TagEditor Grid.Row="1" Grid.Column="0" TagSource="{Binding SelectedNote.Tags}" MinHeight="25" BorderThickness="0" AcceptsReturn="False" AcceptsTab="False" VerticalContentAlignment="Bottom">
+				<ctrl:TagEditor.TokenTemplate>
 					<DataTemplate>
-						<Border VerticalAlignment="Center" Background="SeaShell" BorderThickness="1" BorderBrush="LightGray" Margin="2" Padding="1">
+						<Border VerticalAlignment="Center" Background="SeaShell" BorderThickness="1" BorderBrush="LightGray" Margin="-4,1,8,1" Padding="1">
 							<TextBlock Text="{Binding .}" />
 						</Border>
 					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
+				</ctrl:TagEditor.TokenTemplate>
+				<ctrl:TagEditor.Document>
+					<FlowDocument>
+						<Paragraph>
+							<Run />
+						</Paragraph>
+					</FlowDocument>
+				</ctrl:TagEditor.Document>
+			</ctrl:TagEditor>
 
 			<StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="8,2">
 				<TextBlock Text="*" Foreground="DarkGray" Visibility="{Binding SelectedNote.IsLocalSaved, Converter={conv:BoolToVisibility}, ConverterParameter=Collapsed;Visible}" />
@@ -129,16 +157,25 @@
 			<StatusBarItem  Content="Last Synchronized: " />
 			<StatusBarItem Content="{Binding LastSynchronizedText}" />
 			<Button Content="R" Padding="0" Command="{Binding ResyncCommand}">
-				<Button.LayoutTransform><ScaleTransform ScaleX="1" ScaleY="0.6" /></Button.LayoutTransform>
+				<Button.LayoutTransform>
+					<ScaleTransform ScaleX="1" ScaleY="0.6" />
+				</Button.LayoutTransform>
 			</Button>
 			<Separator Margin="5,2" Foreground="Beige" />
 			<StatusBarItem Content="Length: " />
-			<StatusBarItem Content="2268"/>
+			<StatusBarItem Content="{Binding SelectedNote.Text.Length, FallbackValue=''}"/>
 			<StatusBarItem Content="Lines: " />
-			<StatusBarItem Content="925"/>
+			<StatusBarItem Content="{Binding SelectedNote.Text, Converter={conv:TextToLines}, FallbackValue=''}"/>
 			<StatusBarItem Content="{Binding Repository.ConnectionName}" HorizontalAlignment="Right" Margin="0,0,15,0"/>
 		</StatusBar>
 
+		<tb:TaskbarIcon Grid.Column="0" Grid.Row="0"
+			x:Name="TrayIcon"
+			Visibility="Visible"
+			ToolTipText="Common Note"
+			LeftClickCommand="{Binding ShowMainWindowCommand}"
+			DoubleClickCommand="{Binding ShowMainWindowCommand}" />
+		
 	</Grid>
 </Window>
 

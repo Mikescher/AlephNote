@@ -2,7 +2,7 @@
 
 namespace CommonNote.Settings
 {
-	enum FontSize
+	public enum FontSize
 	{
 		[Description("4 pt") ] Size04 = 4,
 		[Description("5 pt") ] Size05 = 5,

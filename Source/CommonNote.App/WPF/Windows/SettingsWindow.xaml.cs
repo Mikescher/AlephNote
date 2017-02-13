@@ -16,7 +16,7 @@ namespace CommonNote.WPF.Windows
 			InitializeComponent();
 
 			ownerVM = owner;
-			viewmodel = new SettingsWindowViewmodel(data.Clone());
+			viewmodel = new SettingsWindowViewmodel(owner.Owner, data.Clone());
 			DataContext = viewmodel;
 		}
 

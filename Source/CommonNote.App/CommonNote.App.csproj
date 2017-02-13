@@ -38,6 +38,10 @@
     <StartupObject>CommonNote.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Lib\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net45\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\Lib\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -77,6 +81,12 @@
     <Compile Include="WPF\Controls\NoteEditor.xaml.cs">
       <DependentUpon>NoteEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Controls\TagEditor.cs" />
+    <Compile Include="WPF\Converter\FontModifierToFontStyle.cs" />
+    <Compile Include="WPF\Converter\FontModifierToFontWeight.cs" />
+    <Compile Include="WPF\Converter\FontNameToFamily.cs" />
+    <Compile Include="WPF\Converter\FontSizeToInt.cs" />
+    <Compile Include="WPF\Converter\TextToLines.cs" />
     <Compile Include="WPF\Converter\StringCoalesce.cs" />
     <Compile Include="WPF\Converter\DateTimeToDisplay.cs" />
     <Compile Include="WPF\Converter\IsNullToVisibility.cs" />

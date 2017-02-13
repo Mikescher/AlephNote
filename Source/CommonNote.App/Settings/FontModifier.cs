@@ -2,7 +2,7 @@
 
 namespace CommonNote.Settings
 {
-	enum FontModifier
+	public enum FontModifier
 	{
 		[Description("Normal")]
 		Normal,
