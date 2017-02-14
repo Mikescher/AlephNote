@@ -10,5 +10,6 @@ namespace CommonNote.Repository
 		void SyncSuccess(DateTimeOffset now);
 		void SyncError(List<Tuple<string, Exception>> errors);
 
+		void OnSyncRequest();
 	}
 }

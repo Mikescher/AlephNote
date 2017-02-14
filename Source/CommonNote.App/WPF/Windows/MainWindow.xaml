@@ -13,6 +13,7 @@
 		xmlns:tb="http://www.hardcodet.net/taskbar"
 		xmlns:mext="clr-namespace:MSHC.WPF.Extensions.MarkupExtensions;assembly=CSharpUtils"
 		mc:Ignorable="d" 
+		Icon="/Resources/IconMain.png"
 		WindowState="{Binding WindowState}"
 		d:DataContext="{d:DesignInstance windows:MainWindowViewmodel}"
 		ResizeMode="CanResizeWithGrip"
@@ -47,7 +48,7 @@
 			</MenuItem>
 			<MenuItem Header="Help">
 				<MenuItem Header="Check for Updates" />
-				<MenuItem Header="About" />
+				<MenuItem Header="About" Command="{Binding ShowAboutCommand}" />
 			</MenuItem>
 		</Menu>
 
@@ -84,8 +85,8 @@
 						<TextBlock Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" >
 							<TextBlock.ContextMenu>
 								<ContextMenu>
-									<MenuItem Header="Export" Command="{Binding DataContext.ExportCommand, ElementName=LayoutRoot}" />
-									<MenuItem Header="Delete" Command="{Binding DataContext.DeleteCommand, ElementName=LayoutRoot}"/>
+									<MenuItem Header="Export" Click="ContextMenuExport" />
+									<MenuItem Header="Delete" Click="ContextMenuDelete" />
 								</ContextMenu>
 							</TextBlock.ContextMenu>
 						</TextBlock>
@@ -183,6 +184,7 @@
 			x:Name="TrayIcon"
 			Visibility="Visible"
 			ToolTipText="Common Note"
+			IconSource="{Binding SynchronizationState, Converter={conv:StateToAppIcon}}"
 			LeftClickCommand="{Binding ShowMainWindowCommand}"
 			DoubleClickCommand="{Binding ShowMainWindowCommand}" />
 		

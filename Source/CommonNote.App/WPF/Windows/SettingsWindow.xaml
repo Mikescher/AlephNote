@@ -3,14 +3,15 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-						  xmlns:settings="clr-namespace:CommonNote.Settings"
-						  xmlns:converter="clr-namespace:CommonNote.WPF.Converter"
-						  xmlns:windows="clr-namespace:CommonNote.WPF.Windows"
-						  xmlns:controls="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
-						  xmlns:mext="clr-namespace:MSHC.WPF.Extensions.MarkupExtensions;assembly=CSharpUtils"
-						  xmlns:draw="clr-namespace:System.Drawing;assembly=System.Drawing"
-						  mc:Ignorable="d" 
+		xmlns:settings="clr-namespace:CommonNote.Settings"
+		xmlns:converter="clr-namespace:CommonNote.WPF.Converter"
+		xmlns:windows="clr-namespace:CommonNote.WPF.Windows"
+		xmlns:controls="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
+		xmlns:mext="clr-namespace:MSHC.WPF.Extensions.MarkupExtensions;assembly=CSharpUtils"
+		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance windows:SettingsWindowViewmodel}"
+		WindowStartupLocation="CenterOwner"
+		Icon="/Resources/IconMain.png"
 		Title="Common Note - Configuration" MinHeight="300" MinWidth="300" Height="550" Width="535">
 	<Window.Resources>
 		<converter:CreatePluginSettingsGrid x:Key="CreateGridConv" />

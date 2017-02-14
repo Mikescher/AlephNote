@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
@@ -15,6 +16,10 @@ namespace CommonNote
 		public static readonly string APPNAME_REG = "CommonNoteApp";
 		public static readonly string PATH_EXECUTABLE = System.Reflection.Assembly.GetExecutingAssembly().Location;
 
+		public static readonly string APP_VERSION = GetInformationalVersion();
+
+		public static string AppVersionProperty { get { return APP_VERSION; } }
+
 		public App()
 		{
 			DispatcherUnhandledException += AppDispatcherUnhandledException;
@@ -30,6 +35,8 @@ namespace CommonNote
 			e.Handled = false;
 
 			Console.Error.WriteLine(errorMessage);
+
+			System.Diagnostics.Debugger.Break();
 #else
 			e.Handled = true;
 
@@ -37,6 +44,22 @@ namespace CommonNote
 			
 			Application.Current.Shutdown();
 #endif
+		}
+
+		private static string GetInformationalVersion()
+		{
+			try
+			{
+				var assembly = ResourceAssembly;
+
+				var loc = assembly.Location;
+				if (loc == null) return "???.???.???.???";
+				return FileVersionInfo.GetVersionInfo(loc).ProductVersion;
+			}
+			catch (Exception)
+			{
+				return "???.???.???.???";
+			}
 		}
 	}
 }

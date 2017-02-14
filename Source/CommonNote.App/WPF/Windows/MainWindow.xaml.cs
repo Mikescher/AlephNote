@@ -15,6 +15,8 @@ namespace CommonNote.WPF.Windows
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private readonly MainWindowViewmodel viewmodel;
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -44,7 +46,8 @@ namespace CommonNote.WPF.Windows
 
 			SetupScintilla(settings);
 
-			DataContext = new MainWindowViewmodel(settings, this);
+			viewmodel = new MainWindowViewmodel(settings, this);
+			DataContext = viewmodel;
 		}
 
 		private void StartupConfigWindow(AppSettings settings)
@@ -100,6 +103,16 @@ namespace CommonNote.WPF.Windows
 			NoteEditHost.Focus();
 			Keyboard.Focus(NoteEditHost);
 			NoteEdit.Focus();
+		}
+
+		private void ContextMenuExport(object sender, RoutedEventArgs e)
+		{
+			viewmodel.ExportCommand.Execute(null);
+		}
+
+		private void ContextMenuDelete(object sender, RoutedEventArgs e)
+		{
+			viewmodel.DeleteCommand.Execute(null);
 		}
 	}
 }

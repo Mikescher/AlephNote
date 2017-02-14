@@ -27,6 +27,7 @@ namespace CommonNote.WPF.Windows
 		public ICommand ExportCommand { get { return new RelayCommand(ExportNote); } }
 		public ICommand DeleteCommand { get { return new RelayCommand(DeleteNote); } }
 		public ICommand ExitCommand { get { return new RelayCommand(Exit); } }
+		public ICommand ShowAboutCommand { get { return new RelayCommand(ShowAbout); } }
 
 		public ICommand ClosingEvent { get { return new RelayCommand<CancelEventArgs>(OnClosing); } }
 		public ICommand CloseEvent { get { return new RelayCommand<EventArgs>(OnClose); } }
@@ -51,6 +52,9 @@ namespace CommonNote.WPF.Windows
 
 		private WindowState _windowState = WindowState.Normal;
 		public WindowState WindowState { get { return _windowState; } set { _windowState = value; OnPropertyChanged(); } }
+
+		private SynchronizationState _synchronizationState = SynchronizationState.UpToDate;
+		public SynchronizationState SynchronizationState { get { return _synchronizationState; } set { if (value != _synchronizationState) { _synchronizationState = value; OnPropertyChanged(); } } }
 
 		public ICollectionView NotesView
 		{
@@ -87,7 +91,7 @@ namespace CommonNote.WPF.Windows
 
 			Settings.LaunchOnBoot = registryKey != null && registryKey.GetValue(App.APPNAME_REG) != null;
 
-			new SettingsWindow(this, Settings).ShowDialog();
+			new SettingsWindow(this, Settings) {Owner = Owner}.ShowDialog();
 		}
 
 		private void CreateNote()
@@ -156,12 +160,20 @@ namespace CommonNote.WPF.Windows
 		public void StartSync()
 		{
 			LastSynchronizedText = "[SYNCING]";
+			SynchronizationState = SynchronizationState.Syncing;
 		}
 
 		public void SyncSuccess(DateTimeOffset now)
 		{
 			_lastSynchronized = now;
 			LastSynchronizedText = now.ToLocalTime().ToString("HH:mm:ss");
+			SynchronizationState = SynchronizationState.UpToDate;
+		}
+
+
+		public void OnSyncRequest()
+		{
+			SynchronizationState = SynchronizationState.NotSynced;
 		}
 
 		public void SyncError(List<Tuple<string, Exception>> errors)
@@ -176,6 +188,8 @@ namespace CommonNote.WPF.Windows
 			{
 				LastSynchronizedText = "[ERROR]";
 			}
+
+			SynchronizationState = SynchronizationState.Error;
 		}
 
 		public void ShowMainWindow()
@@ -244,6 +258,11 @@ namespace CommonNote.WPF.Windows
 		{
 			_forceClose = true;
 			Owner.Close();
+		}
+
+		private void ShowAbout()
+		{
+			new AboutWindow() {Owner = Owner}.ShowDialog();
 		}
 
 		private void FilterNoteList()

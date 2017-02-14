@@ -20,6 +20,7 @@ namespace CommonNote.Repository
 		private readonly IRemoteStorageConnection conn;
 		private readonly AppSettings appconfig;
 		private readonly SynchronizationThread thread;
+		private readonly ISynchronizationFeedback listener;
 
 		public readonly List<INote> LocalDeletedNotes = new List<INote>(); // deleted local but not on remote
 
@@ -38,6 +39,7 @@ namespace CommonNote.Repository
 			conn = prov.CreateRemoteStorageConnection(cfg.CreateProxy(), config);
 			provider = prov;
 			appconfig = cfg;
+			listener = fb;
 			thread = new SynchronizationThread(this, fb);
 
 			invSaveNotesLocal = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SaveAllDirtyNotes)), 1 * 1000, 60 * 1000);
@@ -151,6 +153,7 @@ namespace CommonNote.Repository
 		private void NoteChanged(object sender, EventArgs e)
 		{
 			invSaveNotesLocal.Request();
+			listener.OnSyncRequest();
 		}
 
 		public void DeleteNote(INote note, bool updateRemote)
