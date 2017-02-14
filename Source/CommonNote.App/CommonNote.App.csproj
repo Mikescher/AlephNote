@@ -86,7 +86,6 @@
     <Compile Include="WPF\Controls\TagEditor.cs" />
     <Compile Include="WPF\Converter\FontModifierToFontStyle.cs" />
     <Compile Include="WPF\Converter\FontModifierToFontWeight.cs" />
-    <Compile Include="WPF\Converter\FontNameToFamily.cs" />
     <Compile Include="WPF\Converter\FontSizeToInt.cs" />
     <Compile Include="WPF\Converter\TextToLines.cs" />
     <Compile Include="WPF\Converter\StringCoalesce.cs" />

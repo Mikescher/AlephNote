@@ -3,6 +3,7 @@ using CommonNote.Repository;
 using CommonNote.Settings;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Win32;
+using MSHC.WPF.Extensions.Methods;
 using MSHC.WPF.MVVM;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace CommonNote.WPF.Windows
@@ -33,7 +36,7 @@ namespace CommonNote.WPF.Windows
 		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); } }
 
 		private NoteRepository _repository;
-		public NoteRepository Repository { get { return _repository; } private set { _repository = value; OnPropertyChanged(); } }
+		public NoteRepository Repository { get { return _repository; } private set { _repository = value; OnPropertyChanged(); OnExplicitPropertyChanged("NotesView"); } }
 
 		private INote _selectedNote;
 		public INote SelectedNote { get { return _selectedNote; } private set { _selectedNote = value; OnPropertyChanged(); SelectedNoteChanged(); } }
@@ -43,9 +46,25 @@ namespace CommonNote.WPF.Windows
 		private string _lastSynchronizedText = "never";
 		public string LastSynchronizedText { get { return _lastSynchronizedText; } set { _lastSynchronizedText = value; OnPropertyChanged(); } }
 
+		private string _searchText = string.Empty;
+		public string SearchText { get { return _searchText; } private set { _searchText = value; OnPropertyChanged(); FilterNoteList(); } }
+
 		private WindowState _windowState = WindowState.Normal;
 		public WindowState WindowState { get { return _windowState; } set { _windowState = value; OnPropertyChanged(); } }
 
+		public ICollectionView NotesView
+		{
+			get
+			{
+				if (Repository == null) return CollectionViewSource.GetDefaultView(new List<INote>());
+
+				var source = CollectionViewSource.GetDefaultView(Repository.Notes);
+				source.Filter = p => SearchFilter((INote)p);
+				return source;
+			}
+		}
+
+		private bool _preventScintillaFocus = false;
 		private bool _forceClose = false;
 
 		public readonly MainWindow Owner;
@@ -64,6 +83,10 @@ namespace CommonNote.WPF.Windows
 
 		private void ShowSettings()
 		{
+			var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+
+			Settings.LaunchOnBoot = registryKey != null && registryKey.GetValue(App.APPNAME_REG) != null;
+
 			new SettingsWindow(this, Settings).ShowDialog();
 		}
 
@@ -71,7 +94,7 @@ namespace CommonNote.WPF.Windows
 		{
 			try
 			{
-				Repository.CreateNewNote();
+				SelectedNote = Repository.CreateNewNote();
 			}
 			catch (Exception e)
 			{
@@ -105,20 +128,24 @@ namespace CommonNote.WPF.Windows
 
 			if (Settings.LaunchOnBoot)
 			{
-				//TODO
+				var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+				if (registryKey != null) registryKey.SetValue(App.APPNAME_REG, App.PATH_EXECUTABLE);
 			}
 			else
 			{
-				//TODO
+				var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+				if (registryKey != null) registryKey.DeleteValue(App.APPNAME_REG);
 			}
 
 			Owner.SetupScintilla(Settings);
+
+			SearchText = string.Empty;
 		}
 
 		private void SelectedNoteChanged()
 		{
 			Owner.ResetScintillaScroll();
-			Owner.FocusScintilla();
+			if (!_preventScintillaFocus) Owner.FocusScintilla();
 		}
 
 		private void Resync()
@@ -206,6 +233,8 @@ namespace CommonNote.WPF.Windows
 		{
 			if (SelectedNote == null) return;
 
+			if (MessageBox.Show(Owner, "Dou you really want to delete this note?", "Delete note ?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+
 			Repository.DeleteNote(SelectedNote, true);
 
 			SelectedNote = Repository.Notes.FirstOrDefault();
@@ -215,6 +244,67 @@ namespace CommonNote.WPF.Windows
 		{
 			_forceClose = true;
 			Owner.Close();
+		}
+
+		private void FilterNoteList()
+		{
+			var sn = SelectedNote;
+
+			_preventScintillaFocus = true;
+			{
+				NotesView.Refresh();
+				if (NotesView.Contains(sn)) 
+					SelectedNote = sn;
+				else
+					SelectedNote = NotesView.FirstOrDefault<INote>();
+			}
+			_preventScintillaFocus = false;
+		}
+
+		private bool SearchFilter(INote note)
+		{
+			if (string.IsNullOrWhiteSpace(SearchText)) return true;
+
+			Regex searchRegex;
+			if (IsRegex(SearchText, out searchRegex))
+			{
+				if (searchRegex.IsMatch(note.Title)) return true;
+				if (searchRegex.IsMatch(note.Text)) return true;
+				if (note.Tags.Any(t => searchRegex.IsMatch(t))) return true;
+
+				return false;
+			}
+			else
+			{
+				if (note.Title.ToLower().Contains(SearchText.ToLower())) return true;
+				if (note.Text.ToLower().Contains(SearchText.ToLower())) return true;
+				if (note.Tags.Any(t => t.ToLower() == SearchText.ToLower())) return true;
+
+				return false;
+			}
+		}
+
+		private bool IsRegex(string text, out Regex r)
+		{
+			try
+			{
+				if (text.Length >= 3 && text.StartsWith("/") && text.EndsWith("/"))
+				{
+					r = new Regex(text.Substring(1, text.Length - 2));
+					return true;
+				}
+				else
+				{
+					r = null;
+					return false;
+				}
+
+			}
+			catch (ArgumentException)
+			{
+				r = null;
+				return false;
+			}
 		}
 	}
 }

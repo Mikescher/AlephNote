@@ -44,6 +44,7 @@ namespace CommonNote.Plugins.SimpleNote
 		{
 			yield return DynamicSettingValue.CreateText(ID_USERNAME, "Username", SimpleNoteUsername);
 			yield return DynamicSettingValue.CreatePassword(ID_PASSWORD, "Password", SimpleNotePassword);
+			yield return DynamicSettingValue.CreateHyperlink("Create Simplenote account", "https://simplenote.com/");
 		}
 
 		public void SetProperty(int id, string value)

@@ -12,11 +12,14 @@ namespace CommonNote
 	{
 		public static readonly string PATH_SETTINGS = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"common_note.config");
 		public static readonly string PATH_LOCALDB  = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".notes");
+		public static readonly string APPNAME_REG = "CommonNoteApp";
+		public static readonly string PATH_EXECUTABLE = System.Reflection.Assembly.GetExecutingAssembly().Location;
 
 		public App()
 		{
 			DispatcherUnhandledException += AppDispatcherUnhandledException;
 		}
+
 
 		void AppDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{

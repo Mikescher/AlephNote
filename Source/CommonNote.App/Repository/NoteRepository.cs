@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using CommonNote.PluginInterface;
+﻿using CommonNote.PluginInterface;
 using CommonNote.Settings;
 using MSHC.Util.Threads;
 using MSHC.WPF.MVVM;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
@@ -40,7 +40,7 @@ namespace CommonNote.Repository
 			appconfig = cfg;
 			thread = new SynchronizationThread(this, fb);
 
-			invSaveNotesLocal = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.Invoke(SaveAllDirtyNotes), 1*1000, 60*1000);
+			invSaveNotesLocal = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SaveAllDirtyNotes)), 1 * 1000, 60 * 1000);
 
 			_notes.CollectionChanged += NoteCollectionChanged;
 		}
@@ -93,12 +93,14 @@ namespace CommonNote.Repository
 			}
 		}
 
-		public void CreateNewNote()
+		public INote CreateNewNote()
 		{
 			var note = provider.CreateEmptyNode();
 			Notes.Add(note);
 			note.SetDirty();
 			SaveNote(note);
+
+			return note;
 		}
 
 		private void SaveAllDirtyNotes()

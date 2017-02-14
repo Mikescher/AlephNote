@@ -78,11 +78,11 @@ namespace CommonNote.WPF.Windows
 			NoteEdit.AdditionalSelectionTyping = s.SciRectSelection;
 			NoteEdit.VirtualSpaceOptions = s.SciRectSelection ? VirtualSpace.RectangularSelection : VirtualSpace.None;
 
-			NoteEdit.Font = new Font(s.NoteFontName, (int)s.NoteFontSize);
+			NoteEdit.Font = new Font(s.NoteFontFamily.Source, (int)s.NoteFontSize);
 			NoteEdit.Styles[0].Bold = s.NoteFontModifier == FontModifier.Bold || s.NoteFontModifier == FontModifier.BoldItalic;
 			NoteEdit.Styles[0].Italic = s.NoteFontModifier == FontModifier.Italic || s.NoteFontModifier == FontModifier.BoldItalic;
 			NoteEdit.Styles[0].Size = (int)s.NoteFontSize;
-			NoteEdit.Styles[0].Font = s.NoteFontName.Name;
+			NoteEdit.Styles[0].Font = s.NoteFontFamily.Source;
 
 			NoteEdit.WrapMode = s.SciWordWrap ? WrapMode.Whitespace : WrapMode.None;
 

@@ -73,19 +73,26 @@
 
 								<CheckBox  Grid.Row="0" Grid.Column="0"            VerticalAlignment="Center" Content="Use proxy" IsChecked="{Binding Settings.ProxyEnabled}" />
 								<TextBlock Grid.Row="0" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Host:" />
-								<TextBox   Grid.Row="0" Grid.Column="2" Margin="3" Text="{Binding Settings.ProxyHost}" />
+								<TextBox   Grid.Row="0" Grid.Column="2" Margin="3" Text="{Binding Settings.ProxyHost}" IsEnabled="{Binding Settings.ProxyEnabled}" />
 								<TextBlock Grid.Row="0" Grid.Column="3" Margin="3" VerticalAlignment="Center" Text="Port:" />
-								<TextBox   Grid.Row="0" Grid.Column="4" Margin="3" Text="{Binding Settings.ProxyPort}" />
+								<TextBox   Grid.Row="0" Grid.Column="4" Margin="3" Text="{Binding Settings.ProxyPort}" IsEnabled="{Binding Settings.ProxyEnabled}" />
 
 								<Rectangle Grid.Row="1" Grid.Column="0" Margin="0,5" Grid.ColumnSpan="5" Height="2" Fill="LightGray" />
 
 								<TextBlock Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Login (optional)" />
 								<TextBlock Grid.Row="3" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Username:" />
-								<TextBox   Grid.Row="3" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Text="{Binding Settings.ProxyUsername}" />
+								<TextBox   Grid.Row="3" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Text="{Binding Settings.ProxyUsername}" IsEnabled="{Binding Settings.ProxyEnabled}" />
 								<TextBlock Grid.Row="4" Grid.Column="1" Margin="3" Text="Password:" VerticalAlignment="Center" />
-								<controls:BindablePasswordBox Grid.Row="4" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Password="{Binding Settings.ProxyPassword}" />
+								<controls:BindablePasswordBox Grid.Row="4" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Password="{Binding Settings.ProxyPassword}" IsEnabled="{Binding Settings.ProxyEnabled}" />
 							</Grid>
 						</GroupBox>
+						
+						<GroupBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Padding="4" Header="Application">
+							<StackPanel>
+								<CheckBox Margin="3" VerticalAlignment="Center" Content="Start with Windows" IsChecked="{Binding Settings.LaunchOnBoot}" />
+							</StackPanel>
+						</GroupBox>
+						
 					</Grid>
 				</ScrollViewer>
 			</TabItem>
@@ -122,17 +129,17 @@
 								</Grid.ColumnDefinitions>
 
 								<TextBlock Margin="2" Grid.Row="2" Grid.Column="0" Text="Title:" VerticalAlignment="Center" />
-								<ComboBox  Margin="2" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Source={x:Static draw:FontFamily.Families}, Mode=OneTime}" DisplayMemberPath="Name" SelectedValue="{Binding Settings.TitleFontName}" />
+								<controls:FontBox  Margin="2" Grid.Row="2" Grid.Column="1" SelectedFont="{Binding Settings.TitleFontFamily}" />
 								<ComboBox  Margin="2" Grid.Row="2" Grid.Column="2" ItemsSource="{mext:EnumSource settings:FontModifier}" SelectedValue="{Binding Settings.TitleFontModifier}"/>
 								<ComboBox  Margin="2" Grid.Row="2" Grid.Column="3" ItemsSource="{mext:EnumSource settings:FontSize}" SelectedValue="{Binding Settings.TitleFontSize}"/>
 
 								<TextBlock Margin="2" Grid.Row="0" Grid.Column="0" Text="Note:" VerticalAlignment="Center" />
-								<ComboBox  Margin="2" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Source={x:Static draw:FontFamily.Families}, Mode=OneTime}" DisplayMemberPath="Name" SelectedValue="{Binding Settings.NoteFontName}" />
+								<controls:FontBox  Margin="2" Grid.Row="0" Grid.Column="1" SelectedFont="{Binding Settings.NoteFontFamily}" />
 								<ComboBox  Margin="2" Grid.Row="0" Grid.Column="2" ItemsSource="{mext:EnumSource settings:FontModifier}" SelectedValue="{Binding Settings.NoteFontModifier}"/>
 								<ComboBox  Margin="2" Grid.Row="0" Grid.Column="3" ItemsSource="{mext:EnumSource settings:FontSize}" SelectedValue="{Binding Settings.NoteFontSize}"/>
 
 								<TextBlock Margin="2" Grid.Row="1" Grid.Column="0" Text="List:" VerticalAlignment="Center" />
-								<ComboBox  Margin="2" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Source={x:Static draw:FontFamily.Families}, Mode=OneTime}" DisplayMemberPath="Name" SelectedValue="{Binding Settings.ListFontName}" />
+								<controls:FontBox  Margin="2" Grid.Row="1" Grid.Column="1" SelectedFont="{Binding Settings.ListFontFamily}" />
 								<ComboBox  Margin="2" Grid.Row="1" Grid.Column="2" ItemsSource="{mext:EnumSource settings:FontModifier}" SelectedValue="{Binding Settings.ListFontModifier}"/>
 								<ComboBox  Margin="2" Grid.Row="1" Grid.Column="3" ItemsSource="{mext:EnumSource settings:FontSize}" SelectedValue="{Binding Settings.ListFontSize}"/>
 							
@@ -172,23 +179,21 @@
 									<ColumnDefinition Width="1*"/>
 								</Grid.ColumnDefinitions>
 
-								<CheckBox Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Start with windows" IsChecked="{Binding Settings.LaunchOnBoot}" />
+								<TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Startup" />
 								
-								<TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Startup" />
-								
-								<TextBlock Grid.Row="1" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Window position" />
-								<TextBox   Grid.Row="1" Grid.Column="2" Margin="3" Text="{Binding Settings.StartupPositionX}" />
-								<TextBox   Grid.Row="1" Grid.Column="4" Margin="3" Text="{Binding Settings.StartupPositionY}" />
+								<TextBlock Grid.Row="0" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Window position" />
+								<TextBox   Grid.Row="0" Grid.Column="2" Margin="3" Text="{Binding Settings.StartupPositionX}" />
+								<TextBox   Grid.Row="0" Grid.Column="4" Margin="3" Text="{Binding Settings.StartupPositionY}" />
 
-								<TextBlock Grid.Row="2" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Window size" />
-								<TextBox   Grid.Row="2" Grid.Column="2" Margin="3" Text="{Binding Settings.StartupPositionWidth}" />
-								<TextBox   Grid.Row="2" Grid.Column="4" Margin="3" Text="{Binding Settings.StartupPositionHeight}" />
+								<TextBlock Grid.Row="1" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Window size" />
+								<TextBox   Grid.Row="1" Grid.Column="2" Margin="3" Text="{Binding Settings.StartupPositionWidth}" />
+								<TextBox   Grid.Row="1" Grid.Column="4" Margin="3" Text="{Binding Settings.StartupPositionHeight}" />
 
-								<TextBlock Grid.Row="3" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Window state" />
-								<ComboBox  Grid.Row="3" Grid.Column="2" Margin="3" ItemsSource="{mext:EnumSource WindowState}" SelectedValue="{Binding Settings.StartupState}" />
-								<ComboBox  Grid.Row="3" Grid.Column="4" Margin="3" ItemsSource="{mext:EnumSource WindowStartupLocation}" SelectedValue="{Binding Settings.StartupLocation}" />
+								<TextBlock Grid.Row="2" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Window state" />
+								<ComboBox  Grid.Row="2" Grid.Column="2" Margin="3" ItemsSource="{mext:EnumSource WindowState}" SelectedValue="{Binding Settings.StartupState}" />
+								<ComboBox  Grid.Row="2" Grid.Column="4" Margin="3" ItemsSource="{mext:EnumSource WindowStartupLocation}" SelectedValue="{Binding Settings.StartupLocation}" />
 
-								<Button Grid.Row="4" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Content="Use current" Command="{Binding InsertCurrentWindowStateCommand}" />
+								<Button    Grid.Row="3" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Content="Use current" Command="{Binding InsertCurrentWindowStateCommand}" />
 								
 							</Grid>
 						</GroupBox>

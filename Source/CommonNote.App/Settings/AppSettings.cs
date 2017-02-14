@@ -4,12 +4,13 @@ using MSHC.Util.Helper;
 using MSHC.WPF.MVVM;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using System.Xml.Linq;
 
 namespace CommonNote.Settings
@@ -19,6 +20,8 @@ namespace CommonNote.Settings
 	public class AppSettings : ObservableObject
 	{
 		public const string ENCRYPTION_KEY = @"jcgkZJvoykjpoGkDWHqiNoXoLZRJxpdb";
+
+		public static readonly FontFamily DEFAULT_FONT = new TextBlock().FontFamily;
 
 		[Setting]
 		public ConfigInterval SynchronizationFrequency { get { return _synchronizationFreq; } set { _synchronizationFreq = value; OnPropertyChanged(); } }
@@ -57,8 +60,8 @@ namespace CommonNote.Settings
 		private bool _closeToTray = false;
 
 		[Setting]
-		public FontFamily TitleFontName { get { return _titleFontName; } set { _titleFontName = value; OnPropertyChanged(); } }
-		private FontFamily _titleFontName = FontFamily.Families.FirstOrDefault(p => p.Name == "Segoe UI") ?? FontFamily.GenericSansSerif;
+		public FontFamily TitleFontFamily { get { return _titleFontFamily; } set { _titleFontFamily = value; OnPropertyChanged(); } }
+		private FontFamily _titleFontFamily = DEFAULT_FONT;
 
 		[Setting]
 		public FontModifier TitleFontModifier { get { return _titleFontModifier; } set { _titleFontModifier = value; OnPropertyChanged(); } }
@@ -69,8 +72,8 @@ namespace CommonNote.Settings
 		private FontSize _titleFontSize = FontSize.Size16;
 
 		[Setting]
-		public FontFamily NoteFontName { get { return _noteFontName; } set { _noteFontName = value; OnPropertyChanged(); } }
-		private FontFamily _noteFontName = FontFamily.Families.FirstOrDefault(p => p.Name == "Segoe UI") ?? FontFamily.GenericSansSerif;
+		public FontFamily NoteFontFamily { get { return _noteFontFamily; } set { _noteFontFamily = value; OnPropertyChanged(); } }
+		private FontFamily _noteFontFamily = DEFAULT_FONT;
 
 		[Setting]
 		public FontModifier NoteFontModifier { get { return _noteFontModifier; } set { _noteFontModifier = value; OnPropertyChanged(); } }
@@ -81,8 +84,8 @@ namespace CommonNote.Settings
 		private FontSize _noteFontSize = FontSize.Size08;
 
 		[Setting]
-		public FontFamily ListFontName { get { return _listFontName; } set { _listFontName = value; OnPropertyChanged(); } }
-		private FontFamily _listFontName = FontFamily.Families.FirstOrDefault(p => p.Name == "Segoe UI") ?? FontFamily.GenericSansSerif;
+		public FontFamily ListFontFamily { get { return _listFontFamily; } set { _listFontFamily = value; OnPropertyChanged(); } }
+		private FontFamily _listFontFamily = DEFAULT_FONT;
 
 		[Setting]
 		public FontModifier ListFontModifier { get { return _listFontModifier; } set { _listFontModifier = value; OnPropertyChanged(); } }

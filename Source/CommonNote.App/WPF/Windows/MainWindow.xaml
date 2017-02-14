@@ -20,7 +20,7 @@
 		Closing="{mext:EventBinding ClosingEvent, CommandParameter=$e}"
 		Closed="{mext:EventBinding CloseEvent, CommandParameter=$e}"
 		Title="Common Note" Height="350" Width="525">
-	<Grid>
+	<Grid x:Name="LayoutRoot">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="150"/>
 			<ColumnDefinition Width="Auto"/>
@@ -61,24 +61,34 @@
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
 
-			<TextBox Grid.Row="0" Margin="0,2">
+			<controls:ClickSelectTextBox Grid.Row="0" Margin="0,2" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
 				<services:WatermarkService.Watermark>
 					<TextBlock Text="Search" Padding="5,0"/>
 				</services:WatermarkService.Watermark>
-			</TextBox>
+			</controls:ClickSelectTextBox>
 
 			<Button Grid.Row="0" Grid.Column="1" Content="+" Margin="2" Background="Transparent" BorderThickness="0" FontWeight="Bold" Command="{Binding CreateNewNoteCommand}"/>
 
 			<ListView Grid.Column="0"  Grid.Row="1" Grid.ColumnSpan="2"  
-					  ItemsSource="{Binding Repository.Notes}" 
+					  ItemsSource="{Binding NotesView}" 
 					  SelectedValue="{Binding SelectedNote}"
 					  FontSize="{Binding Settings.ListFontSize, Converter={conv:FontSizeToInt}}" 
-					  FontFamily="{Binding Settings.ListFontName.Name, Converter={conv:FontNameToFamily}}" 
+					  FontFamily="{Binding Settings.ListFontFamily}" 
 					  FontWeight="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontWeight}}" 
 					  FontStyle="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontStyle}}">
+				<ListView.InputBindings>
+					<KeyBinding Command="{Binding DeleteCommand}" Key="Delete"/>
+				</ListView.InputBindings>
 				<ListView.ItemTemplate>
 					<DataTemplate>
-						<TextBlock Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" />
+						<TextBlock Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" >
+							<TextBlock.ContextMenu>
+								<ContextMenu>
+									<MenuItem Header="Export" Command="{Binding DataContext.ExportCommand, ElementName=LayoutRoot}" />
+									<MenuItem Header="Delete" Command="{Binding DataContext.DeleteCommand, ElementName=LayoutRoot}"/>
+								</ContextMenu>
+							</TextBlock.ContextMenu>
+						</TextBlock>
 					</DataTemplate>
 				</ListView.ItemTemplate>
 			</ListView>
@@ -102,14 +112,14 @@
 			<TextBox Grid.Row="0" BorderBrush="Transparent" BorderThickness="0"  
 					 Foreground="CornflowerBlue" 
 					 FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
-					 FontFamily="{Binding Settings.TitleFontName.Name, Converter={conv:FontNameToFamily}}" 
+					 FontFamily="{Binding Settings.TitleFontFamily}" 
 					 FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
 					 FontStyle="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontStyle}}" 
 					 Text="{Binding SelectedNote.Title, UpdateSourceTrigger=PropertyChanged}" >
 				<services:WatermarkService.Watermark>
 					<TextBlock Text="Empty Title..." VerticalAlignment="Center" Padding="6,0"
 					 FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
-					 FontFamily="{Binding Settings.TitleFontName.Name, Converter={conv:FontNameToFamily}}" 
+					 FontFamily="{Binding Settings.TitleFontFamily}" 
 					 FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
 					 FontStyle="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontStyle}}" />
 				</services:WatermarkService.Watermark>

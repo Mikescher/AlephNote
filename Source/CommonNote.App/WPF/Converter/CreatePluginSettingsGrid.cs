@@ -1,12 +1,15 @@
 ﻿using CommonNote.PluginInterface;
 using CommonNote.Settings;
+using MSHC.WPF.Controls;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using MSHC.WPF.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace CommonNote.WPF.Converter
 {
@@ -32,47 +35,66 @@ namespace CommonNote.WPF.Converter
 			int row = 0;
 			foreach (var prop in cfg.ListProperties())
 			{
-				int propID = prop.ID;
+				var xprop = prop;
 
-				grid.RowDefinitions.Add(new RowDefinition{Height = new GridLength(1, GridUnitType.Auto)});
-
-				var label = new TextBlock {Text = prop.Description + ":"};
-
-				FrameworkElement comp;
 				switch (prop.Type)
 				{
 					case DynamicSettingValue.SettingType.Text:
 						var tb = new TextBox {Text = prop.CurrentValue};
-						tb.TextChanged += (s, a) => cfg.SetProperty(propID, tb.Text);
-						comp = tb;
+						tb.TextChanged += (s, a) => cfg.SetProperty(xprop.ID, tb.Text);
+						AddComponent(prop, ref row, grid, tb);
 						break;
+
 					case DynamicSettingValue.SettingType.Password:
 						var pb = new BindablePasswordBox {Password = prop.CurrentValue};
-						pb.PasswordChanged += (s, a) => cfg.SetProperty(propID, pb.Password);
-						comp = pb;
+						pb.PasswordChanged += (s, a) => cfg.SetProperty(xprop.ID, pb.Password);
+						AddComponent(prop, ref row, grid, pb);
 						break;
+
+					case DynamicSettingValue.SettingType.Hyperlink:
+						var hl = new TextBlock
+						{
+							Text = prop.Description,
+							TextDecorations = TextDecorations.Underline,
+							Foreground = Brushes.Blue,
+							Cursor = Cursors.Hand,
+							ToolTip = prop.Arguments[0],
+						};
+						hl.MouseDown += (o, e) => Process.Start((string)xprop.Arguments[0]);
+						AddComponent(prop, ref row, grid, hl, false);
+						break;
+
 					default:
 						return DependencyProperty.UnsetValue;
 				}
-
-				label.Margin = new Thickness(2);
-				comp.Margin = new Thickness(2);
-
-				label.VerticalAlignment = VerticalAlignment.Center;
-				comp.VerticalAlignment = VerticalAlignment.Center;
-
-				Grid.SetRow(label, row);
-				Grid.SetColumn(label, 0);
-				Grid.SetRow(comp, row);
-				Grid.SetColumn(comp, 1);
-
-				grid.Children.Add(label);
-				grid.Children.Add(comp);
-
-				row++;
 			}
 
 			return grid;
+		}
+
+		private void AddComponent(DynamicSettingValue prop, ref int row, Grid grid, FrameworkElement comp, bool addLabel = true)
+		{
+			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+
+			if (addLabel)
+			{
+				var label = new TextBlock { Text = prop.Description + ":" };
+				label.Margin = new Thickness(2);
+				label.VerticalAlignment = VerticalAlignment.Center;
+				Grid.SetRow(label, row);
+				Grid.SetColumn(label, 0);
+				grid.Children.Add(label);
+			}
+
+			comp.Margin = new Thickness(2);
+			comp.VerticalAlignment = VerticalAlignment.Center;
+
+			Grid.SetRow(comp, row);
+			Grid.SetColumn(comp, 1);
+
+			grid.Children.Add(comp);
+
+			row++;
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
