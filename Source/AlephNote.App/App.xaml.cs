@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlephNote.WPF.Windows;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -27,19 +28,17 @@ namespace AlephNote
 		
 		void AppDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
-			string errorMessage = string.Format("An application error occurred.\nThe application cannot continue and will shut down.\n\nError:\n{0}", e.Exception.Message + (e.Exception.InnerException != null ? "\n" + e.Exception.InnerException.Message : null));
+			ExceptionDialog.Show(null, "Internal Application Error", "An internal exception occured.\r\nThis should really not happen, the application will be terminated.\r\nPlease send a bug report to me.", e.Exception);
 
 #if DEBUG
 			// In debug mode do not custom-handle the exception, let Visual Studio handle it
 			e.Handled = false;
 
-			Console.Error.WriteLine(errorMessage);
+			Console.Error.WriteLine(e.Exception.Message + (e.Exception.InnerException != null ? "\n" + e.Exception.InnerException.Message : null));
 
 			Debugger.Break();
 #else
 			e.Handled = true;
-
-			MessageBox.Show(errorMessage, "Application Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			
 			Application.Current.Shutdown();
 #endif

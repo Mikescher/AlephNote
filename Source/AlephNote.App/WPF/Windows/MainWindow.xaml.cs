@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-using MessageBox = System.Windows.MessageBox;
 
 namespace AlephNote.WPF.Windows
 {
@@ -40,7 +39,7 @@ namespace AlephNote.WPF.Windows
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show("Could not load settings from " + App.PATH_SETTINGS + "\r\n\r\n" + e, "Could not load settings");
+				ExceptionDialog.Show(null, "Could not load settings", "Could not load settings from " + App.PATH_SETTINGS, e);
 				settings = AppSettings.CreateEmpty();
 			}
 

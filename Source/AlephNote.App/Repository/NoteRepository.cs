@@ -1,5 +1,6 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.Settings;
+using AlephNote.WPF.Windows;
 using MSHC.Util.Threads;
 using MSHC.WPF.MVVM;
 using System;
@@ -90,7 +91,7 @@ namespace AlephNote.Repository
 				}
 				catch (Exception e)
 				{
-					MessageBox.Show("Cannot load note from '" + noteFile + "'.\r\n\r\n" + e);
+					ExceptionDialog.Show(null, "LoadNotes from local cache", "Could not load note from '" + noteFile + "'", e);
 				}
 			}
 		}

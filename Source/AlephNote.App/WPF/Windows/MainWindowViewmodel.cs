@@ -112,7 +112,7 @@ namespace AlephNote.WPF.Windows
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show("Cannot create note cause of " + e.Message + "\r\n\r\n" + e, "CreateNote failed");
+				ExceptionDialog.Show(Owner, "Cannot create note", e);
 			}
 		}
 
@@ -264,9 +264,9 @@ namespace AlephNote.WPF.Windows
 				{
 					File.WriteAllText(sfd.FileName, SelectedNote.Text, Encoding.UTF8);
 				}
-				catch (Exception)
+				catch (Exception e)
 				{
-					MessageBox.Show(Owner, "Could not write to file", "Error in WriteAllText");
+					ExceptionDialog.Show(Owner, "Could not write to file", e);
 				}
 			}
 		}

@@ -113,6 +113,9 @@
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\ConfigInterval.cs" />
+    <Compile Include="WPF\Windows\ExceptionWindow.xaml.cs">
+      <DependentUpon>ExceptionWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Windows\SyncErrorDialog.xaml.cs">
       <DependentUpon>SyncErrorDialog.xaml</DependentUpon>
     </Compile>
@@ -135,6 +138,10 @@
     <Page Include="WPF\Windows\SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Windows\ExceptionWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="WPF\Windows\SyncErrorDialog.xaml">
       <SubType>Designer</SubType>

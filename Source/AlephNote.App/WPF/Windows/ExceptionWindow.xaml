@@ -1,0 +1,29 @@
+﻿<controls:DialogWindow x:Class="AlephNote.WPF.Windows.ExceptionDialog"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:controls="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
+		WindowStartupLocation="CenterOwner"
+		Title="?" Height="359" Width="541">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<Border Grid.Row="0" Background="Tomato" BorderBrush="DimGray" BorderThickness="1" Margin="10" CornerRadius="10">
+			<TextBlock Foreground="Black" Background="Transparent" TextWrapping="Wrap" x:Name="ErrorMessage" Margin="10" FontWeight="Bold" />
+		</Border>
+
+		<TextBox Grid.Row="1" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" x:Name="ErrorTrace" />
+
+		<Button Grid.Row="2" HorizontalAlignment="Right" Content="OK" Margin="5" MinWidth="100" FontWeight="Bold" Click="ButtonBase_OnClick" VerticalAlignment="Bottom" />
+		
+		<TextBlock Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"  Margin="5,5,150,5" TextWrapping="Wrap" FontStyle="Italic" Foreground="DimGray">
+			<Run>If this happens again please file a bug report at</Run>
+			<Run TextDecorations="Underline" Foreground="Blue" Cursor="Hand" MouseDown="ClickLink">http://github.com/Mikescher/CommonNote</Run>
+			<Run>. Attach the here displayed stack trace and really do it! This is the only way I can fix bugs, by hearing about them.</Run>
+		</TextBlock>
+		
+	</Grid>
+</controls:DialogWindow>

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using AlephNote.PluginInterface;
+using AlephNote.WPF.Windows;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows;
-using AlephNote.PluginInterface;
 
 namespace AlephNote.Plugins
 {
@@ -22,19 +22,17 @@ namespace AlephNote.Plugins
 
 			foreach (var path in pluginfiles)
 			{
-				if (path.Contains("StandardNote")) continue; //TODO ONLY FOR DEBUGGING !! 
-
 				try
 				{
 					LoadPlugin(path);
 				}
 				catch (ReflectionTypeLoadException e)
 				{
-					MessageBox.Show("Could not load plugin from " + path + "\r\n\r\n" + e + "\r\n\r\n" + string.Join("\r\n--------\r\n", e.LoaderExceptions.Select(p => p.ToString())), "Could not load plugin");
+					ExceptionDialog.Show(null, "Plugin load Error", "Could not load plugin from " + path, e, e.LoaderExceptions);
 				}
 				catch (Exception e)
 				{
-					MessageBox.Show("Could not load plugin from " + path + "\r\n\r\n" + e, "Could not load plugin");
+					ExceptionDialog.Show(null, "Plugin load Error", "Could not load plugin from " + path, e);
 				}
 			}
 		}
@@ -43,23 +41,21 @@ namespace AlephNote.Plugins
 		{
 			AssemblyName an = AssemblyName.GetAssemblyName(path);
 			Assembly assembly = Assembly.Load(an);
+
 			if (assembly == null) throw new Exception("Could not load assembly '" + an.FullName + "'");
 
-			if (assembly != null)
+			Type[] types = assembly.GetTypes();
+			foreach (Type type in types)
 			{
-				Type[] types = assembly.GetTypes();
-				foreach (Type type in types)
+				if (type.IsInterface || type.IsAbstract) continue;
+
+				if (type.GetInterface(typeof(IRemoteProvider).FullName) != null)
 				{
-					if (type.IsInterface || type.IsAbstract) continue;
+					IRemoteProvider instance = (IRemoteProvider)Activator.CreateInstance(type);
 
-					if (type.GetInterface(typeof(IRemoteProvider).FullName) != null)
-					{
-						IRemoteProvider instance = (IRemoteProvider)Activator.CreateInstance(type);
+					if (instance == null) throw new Exception("Could not instantiate IAlephNotePlugin '" + type.FullName + "'");
 
-						if (instance == null) throw new Exception("Could not instantiate IAlephNotePlugin '" + type.FullName + "'");
-
-						_provider.Add(instance);
-					}
+					_provider.Add(instance);
 				}
 			}
 		}

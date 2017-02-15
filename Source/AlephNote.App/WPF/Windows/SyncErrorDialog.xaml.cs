@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -65,6 +64,11 @@ namespace AlephNote.WPF.Windows
 
 			return string.Join(Environment.NewLine, lines);
 
+		}
+
+		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+		{
+			Close();
 		}
 	}
 }
