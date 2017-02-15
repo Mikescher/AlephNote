@@ -14,7 +14,7 @@ namespace AlephNote.PluginInterface
 
 		IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
 		IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config);
-		INote CreateEmptyNode();
+		INote CreateEmptyNote();
 	}
 
 	public abstract class RemoteBasicProvider : IRemoteProvider
@@ -50,6 +50,6 @@ namespace AlephNote.PluginInterface
 
 		public abstract IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
 		public abstract IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config);
-		public abstract INote CreateEmptyNode();
+		public abstract INote CreateEmptyNote();
 	}
 }

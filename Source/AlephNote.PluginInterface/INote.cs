@@ -1,9 +1,8 @@
-﻿
-using MSHC.WPF.MVVM;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 
 namespace AlephNote.PluginInterface
@@ -39,7 +38,7 @@ namespace AlephNote.PluginInterface
 		void TriggerOnChanged();
 	}
 
-	public abstract class BasicNote : ObservableObject,  INote
+	public abstract class BasicNote : INotifyPropertyChanged,  INote
 	{
 		private int _dirtySupressor = 0;
 		private bool _ignoreChangeEvent = false;
@@ -66,6 +65,18 @@ namespace AlephNote.PluginInterface
 			{
 				note._dirtySupressor--;
 			}
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		private void OnExplicitPropertyChanged(string propertyName)
+		{
+			if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		protected BasicNote()

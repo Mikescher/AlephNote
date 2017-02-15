@@ -24,7 +24,7 @@ namespace AlephNote.Plugins.Headless
 			return new HeadlessConnection();
 		}
 
-		public override INote CreateEmptyNode()
+		public override INote CreateEmptyNote()
 		{
 			return new HeadlessNote(Guid.NewGuid());
 		}

@@ -1,6 +1,7 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.Settings;
 using AlephNote.WPF.Windows;
+using MSHC.Util.Helper;
 using MSHC.Util.Threads;
 using MSHC.WPF.MVVM;
 using System;
@@ -36,7 +37,7 @@ namespace AlephNote.Repository
 
 		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, IRemoteProvider prov, IRemoteStorageConfiguration config)
 		{
-			pathLocal = Path.Combine(path, prov.GetUniqueID().ToString("B"), config.GetUniqueName());
+			pathLocal = Path.Combine(path, prov.GetUniqueID().ToString("B"), FilenameHelper.ConvertStringForFilename(config.GetUniqueName()));
 			conn = prov.CreateRemoteStorageConnection(cfg.CreateProxy(), config);
 			provider = prov;
 			appconfig = cfg;
@@ -81,7 +82,7 @@ namespace AlephNote.Repository
 					var data = root.Element("data");
 					if (data == null) throw new Exception("missing data node");
 
-					var note = provider.CreateEmptyNode();
+					var note = provider.CreateEmptyNote();
 					note.Deserialize(data.Elements().FirstOrDefault());
 
 					note.ResetLocalDirty();
@@ -98,7 +99,7 @@ namespace AlephNote.Repository
 
 		public INote CreateNewNote()
 		{
-			var note = provider.CreateEmptyNode();
+			var note = provider.CreateEmptyNote();
 			Notes.Add(note);
 			note.SetDirty();
 			SaveNote(note);

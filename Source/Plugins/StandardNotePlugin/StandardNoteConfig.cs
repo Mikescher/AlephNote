@@ -6,29 +6,32 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
 
-namespace AlephNote.Plugins.SimpleNote
+namespace AlephNote.Plugins.StandardNote
 {
-	public class SimpleNoteConfig : IRemoteStorageConfiguration
+	public class StandardNoteConfig : IRemoteStorageConfiguration
 	{
-		private const string ENCRYPTION_KEY = @"rLPDWseNePtqLjXuYRdAAWjQnJoSjxjp";
+		private const string ENCRYPTION_KEY = @"HuIpJachKuRyJuOmVelThufCeck";
 		
-		private const int ID_USERNAME = 6151;
+		private const int ID_EMAIL    = 6151;
 		private const int ID_PASSWORD = 6152;
+		private const int ID_SERVER   = 613;
 
-		public string Username = string.Empty;
+		public string Email    = string.Empty;
 		public string Password = string.Empty;
+		public string Server   = @"https://n3.standardnotes.org";
 
 		public XElement Serialize()
 		{
 			var data = new object[]
 			{
-				new XElement("Username", Username),
+				new XElement("Username", Email),
 				new XElement("Password", Encrypt(Password)),
+				new XElement("Server", Server),
 			};
 
 			var r = new XElement("config", data);
-			r.SetAttributeValue("plugin", SimpleNotePlugin.Name);
-			r.SetAttributeValue("pluginversion", SimpleNotePlugin.Version.ToString());
+			r.SetAttributeValue("plugin", StandardNotePlugin.Name);
+			r.SetAttributeValue("pluginversion", StandardNotePlugin.Version.ToString());
 			return r;
 		}
 
@@ -36,40 +39,45 @@ namespace AlephNote.Plugins.SimpleNote
 		{
 			if (input.Name.LocalName != "config") throw new Exception("LocalName != 'config'");
 
-			Username = XHelper.GetChildValue(input, "Username", string.Empty);
+			Email = XHelper.GetChildValue(input, "Email", string.Empty);
 			Password = Decrypt(XHelper.GetChildValue(input, "Password", string.Empty));
+			Server   = XHelper.GetChildValue(input, "Server", string.Empty);
 		}
 
 		public IEnumerable<DynamicSettingValue> ListProperties()
 		{
-			yield return DynamicSettingValue.CreateText(ID_USERNAME, "Username", Username);
+			yield return DynamicSettingValue.CreateText(ID_EMAIL, "Email", Email);
 			yield return DynamicSettingValue.CreatePassword(ID_PASSWORD, "Password", Password);
-			yield return DynamicSettingValue.CreateHyperlink("Create Simplenote account", "https://simplenote.com/");
+			yield return DynamicSettingValue.CreatePassword(ID_SERVER, "Host", Server);
+			yield return DynamicSettingValue.CreateHyperlink("Create Standard Notes account", "https://standardnotes.org/");
 		}
 
 		public void SetProperty(int id, string value)
 		{
-			if (id == ID_USERNAME) Username = value;
+			if (id == ID_EMAIL) Email = value;
 			if (id == ID_PASSWORD) Password = value;
+			if (id == ID_SERVER) Server = value;
 		}
 
 		public bool IsEqual(IRemoteStorageConfiguration iother)
 		{
-			var other = iother as SimpleNoteConfig;
+			var other = iother as StandardNoteConfig;
 			if (other == null) return false;
 
-			if (this.Username != other.Username) return false;
+			if (this.Email    != other.Email) return false;
 			if (this.Password != other.Password) return false;
+			if (this.Server   != other.Server) return false;
 
 			return true;
 		}
 
 		public IRemoteStorageConfiguration Clone()
 		{
-			return new SimpleNoteConfig
+			return new StandardNoteConfig
 			{
-				Username = this.Username,
+				Email    = this.Email,
 				Password = this.Password,
+				Server   = this.Server,
 			};
 		}
 
@@ -87,7 +95,7 @@ namespace AlephNote.Plugins.SimpleNote
 
 		public string GetUniqueName()
 		{
-			return Username;
+			return Email + ";" + Server;
 		}
 	}
 }
