@@ -1,0 +1,226 @@
+﻿<controls:DialogWindow x:Class="AlephNote.WPF.Windows.SettingsWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:settings="clr-namespace:AlephNote.Settings"
+		xmlns:converter="clr-namespace:AlephNote.WPF.Converter"
+		xmlns:windows="clr-namespace:AlephNote.WPF.Windows"
+		xmlns:controls="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
+		xmlns:mext="clr-namespace:MSHC.WPF.Extensions.MarkupExtensions;assembly=CSharpUtils"
+		mc:Ignorable="d" 
+		d:DataContext="{d:DesignInstance windows:SettingsWindowViewmodel}"
+		WindowStartupLocation="CenterOwner"
+		Icon="/Resources/IconMain.png"
+		Title="Common Note - Configuration" MinHeight="300" MinWidth="300" Height="550" Width="535">
+	<Window.Resources>
+		<converter:CreatePluginSettingsGrid x:Key="CreateGridConv" />
+	</Window.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<TabControl Grid.Row="0">
+			<TabItem Header="General">
+				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+					<Grid Margin="4">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="50"/>
+							<ColumnDefinition Width="1*"/>
+						</Grid.ColumnDefinitions>
+
+						<TextBlock Grid.Row="0" Grid.Column="0" Text="Storage provider:" VerticalAlignment="Center" />
+						<ComboBox Grid.Row="0" Grid.Column="2" Margin="2" ItemsSource="{Binding AvailableProvider}" SelectedValue="{Binding Settings.NoteProvider}" DisplayMemberPath="DisplayTitleShort" />
+
+						<GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Header="Storage options" Margin="2" MinHeight="100">
+							<ContentControl>
+								<ContentControl.Content>
+									<MultiBinding Converter="{StaticResource CreateGridConv}">
+										<Binding Path="Settings.NoteProvider" />
+										<Binding Path="Settings" />
+									</MultiBinding>
+								</ContentControl.Content>
+							</ContentControl>
+						</GroupBox>
+
+						<TextBlock Grid.Row="2" Grid.Column="0" Text="Synchronization frequency:" VerticalAlignment="Center" />
+						<ComboBox Grid.Row="2" Grid.Column="2" Margin="2" ItemsSource="{mext:EnumSource {x:Type settings:ConfigInterval}}" SelectedValue="{Binding Settings.SynchronizationFrequency}" />
+
+						<GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Header="Connection" Margin="2" Padding="5">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" MinWidth="150"/>
+									<ColumnDefinition Width="Auto"/>
+									<ColumnDefinition Width="3*"/>
+									<ColumnDefinition Width="Auto"/>
+									<ColumnDefinition Width="1*"/>
+								</Grid.ColumnDefinitions>
+
+								<CheckBox  Grid.Row="0" Grid.Column="0"            VerticalAlignment="Center" Content="Use proxy" IsChecked="{Binding Settings.ProxyEnabled}" />
+								<TextBlock Grid.Row="0" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Host:" />
+								<TextBox   Grid.Row="0" Grid.Column="2" Margin="3" Text="{Binding Settings.ProxyHost}" IsEnabled="{Binding Settings.ProxyEnabled}" />
+								<TextBlock Grid.Row="0" Grid.Column="3" Margin="3" VerticalAlignment="Center" Text="Port:" />
+								<TextBox   Grid.Row="0" Grid.Column="4" Margin="3" Text="{Binding Settings.ProxyPort}" IsEnabled="{Binding Settings.ProxyEnabled}" />
+
+								<Rectangle Grid.Row="1" Grid.Column="0" Margin="0,5" Grid.ColumnSpan="5" Height="2" Fill="LightGray" />
+
+								<TextBlock Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Login (optional)" />
+								<TextBlock Grid.Row="3" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Username:" />
+								<TextBox   Grid.Row="3" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Text="{Binding Settings.ProxyUsername}" IsEnabled="{Binding Settings.ProxyEnabled}" />
+								<TextBlock Grid.Row="4" Grid.Column="1" Margin="3" Text="Password:" VerticalAlignment="Center" />
+								<controls:BindablePasswordBox Grid.Row="4" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Password="{Binding Settings.ProxyPassword}" IsEnabled="{Binding Settings.ProxyEnabled}" />
+							</Grid>
+						</GroupBox>
+						
+						<GroupBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Padding="4" Header="Application">
+							<StackPanel>
+								<CheckBox Margin="3" VerticalAlignment="Center" Content="Start with Windows" IsChecked="{Binding Settings.LaunchOnBoot}" />
+							</StackPanel>
+						</GroupBox>
+						
+					</Grid>
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="View">
+				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+					<StackPanel Orientation="Vertical">
+						<GroupBox Header="Main" Padding="4">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+								</Grid.ColumnDefinitions>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+								<StackPanel Grid.Row="0" Grid.Column="0">
+									<CheckBox Margin="2" Content="Minimize to Tray" IsChecked="{Binding Settings.MinimizeToTray}" />
+								</StackPanel>
+								<StackPanel Grid.Row="0" Grid.Column="1">
+									<CheckBox Margin="2" Content="Close to Tray" IsChecked="{Binding Settings.CloseToTray}" />
+								</StackPanel>
+
+								<TextBlock Grid.Row="1" Grid.Column="0" Margin="5"  Text="Note sorting:"/>
+								<ComboBox  Grid.Row="1" Grid.Column="1" Margin="5"  ItemsSource="{mext:EnumSource settings:SortingMode}" SelectedValue="{Binding Settings.NoteSorting}" />
+								
+							</Grid>
+						</GroupBox>
+						<GroupBox Header="Font" Padding="4">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition/>
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" MinWidth="100"/>
+									<ColumnDefinition Width="2*"/>
+									<ColumnDefinition Width="1*"/>
+									<ColumnDefinition Width="1*"/>
+								</Grid.ColumnDefinitions>
+
+								<TextBlock Margin="2" Grid.Row="2" Grid.Column="0" Text="Title:" VerticalAlignment="Center" />
+								<controls:FontBox  Margin="2" Grid.Row="2" Grid.Column="1" SelectedFont="{Binding Settings.TitleFontFamily}" />
+								<ComboBox  Margin="2" Grid.Row="2" Grid.Column="2" ItemsSource="{mext:EnumSource settings:FontModifier}" SelectedValue="{Binding Settings.TitleFontModifier}"/>
+								<ComboBox  Margin="2" Grid.Row="2" Grid.Column="3" ItemsSource="{mext:EnumSource settings:FontSize}" SelectedValue="{Binding Settings.TitleFontSize}"/>
+
+								<TextBlock Margin="2" Grid.Row="0" Grid.Column="0" Text="Note:" VerticalAlignment="Center" />
+								<controls:FontBox  Margin="2" Grid.Row="0" Grid.Column="1" SelectedFont="{Binding Settings.NoteFontFamily}" />
+								<ComboBox  Margin="2" Grid.Row="0" Grid.Column="2" ItemsSource="{mext:EnumSource settings:FontModifier}" SelectedValue="{Binding Settings.NoteFontModifier}"/>
+								<ComboBox  Margin="2" Grid.Row="0" Grid.Column="3" ItemsSource="{mext:EnumSource settings:FontSize}" SelectedValue="{Binding Settings.NoteFontSize}"/>
+
+								<TextBlock Margin="2" Grid.Row="1" Grid.Column="0" Text="List:" VerticalAlignment="Center" />
+								<controls:FontBox  Margin="2" Grid.Row="1" Grid.Column="1" SelectedFont="{Binding Settings.ListFontFamily}" />
+								<ComboBox  Margin="2" Grid.Row="1" Grid.Column="2" ItemsSource="{mext:EnumSource settings:FontModifier}" SelectedValue="{Binding Settings.ListFontModifier}"/>
+								<ComboBox  Margin="2" Grid.Row="1" Grid.Column="3" ItemsSource="{mext:EnumSource settings:FontSize}" SelectedValue="{Binding Settings.ListFontSize}"/>
+							
+							</Grid>
+						</GroupBox>
+						<GroupBox Header="Scintilla" Padding="4">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+								</Grid.ColumnDefinitions>
+								<StackPanel Grid.Column="0">
+									<CheckBox Margin="2" Content="Display Line numbers" IsChecked="{Binding Settings.SciLineNumbers}" />
+									<CheckBox Margin="2" Content="Enable rectangular selection" IsChecked="{Binding Settings.SciRectSelection}" />
+									<CheckBox Margin="2" Content="Can zoom" IsChecked="{Binding Settings.SciZoomable}" />
+								</StackPanel>
+								<StackPanel Grid.Column="1">
+									<CheckBox Margin="2" Content="Word wrap" IsChecked="{Binding Settings.SciWordWrap}" />
+									<CheckBox Margin="2" Content="Show Whitespaces" IsChecked="{Binding Settings.SciShowWhitespace}" />
+									<CheckBox Margin="2" Content="Show EOL" IsChecked="{Binding Settings.SciShowEOL}" />
+								</StackPanel>
+							</Grid>
+						</GroupBox>
+						<GroupBox Header="Startup" Padding="4">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" MinWidth="150"/>
+									<ColumnDefinition Width="Auto"/>
+									<ColumnDefinition Width="1*"/>
+									<ColumnDefinition Width="Auto"/>
+									<ColumnDefinition Width="1*"/>
+								</Grid.ColumnDefinitions>
+
+								<TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Startup" />
+								
+								<TextBlock Grid.Row="0" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Window position" />
+								<TextBox   Grid.Row="0" Grid.Column="2" Margin="3" Text="{Binding Settings.StartupPositionX}" />
+								<TextBox   Grid.Row="0" Grid.Column="4" Margin="3" Text="{Binding Settings.StartupPositionY}" />
+
+								<TextBlock Grid.Row="1" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Window size" />
+								<TextBox   Grid.Row="1" Grid.Column="2" Margin="3" Text="{Binding Settings.StartupPositionWidth}" />
+								<TextBox   Grid.Row="1" Grid.Column="4" Margin="3" Text="{Binding Settings.StartupPositionHeight}" />
+
+								<TextBlock Grid.Row="2" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Window state" />
+								<ComboBox  Grid.Row="2" Grid.Column="2" Margin="3" ItemsSource="{mext:EnumSource WindowState}" SelectedValue="{Binding Settings.StartupState}" />
+								<ComboBox  Grid.Row="2" Grid.Column="4" Margin="3" ItemsSource="{mext:EnumSource WindowStartupLocation}" SelectedValue="{Binding Settings.StartupLocation}" />
+
+								<Button    Grid.Row="3" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Content="Use current" Command="{Binding InsertCurrentWindowStateCommand}" />
+								
+							</Grid>
+						</GroupBox>
+					</StackPanel>
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="Remote Encryption">
+				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+
+				</ScrollViewer>
+			</TabItem>
+		</TabControl>
+
+		<WrapPanel Grid.Row="1" HorizontalAlignment="Right">
+			<Button Content="Ok"     Margin="5" MinWidth="100" Click="OnOKClicked" />
+			<Button Content="Cancel" Margin="5" MinWidth="100" Click="OnCancelClicked" />
+		</WrapPanel>
+
+	</Grid>
+</controls:DialogWindow>

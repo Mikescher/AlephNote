@@ -7,7 +7,7 @@
     <ProjectGuid>{AA8A52AA-2A00-46DC-9649-BDB801A48380}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CommonNote.Plugins.SimpleNote</RootNamespace>
+    <RootNamespace>AlephNote.Plugins.SimpleNote</RootNamespace>
     <AssemblyName>SimpleNotePlugin</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -46,15 +46,16 @@
   <ItemGroup>
     <Compile Include="SimpleNote.cs" />
     <Compile Include="SimpleNoteAPI.cs" />
+    <Compile Include="SimpleNoteAPIException.cs" />
     <Compile Include="SimpleNoteConfig.cs" />
     <Compile Include="SimpleNoteConnection.cs" />
     <Compile Include="SimpleNotePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CommonNote.PluginInterface\CommonNote.PluginInterface.csproj">
+    <ProjectReference Include="..\..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj">
       <Project>{a18f5e8c-5894-41f1-9b4c-f66c66490e2d}</Project>
-      <Name>CommonNote.PluginInterface</Name>
+      <Name>AlephNote.PluginInterface</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\External\CSharpUtils\CSharpUtils.csproj">

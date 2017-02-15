@@ -1,4 +1,4 @@
-﻿using CommonNote.PluginInterface;
+﻿using AlephNote.PluginInterface;
 using MSHC.Lang.Extensions;
 using MSHC.Util.Helper;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-namespace CommonNote.Plugins.SimpleNote
+namespace AlephNote.Plugins.SimpleNote
 {
 	class SimpleNote : BasicNote
 	{
@@ -31,7 +31,10 @@ namespace CommonNote.Plugins.SimpleNote
 		public string Content { get { return _content; } set { _content = value; OnPropertyChanged(); } }
 
 		private DateTimeOffset _creationDate = DateTimeOffset.MinValue;
-		public DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
+		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
+
+		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
+		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
 
 		private int _version;
 		public int Version { get { return _version; } set { _version = value; OnPropertyChanged(); } }
@@ -89,10 +92,6 @@ namespace CommonNote.Plugins.SimpleNote
 				OnPropertyChanged();
 			}
 		}
-
-
-		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
-		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
 
 		public override string GetUniqueName()
 		{

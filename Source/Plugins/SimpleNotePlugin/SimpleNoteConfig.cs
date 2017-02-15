@@ -1,4 +1,4 @@
-﻿using CommonNote.PluginInterface;
+﻿using AlephNote.PluginInterface;
 using MSHC.Math.Encryption;
 using MSHC.Util.Helper;
 using System;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
 
-namespace CommonNote.Plugins.SimpleNote
+namespace AlephNote.Plugins.SimpleNote
 {
 	public class SimpleNoteConfig : IRemoteStorageConfiguration
 	{

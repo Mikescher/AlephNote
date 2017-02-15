@@ -1,0 +1,61 @@
+﻿<controls:DialogWindow x:Class="AlephNote.WPF.Windows.AboutWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:controls="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
+		xmlns:windows="clr-namespace:AlephNote.WPF.Windows"
+		mc:Ignorable="d"
+		WindowStartupLocation="CenterOwner"
+		d:DataContext="{d:DesignInstance windows:AboutWindowViewmodel}"
+		Icon="/Resources/IconMain.png"
+		Title="About AlephNote" Height="310" Width="300" MinWidth="300" MinHeight="310">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+
+		<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="AlephNote" HorizontalAlignment="Center" FontWeight="Bold" FontSize="18" />
+		<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Appversion}" FontSize="12" Foreground="DarkGray" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="3" />
+		
+		<Image Grid.Row="1" Grid.Column="0" Source="/Resources/IconMainBig.png" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15" />
+
+		<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Margin="5,15" >
+			<TextBlock Text="Remote Provider:" HorizontalAlignment="Left" FontWeight="Bold" FontSize="12" Margin="0,0,0,10" />
+
+			<ItemsControl ItemsSource="{Binding AvailableProvider}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Orientation="Vertical" />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding DisplayTitleLong}" FontSize="12" />
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</StackPanel>
+
+		<StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" Margin="10,2">
+			<TextBlock Text="Origami Colored Pencil Icons" Tag="http://www.doublejdesign.co.uk/"                 Foreground="Blue" TextDecorations="Underline" Cursor="Hand" MouseDown="Hyperlink_Clicked" />
+			<TextBlock Text="Newtonsoft.Json"              Tag="http://www.newtonsoft.com/json"                  Foreground="Blue" TextDecorations="Underline" Cursor="Hand" MouseDown="Hyperlink_Clicked" />
+			<TextBlock Text="Scintilla.Net"                Tag="https://github.com/jacobslusser/ScintillaNET"    Foreground="Blue" TextDecorations="Underline" Cursor="Hand" MouseDown="Hyperlink_Clicked" />
+			<TextBlock Text="Hardcodet.NotifyIcon"         Tag="https://bitbucket.org/hardcodet/notifyicon-wpf/" Foreground="Blue" TextDecorations="Underline" Cursor="Hand" MouseDown="Hyperlink_Clicked" />
+		</StackPanel>
+
+		<StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="3">
+			<Image Source="/Resources/github.png" Stretch="UniformToFill" Width="16" Height="16" Margin="0,0,5,0" Tag="https://github.com/Mikescher/AlephNote" MouseDown="Hyperlink_Clicked" Cursor="Hand" />
+			<TextBlock Text="Contribute via git" Tag="https://github.com/Mikescher/AlephNote" Foreground="Blue" TextDecorations="Underline" Cursor="Hand" MouseDown="Hyperlink_Clicked"/>
+		</StackPanel>
+		
+	</Grid>
+</controls:DialogWindow>
+

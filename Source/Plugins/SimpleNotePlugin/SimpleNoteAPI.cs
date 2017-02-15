@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
-namespace CommonNote.Plugins.SimpleNote
+namespace AlephNote.Plugins.SimpleNote
 {
 	/// <summary>
 	/// https://simperium.com/docs/reference/http/
@@ -30,7 +30,7 @@ namespace CommonNote.Plugins.SimpleNote
 		{
 			var web = new WebClient();
 			if (proxy != null) web.Proxy = proxy;
-			web.Headers["User-Agent"] = "CommonNote/1.0.0.0";
+			web.Headers["User-Agent"] = "AlephNote/1.0.0.0";
 			web.Headers["X-Simperium-API-Key"] = API_KEY;
 			if (authToken != null) web.Headers["X-Simperium-Token"] = authToken;
 			return web;
@@ -38,134 +38,237 @@ namespace CommonNote.Plugins.SimpleNote
 
 		public static APIResultAuthorize Authenticate(IWebProxy proxy, string userName, string password)
 		{
-			var uri = new Uri(string.Format("https://auth.simperium.com/1/{0}/authorize/", APP_ID));
-			var content = string.Format("{{\"username\":\"{0}\", \"password\":\"{1}\"}}", userName, password);
+			string result;
 
-			var value = CreateClient(proxy, null).UploadString(uri, content);
+			try
+			{
+				var uri = new Uri(string.Format("https://auth.simperium.com/1/{0}/authorize/", APP_ID));
+				var content = string.Format("{{\"username\":\"{0}\", \"password\":\"{1}\"}}", userName, password);
 
-			return JsonConvert.DeserializeObject<APIResultAuthorize>(value);
+				result = CreateClient(proxy, null).UploadString(uri, content);
+			}
+			catch (Exception e)
+			{
+				throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed", e);
+			}
+
+			try
+			{
+				return JsonConvert.DeserializeObject<APIResultAuthorize>(result);
+			}
+			catch (Exception e)
+			{
+				throw new SimpleNoteAPIException("Authentification with SimpleNoteAPI failed.\r\nHTTP-Response:\r\n"+result, e);
+			}
 		}
 
 		public static APIResultIndex ListBuckets(IWebProxy proxy, string authToken)
 		{
-			var web = CreateClient(proxy, authToken);
+			string value;
+			WebClient web;
 
-			var value = web.DownloadString(string.Format("https://api.simperium.com/1/{0}/note/index", APP_ID));
-			APIResultIndex idx = JsonConvert.DeserializeObject<APIResultIndex>(value);
-
-			while (!string.IsNullOrWhiteSpace(idx.mark))
+			try
 			{
-				var value2 = web.DownloadString(string.Format("https://api.simperium.com/1/{0}/note/index?mark={1}", APP_ID, idx.mark));
-				APIResultIndex idx2 = JsonConvert.DeserializeObject<APIResultIndex>(value2);
+				web = CreateClient(proxy, authToken);
 
-				idx.current = idx2.current;
-				idx.mark = idx2.mark;
-				idx.index.AddRange(idx2.index);
+				value = web.DownloadString(string.Format("https://api.simperium.com/1/{0}/note/index", APP_ID));
+			}
+			catch (Exception e)
+			{
+				throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed", e);
 			}
 
-			return idx;
+			try
+			{
+				APIResultIndex idx = JsonConvert.DeserializeObject<APIResultIndex>(value);
+
+				while (!string.IsNullOrWhiteSpace(idx.mark))
+				{
+					var value2 = web.DownloadString(string.Format("https://api.simperium.com/1/{0}/note/index?mark={1}", APP_ID, idx.mark));
+					APIResultIndex idx2 = JsonConvert.DeserializeObject<APIResultIndex>(value2);
+
+					idx.current = idx2.current;
+					idx.mark = idx2.mark;
+					idx.index.AddRange(idx2.index);
+				}
+
+				return idx;
+			}
+			catch (Exception e)
+			{
+				throw new SimpleNoteAPIException("SimpleNoteAPI::ListBuckets failed.\r\nHTTP-Response:\r\n" + value, e);
+			}
 		}
 
 		public static SimpleNote GetNoteData(IWebProxy proxy, string authToken, string nodeID, int? version = null)
 		{
-			var web = CreateClient(proxy, authToken);
+			string value;
+			WebClient web;
 
-			var url = string.Format("https://api.simperium.com/1/{0}/note/i/{1}", APP_ID, nodeID);
-			if (version != null) url += "/v/" + version;
+			try
+			{
+				web = CreateClient(proxy, authToken);
 
-			var value = web.DownloadString(url);
-			var r = JsonConvert.DeserializeObject<APIResultNoteData>(value);
+				var url = string.Format("https://api.simperium.com/1/{0}/note/i/{1}", APP_ID, nodeID);
+				if (version != null) url += "/v/" + version;
 
-			return GetNoteFromQuery(r, web, nodeID);
+				value = web.DownloadString(url);
+			}
+			catch (Exception e)
+			{
+				throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed", e);
+			}
+
+			try
+			{
+				var r = JsonConvert.DeserializeObject<APIResultNoteData>(value);
+
+				return GetNoteFromQuery(r, web, nodeID);
+			}
+			catch (Exception e)
+			{
+				throw new SimpleNoteAPIException("SimpleNoteAPI::GetNoteData failed.\r\nHTTP-Response:\r\n" + value, e);
+			}
 		}
 
 		public static SimpleNote UploadNote(IWebProxy proxy, string authToken, SimpleNote note)
 		{
-			var web = CreateClient(proxy, authToken);
+			string value;
+			WebClient web;
 
-			note.Deleted = false;
-			note.CreationDate = DateTimeOffset.Now;
-			note.ModificationDate = DateTimeOffset.Now;
-
-			var uri = new Uri(string.Format("https://api.simperium.com/1/{0}/note/i/{1}?response=1", APP_ID, note.ID));
-
-			APIResultNoteData data = new APIResultNoteData
+			try
 			{
-				tags = note.Tags.ToList(),
-				deleted = false,
-				shareURL = note.ShareURL,
-				publishURL = note.PublicURL,
-				systemTags = note.SystemTags,
-				content = note.Content,
-				creationDate = ConvertToEpochDate(note.CreationDate),
-				modificationDate = ConvertToEpochDate(note.ModificationDate),
-			};
+				web = CreateClient(proxy, authToken);
 
-			var rawdata = JsonConvert.SerializeObject(data);
-			var value = web.UploadString(uri, rawdata);
-			var r = JsonConvert.DeserializeObject<APIResultNoteData>(value);
+				note.Deleted = false;
+				note.CreationDate = DateTimeOffset.Now;
+				note.ModificationDate = DateTimeOffset.Now;
 
-			return GetNoteFromQuery(r, web, note.ID);
+				var uri = new Uri(string.Format("https://api.simperium.com/1/{0}/note/i/{1}?response=1", APP_ID, note.ID));
+
+				APIResultNoteData data = new APIResultNoteData
+				{
+					tags = note.Tags.ToList(),
+					deleted = false,
+					shareURL = note.ShareURL,
+					publishURL = note.PublicURL,
+					systemTags = note.SystemTags,
+					content = note.Content,
+					creationDate = ConvertToEpochDate(note.CreationDate),
+					modificationDate = ConvertToEpochDate(note.ModificationDate),
+				};
+
+				var rawdata = JsonConvert.SerializeObject(data);
+				value = web.UploadString(uri, rawdata);
+			}
+			catch (Exception e)
+			{
+				throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed", e);
+			}
+
+			try
+			{
+				var r = JsonConvert.DeserializeObject<APIResultNoteData>(value);
+
+				return GetNoteFromQuery(r, web, note.ID);
+			}
+			catch (Exception e)
+			{
+				throw new SimpleNoteAPIException("SimpleNoteAPI::UploadNote failed.\r\nHTTP-Response:\r\n" + value, e);
+			}
 		}
 
 		public static SimpleNote ChangeNote(IWebProxy proxy, string authToken, SimpleNote note)
 		{
-			var web = CreateClient(proxy, authToken);
+			string value;
+			WebClient web;
 
-			if (note.Deleted) throw new Exception("Cannot update an already deleted note");
-			if (note.ID == "") throw new Exception("Cannot change a not uploaded note");
-			note.ModificationDate = DateTimeOffset.Now;
-
-			var uri = new Uri(string.Format("https://api.simperium.com/1/{0}/note/i/{1}?response=1", APP_ID, note.ID));
-
-			APIResultNoteData data = new APIResultNoteData
+			try
 			{
-				tags = note.Tags.ToList(),
-				deleted = false,
-				shareURL = note.ShareURL,
-				publishURL = note.PublicURL,
-				systemTags = note.SystemTags,
-				content = note.Content,
-				creationDate = ConvertToEpochDate(note.CreationDate),
-				modificationDate = ConvertToEpochDate(note.ModificationDate),
-			};
+				web = CreateClient(proxy, authToken);
 
-			var rawdata = JsonConvert.SerializeObject(data);
-			var value = web.UploadString(uri, rawdata);
-			var r = JsonConvert.DeserializeObject<APIResultNoteData>(value);
+				if (note.Deleted) throw new Exception("Cannot update an already deleted note");
+				if (note.ID == "") throw new Exception("Cannot change a not uploaded note");
+				note.ModificationDate = DateTimeOffset.Now;
 
-			return GetNoteFromQuery(r, web, note.ID);
+				var uri = new Uri(string.Format("https://api.simperium.com/1/{0}/note/i/{1}?response=1", APP_ID, note.ID));
+
+				APIResultNoteData data = new APIResultNoteData
+				{
+					tags = note.Tags.ToList(),
+					deleted = false,
+					shareURL = note.ShareURL,
+					publishURL = note.PublicURL,
+					systemTags = note.SystemTags,
+					content = note.Content,
+					creationDate = ConvertToEpochDate(note.CreationDate),
+					modificationDate = ConvertToEpochDate(note.ModificationDate),
+				};
+
+				var rawdata = JsonConvert.SerializeObject(data);
+				value = web.UploadString(uri, rawdata);
+			}
+			catch (Exception e)
+			{
+				throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed", e);
+			}
+
+			try
+			{
+				var r = JsonConvert.DeserializeObject<APIResultNoteData>(value);
+
+				return GetNoteFromQuery(r, web, note.ID);
+			}
+			catch (Exception e)
+			{
+				throw new SimpleNoteAPIException("SimpleNoteAPI::ChangeNote failed.\r\nHTTP-Response:\r\n" + value, e);
+			}
+
 		}
 
 		public static void DeleteNote(IWebProxy proxy, string authToken, SimpleNote note)
 		{
-			var web = CreateClient(proxy, authToken);
+			try
+			{
+				var web = CreateClient(proxy, authToken);
 
-			if (note.ID == "") throw new Exception("Cannot delete a not uploaded note");
-			note.ModificationDate = DateTimeOffset.Now;
+				if (note.ID == "") throw new Exception("Cannot delete a not uploaded note");
+				note.ModificationDate = DateTimeOffset.Now;
 
-			var uri = new Uri(string.Format("https://api.simperium.com/1/{0}/note/i/{1}", APP_ID, note.ID));
-			
-			web.UploadString(uri, "DELETE", string.Empty);
+				var uri = new Uri(string.Format("https://api.simperium.com/1/{0}/note/i/{1}", APP_ID, note.ID));
+
+				web.UploadString(uri, "DELETE", string.Empty);
+			}
+			catch (Exception e)
+			{
+				throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed", e);
+			}
 		}
 
 		private static SimpleNote GetNoteFromQuery(APIResultNoteData r, WebClient c, string id)
 		{
-			var n = new SimpleNote(id)
+			try
 			{
-				Deleted = r.deleted,
-				ShareURL = r.shareURL,
-				PublicURL = r.publishURL,
-				SystemTags = r.systemTags,
-				Content = r.content,
-				ModificationDate = ConvertFromEpochDate(r.modificationDate),
-				CreationDate = ConvertFromEpochDate(r.creationDate),
-				Version = int.Parse(c.ResponseHeaders["X-Simperium-Version"]),
-			};
+				var n = new SimpleNote(id)
+				{
+					Deleted = r.deleted,
+					ShareURL = r.shareURL,
+					PublicURL = r.publishURL,
+					SystemTags = r.systemTags,
+					Content = r.content,
+					ModificationDate = ConvertFromEpochDate(r.modificationDate),
+					CreationDate = ConvertFromEpochDate(r.creationDate),
+					Version = int.Parse(c.ResponseHeaders["X-Simperium-Version"]),
+				};
 
-			n.Tags.Synchronize(r.tags);
+				n.Tags.Synchronize(r.tags);
 
-			return n;
+				return n;
+			}
+			catch (Exception e)
+			{
+				throw new SimpleNoteAPIException("SimpleNote API returned unexpected note data", e);
+			}
 		}
 
 		private static DateTimeOffset ConvertFromEpochDate(double seconds)
