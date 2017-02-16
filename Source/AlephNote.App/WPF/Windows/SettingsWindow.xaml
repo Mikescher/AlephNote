@@ -109,6 +109,7 @@
 								<Grid.RowDefinitions>
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 								<StackPanel Grid.Row="0" Grid.Column="0">
 									<CheckBox Margin="2" Content="Minimize to Tray" IsChecked="{Binding Settings.MinimizeToTray}" />
@@ -119,7 +120,10 @@
 
 								<TextBlock Grid.Row="1" Grid.Column="0" Margin="5"  Text="Note sorting:"/>
 								<ComboBox  Grid.Row="1" Grid.Column="1" Margin="5"  ItemsSource="{mext:EnumSource settings:SortingMode}" SelectedValue="{Binding Settings.NoteSorting}" />
-								
+
+								<TextBlock Grid.Row="2" Grid.Column="0" Margin="5"  Text="Note Preview:"/>
+								<ComboBox  Grid.Row="2" Grid.Column="1" Margin="5"  ItemsSource="{mext:EnumSource settings:NotePreviewStyle}" SelectedValue="{Binding Settings.NotePreviewStyle}" />
+
 							</Grid>
 						</GroupBox>
 						<GroupBox Header="Font" Padding="4">
@@ -208,11 +212,6 @@
 							</Grid>
 						</GroupBox>
 					</StackPanel>
-				</ScrollViewer>
-			</TabItem>
-			<TabItem Header="Remote Encryption">
-				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-
 				</ScrollViewer>
 			</TabItem>
 		</TabControl>

@@ -79,6 +79,7 @@
     <Compile Include="Repository\NoteRepository.cs" />
     <Compile Include="Repository\SynchronizationThread.cs" />
     <Compile Include="Settings\AppSettings.cs" />
+    <Compile Include="Settings\NotePreviewStyle.cs" />
     <Compile Include="Settings\SortingMode.cs" />
     <Compile Include="Settings\FontSize.cs" />
     <Compile Include="Settings\FontModifier.cs" />
@@ -86,6 +87,10 @@
     <Compile Include="Settings\SettingType.cs" />
     <Compile Include="Settings\SynchronizationState.cs" />
     <Compile Include="WPF\Controls\TagEditor.cs" />
+    <Compile Include="WPF\Converter\Subtract.cs" />
+    <Compile Include="WPF\Converter\GridLengthToDouble.cs" />
+    <Compile Include="WPF\Converter\SubstringLeft.cs" />
+    <Compile Include="WPF\Converter\SmallDateTimeToDisplay.cs" />
     <Compile Include="WPF\Converter\StateToAppIcon.cs" />
     <Compile Include="WPF\Converter\FontModifierToFontStyle.cs" />
     <Compile Include="WPF\Converter\FontModifierToFontWeight.cs" />

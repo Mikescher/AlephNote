@@ -7,10 +7,13 @@ namespace AlephNote.PluginInterface
 	{
 		INote UploadNote(INote note);
 		RemoteResult UpdateNote(INote note);
-		void StartNewSync();
-		void FinishNewSync();
+		void StartSync();
+		void FinishSync();
 		INote DownloadNote(string id, out bool result);
 		void DeleteNote(INote note);
 		List<string> ListMissingNotes(List<INote> localnotes);
+
+		bool NeedsUpload(INote note);
+		bool NeedsDownload(INote note);
 	}
 }

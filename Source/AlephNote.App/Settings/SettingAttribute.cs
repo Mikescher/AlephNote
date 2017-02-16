@@ -45,6 +45,9 @@ namespace AlephNote.Settings
 				case SettingType.String:
 					data = (string)prop.GetValue(obj);
 					break;
+				case SettingType.Double:
+					data = ((double)prop.GetValue(obj)).ToString("R");
+					break;
 				case SettingType.Enum:
 					data = Convert.ToString(prop.GetValue(obj));
 					break;
@@ -69,6 +72,9 @@ namespace AlephNote.Settings
 			{
 				case SettingType.Integer:
 					prop.SetValue(data, XHelper.GetChildValue(xroot, prop.Name, (int)prop.GetValue(data)));
+					return;
+				case SettingType.Double:
+					prop.SetValue(data, XHelper.GetChildValue(xroot, prop.Name, (double)prop.GetValue(data)));
 					return;
 				case SettingType.NullableInteger:
 					prop.SetValue(data, XHelper.GetChildValue(xroot, prop.Name, (int?)prop.GetValue(data)));
@@ -118,6 +124,8 @@ namespace AlephNote.Settings
 					return (string)va == (string)vb;
 				case SettingType.String:
 					return (string)va == (string)vb;
+				case SettingType.Double:
+					return Math.Abs((double)va - (double)vb) < double.Epsilon;
 				case SettingType.Enum:
 					return (int)va == (int)vb;
 				case SettingType.FontFamily:
@@ -151,6 +159,7 @@ namespace AlephNote.Settings
 		public SettingType GetSettingType(PropertyInfo prop)
 		{
 			if (prop.PropertyType == typeof(int)) return SettingType.Integer;
+			if (prop.PropertyType == typeof(double)) return SettingType.Double;
 			if (prop.PropertyType == typeof(int?)) return SettingType.NullableInteger;
 			if (prop.PropertyType == typeof(string)) return Encrypted ? SettingType.EncryptedString : SettingType.String;
 			if (prop.PropertyType == typeof(bool)) return SettingType.Boolean;

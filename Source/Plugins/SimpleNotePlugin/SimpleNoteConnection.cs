@@ -27,7 +27,7 @@ namespace AlephNote.Plugins.SimpleNote
 			try
 			{
 				if (_token == null)
-					_token = SimpleNoteAPI.Authenticate(_proxy, _config.SimpleNoteUsername, _config.SimpleNotePassword);
+					_token = SimpleNoteAPI.Authenticate(_proxy, _config.Username, _config.Password);
 			}
 			catch (Exception e)
 			{
@@ -35,16 +35,42 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		public void StartNewSync()
+		public void StartSync()
 		{
 			RefreshToken();
 
 			buckets = SimpleNoteAPI.ListBuckets(_proxy, _token.access_token);
 		}
 
-		public void FinishNewSync()
+		public void FinishSync()
 		{
 			buckets = null;
+		}
+
+		public bool NeedsUpload(INote inote)
+		{
+			var note = (SimpleNote)inote;
+
+			if (!note.IsRemoteSaved) return true;
+
+			var remote = buckets.index.FirstOrDefault(p => p.id == note.ID);
+
+			if (remote == null) return true;
+
+			return remote.v < note.LocalVersion;
+		}
+
+		public bool NeedsDownload(INote inote)
+		{
+			var note = (SimpleNote)inote;
+
+			if (!note.IsRemoteSaved) return false;
+
+			var remote = buckets.index.FirstOrDefault(p => p.id == note.ID);
+
+			if (remote == null) return false;
+
+			return remote.v > note.LocalVersion;
 		}
 
 		public INote DownloadNote(string id, out bool result)
@@ -115,7 +141,7 @@ namespace AlephNote.Plugins.SimpleNote
 
 			if (remote == null) return RemoteResult.DeletedOnRemote;
 
-			if (remote.v == note.Version) return RemoteResult.UpToDate;
+			if (remote.v == note.LocalVersion) return RemoteResult.UpToDate;
 
 			var unote = SimpleNoteAPI.GetNoteData(_proxy, _token.access_token, note.ID);
 			if (unote.Deleted) return RemoteResult.DeletedOnRemote;

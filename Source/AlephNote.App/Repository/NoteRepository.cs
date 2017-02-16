@@ -30,6 +30,7 @@ namespace AlephNote.Repository
 		public ObservableCollection<INote> Notes { get { return _notes; } }
 
 		private readonly DelayedCombiningInvoker invSaveNotesLocal;
+		private readonly DelayedCombiningInvoker invSaveNotesRemote;
 
 		public IRemoteStorageConnection Connection { get { return conn; } }
 
@@ -44,7 +45,8 @@ namespace AlephNote.Repository
 			listener = fb;
 			thread = new SynchronizationThread(this, fb);
 
-			invSaveNotesLocal = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SaveAllDirtyNotes)), 1 * 1000, 60 * 1000);
+			invSaveNotesLocal = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SaveAllDirtyNotes)),  1 * 1000,  1 * 60 * 1000);
+			invSaveNotesRemote = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SyncNow)),          30 * 1000, 15 * 60 * 1000);
 
 			_notes.CollectionChanged += NoteCollectionChanged;
 		}
@@ -63,7 +65,7 @@ namespace AlephNote.Repository
 			invSaveNotesLocal.CancelPendingRequests();
 			SaveAllDirtyNotes();
 
-			thread.Stop();
+			thread.SyncNowAndStopAsync();
 		}
 
 		private void LoadNotesFromLocal()
@@ -84,9 +86,13 @@ namespace AlephNote.Repository
 
 					var note = provider.CreateEmptyNote();
 					note.Deserialize(data.Elements().FirstOrDefault());
-
 					note.ResetLocalDirty();
 					note.ResetRemoteDirty();
+					
+					var meta = root.Element("meta");
+					if (meta == null) throw new Exception("missing meta node");
+
+					if (XHelper.GetChildValue(meta, "dirty", false)) note.SetRemoteDirty();
 
 					Notes.Add(note);
 				}
@@ -122,8 +128,9 @@ namespace AlephNote.Repository
 			var root = new XElement("note");
 
 			var meta = new XElement("meta");
-			meta.Add("date", DateTime.Now.ToString("O"));
-			meta.Add("provider", provider.GetUniqueID().ToString("B"));
+			meta.Add(new XElement("date", DateTime.Now.ToString("O")));
+			meta.Add(new XElement("provider", provider.GetUniqueID().ToString("B")));
+			meta.Add(new XElement("dirty", !note.IsRemoteSaved));
 			root.Add(meta);
 
 			root.Add(new XElement("data", note.Serialize()));
@@ -155,6 +162,8 @@ namespace AlephNote.Repository
 		private void NoteChanged(object sender, EventArgs e)
 		{
 			invSaveNotesLocal.Request();
+			invSaveNotesRemote.Request();
+
 			listener.OnSyncRequest();
 		}
 
@@ -168,7 +177,7 @@ namespace AlephNote.Repository
 			if (found && updateRemote)
 			{
 				LocalDeletedNotes.Add(note);
-				thread.SyncNow();
+				thread.SyncNowAsync();
 			}
 		}
 
@@ -181,13 +190,13 @@ namespace AlephNote.Repository
 
 			if (updateRemote)
 			{
-				thread.SyncNow();
+				thread.SyncNowAsync();
 			}
 		}
 
 		public void SyncNow()
 		{
-			thread.SyncNow();
+			thread.SyncNowAsync();
 		}
 
 		public void SaveAll()

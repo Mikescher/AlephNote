@@ -5,12 +5,12 @@ namespace AlephNote.Plugins.Headless
 {
 	class HeadlessConnection : IRemoteStorageConnection
 	{
-		public void StartNewSync()
+		public void StartSync()
 		{
 			// ok
 		}
 
-		public void FinishNewSync()
+		public void FinishSync()
 		{
 			//
 		}
@@ -29,6 +29,16 @@ namespace AlephNote.Plugins.Headless
 		public List<string> ListMissingNotes(List<INote> localnotes)
 		{
 			return new List<string>();
+		}
+
+		public bool NeedsUpload(INote note)
+		{
+			return false;
+		}
+
+		public bool NeedsDownload(INote note)
+		{
+			return false;
 		}
 
 		public RemoteResult UpdateNote(INote note)

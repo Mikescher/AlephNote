@@ -3,6 +3,7 @@
 	enum SettingType
 	{
 		Integer,
+		Double,
 		NullableInteger,
 		Boolean,
 		Guid,

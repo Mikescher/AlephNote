@@ -72,6 +72,11 @@ namespace AlephNote.WPF.Windows
 			}
 		}
 
+		private GridLength _overviewGridLength = new GridLength(0);
+		public GridLength OverviewListWidth { get { return _overviewGridLength; } set { if (value != _overviewGridLength) { _overviewGridLength = value; OnPropertyChanged(); GridSplitterChanged(); } } }
+
+		public string FullVersion { get { return "AlephNote v" + App.APP_VERSION; } }
+
 		private readonly DelayedCombiningInvoker _invSaveSettings;
 
 		private bool _preventScintillaFocus = false;
@@ -92,6 +97,7 @@ namespace AlephNote.WPF.Windows
 			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
 
 			SelectedNote = NotesView.FirstOrDefault<INote>();
+			OverviewListWidth = new GridLength(settings.OverviewListWidth);
 		}
 
 		private void ShowSettings()
@@ -163,6 +169,12 @@ namespace AlephNote.WPF.Windows
 			if (!_preventScintillaFocus) Owner.FocusScintilla();
 		}
 
+		private void GridSplitterChanged()
+		{
+			Settings.OverviewListWidth = OverviewListWidth.Value;
+			RequestSettingsSave();
+		}
+
 		private void Resync()
 		{
 			Repository.SyncNow();
@@ -180,7 +192,6 @@ namespace AlephNote.WPF.Windows
 			LastSynchronizedText = now.ToLocalTime().ToString("HH:mm:ss");
 			SynchronizationState = SynchronizationState.UpToDate;
 		}
-
 
 		public void OnSyncRequest()
 		{

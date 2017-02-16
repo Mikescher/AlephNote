@@ -23,6 +23,7 @@ namespace AlephNote.Plugins.SimpleNote
 		public class APIResultIndex { public string current, mark; public List<APIResultIndexObj> index = new List<APIResultIndexObj>(); }
 		public class APIResultIndexObj { public string id; public int v; }
 		public class APIResultNoteData { public List<string> tags = new List<string>(); public bool deleted; public string shareURL, content, publishURL; public List<string> systemTags = new List<string>(); public double modificationDate, creationDate; }
+		public class APISendNoteData { public List<string> tags = new List<string>(); public string content; }
 		// ReSharper restore All
 #pragma warning restore 0649
 
@@ -148,16 +149,10 @@ namespace AlephNote.Plugins.SimpleNote
 
 					var uri = new Uri(string.Format("https://api.simperium.com/1/{0}/note/i/{1}?response=1", APP_ID, note.ID));
 
-					APIResultNoteData data = new APIResultNoteData
+					APISendNoteData data = new APISendNoteData
 					{
 						tags = note.Tags.ToList(),
-						deleted = false,
-						shareURL = note.ShareURL,
-						publishURL = note.PublicURL,
-						systemTags = note.SystemTags,
 						content = note.Content,
-						creationDate = ConvertToEpochDate(note.CreationDate),
-						modificationDate = ConvertToEpochDate(note.ModificationDate),
 					};
 
 					var rawdata = JsonConvert.SerializeObject(data);
@@ -261,7 +256,7 @@ namespace AlephNote.Plugins.SimpleNote
 					Content = r.content,
 					ModificationDate = ConvertFromEpochDate(r.modificationDate),
 					CreationDate = ConvertFromEpochDate(r.creationDate),
-					Version = int.Parse(c.ResponseHeaders["X-Simperium-Version"]),
+					LocalVersion = int.Parse(c.ResponseHeaders["X-Simperium-Version"]),
 				};
 
 				n.Tags.Synchronize(r.tags);

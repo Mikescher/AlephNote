@@ -36,8 +36,8 @@ namespace AlephNote.Plugins.SimpleNote
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
 		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
 
-		private int _version;
-		public int Version { get { return _version; } set { _version = value; OnPropertyChanged(); } }
+		private int _localVersion;
+		public int LocalVersion { get { return _localVersion; } set { _localVersion = value; OnPropertyChanged(); } }
 
 		public SimpleNote(string uid)
 		{
@@ -111,7 +111,7 @@ namespace AlephNote.Plugins.SimpleNote
 				new XElement("Content", Convert.ToBase64String(Encoding.UTF8.GetBytes(_content))),
 				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
-				new XElement("Version", _version),
+				new XElement("LocalVersion", _localVersion),
 			};
 
 			var r = new XElement("simplenote", data);
@@ -134,7 +134,7 @@ namespace AlephNote.Plugins.SimpleNote
 				_content = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Content")));
 				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
-				_version = XHelper.GetChildValueInt(input, "Version");
+				_localVersion = XHelper.GetChildValueInt(input, "LocalVersion");
 			}
 		}
 
@@ -149,7 +149,7 @@ namespace AlephNote.Plugins.SimpleNote
 			n._systemTags = _systemTags.ToList();
 			n._creationDate = _creationDate;
 			n._modificationDate = _modificationDate;
-			n._version = _version;
+			n._localVersion = _localVersion;
 			return n;
 		}
 
@@ -161,7 +161,7 @@ namespace AlephNote.Plugins.SimpleNote
 			{
 				_modificationDate = other.ModificationDate;
 				_creationDate = other.CreationDate;
-				_version = other.Version;
+				_localVersion = other.LocalVersion;
 				_systemTags = other.SystemTags;
 				_publicURL = other.PublicURL;
 				_shareURL = other.ShareURL;
@@ -176,7 +176,7 @@ namespace AlephNote.Plugins.SimpleNote
 			using (SuppressDirtyChanges())
 			{
 				_modificationDate = other.ModificationDate;
-				_version = other.Version;
+				_localVersion = other.LocalVersion;
 				_systemTags = other.SystemTags;
 				_publicURL = other.PublicURL;
 				_shareURL = other.ShareURL;

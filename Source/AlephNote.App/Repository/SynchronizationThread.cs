@@ -19,6 +19,7 @@ namespace AlephNote.Repository
 		private bool prioritysync = false;
 		private bool cancel = false;
 		private bool running = false;
+		private bool isSyncing = false;
 		
 		public SynchronizationThread(NoteRepository repository, ISynchronizationFeedback synclistener)
 		{
@@ -43,15 +44,16 @@ namespace AlephNote.Repository
 
 			for (; ; )
 			{
+				isSyncing = true;
 				DoSync();
+				isSyncing = false;
 
 				var tick = Environment.TickCount;
 				do
 				{
 					if (cancel) { running = false; return; }
-
 					if (prioritysync) { prioritysync = false; break; }
-
+					
 					Thread.Sleep(333);
 
 				} while (Environment.TickCount - tick < delay);
@@ -62,24 +64,25 @@ namespace AlephNote.Repository
 		{
 			List<Tuple<string, Exception>> errors = new List<Tuple<string, Exception>>();
 
-			Application.Current.Dispatcher.Invoke(() => listener.StartSync());
+			BeginInvoke(() => listener.StartSync());
 
 			try
 			{
-				List<Tuple<INote, INote>> allNotes = new List<Tuple<INote, INote>>();
-				List<Tuple<INote, INote>> notesToUpload = new List<Tuple<INote, INote>>();
-				List<Tuple<INote, INote>> notesToDownload = new List<Tuple<INote, INote>>();
-				List<INote> notesToDelete = new List<INote>();
-				Application.Current.Dispatcher.Invoke(() =>
-				{
-					allNotes = repo.Notes.Select(p => Tuple.Create(p, p.Clone())).ToList();
-					notesToUpload = allNotes.Where(p => !p.Item2.IsRemoteSaved).ToList();
-					notesToDownload = allNotes.Where(p => p.Item2.IsRemoteSaved).ToList();
-					notesToDelete = repo.LocalDeletedNotes.ToList();
-				});
 
-				repo.Connection.StartNewSync();
+				repo.Connection.StartSync();
 				{
+					List<Tuple<INote, INote>> allNotes = new List<Tuple<INote, INote>>();
+					List<Tuple<INote, INote>> notesToUpload = new List<Tuple<INote, INote>>();
+					List<Tuple<INote, INote>> notesToDownload = new List<Tuple<INote, INote>>();
+					List<INote> notesToDelete = new List<INote>();
+					Invoke(() =>
+					{
+						allNotes = repo.Notes.Select(p => Tuple.Create(p, p.Clone())).ToList();
+						notesToUpload = allNotes.Where(p => repo.Connection.NeedsUpload(p.Item2)).ToList();
+						notesToDownload = allNotes.Where(p => repo.Connection.NeedsDownload(p.Item2)).ToList();
+						notesToDelete = repo.LocalDeletedNotes.ToList();
+					});
+
 					UploadNotes(notesToUpload, ref errors);
 
 					DownloadNotes(notesToDownload, ref errors);
@@ -88,7 +91,7 @@ namespace AlephNote.Repository
 
 					DownloadNewNotes(allNotes, ref errors);
 				}
-				repo.Connection.FinishNewSync();
+				repo.Connection.FinishSync();
 			}
 			catch (Exception e)
 			{
@@ -97,11 +100,11 @@ namespace AlephNote.Repository
 
 			if (errors.Any())
 			{
-				Application.Current.Dispatcher.Invoke(() => listener.SyncError(errors));
+				BeginInvoke(() => listener.SyncError(errors));
 			}
 			else
 			{
-				Application.Current.Dispatcher.Invoke(() => listener.SyncSuccess(DateTimeOffset.Now));
+				BeginInvoke(() => listener.SyncSuccess(DateTimeOffset.Now));
 			}
 		}
 
@@ -116,7 +119,7 @@ namespace AlephNote.Repository
 				{
 					if (!clonenote.IsLocalSaved)
 					{
-						Application.Current.Dispatcher.Invoke(() =>
+						Invoke(() =>
 						{
 							if (!realnote.IsLocalSaved) repo.SaveNote(realnote);
 						});
@@ -124,18 +127,19 @@ namespace AlephNote.Repository
 
 					clonenote = repo.Connection.UploadNote(clonenote);
 
-					Application.Current.Dispatcher.Invoke(() =>
+					Invoke(() =>
 					{
 						if (realnote.IsLocalSaved)
 						{
 							realnote.OnAfterUpload(clonenote);
+							repo.SaveNote(realnote);
 							realnote.IsRemoteSaved = true;
 						}
 					});
 				}
 				catch (Exception e)
 				{
-					errors.Add(Tuple.Create(string.Format("Could not upload note {2} ({0}) cause of {1}", clonenote.GetUniqueName(), e.Message, clonenote.Title), e));
+					errors.Add(Tuple.Create(string.Format("Could not upload note '{2}' ({0}) cause of {1}", clonenote.GetUniqueName(), e.Message, clonenote.Title), e));
 				}
 			}
 		}
@@ -160,7 +164,7 @@ namespace AlephNote.Repository
 							break;
 
 						case RemoteResult.Updated:
-							Application.Current.Dispatcher.Invoke(() =>
+							Invoke(() =>
 							{
 								if (realnote.IsLocalSaved)
 								{
@@ -173,7 +177,7 @@ namespace AlephNote.Repository
 							break;
 
 						case RemoteResult.DeletedOnRemote:
-							Application.Current.Dispatcher.Invoke(() =>
+							Invoke(() =>
 							{
 								if (realnote.IsLocalSaved)
 								{
@@ -188,7 +192,7 @@ namespace AlephNote.Repository
 				}
 				catch (Exception e)
 				{
-					errors.Add(Tuple.Create(string.Format("Could not synchronize note {2} ({0}) cause of {1}", clonenote.GetUniqueName(), e.Message, clonenote.Title), e));
+					errors.Add(Tuple.Create(string.Format("Could not synchronize note '{2}' ({0}) cause of {1}", clonenote.GetUniqueName(), e.Message, clonenote.Title), e));
 				}
 			}
 		}
@@ -202,7 +206,7 @@ namespace AlephNote.Repository
 				try
 				{
 					repo.Connection.DeleteNote(note);
-					Application.Current.Dispatcher.Invoke(() => { repo.LocalDeletedNotes.Remove(note); });
+					Invoke(() => repo.LocalDeletedNotes.Remove(note));
 				}
 				catch (Exception e)
 				{
@@ -227,7 +231,7 @@ namespace AlephNote.Repository
 					{
 						note.SetLocalDirty();
 						note.ResetRemoteDirty();
-						Application.Current.Dispatcher.Invoke(() => repo.AddNote(note, false));
+						Invoke(() => repo.AddNote(note, false));
 					}
 				}
 				catch (Exception e)
@@ -237,22 +241,44 @@ namespace AlephNote.Repository
 			}
 		}
 
-		public void Stop()
+		private void Invoke(Action a)
 		{
-			cancel = true;
-			for (int i = 0; i<100; i++)
-			{
-				Thread.Sleep(100);
-
-				if (cancel) return;
-			}
-
-			throw new Exception("Background thread timeout after 10sec");
+			var app = Application.Current;
+			app.Dispatcher.Invoke(a);
 		}
 
-		public void SyncNow()
+		private void BeginInvoke(Action a)
+		{
+			var app = Application.Current;
+			app.Dispatcher.BeginInvoke(a);
+		}
+		
+		public void SyncNowAsync()
 		{
 			prioritysync = true;
+		}
+
+		public void SyncNowAndStopAsync()
+		{
+			if (isSyncing)
+			{
+				cancel = true;
+				return;
+			}
+
+			prioritysync = true;
+			for (int i = 0; i < 100; i++)
+			{
+				if (!running) return;
+				if (!prioritysync)
+				{
+					cancel = true;
+					return;
+				}
+
+				Thread.Sleep(100);
+			}
+			throw new Exception("Background thread timeout after 10sec");
 		}
 	}
 }

@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MessageBox = System.Windows.MessageBox;
 
 namespace AlephNote.WPF.Windows
 {
@@ -24,6 +25,8 @@ namespace AlephNote.WPF.Windows
 
 			PluginManager.LoadPlugins();
 
+			bool firstLaunch = false;
+
 			AppSettings settings;
 			try
 			{
@@ -35,6 +38,8 @@ namespace AlephNote.WPF.Windows
 				{
 					settings = AppSettings.CreateEmpty();
 					settings.Save();
+
+					firstLaunch = true;
 				}
 			}
 			catch (Exception e)
@@ -49,6 +54,18 @@ namespace AlephNote.WPF.Windows
 
 			viewmodel = new MainWindowViewmodel(settings, this);
 			DataContext = viewmodel;
+
+			if (firstLaunch)
+			{
+				MessageBox.Show(
+					this, 
+					"It looks like you are starting AlephNote for the first time." + Environment.NewLine + 
+					"You should start by looking into the settings and configuring a remote where your notes are stored." + Environment.NewLine + 
+					"Or you can use this program in headless mode where the notes exist only local.", 
+					"First launch", 
+					MessageBoxButton.OK, 
+					MessageBoxImage.Information);
+			}
 		}
 
 		private void StartupConfigWindow(AppSettings settings)

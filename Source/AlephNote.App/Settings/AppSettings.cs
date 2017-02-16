@@ -158,6 +158,14 @@ namespace AlephNote.Settings
 		public int SciZoom { get { return _sciZoom; } set { _sciZoom = value; OnPropertyChanged(); } }
 		private int _sciZoom = 1;
 
+		[Setting]
+		public double OverviewListWidth { get { return _overviewListWidth; } set { _overviewListWidth = value; OnPropertyChanged(); } }
+		private double _overviewListWidth = 150;
+
+		[Setting]
+		public NotePreviewStyle NotePreviewStyle { get { return _notePreviewStyle; } set { _notePreviewStyle = value; OnPropertyChanged(); } }
+		private NotePreviewStyle _notePreviewStyle = NotePreviewStyle.Extended;
+
 		public Dictionary<Guid, IRemoteStorageConfiguration> PluginSettings = new Dictionary<Guid, IRemoteStorageConfiguration>();
 
 		private static readonly List<Tuple<SettingType, SettingAttribute, PropertyInfo>> _settingProperties;

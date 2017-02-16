@@ -12,6 +12,8 @@
 		xmlns:ctrl="clr-namespace:AlephNote.WPF.Controls"
 		xmlns:tb="http://www.hardcodet.net/taskbar"
 		xmlns:mext="clr-namespace:MSHC.WPF.Extensions.MarkupExtensions;assembly=CSharpUtils"
+		xmlns:settings="clr-namespace:AlephNote.Settings"
+		xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
 		mc:Ignorable="d" 
 		Icon="/Resources/IconMain.png"
 		WindowState="{Binding WindowState}"
@@ -31,7 +33,7 @@
 	
 	<Grid x:Name="LayoutRoot">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="150"/>
+			<ColumnDefinition Width="{Binding OverviewListWidth, Mode=TwoWay}"/>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="2*"/>
 		</Grid.ColumnDefinitions>
@@ -78,28 +80,82 @@
 
 			<Button Grid.Row="0" Grid.Column="1" Content="+" Margin="2" Background="Transparent" BorderThickness="0" FontWeight="Bold" Command="{Binding CreateNewNoteCommand}"/>
 
-			<ListView Grid.Column="0"  Grid.Row="1" Grid.ColumnSpan="2"  
+			<ListView Grid.Column="0"  Grid.Row="1" Grid.ColumnSpan="2"
+					  services:MultiDatatemplateService.MultiTemplateSelector="{Binding Settings.NotePreviewStyle}"
+					  HorizontalContentAlignment="Stretch"
+					  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 					  ItemsSource="{Binding NotesView}" 
 					  SelectedValue="{Binding SelectedNote}"
 					  FontSize="{Binding Settings.ListFontSize, Converter={conv:FontSizeToInt}}" 
 					  FontFamily="{Binding Settings.ListFontFamily}" 
 					  FontWeight="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontWeight}}" 
 					  FontStyle="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontStyle}}">
+				
 				<ListView.InputBindings>
 					<KeyBinding Command="{Binding DeleteCommand}" Key="Delete"/>
 				</ListView.InputBindings>
+				
+				<ListView.ContextMenu>
+					<ContextMenu>
+						<MenuItem Header="Export" Command="{Binding ExportCommand}" />
+						<MenuItem Header="Delete" Command="{Binding DeleteCommand}" />
+					</ContextMenu>
+				</ListView.ContextMenu>
+				
 				<ListView.ItemTemplate>
 					<DataTemplate>
-						<TextBlock Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" >
-							<TextBlock.ContextMenu>
-								<ContextMenu>
-									<MenuItem Header="Export" Click="ContextMenuExport" />
-									<MenuItem Header="Delete" Click="ContextMenuDelete" />
-								</ContextMenu>
-							</TextBlock.ContextMenu>
-						</TextBlock>
 					</DataTemplate>
 				</ListView.ItemTemplate>
+
+				<!-- ReSharper disable Xaml.RedundantResource -->
+				<services:MultiDatatemplateService.MultiTemplate>
+
+					<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.Simple}" d:DataContext="{d:DesignInstance pi:INote}">
+						<DataTemplate >
+							<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}">
+								<TextBlock Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" TextTrimming="CharacterEllipsis" />
+							</Grid>
+						</DataTemplate>
+					</services:ConditionalDataTemplate>
+
+					<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.Extended}" d:DataContext="{d:DesignInstance pi:INote}">
+						<DataTemplate>
+							<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+								<TextBlock Grid.Column="0" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" TextTrimming="CharacterEllipsis" />
+								<TextBlock Grid.Column="1" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}}" VerticalAlignment="Center" Foreground="DimGray" >
+									<TextBlock.LayoutTransform>
+										<ScaleTransform ScaleX="0.9" ScaleY="0.9" />
+									</TextBlock.LayoutTransform>
+								</TextBlock>
+							</Grid>
+						</DataTemplate>
+					</services:ConditionalDataTemplate>
+
+					<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.FullPreview}" d:DataContext="{d:DesignInstance pi:INote}">
+						<DataTemplate>
+							<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}">
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+								<TextBlock Grid.Row="0" FontWeight="Bold" FontStyle="Normal" Foreground="Black" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" TextTrimming="CharacterEllipsis" />
+								<TextBlock Grid.Row="1" TextWrapping="Wrap">
+									<Run Foreground="Brown" FontWeight="Normal" FontStyle="Normal" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}}" />
+									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:SubstringLeft}, ConverterParameter=100}" />
+								</TextBlock>
+								<Separator Grid.Row="2" Background="LightGray" Margin="6,7,6,7" />
+							</Grid>
+						</DataTemplate>
+					</services:ConditionalDataTemplate>
+
+				</services:MultiDatatemplateService.MultiTemplate>
+				<!-- ReSharper restore Xaml.RedundantResource -->
+
 			</ListView>
 
 		</Grid>
@@ -174,7 +230,7 @@
 
 			<StatusBarItem  Content="Last Synchronized: " />
 			<StatusBarItem Content="{Binding LastSynchronizedText}" />
-			<Button Content="R" Padding="0" Command="{Binding ResyncCommand}">
+			<Button Content="R" Padding="0" Command="{Binding ResyncCommand}" ToolTip="Synchronize Now">
 				<Button.LayoutTransform>
 					<ScaleTransform ScaleX="1" ScaleY="0.6" />
 				</Button.LayoutTransform>
@@ -184,13 +240,15 @@
 			<StatusBarItem Content="{Binding SelectedNote.Text.Length, FallbackValue=''}"/>
 			<StatusBarItem Content="Lines: " />
 			<StatusBarItem Content="{Binding SelectedNote.Text, Converter={conv:TextToLines}, FallbackValue=''}"/>
+			<StatusBarItem Content="Synchronized: " />
+			<StatusBarItem Content="{Binding SelectedNote.IsRemoteSaved, FallbackValue='?'}"/>
 			<StatusBarItem Content="{Binding Repository.ConnectionName}" HorizontalAlignment="Right" Margin="0,0,15,0"/>
 		</StatusBar>
 
 		<tb:TaskbarIcon Grid.Column="0" Grid.Row="0"
 			x:Name="TrayIcon"
 			Visibility="Visible"
-			ToolTipText="AlephNote"
+			ToolTipText="{Binding FullVersion}"
 			IconSource="{Binding SynchronizationState, Converter={conv:StateToAppIcon}}"
 			LeftClickCommand="{Binding ShowMainWindowCommand}"
 			DoubleClickCommand="{Binding ShowMainWindowCommand}">

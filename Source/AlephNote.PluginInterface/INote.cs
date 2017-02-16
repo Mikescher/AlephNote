@@ -19,6 +19,7 @@ namespace AlephNote.PluginInterface
 
 		void SetDirty();
 		void SetLocalDirty();
+		void SetRemoteDirty();
 		void ResetLocalDirty();
 		void ResetRemoteDirty();
 
@@ -124,6 +125,11 @@ namespace AlephNote.PluginInterface
 		public void SetLocalDirty()
 		{
 			IsLocalSaved = false;
+		}
+
+		public void SetRemoteDirty()
+		{
+			IsRemoteSaved = false;
 		}
 
 		public void ResetLocalDirty()
