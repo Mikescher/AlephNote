@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using System;
 using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace AlephNote.Plugins.StandardNote
@@ -10,14 +9,16 @@ namespace AlephNote.Plugins.StandardNote
 	/// <summary>
 	/// https://github.com/standardnotes/doc/blob/master/Client%20Development%20Guide.md
 	/// </summary>
-	static class SimpleNoteAPI
+	static class StandardNoteAPI
 	{
 #pragma warning disable 0649
 		// ReSharper disable All
 		public enum PasswordAlg { sha512, sha256 }
 		public enum PasswordFunc { pbkdf2 }
 
-		public class APIResultAuthorize { public string pw_salt; public PasswordAlg pw_alg; public PasswordFunc pw_func; public int pw_cost, pw_key_size; }
+		public class APIAuthParams { public string pw_salt; public PasswordAlg pw_alg; public PasswordFunc pw_func; public int pw_cost, pw_key_size; }
+		public class APIResultUser { public Guid uuid; public string email; }
+		public class APIResultAuthorize { public APIResultUser user; public string token; }
 		// ReSharper restore All
 #pragma warning restore 0649
 
@@ -62,36 +63,30 @@ namespace AlephNote.Plugins.StandardNote
 
 			try
 			{
-				var r = JsonConvert.DeserializeObject<APIResultAuthorize>(result);
+				var apiparams = JsonConvert.DeserializeObject<APIAuthParams>(result);
 
-				if (r.pw_func != PasswordFunc.pbkdf2) throw new Exception("Unknown pw_func: " + r.pw_func);
+				if (apiparams.pw_func != PasswordFunc.pbkdf2) throw new Exception("Unknown pw_func: " + apiparams.pw_func);
 
 				byte[] bytes; 
 
-				if (r.pw_alg == PasswordAlg.sha512)
+				if (apiparams.pw_alg == PasswordAlg.sha512)
 				{
-					using (var hmac = new HMACSHA256())
-					{
-						var df = new Pbkdf2(hmac, Encoding.UTF8.GetBytes(password), Convert.FromBase64String(r.pw_salt));
-						bytes = df.GetBytes(r.pw_key_size / 64);
-					}
+					bytes = PBKDF2.GenerateDerivedKey(apiparams.pw_key_size / 8, Encoding.UTF8.GetBytes(password), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
 				}
-				else if (r.pw_alg == PasswordAlg.sha512)
+				else if (apiparams.pw_alg == PasswordAlg.sha512)
 				{
-					using (var hmac = new HMACSHA256())
-					{
-						var df = new Pbkdf2(hmac, Encoding.UTF8.GetBytes(password), Convert.FromBase64String(r.pw_salt));
-						bytes = df.GetBytes(r.pw_key_size / 64);
-					}
+					bytes = PBKDF2.GenerateDerivedKey(apiparams.pw_key_size / 8, Encoding.UTF8.GetBytes(password), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
 				}
 				else
 				{
-					throw new Exception("Unknown pw_alg: " + r.pw_alg);
+					throw new Exception("Unknown pw_alg: " + apiparams.pw_alg);
 				}
 				
-				var uri = CreateUri(host, "auth/sign-in");
+				var uri = CreateUri(host, "auth/sign-in", "email=" + mail + "&password=" + EncodingConverter.ByteToHexBitFiddle(bytes));
 
 				result = CreateClient(proxy, null).DownloadString(uri);
+
+				return JsonConvert.DeserializeObject<APIResultAuthorize>(result);
 
 			}
 			catch (Exception e)
