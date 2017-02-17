@@ -24,9 +24,9 @@ namespace AlephNote.Plugins.SimpleNote
 			return new SimpleNoteConnection(proxy, (SimpleNoteConfig)config);
 		}
 
-		public override INote CreateEmptyNote()
+		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
 		{
-			return new SimpleNote(Guid.NewGuid().ToString("N").ToUpper());
+			return new SimpleNote(Guid.NewGuid().ToString("N").ToUpper(), (SimpleNoteConfig)cfg);
 		}
 	}
 }

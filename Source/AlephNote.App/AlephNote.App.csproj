@@ -87,6 +87,7 @@
     <Compile Include="Settings\SettingType.cs" />
     <Compile Include="Settings\SynchronizationState.cs" />
     <Compile Include="WPF\Controls\TagEditor.cs" />
+    <Compile Include="WPF\Converter\GetLine.cs" />
     <Compile Include="WPF\Converter\Subtract.cs" />
     <Compile Include="WPF\Converter\GridLengthToDouble.cs" />
     <Compile Include="WPF\Converter\SubstringLeft.cs" />

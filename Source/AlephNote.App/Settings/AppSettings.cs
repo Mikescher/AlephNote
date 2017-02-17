@@ -109,6 +109,10 @@ namespace AlephNote.Settings
 		[Setting]
 		public bool SciZoomable { get { return _sciZoomable; } set { _sciZoomable = value; OnPropertyChanged(); } }
 		private bool _sciZoomable = true;
+
+		[Setting]
+		public bool SciUseTabs { get { return _sciUseTabs; } set { _sciUseTabs = value; OnPropertyChanged(); } }
+		private bool _sciUseTabs = true;
 		
 		[Setting]
 		public bool SciWordWrap { get { return _sciWordWrap; } set { _sciWordWrap = value; OnPropertyChanged(); } }
@@ -121,6 +125,10 @@ namespace AlephNote.Settings
 		[Setting]
 		public bool SciShowEOL { get { return _sciShowEOL; } set { _sciShowEOL = value; OnPropertyChanged(); } }
 		private bool _sciShowEOL = false;
+
+		[Setting]
+		public int SciTabWidth { get { return _sciTabWidth; } set { _sciTabWidth = value; OnPropertyChanged(); } }
+		private int _sciTabWidth = 4;
 
 		[Setting]
 		public int StartupPositionX { get { return _startupPositionX; } set { _startupPositionX = value; OnPropertyChanged(); } }
@@ -165,6 +173,10 @@ namespace AlephNote.Settings
 		[Setting]
 		public NotePreviewStyle NotePreviewStyle { get { return _notePreviewStyle; } set { _notePreviewStyle = value; OnPropertyChanged(); } }
 		private NotePreviewStyle _notePreviewStyle = NotePreviewStyle.Extended;
+
+		[Setting]
+		public ConflictResolutionStrategy ConflictResolution { get { return _conflictResolution; } set { _conflictResolution = value; OnPropertyChanged(); } }
+		private ConflictResolutionStrategy _conflictResolution = ConflictResolutionStrategy.UseClientCreateConflictFile;
 
 		public Dictionary<Guid, IRemoteStorageConfiguration> PluginSettings = new Dictionary<Guid, IRemoteStorageConfiguration>();
 

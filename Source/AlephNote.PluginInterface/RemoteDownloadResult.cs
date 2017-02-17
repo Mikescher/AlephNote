@@ -1,7 +1,7 @@
 ﻿
 namespace AlephNote.PluginInterface
 {
-	public enum RemoteResult
+	public enum RemoteDownloadResult
 	{
 		UpToDate,
 		Updated,

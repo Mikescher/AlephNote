@@ -24,6 +24,7 @@ namespace AlephNote.Plugins.SimpleNote
 		public class APIResultIndexObj { public string id; public int v; }
 		public class APIResultNoteData { public List<string> tags = new List<string>(); public bool deleted; public string shareURL, content, publishURL; public List<string> systemTags = new List<string>(); public double modificationDate, creationDate; }
 		public class APISendNoteData { public List<string> tags = new List<string>(); public string content; }
+		public class APIDeleteNoteData { public bool deleted; }
 		// ReSharper restore All
 #pragma warning restore 0649
 
@@ -104,7 +105,7 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		public static SimpleNote GetNoteData(IWebProxy proxy, string authToken, string nodeID, int? version = null)
+		public static SimpleNote GetNoteData(IWebProxy proxy, string authToken, string nodeID, SimpleNoteConfig cfg, int? version = null)
 		{
 			using (var web = CreateClient(proxy, authToken))
 			{
@@ -126,7 +127,7 @@ namespace AlephNote.Plugins.SimpleNote
 				{
 					var r = JsonConvert.DeserializeObject<APIResultNoteData>(value);
 
-					return GetNoteFromQuery(r, web, nodeID);
+					return GetNoteFromQuery(r, web, nodeID, cfg);
 				}
 				catch (Exception e)
 				{
@@ -135,7 +136,7 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		public static SimpleNote UploadNote(IWebProxy proxy, string authToken, SimpleNote note)
+		public static SimpleNote UploadNewNote(IWebProxy proxy, string authToken, SimpleNote note, SimpleNoteConfig cfg)
 		{
 			using (var web = CreateClient(proxy, authToken))
 			{
@@ -145,47 +146,6 @@ namespace AlephNote.Plugins.SimpleNote
 				{
 					note.Deleted = false;
 					note.CreationDate = DateTimeOffset.Now;
-					note.ModificationDate = DateTimeOffset.Now;
-
-					var uri = new Uri(string.Format("https://api.simperium.com/1/{0}/note/i/{1}?response=1", APP_ID, note.ID));
-
-					APISendNoteData data = new APISendNoteData
-					{
-						tags = note.Tags.ToList(),
-						content = note.Content,
-					};
-
-					var rawdata = JsonConvert.SerializeObject(data);
-					value = web.UploadString(uri, rawdata);
-				}
-				catch (Exception e)
-				{
-					throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed", e);
-				}
-
-				try
-				{
-					var r = JsonConvert.DeserializeObject<APIResultNoteData>(value);
-
-					return GetNoteFromQuery(r, web, note.ID);
-				}
-				catch (Exception e)
-				{
-					throw new SimpleNoteAPIException("SimpleNoteAPI::UploadNote failed.\r\nHTTP-Response:\r\n" + value, e);
-				}
-			}
-		}
-
-		public static SimpleNote ChangeNote(IWebProxy proxy, string authToken, SimpleNote note)
-		{
-			using (var web = CreateClient(proxy, authToken))
-			{
-				string value;
-
-				try
-				{
-					if (note.Deleted) throw new Exception("Cannot update an already deleted note");
-					if (note.ID == "") throw new Exception("Cannot change a not uploaded note");
 					note.ModificationDate = DateTimeOffset.Now;
 
 					var uri = new Uri(string.Format("https://api.simperium.com/1/{0}/note/i/{1}?response=1", APP_ID, note.ID));
@@ -205,6 +165,32 @@ namespace AlephNote.Plugins.SimpleNote
 					var rawdata = JsonConvert.SerializeObject(data);
 					value = web.UploadString(uri, rawdata);
 				}
+				catch (WebException e)
+				{
+					var resp = e.Response as HttpWebResponse;
+					if (resp != null && resp.StatusCode == HttpStatusCode.PreconditionFailed)
+					{
+						// 412 - Empty change
+						throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed (EMPTY CHANGE)", e);
+					}
+					if (resp != null && resp.StatusCode == HttpStatusCode.PreconditionFailed)
+					{
+						// 400 - Bad request
+						throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed (BAD REQUEST)", e);
+					}
+					if (resp != null && resp.StatusCode == HttpStatusCode.PreconditionFailed)
+					{
+						// 401 - Authorization error
+						throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed (AUTHORIZATION ERROR)", e);
+					}
+					if (resp != null && resp.StatusCode == HttpStatusCode.PreconditionFailed)
+					{
+						// 404 - version does not exist
+						throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed (VERSION DOES NOT EXIST)", e);
+					}
+
+					throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed", e);
+				}
 				catch (Exception e)
 				{
 					throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed", e);
@@ -214,11 +200,102 @@ namespace AlephNote.Plugins.SimpleNote
 				{
 					var r = JsonConvert.DeserializeObject<APIResultNoteData>(value);
 
-					return GetNoteFromQuery(r, web, note.ID);
+					return GetNoteFromQuery(r, web, note.ID, cfg);
+				}
+				catch (Exception e)
+				{
+					throw new SimpleNoteAPIException("SimpleNoteAPI::UploadNote failed.\r\nHTTP-Response:\r\n" + value, e);
+				}
+			}
+		}
+
+		public static SimpleNote ChangeExistingNote(IWebProxy proxy, string authToken, SimpleNote note, SimpleNoteConfig cfg, out bool updated)
+		{
+			using (var web = CreateClient(proxy, authToken))
+			{
+				string value;
+
+				try
+				{
+					if (note.Deleted) throw new Exception("Cannot update an already deleted note");
+					if (note.ID == "") throw new Exception("Cannot change a not uploaded note");
+					note.ModificationDate = DateTimeOffset.Now;
+
+					var uri = new Uri(string.Format("https://api.simperium.com/1/{0}/note/i/{1}?response=1", APP_ID, note.ID));
+
+					APISendNoteData data = new APISendNoteData
+					{
+						tags = note.Tags.ToList(),
+						content = note.Content,
+					};
+
+					var rawdata = JsonConvert.SerializeObject(data);
+					value = web.UploadString(uri, rawdata);
+				}
+				catch (WebException e)
+				{
+					var resp = e.Response as HttpWebResponse;
+					if (resp != null && resp.StatusCode == HttpStatusCode.PreconditionFailed)
+					{
+						// 412 - Empty change
+
+						updated = false;
+						return (SimpleNote)note.Clone();
+					}
+					if (resp != null && resp.StatusCode == HttpStatusCode.PreconditionFailed)
+					{
+						// 400 - Bad request
+						throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed (BAD REQUEST)", e);
+					}
+					if (resp != null && resp.StatusCode == HttpStatusCode.PreconditionFailed)
+					{
+						// 401 - Authorization error
+						throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed (AUTHORIZATION ERROR)", e);
+					}
+					if (resp != null && resp.StatusCode == HttpStatusCode.PreconditionFailed)
+					{
+						// 404 - version does not exist
+						throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed (VERSION DOES NOT EXIST)", e);
+					}
+
+					throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed", e);
+				}
+				catch (Exception e)
+				{
+					throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed", e);
+				}
+
+				try
+				{
+					var r = JsonConvert.DeserializeObject<APIResultNoteData>(value);
+
+					updated = true;
+					return GetNoteFromQuery(r, web, note.ID, cfg);
 				}
 				catch (Exception e)
 				{
 					throw new SimpleNoteAPIException("SimpleNoteAPI::ChangeNote failed.\r\nHTTP-Response:\r\n" + value, e);
+				}
+			}
+		}
+
+		public static void DeleteNotePermanently(IWebProxy proxy, string authToken, SimpleNote note)
+		{
+			using (var web = CreateClient(proxy, authToken))
+			{
+				if (note.ID == "") throw new Exception("Cannot delete a not uploaded note");
+
+				try
+				{
+					note.ModificationDate = DateTimeOffset.Now;
+
+					var uri = new Uri(string.Format("https://api.simperium.com/1/{0}/note/i/{1}", APP_ID, note.ID));
+
+					web.UploadString(uri, "DELETE", string.Empty);
+				}
+				catch (Exception e)
+				{
+					throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed", e);
 				}
 			}
 		}
@@ -234,7 +311,41 @@ namespace AlephNote.Plugins.SimpleNote
 
 					var uri = new Uri(string.Format("https://api.simperium.com/1/{0}/note/i/{1}", APP_ID, note.ID));
 
-					web.UploadString(uri, "DELETE", string.Empty);
+					APIDeleteNoteData data = new APIDeleteNoteData
+					{
+						deleted = true
+					};
+
+					var rawdata = JsonConvert.SerializeObject(data);
+					
+					web.UploadString(uri, rawdata);
+				}
+				catch (WebException e)
+				{
+					var resp = e.Response as HttpWebResponse;
+					if (resp != null && resp.StatusCode == HttpStatusCode.PreconditionFailed)
+					{
+						// 412 - Empty change
+
+						return;
+					}
+					if (resp != null && resp.StatusCode == HttpStatusCode.PreconditionFailed)
+					{
+						// 400 - Bad request
+						throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed (BAD REQUEST)", e);
+					}
+					if (resp != null && resp.StatusCode == HttpStatusCode.PreconditionFailed)
+					{
+						// 401 - Authorization error
+						throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed (AUTHORIZATION ERROR)", e);
+					}
+					if (resp != null && resp.StatusCode == HttpStatusCode.PreconditionFailed)
+					{
+						// 404 - version does not exist
+						throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed (VERSION DOES NOT EXIST)", e);
+					}
+
+					throw new SimpleNoteAPIException("Communication with SimpleNoteAPI failed", e);
 				}
 				catch (Exception e)
 				{
@@ -243,11 +354,11 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		private static SimpleNote GetNoteFromQuery(APIResultNoteData r, WebClient c, string id)
+		private static SimpleNote GetNoteFromQuery(APIResultNoteData r, WebClient c, string id, SimpleNoteConfig cfg)
 		{
 			try
 			{
-				var n = new SimpleNote(id)
+				var n = new SimpleNote(id, cfg)
 				{
 					Deleted = r.deleted,
 					ShareURL = r.shareURL,
@@ -271,6 +382,8 @@ namespace AlephNote.Plugins.SimpleNote
 
 		private static DateTimeOffset ConvertFromEpochDate(double seconds)
 		{
+			if (seconds <= 0) return TIMESTAMP_ORIGIN;
+
 			return TIMESTAMP_ORIGIN.AddSeconds(seconds);
 		}
 

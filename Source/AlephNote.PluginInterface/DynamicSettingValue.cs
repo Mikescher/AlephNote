@@ -3,7 +3,7 @@ namespace AlephNote.PluginInterface
 {
 	public class DynamicSettingValue
 	{
-		public enum SettingType { Text, Password, Hyperlink }
+		public enum SettingType { Text, Password, Hyperlink, Checkbox }
 
 		public readonly int ID;
 		public readonly string Description;
@@ -28,6 +28,11 @@ namespace AlephNote.PluginInterface
 		public static DynamicSettingValue CreatePassword(int id, string description, string value)
 		{
 			return new DynamicSettingValue(id, SettingType.Password, description, value);
+		}
+
+		public static DynamicSettingValue CreateCheckbox(int id, string description, bool value)
+		{
+			return new DynamicSettingValue(id, SettingType.Checkbox, description, "", value);
 		}
 
 		public static DynamicSettingValue CreateHyperlink(string text, string link)

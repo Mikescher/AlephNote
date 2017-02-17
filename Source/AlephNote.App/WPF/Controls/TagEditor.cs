@@ -86,8 +86,21 @@ namespace AlephNote.WPF.Controls
 			if (e.Key == Key.Enter || e.Key == Key.Tab)
 			{
 				var text = CaretPosition.GetTextInRun(LogicalDirection.Backward);
-				TagSource.Add(text);
-				e.Handled = true;
+
+				if (string.IsNullOrWhiteSpace(text) && e.Key == Key.Enter)
+				{
+					e.Handled = true;
+				}
+				else if (string.IsNullOrWhiteSpace(text) && e.Key == Key.Tab)
+				{
+					e.Handled = false;
+				}
+				else
+				{
+					TagSource.Add(text);
+					e.Handled = true;
+				}
+
 			}
 		}
 

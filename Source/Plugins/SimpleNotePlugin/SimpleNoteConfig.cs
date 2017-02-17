@@ -14,9 +14,13 @@ namespace AlephNote.Plugins.SimpleNote
 		
 		private const int ID_USERNAME = 6151;
 		private const int ID_PASSWORD = 6152;
+		private const int ID_PERMADEL = 6153;
+		private const int ID_BLANKFMT = 6154;
 
 		public string Username = string.Empty;
 		public string Password = string.Empty;
+		public bool PermanentlyDeleteNotes = false;
+		public bool BlankLineBelowTitle = true;
 
 		public XElement Serialize()
 		{
@@ -24,6 +28,8 @@ namespace AlephNote.Plugins.SimpleNote
 			{
 				new XElement("Username", Username),
 				new XElement("Password", Encrypt(Password)),
+				new XElement("PermanentlyDeleteNotes", PermanentlyDeleteNotes),
+				new XElement("BlankLineBelowTitle", BlankLineBelowTitle),
 			};
 
 			var r = new XElement("config", data);
@@ -38,12 +44,16 @@ namespace AlephNote.Plugins.SimpleNote
 
 			Username = XHelper.GetChildValue(input, "Username", string.Empty);
 			Password = Decrypt(XHelper.GetChildValue(input, "Password", string.Empty));
+			PermanentlyDeleteNotes = XHelper.GetChildValue(input, "PermanentlyDeleteNotes", false);
+			BlankLineBelowTitle = XHelper.GetChildValue(input, "BlankLineBelowTitle", true);
 		}
 
 		public IEnumerable<DynamicSettingValue> ListProperties()
 		{
 			yield return DynamicSettingValue.CreateText(ID_USERNAME, "Username", Username);
 			yield return DynamicSettingValue.CreatePassword(ID_PASSWORD, "Password", Password);
+			yield return DynamicSettingValue.CreateCheckbox(ID_PERMADEL, "Delete notes permanently on server", PermanentlyDeleteNotes);
+			yield return DynamicSettingValue.CreateCheckbox(ID_BLANKFMT, "Empty line between title and content", BlankLineBelowTitle);
 			yield return DynamicSettingValue.CreateHyperlink("Create Simplenote account", "https://simplenote.com/");
 		}
 
@@ -53,6 +63,12 @@ namespace AlephNote.Plugins.SimpleNote
 			if (id == ID_PASSWORD) Password = value;
 		}
 
+		public void SetProperty(int id, bool value)
+		{
+			if (id == ID_PERMADEL) PermanentlyDeleteNotes = value;
+			if (id == ID_BLANKFMT) BlankLineBelowTitle = value;
+		}
+
 		public bool IsEqual(IRemoteStorageConfiguration iother)
 		{
 			var other = iother as SimpleNoteConfig;
@@ -60,6 +76,8 @@ namespace AlephNote.Plugins.SimpleNote
 
 			if (this.Username != other.Username) return false;
 			if (this.Password != other.Password) return false;
+			if (this.PermanentlyDeleteNotes != other.PermanentlyDeleteNotes) return false;
+			if (this.BlankLineBelowTitle != other.BlankLineBelowTitle) return false;
 
 			return true;
 		}
@@ -70,6 +88,8 @@ namespace AlephNote.Plugins.SimpleNote
 			{
 				Username = this.Username,
 				Password = this.Password,
+				PermanentlyDeleteNotes = this.PermanentlyDeleteNotes,
+				BlankLineBelowTitle = this.BlankLineBelowTitle,
 			};
 		}
 

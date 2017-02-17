@@ -51,6 +51,12 @@ namespace AlephNote.WPF.Converter
 						AddComponent(prop, ref row, grid, pb);
 						break;
 
+					case DynamicSettingValue.SettingType.Checkbox:
+						var cb = new CheckBox {IsChecked = (bool)prop.Arguments[0]};
+						cb.Checked += (s, a) => cfg.SetProperty(xprop.ID, cb.IsChecked ?? false);
+						AddComponent(prop, ref row, grid, cb);
+						break;
+
 					case DynamicSettingValue.SettingType.Hyperlink:
 						var hl = new TextBlock
 						{

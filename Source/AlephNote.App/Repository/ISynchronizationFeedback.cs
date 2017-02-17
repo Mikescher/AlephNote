@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlephNote.PluginInterface;
+using System;
 using System.Collections.Generic;
 
 namespace AlephNote.Repository
@@ -11,5 +12,7 @@ namespace AlephNote.Repository
 		void SyncError(List<Tuple<string, Exception>> errors);
 
 		void OnSyncRequest();
+
+		void OnNoteChanged(NoteChangedEventArgs e);
 	}
 }

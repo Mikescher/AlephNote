@@ -9,7 +9,7 @@ namespace AlephNote.PluginInterface
 {
 	public interface INote
 	{
-		event EventHandler OnChanged;
+		event NoteChangedEventHandler OnChanged;
 
 		XElement Serialize();
 		void Deserialize(XElement input);
@@ -31,6 +31,7 @@ namespace AlephNote.PluginInterface
 		string Title { get; set; }
 		bool IsLocalSaved { get; set; }
 		bool IsRemoteSaved { get; set; }
+		bool IsConflictNote { get; set; }
 		DateTimeOffset CreationDate { get; set; }
 		DateTimeOffset ModificationDate { get; set; }
 
@@ -50,7 +51,10 @@ namespace AlephNote.PluginInterface
 		private bool _isRemoteSaved = false;
 		public bool IsRemoteSaved { get { return _isRemoteSaved; } set { _isRemoteSaved = value; OnPropertyChanged(); } }
 
-		public event EventHandler OnChanged;
+		private bool _isConflictNote = false;
+		public bool IsConflictNote { get { return _isConflictNote; } set { _isConflictNote = value; OnPropertyChanged(); } }
+
+		public event NoteChangedEventHandler OnChanged;
 
 		private class NoteDirtyBlocker : IDisposable
 		{
@@ -101,14 +105,16 @@ namespace AlephNote.PluginInterface
 					_ignoreChangeEvent = false;
 				}
 
-				if (OnChanged != null) OnChanged(this, new EventArgs());
+				if (IsConflictNote) IsConflictNote = false;
+
+				if (OnChanged != null) OnChanged(this, new NoteChangedEventArgs(this, e.PropertyName));
 			}
 		}
 
 		private void TagsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			SetDirty();
-			if (OnChanged != null) OnChanged(this, new EventArgs());
+			if (OnChanged != null) OnChanged(this, new NoteChangedEventArgs(this, "Tags"));
 		}
 
 		public bool EqualID(INote other)

@@ -169,6 +169,11 @@ namespace AlephNote.WPF.Windows
 			if (!_preventScintillaFocus) Owner.FocusScintilla();
 		}
 
+		public void OnNoteChanged(NoteChangedEventArgs e)
+		{
+			if (NotesView.FirstOrDefault<INote>() != e.Note) NotesView.Refresh();
+		}
+
 		private void GridSplitterChanged()
 		{
 			Settings.OverviewListWidth = OverviewListWidth.Value;

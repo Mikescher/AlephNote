@@ -45,16 +45,16 @@
 
 		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" >
 			<MenuItem Header="File">
-				<MenuItem Header="New Note" Command="{Binding CreateNewNoteCommand}" />
+				<MenuItem Header="New Note" Command="{Binding CreateNewNoteCommand}" InputGestureText="Ctrl+N" />
 				<Separator />
 				<MenuItem Header="Export Note" Command="{Binding ExportCommand}" />
-				<MenuItem Header="Delete Note" Command="{Binding DeleteCommand}" />
+				<MenuItem Header="Delete Note" Command="{Binding DeleteCommand}" InputGestureText="Entf" />
 				<Separator />
-				<MenuItem Header="Exit" Command="{Binding ExitCommand}" />
+				<MenuItem Header="Exit" Command="{Binding ExitCommand}" InputGestureText="Alt+F4" />
 			</MenuItem>
 			<MenuItem Header="Edit">
 				<MenuItem Header="Settings" Command="{Binding SettingsCommand}" />
-				<MenuItem Header="Synchronize now" Command="{Binding ResyncCommand}" />
+				<MenuItem Header="Synchronize now" Command="{Binding ResyncCommand}" InputGestureText="Ctrl+S" />
 			</MenuItem>
 			<MenuItem Header="Help">
 				<MenuItem Header="Check for Updates" />
@@ -142,13 +142,21 @@
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 								<TextBlock Grid.Row="0" FontWeight="Bold" FontStyle="Normal" Foreground="Black" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" TextTrimming="CharacterEllipsis" />
-								<TextBlock Grid.Row="1" TextWrapping="Wrap">
+								<TextBlock Grid.Row="1" TextWrapping="NoWrap">
 									<Run Foreground="Brown" FontWeight="Normal" FontStyle="Normal" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}}" />
-									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:SubstringLeft}, ConverterParameter=100}" />
+									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0}" />
 								</TextBlock>
-								<Separator Grid.Row="2" Background="LightGray" Margin="6,7,6,7" />
+								<TextBlock Grid.Row="2" TextWrapping="NoWrap">
+									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=1}" />
+								</TextBlock>
+								<TextBlock Grid.Row="3" TextWrapping="NoWrap">
+									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=2}" />
+								</TextBlock>
+								<Separator Grid.Row="4" Background="Snow" Margin="6,7,6,7" />
 							</Grid>
 						</DataTemplate>
 					</services:ConditionalDataTemplate>
@@ -213,7 +221,7 @@
 
 			<WindowsFormsHost Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="NoteEditHost">
 				<WindowsFormsHost.Child>
-					<scinet:Scintilla x:Name="NoteEdit" KeyPress="NoteEdit_OnKeyPress" />
+					<scinet:Scintilla x:Name="NoteEdit" KeyPress="NoteEdit_OnKeyPress" KeyDown="NoteEdit_OnKeyDown" />
 				</WindowsFormsHost.Child>
 			</WindowsFormsHost>
 

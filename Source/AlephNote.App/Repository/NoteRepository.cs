@@ -1,4 +1,5 @@
-﻿using AlephNote.PluginInterface;
+﻿using System.ComponentModel;
+using AlephNote.PluginInterface;
 using AlephNote.Settings;
 using AlephNote.WPF.Windows;
 using MSHC.Util.Helper;
@@ -20,6 +21,7 @@ namespace AlephNote.Repository
 		private readonly string pathLocal;
 		private readonly IRemoteProvider provider;
 		private readonly IRemoteStorageConnection conn;
+		private readonly IRemoteStorageConfiguration remoteconfig;
 		private readonly AppSettings appconfig;
 		private readonly SynchronizationThread thread;
 		private readonly ISynchronizationFeedback listener;
@@ -40,10 +42,11 @@ namespace AlephNote.Repository
 		{
 			pathLocal = Path.Combine(path, prov.GetUniqueID().ToString("B"), FilenameHelper.ConvertStringForFilename(config.GetUniqueName()));
 			conn = prov.CreateRemoteStorageConnection(cfg.CreateProxy(), config);
+			remoteconfig = config;
 			provider = prov;
 			appconfig = cfg;
 			listener = fb;
-			thread = new SynchronizationThread(this, fb);
+			thread = new SynchronizationThread(this, fb, cfg.ConflictResolution);
 
 			invSaveNotesLocal = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SaveAllDirtyNotes)),  1 * 1000,  1 * 60 * 1000);
 			invSaveNotesRemote = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SyncNow)),          30 * 1000, 15 * 60 * 1000);
@@ -84,7 +87,7 @@ namespace AlephNote.Repository
 					var data = root.Element("data");
 					if (data == null) throw new Exception("missing data node");
 
-					var note = provider.CreateEmptyNote();
+					var note = provider.CreateEmptyNote(remoteconfig);
 					note.Deserialize(data.Elements().FirstOrDefault());
 					note.ResetLocalDirty();
 					note.ResetRemoteDirty();
@@ -93,6 +96,7 @@ namespace AlephNote.Repository
 					if (meta == null) throw new Exception("missing meta node");
 
 					if (XHelper.GetChildValue(meta, "dirty", false)) note.SetRemoteDirty();
+					note.IsConflictNote = XHelper.GetChildValue(meta, "conflict", false);
 
 					Notes.Add(note);
 				}
@@ -105,7 +109,7 @@ namespace AlephNote.Repository
 
 		public INote CreateNewNote()
 		{
-			var note = provider.CreateEmptyNote();
+			var note = provider.CreateEmptyNote(remoteconfig);
 			Notes.Add(note);
 			note.SetDirty();
 			SaveNote(note);
@@ -131,6 +135,7 @@ namespace AlephNote.Repository
 			meta.Add(new XElement("date", DateTime.Now.ToString("O")));
 			meta.Add(new XElement("provider", provider.GetUniqueID().ToString("B")));
 			meta.Add(new XElement("dirty", !note.IsRemoteSaved));
+			meta.Add(new XElement("conflict", note.IsConflictNote));
 			root.Add(meta);
 
 			root.Add(new XElement("data", note.Serialize()));
@@ -159,12 +164,14 @@ namespace AlephNote.Repository
 			}
 		}
 
-		private void NoteChanged(object sender, EventArgs e)
+		private void NoteChanged(object sender, NoteChangedEventArgs e)
 		{
 			invSaveNotesLocal.Request();
 			invSaveNotesRemote.Request();
 
 			listener.OnSyncRequest();
+
+			listener.OnNoteChanged(e);
 		}
 
 		public void DeleteNote(INote note, bool updateRemote)

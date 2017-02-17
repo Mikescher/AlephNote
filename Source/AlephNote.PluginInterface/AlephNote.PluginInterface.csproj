@@ -40,14 +40,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConflictResolutionStrategy.cs" />
     <Compile Include="DynamicSettingValue.cs" />
     <Compile Include="IRemoteStorageConfiguration.cs" />
     <Compile Include="IRemoteStorageConnection.cs" />
     <Compile Include="IRemoteProvider.cs" />
     <Compile Include="INote.cs" />
+    <Compile Include="NoteChangedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteUploadResult.cs" />
     <Compile Include="RemoteException.cs" />
-    <Compile Include="RemoteResult.cs" />
+    <Compile Include="RemoteDownloadResult.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

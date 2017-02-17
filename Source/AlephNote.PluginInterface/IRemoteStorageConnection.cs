@@ -5,8 +5,8 @@ namespace AlephNote.PluginInterface
 {
 	public interface IRemoteStorageConnection
 	{
-		INote UploadNote(INote note);
-		RemoteResult UpdateNote(INote note);
+		RemoteUploadResult UploadNoteToRemote(ref INote note, out INote conflict, ConflictResolutionStrategy strategy);
+		RemoteDownloadResult UpdateNoteFromRemote(INote note);
 		void StartSync();
 		void FinishSync();
 		INote DownloadNote(string id, out bool result);

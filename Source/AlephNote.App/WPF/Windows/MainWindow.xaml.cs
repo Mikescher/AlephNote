@@ -113,6 +113,9 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.ZoomChanged -= ZoomChanged;
 			NoteEdit.ZoomChanged += ZoomChanged;
 
+			NoteEdit.UseTabs = s.SciUseTabs;
+			NoteEdit.TabWidth = s.SciTabWidth * 2;
+
 			ResetScintillaScrollAndUndo();
 		}
 
@@ -177,6 +180,24 @@ namespace AlephNote.WPF.Windows
 				// Prevent control characters from getting inserted into the text buffer
 				e.Handled = true;
 				return;
+			}
+		}
+
+		private void NoteEdit_OnKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		{
+			// Manually call our Shortcuts
+			// Cause the WindowsFormsHost fucks everything up
+
+			if (e.Control && e.KeyCode == Keys.S)
+			{
+				viewmodel.SaveAndSyncCommand.Execute(sender);
+				e.Handled = true;
+			}
+
+			if (e.Control && e.KeyCode == Keys.N)
+			{
+				viewmodel.CreateNewNoteCommand.Execute(sender);
+				e.Handled = true;
 			}
 		}
 

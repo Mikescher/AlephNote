@@ -24,7 +24,7 @@ namespace AlephNote.Plugins.Headless
 			return new HeadlessConnection();
 		}
 
-		public override INote CreateEmptyNote()
+		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
 		{
 			return new HeadlessNote(Guid.NewGuid());
 		}

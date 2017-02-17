@@ -1,10 +1,10 @@
 ﻿using AlephNote.PluginInterface;
+using MSHC.Lang.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using System.Windows.Documents;
 
 namespace AlephNote.Repository
 {
@@ -12,6 +12,7 @@ namespace AlephNote.Repository
 	{
 		private readonly NoteRepository repo;
 		private readonly ISynchronizationFeedback listener;
+		private readonly ConflictResolutionStrategy conflictStrategy;
 		private int delay;
 
 		private Thread thread;
@@ -21,10 +22,11 @@ namespace AlephNote.Repository
 		private bool running = false;
 		private bool isSyncing = false;
 		
-		public SynchronizationThread(NoteRepository repository, ISynchronizationFeedback synclistener)
+		public SynchronizationThread(NoteRepository repository, ISynchronizationFeedback synclistener, ConflictResolutionStrategy strat)
 		{
 			repo = repository;
 			listener = synclistener;
+			conflictStrategy = strat;
 		}
 
 		public void Start(int syncdelay)
@@ -125,22 +127,103 @@ namespace AlephNote.Repository
 						});
 					}
 
-					clonenote = repo.Connection.UploadNote(clonenote);
+					INote conflictnote;
+					var result = repo.Connection.UploadNoteToRemote(ref clonenote, out conflictnote, conflictStrategy);
 
-					Invoke(() =>
+					switch (result)
 					{
-						if (realnote.IsLocalSaved)
-						{
-							realnote.OnAfterUpload(clonenote);
-							repo.SaveNote(realnote);
-							realnote.IsRemoteSaved = true;
-						}
-					});
+						case RemoteUploadResult.UpToDate:
+						case RemoteUploadResult.Uploaded:
+							Invoke(() =>
+							{
+								if (realnote.IsLocalSaved)
+								{
+									realnote.OnAfterUpload(clonenote);
+									realnote.ResetRemoteDirty();
+									repo.SaveNote(realnote);
+								}
+							});
+							break;
+						case RemoteUploadResult.Conflict:
+							ResolveUploadConflict(realnote, clonenote, conflictnote);
+							break;
+						default:
+							throw new ArgumentOutOfRangeException();
+					}
+
 				}
 				catch (Exception e)
 				{
 					errors.Add(Tuple.Create(string.Format("Could not upload note '{2}' ({0}) cause of {1}", clonenote.GetUniqueName(), e.Message, clonenote.Title), e));
 				}
+			}
+		}
+
+		/// <param name="realnote">The real note in the repository (owned by UI Thread)</param>
+		/// <param name="clonenote">The new note data</param>
+		/// <param name="conflictnote">The conflicting note</param>
+		private void ResolveUploadConflict(INote realnote, INote clonenote, INote conflictnote)
+		{
+			switch (conflictStrategy)
+			{
+				case ConflictResolutionStrategy.UseClientVersion:
+					Invoke(() =>
+					{
+						if (realnote.IsLocalSaved)
+						{
+							realnote.OnAfterUpload(clonenote);
+							realnote.ResetRemoteDirty();
+							repo.SaveNote(realnote);
+						}
+					});
+					break;
+				case ConflictResolutionStrategy.UseServerVersion:
+					Invoke(() =>
+					{
+						realnote.ApplyUpdatedData(clonenote);
+						realnote.TriggerOnChanged();
+						realnote.SetLocalDirty();
+						realnote.ResetRemoteDirty();
+						repo.SaveNote(realnote);
+					});
+					break;
+				case ConflictResolutionStrategy.UseClientCreateConflictFile:
+					Invoke(() =>
+					{
+						if (realnote.IsLocalSaved)
+						{
+							realnote.OnAfterUpload(clonenote);
+							realnote.ResetRemoteDirty();
+							repo.SaveNote(realnote);
+
+							var conflict = repo.CreateNewNote();
+							conflict.Title = string.Format("{0}_conflict-{1:yyyy-MM-dd_HH:mm:ss}", conflictnote.Title, DateTime.Now);
+							conflict.Text = conflictnote.Text;
+							conflict.Tags.Synchronize(conflictnote.Tags);
+							conflict.IsConflictNote = true;
+							repo.SaveNote(conflict);
+						}
+					});
+					break;
+				case ConflictResolutionStrategy.UseServerCreateConflictFile:
+					Invoke(() =>
+					{
+						realnote.ApplyUpdatedData(clonenote);
+						realnote.TriggerOnChanged();
+						realnote.SetLocalDirty();
+						realnote.ResetRemoteDirty();
+						repo.SaveNote(realnote);
+
+						var conflict = repo.CreateNewNote();
+						conflict.Title = string.Format("{0}_conflict-{1:yyyy-MM-dd_HH:mm:ss}", conflictnote.Title, DateTime.Now);
+						conflict.Text = conflictnote.Text;
+						conflict.Tags.Synchronize(conflictnote.Tags);
+						conflict.IsConflictNote = true;
+						repo.SaveNote(conflict);
+					});
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 		}
 
@@ -155,15 +238,15 @@ namespace AlephNote.Repository
 				{
 					if (!clonenote.IsLocalSaved) continue;
 
-					var result = repo.Connection.UpdateNote(clonenote);
+					var result = repo.Connection.UpdateNoteFromRemote(clonenote);
 
 					switch (result)
 					{
-						case RemoteResult.UpToDate:
+						case RemoteDownloadResult.UpToDate:
 							// OK
 							break;
 
-						case RemoteResult.Updated:
+						case RemoteDownloadResult.Updated:
 							Invoke(() =>
 							{
 								if (realnote.IsLocalSaved)
@@ -176,7 +259,7 @@ namespace AlephNote.Repository
 							});
 							break;
 
-						case RemoteResult.DeletedOnRemote:
+						case RemoteDownloadResult.DeletedOnRemote:
 							Invoke(() =>
 							{
 								if (realnote.IsLocalSaved)

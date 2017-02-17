@@ -36,6 +36,11 @@ namespace AlephNote.Plugins.Headless
 			throw new ArgumentException();
 		}
 
+		public void SetProperty(int id, bool value)
+		{
+			throw new ArgumentException();
+		}
+
 		public bool IsEqual(IRemoteStorageConfiguration other)
 		{
 			return other is HeadlessConfig;

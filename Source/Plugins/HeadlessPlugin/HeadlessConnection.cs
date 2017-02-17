@@ -41,14 +41,15 @@ namespace AlephNote.Plugins.Headless
 			return false;
 		}
 
-		public RemoteResult UpdateNote(INote note)
+		public RemoteDownloadResult UpdateNoteFromRemote(INote note)
 		{
-			return RemoteResult.UpToDate;
+			return RemoteDownloadResult.UpToDate;
 		}
 
-		public INote UploadNote(INote note)
+		public RemoteUploadResult UploadNoteToRemote(ref INote note, out INote conflict, ConflictResolutionStrategy strategy)
 		{
-			return note;
+			conflict = null;
+			return RemoteUploadResult.UpToDate;
 		}
 	}
 }

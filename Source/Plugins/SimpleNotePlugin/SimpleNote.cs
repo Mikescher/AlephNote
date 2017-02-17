@@ -39,9 +39,12 @@ namespace AlephNote.Plugins.SimpleNote
 		private int _localVersion;
 		public int LocalVersion { get { return _localVersion; } set { _localVersion = value; OnPropertyChanged(); } }
 
-		public SimpleNote(string uid)
+		private readonly SimpleNoteConfig _config;
+
+		public SimpleNote(string uid, SimpleNoteConfig cfg)
 		{
 			_id = uid;
+			_config = cfg;
 		}
 
 		private readonly ObservableCollection<string> _tags = new ObservableCollection<string>();
@@ -52,9 +55,21 @@ namespace AlephNote.Plugins.SimpleNote
 			get
 			{
 				var lines = _content.Split('\n');
-				if (lines.Length <= 1) return string.Empty;
+				if (lines.Length == 0) return string.Empty;
+				if (lines.Length == 1) return string.Empty;
+				if (lines.Length == 2) return lines[1];
 
-				return string.Join("\n", lines.Skip(1));
+				if (_config.BlankLineBelowTitle)
+				{
+					if (!string.IsNullOrWhiteSpace(lines[1])) return string.Join("\n", lines.Skip(1));
+
+					return string.Join("\n", lines.Skip(2));
+				}
+				else
+				{
+					return string.Join("\n", lines.Skip(1));
+				}
+
 			}
 			set
 			{
@@ -65,7 +80,14 @@ namespace AlephNote.Plugins.SimpleNote
 				}
 				else
 				{
-					_content = lines[0] + "\n" + value;
+					if (_config.BlankLineBelowTitle)
+					{
+						_content = lines[0] + "\n" + "\n" + value;
+					}
+					else
+					{
+						_content = lines[0] + "\n" + value;
+					}
 				}
 				OnPropertyChanged();
 			}
@@ -84,10 +106,28 @@ namespace AlephNote.Plugins.SimpleNote
 				{
 					_content = value;
 				}
+				else if (lines.Length == 1)
+				{
+					_content = value;
+				}
 				else
 				{
-					lines[0] = value;
-					_content = string.Join("\n", lines);
+					if (_config.BlankLineBelowTitle)
+					{
+						if (lines.Length >= 2 && string.IsNullOrWhiteSpace(lines[1]))
+						{
+							_content = value + "\n" + "\n" + string.Join("\n", lines.Skip(2));
+						}
+						else
+						{
+							_content = value + "\n" + "\n" + string.Join("\n", lines.Skip(1));
+						}
+					}
+					else
+					{
+						lines[0] = value;
+						_content = string.Join("\n", lines);
+					}
 				}
 				OnPropertyChanged();
 			}
@@ -140,7 +180,7 @@ namespace AlephNote.Plugins.SimpleNote
 
 		protected override BasicNote CreateClone()
 		{
-			var n = new SimpleNote(_id);
+			var n = new SimpleNote(_id, _config);
 			n._tags.Synchronize(_tags.ToList());
 			n._content = _content;
 			n._deleted = _deleted;
