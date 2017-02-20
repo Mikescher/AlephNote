@@ -155,7 +155,7 @@ namespace AlephNote.Plugins.SimpleNote
 			};
 
 			var r = new XElement("simplenote", data);
-			r.SetAttributeValue("plugin", "SimpleNotePlugin");
+			r.SetAttributeValue("plugin", SimpleNotePlugin.Name);
 			r.SetAttributeValue("pluginversion", SimpleNotePlugin.Version.ToString());
 
 			return r;

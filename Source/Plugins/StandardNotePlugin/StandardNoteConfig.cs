@@ -12,9 +12,9 @@ namespace AlephNote.Plugins.StandardNote
 	{
 		private const string ENCRYPTION_KEY = @"HuIpJachKuRyJuOmVelThufCeck";
 		
-		private const int ID_EMAIL    = 6151;
-		private const int ID_PASSWORD = 6152;
-		private const int ID_SERVER   = 613;
+		private const int ID_EMAIL    = 6251;
+		private const int ID_PASSWORD = 6252;
+		private const int ID_SERVER   = 6253;
 
 		public string Email    = string.Empty;
 		public string Password = string.Empty;
@@ -57,6 +57,11 @@ namespace AlephNote.Plugins.StandardNote
 			if (id == ID_EMAIL) Email = value;
 			if (id == ID_PASSWORD) Password = value;
 			if (id == ID_SERVER) Server = value;
+		}
+
+		public void SetProperty(int id, bool value)
+		{
+			throw new ArgumentException();
 		}
 
 		public bool IsEqual(IRemoteStorageConfiguration iother)

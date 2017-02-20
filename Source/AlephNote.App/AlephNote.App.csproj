@@ -201,11 +201,16 @@
       <Name>StandardNotePlugin</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\Plugins\HeadlessPlugin\HeadlessPlugin.csproj">
-      <Project>{7F674975-7A10-458E-BDF9-82AEC27CAFAA}</Project>
-      <Name>HeadlessPlugin</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
+		<ProjectReference Include="..\Plugins\HeadlessPlugin\HeadlessPlugin.csproj">
+			<Project>{7F674975-7A10-458E-BDF9-82AEC27CAFAA}</Project>
+			<Name>HeadlessPlugin</Name>
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
+		<ProjectReference Include="..\Plugins\FilesystemPlugin\FilesystemPlugin.csproj">
+			<Project>{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5}</Project>
+			<Name>FilesystemPlugin</Name>
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="IconMain.ico" />

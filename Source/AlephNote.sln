@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpUtils", "External\CSh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeadlessPlugin", "Plugins\HeadlessPlugin\HeadlessPlugin.csproj", "{7F674975-7A10-458E-BDF9-82AEC27CAFAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilesystemPlugin", "Plugins\FilesystemPlugin\FilesystemPlugin.csproj", "{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{7F674975-7A10-458E-BDF9-82AEC27CAFAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F674975-7A10-458E-BDF9-82AEC27CAFAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F674975-7A10-458E-BDF9-82AEC27CAFAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,5 +69,6 @@ Global
 		{D4F7E915-D101-4500-A01D-B9C366575662} = {0B76231E-AA47-46DF-A894-ACBE698F2ECE}
 		{D661CD9F-8934-496D-8332-BC82AAB77598} = {680C7441-8AC2-444D-A35F-135A70381F1E}
 		{7F674975-7A10-458E-BDF9-82AEC27CAFAA} = {0B76231E-AA47-46DF-A894-ACBE698F2ECE}
+		{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5} = {0B76231E-AA47-46DF-A894-ACBE698F2ECE}
 	EndGlobalSection
 EndGlobal
