@@ -5,7 +5,7 @@ namespace AlephNote.Plugins.Headless
 {
 	class HeadlessConnection : IRemoteStorageConnection
 	{
-		public void StartSync()
+		public void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes)
 		{
 			// ok
 		}

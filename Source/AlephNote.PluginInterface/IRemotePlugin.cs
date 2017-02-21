@@ -3,7 +3,7 @@ using System.Net;
 
 namespace AlephNote.PluginInterface
 {
-	public interface IRemoteProvider
+	public interface IRemotePlugin
 	{
 		string DisplayTitleLong { get; }
 		string DisplayTitleShort { get; }
@@ -14,10 +14,11 @@ namespace AlephNote.PluginInterface
 
 		IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
 		IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config);
+		IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData();
 		INote CreateEmptyNote(IRemoteStorageConfiguration cfg);
 	}
 
-	public abstract class RemoteBasicProvider : IRemoteProvider
+	public abstract class BasicRemotePlugin : IRemotePlugin
 	{
 		private readonly Guid uuid;
 		private readonly string name;
@@ -26,7 +27,7 @@ namespace AlephNote.PluginInterface
 		public string DisplayTitleLong { get { return GetName() + " v" + GetVersion(); } }
 		public string DisplayTitleShort { get { return GetName(); } }
 
-		protected RemoteBasicProvider(string name, Version version, Guid uuid)
+		protected BasicRemotePlugin(string name, Version version, Guid uuid)
 		{
 			this.name = name;
 			this.uuid = uuid;
@@ -50,6 +51,7 @@ namespace AlephNote.PluginInterface
 
 		public abstract IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
 		public abstract IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config);
+		public abstract IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData();
 		public abstract INote CreateEmptyNote(IRemoteStorageConfiguration cfg);
 	}
 }

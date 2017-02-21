@@ -44,8 +44,9 @@
     <Compile Include="DynamicSettingValue.cs" />
     <Compile Include="IRemoteStorageConfiguration.cs" />
     <Compile Include="IRemoteStorageConnection.cs" />
-    <Compile Include="IRemoteProvider.cs" />
+    <Compile Include="IRemotePlugin.cs" />
     <Compile Include="INote.cs" />
+    <Compile Include="IRemoteStorageSyncPersistance.cs" />
     <Compile Include="NoteChangedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteUploadResult.cs" />

@@ -4,7 +4,7 @@ using System.Net;
 
 namespace AlephNote.Plugins.StandardNote
 {
-	public class StandardNotePlugin : RemoteBasicProvider
+	public class StandardNotePlugin : BasicRemotePlugin
 	{
 		public static readonly Version Version = new Version(0, 0, 0, 1);
 		public const string Name = "StandardNotePlugin";
@@ -26,7 +26,12 @@ namespace AlephNote.Plugins.StandardNote
 
 		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
 		{
-			throw new NotImplementedException();
+			return new StandardNote(Guid.NewGuid(), (StandardNoteConfig)cfg);
+		}
+
+		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()
+		{
+			return new StandardNoteData();
 		}
 	}
 }

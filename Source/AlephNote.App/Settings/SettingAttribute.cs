@@ -55,7 +55,7 @@ namespace AlephNote.Settings
 					data = ((FontFamily)prop.GetValue(obj)).Source;
 					break;
 				case SettingType.RemoteProvider:
-					data = ((IRemoteProvider)prop.GetValue(obj)).GetUniqueID().ToString("B");
+					data = ((IRemotePlugin)prop.GetValue(obj)).GetUniqueID().ToString("B");
 					break;
 				default:
 					throw new ArgumentOutOfRangeException("ptype", ptype, null);
@@ -131,7 +131,7 @@ namespace AlephNote.Settings
 				case SettingType.FontFamily:
 					return ((FontFamily)va).Source == ((FontFamily)vb).Source;
 				case SettingType.RemoteProvider:
-					return ((IRemoteProvider)va).GetUniqueID() == ((IRemoteProvider)vb).GetUniqueID();
+					return ((IRemotePlugin)va).GetUniqueID() == ((IRemotePlugin)vb).GetUniqueID();
 				default:
 					throw new ArgumentOutOfRangeException("ptype", ptype, null);
 			}
@@ -166,7 +166,7 @@ namespace AlephNote.Settings
 			if (prop.PropertyType == typeof(Guid)) return SettingType.Guid;
 			if (prop.PropertyType == typeof(FontFamily)) return SettingType.FontFamily;
 			if (prop.PropertyType.IsEnum) return SettingType.Enum;
-			if (typeof(IRemoteProvider).IsAssignableFrom(prop.PropertyType)) return SettingType.RemoteProvider;
+			if (typeof(IRemotePlugin).IsAssignableFrom(prop.PropertyType)) return SettingType.RemoteProvider;
 
 			throw new NotSupportedException("Setting of type " + prop.PropertyType + " not supported");
 		}

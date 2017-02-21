@@ -24,7 +24,7 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			var data = new object[]
 			{
-				new XElement("Username", Email),
+				new XElement("Email", Email),
 				new XElement("Password", Encrypt(Password)),
 				new XElement("Server", Server),
 			};
@@ -100,7 +100,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public string GetUniqueName()
 		{
-			return Email + ";" + Server;
+			return Email + ";" + FilenameHelper.StripStringForFilename(Server);
 		}
 	}
 }

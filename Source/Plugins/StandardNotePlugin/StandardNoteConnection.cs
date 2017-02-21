@@ -7,7 +7,7 @@ namespace AlephNote.Plugins.StandardNote
 {
 	/// <summary>
 	/// https://github.com/standardnotes/doc/blob/master/Client%20Development%20Guide.md
-	/// http://standardfile.org/api#api
+	/// http://standardfile.org/#api
 	/// </summary>
 	class StandardNoteConnection : IRemoteStorageConnection
 	{
@@ -35,22 +35,22 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
+		public void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes)
+		{
+			RefreshToken();
+		}
+
+		public void FinishSync()
+		{
+			throw new NotImplementedException();
+		}
+
 		public RemoteUploadResult UploadNoteToRemote(ref INote note, out INote conflict, ConflictResolutionStrategy strategy)
 		{
 			throw new NotImplementedException();
 		}
 
 		public RemoteDownloadResult UpdateNoteFromRemote(INote note)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void StartSync()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void FinishSync()
 		{
 			throw new NotImplementedException();
 		}

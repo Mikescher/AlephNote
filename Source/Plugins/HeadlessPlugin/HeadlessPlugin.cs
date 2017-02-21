@@ -4,7 +4,7 @@ using System.Net;
 
 namespace AlephNote.Plugins.Headless
 {
-	public class HeadlessPlugin : RemoteBasicProvider
+	public class HeadlessPlugin : BasicRemotePlugin
 	{
 		public static readonly Version Version = new Version(0, 0, 0, 1);
 		public const string Name = "HeadlessPlugin";
@@ -27,6 +27,11 @@ namespace AlephNote.Plugins.Headless
 		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
 		{
 			return new HeadlessNote(Guid.NewGuid());
+		}
+
+		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()
+		{
+			return new HeadlessData();
 		}
 	}
 }

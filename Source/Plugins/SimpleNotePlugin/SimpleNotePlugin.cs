@@ -4,7 +4,7 @@ using System.Net;
 
 namespace AlephNote.Plugins.SimpleNote
 {
-	public class SimpleNotePlugin : RemoteBasicProvider
+	public class SimpleNotePlugin : BasicRemotePlugin
 	{
 		public static readonly Version Version = new Version(0, 0, 0, 1);
 		public const string Name = "SimpleNotePlugin";
@@ -27,6 +27,11 @@ namespace AlephNote.Plugins.SimpleNote
 		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
 		{
 			return new SimpleNote(Guid.NewGuid().ToString("N").ToUpper(), (SimpleNoteConfig)cfg);
+		}
+
+		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()
+		{
+			return new SimpleNoteData();
 		}
 	}
 }

@@ -21,7 +21,7 @@ namespace AlephNote.WPF.Converter
 		{
 			if (values.Length != 2 || values.Any(p => p == DependencyProperty.UnsetValue)) return DependencyProperty.UnsetValue;
 
-			var provider = values[0] as IRemoteProvider;
+			var provider = values[0] as IRemotePlugin;
 			var settings = values[1] as AppSettings;
 
 			if (provider == null) return DependencyProperty.UnsetValue;

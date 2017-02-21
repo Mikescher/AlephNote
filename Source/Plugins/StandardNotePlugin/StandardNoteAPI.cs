@@ -1,6 +1,8 @@
 ﻿using MSHC.Math.Encryption;
+using MSHC.Network;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Net;
 using System.Text;
 
@@ -8,6 +10,7 @@ namespace AlephNote.Plugins.StandardNote
 {
 	/// <summary>
 	/// https://github.com/standardnotes/doc/blob/master/Client%20Development%20Guide.md
+	/// http://standardfile.org/api#api
 	/// </summary>
 	static class StandardNoteAPI
 	{
@@ -24,7 +27,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		private static WebClient CreateClient(IWebProxy proxy, string authToken)
 		{
-			var web = new WebClient();
+			var web = new GZWebClient();
 			if (proxy != null) web.Proxy = proxy;
 			web.Headers["User-Agent"] = "AlephNote/1.0.0.0";
 			if (authToken != null) web.Headers["X-Simperium-Token"] = authToken;
@@ -81,10 +84,13 @@ namespace AlephNote.Plugins.StandardNote
 				{
 					throw new Exception("Unknown pw_alg: " + apiparams.pw_alg);
 				}
-				
-				var uri = CreateUri(host, "auth/sign-in", "email=" + mail + "&password=" + EncodingConverter.ByteToHexBitFiddle(bytes));
 
-				result = CreateClient(proxy, null).DownloadString(uri);
+				var pw = bytes.Take(bytes.Length / 2).ToArray();
+				var mk = bytes.Skip(bytes.Length / 2).ToArray();
+
+				var uri = CreateUri(host, "auth/sign_in", "email=" + mail + "&password=" + EncodingConverter.ByteToHexBitFiddle(pw).ToLower());
+
+				result = CreateClient(proxy, null).UploadString(uri, string.Empty);
 
 				return JsonConvert.DeserializeObject<APIResultAuthorize>(result);
 

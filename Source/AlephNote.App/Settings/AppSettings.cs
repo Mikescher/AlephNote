@@ -51,8 +51,8 @@ namespace AlephNote.Settings
 		private string _proxyPassword = string.Empty;
 
 		[Setting]
-		public IRemoteProvider NoteProvider { get { return _noteProvider; } set { _noteProvider = value; OnPropertyChanged(); } }
-		private IRemoteProvider _noteProvider = null;
+		public IRemotePlugin NoteProvider { get { return _noteProvider; } set { _noteProvider = value; OnPropertyChanged(); } }
+		private IRemotePlugin _noteProvider = null;
 
 		[Setting]
 		public bool MinimizeToTray { get { return _minimizeToTray; } set { _minimizeToTray = value; OnPropertyChanged(); } }

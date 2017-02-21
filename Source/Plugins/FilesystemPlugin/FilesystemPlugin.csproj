@@ -42,6 +42,7 @@
     <Compile Include="FilesystemConnection.cs" />
     <Compile Include="FilesystemPlugin.cs" />
     <Compile Include="FilesystemConfig.cs" />
+    <Compile Include="FilesystemData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FilesystemNote.cs" />
   </ItemGroup>

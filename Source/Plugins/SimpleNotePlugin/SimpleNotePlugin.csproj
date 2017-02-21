@@ -49,6 +49,7 @@
     <Compile Include="SimpleNoteAPIException.cs" />
     <Compile Include="SimpleNoteConfig.cs" />
     <Compile Include="SimpleNoteConnection.cs" />
+    <Compile Include="SimpleNoteData.cs" />
     <Compile Include="SimpleNotePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

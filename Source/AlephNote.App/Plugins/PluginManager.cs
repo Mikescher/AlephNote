@@ -10,12 +10,12 @@ namespace AlephNote.Plugins
 {
 	public static class PluginManager
 	{
-		private static List<IRemoteProvider> _provider = new List<IRemoteProvider>();
-		public static IEnumerable<IRemoteProvider> LoadedPlugins { get { return _provider; } }
+		private static List<IRemotePlugin> _provider = new List<IRemotePlugin>();
+		public static IEnumerable<IRemotePlugin> LoadedPlugins { get { return _provider; } }
 
 		public static void LoadPlugins()
 		{
-			_provider = new List<IRemoteProvider>();
+			_provider = new List<IRemotePlugin>();
 
 			var pluginPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"plugins\");
 			var pluginfiles = Directory.GetFiles(pluginPath, "*.dll");
@@ -49,9 +49,9 @@ namespace AlephNote.Plugins
 			{
 				if (type.IsInterface || type.IsAbstract) continue;
 
-				if (type.GetInterface(typeof(IRemoteProvider).FullName) != null)
+				if (type.GetInterface(typeof(IRemotePlugin).FullName) != null)
 				{
-					IRemoteProvider instance = (IRemoteProvider)Activator.CreateInstance(type);
+					IRemotePlugin instance = (IRemotePlugin)Activator.CreateInstance(type);
 
 					if (instance == null) throw new Exception("Could not instantiate IAlephNotePlugin '" + type.FullName + "'");
 
@@ -60,7 +60,7 @@ namespace AlephNote.Plugins
 			}
 		}
 
-		public static IRemoteProvider GetDefaultPlugin()
+		public static IRemotePlugin GetDefaultPlugin()
 		{
 			foreach (var plugin in LoadedPlugins)
 			{
@@ -70,7 +70,7 @@ namespace AlephNote.Plugins
 			return LoadedPlugins.First();
 		}
 
-		public static IRemoteProvider GetPlugin(Guid uuid)
+		public static IRemotePlugin GetPlugin(Guid uuid)
 		{
 			return LoadedPlugins.FirstOrDefault(p => p.GetUniqueID() == uuid);
 		}

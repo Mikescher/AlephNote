@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using AlephNote.PluginInterface;
+﻿using AlephNote.PluginInterface;
 using AlephNote.Settings;
 using AlephNote.WPF.Windows;
 using MSHC.Util.Helper;
@@ -18,8 +17,9 @@ namespace AlephNote.Repository
 {
 	public class NoteRepository : ObservableObject
 	{
-		private readonly string pathLocal;
-		private readonly IRemoteProvider provider;
+		private readonly string pathLocalFolder;
+		private readonly string pathLocalData;
+		private readonly IRemotePlugin provider;
 		private readonly IRemoteStorageConnection conn;
 		private readonly IRemoteStorageConfiguration remoteconfig;
 		private readonly AppSettings appconfig;
@@ -38,9 +38,10 @@ namespace AlephNote.Repository
 
 		public string ConnectionName { get { return provider.DisplayTitleShort; } }
 
-		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, IRemoteProvider prov, IRemoteStorageConfiguration config)
+		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, IRemotePlugin prov, IRemoteStorageConfiguration config)
 		{
-			pathLocal = Path.Combine(path, prov.GetUniqueID().ToString("B"), FilenameHelper.ConvertStringForFilename(config.GetUniqueName()));
+			pathLocalFolder = Path.Combine(path, prov.GetUniqueID().ToString("B"), FilenameHelper.ConvertStringForFilename(config.GetUniqueName()));
+			pathLocalData = Path.Combine(path, prov.GetUniqueID().ToString("B"), FilenameHelper.ConvertStringForFilename(config.GetUniqueName()) + ".xml");
 			conn = prov.CreateRemoteStorageConnection(cfg.CreateProxy(), config);
 			remoteconfig = config;
 			provider = prov;
@@ -56,7 +57,7 @@ namespace AlephNote.Repository
 
 		public void Init()
 		{
-			if (!Directory.Exists(pathLocal)) Directory.CreateDirectory(pathLocal);
+			if (!Directory.Exists(pathLocalFolder)) Directory.CreateDirectory(pathLocalFolder);
 
 			LoadNotesFromLocal();
 
@@ -73,7 +74,7 @@ namespace AlephNote.Repository
 
 		private void LoadNotesFromLocal()
 		{
-			var noteFiles = Directory.GetFiles(pathLocal, "*.xml");
+			var noteFiles = Directory.GetFiles(pathLocalFolder, "*.xml");
 
 			foreach (var noteFile in noteFiles)
 			{
@@ -127,7 +128,7 @@ namespace AlephNote.Repository
 
 		public void SaveNote(INote note)
 		{
-			var path = Path.Combine(pathLocal, note.GetUniqueName() + ".xml");
+			var path = Path.Combine(pathLocalFolder, note.GetUniqueName() + ".xml");
 
 			var root = new XElement("note");
 
@@ -178,7 +179,7 @@ namespace AlephNote.Repository
 		{
 			var found = Notes.Remove(note);
 
-			var path = Path.Combine(pathLocal, note.GetUniqueName() + ".xml");
+			var path = Path.Combine(pathLocalFolder, note.GetUniqueName() + ".xml");
 			if (File.Exists(path)) File.Delete(path);
 
 			if (found && updateRemote)
@@ -209,6 +210,40 @@ namespace AlephNote.Repository
 		public void SaveAll()
 		{
 			SaveAllDirtyNotes();
+		}
+
+		public IRemoteStorageSyncPersistance GetSyncData()
+		{
+			var d = provider.CreateEmptyRemoteSyncData();
+			if (File.Exists(pathLocalData))
+			{
+				try
+				{
+					var doc = XDocument.Load(pathLocalData);
+
+					var root = doc.Root;
+					if (root == null) throw new Exception("Root == null");
+
+					d.Deserialize(root);
+
+					return d;
+				}
+				catch (Exception e)
+				{
+					throw new Exception("Could not load synchronization state from '" + pathLocalData + "'", e);
+				}
+			}
+			else
+			{
+				WriteSyncData(d);
+				return d;
+			}
+		}
+
+		private void WriteSyncData(IRemoteStorageSyncPersistance data)
+		{
+			var x = new XDocument(data.Serialize());
+			x.Save(pathLocalData);
 		}
 	}
 }

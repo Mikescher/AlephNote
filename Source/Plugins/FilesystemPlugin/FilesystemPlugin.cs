@@ -4,7 +4,7 @@ using System.Net;
 
 namespace AlephNote.Plugins.Filesystem
 {
-	public class FilesystemPlugin : RemoteBasicProvider
+	public class FilesystemPlugin : BasicRemotePlugin
 	{
 		public static readonly Version Version = new Version(0, 0, 0, 1);
 		public const string Name = "FilesystemPlugin";
@@ -27,6 +27,11 @@ namespace AlephNote.Plugins.Filesystem
 		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
 		{
 			return new FilesystemNote(Guid.NewGuid(), (FilesystemConfig)cfg);
+		}
+
+		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()
+		{
+			return new FilesystemData();
 		}
 	}
 }

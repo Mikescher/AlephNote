@@ -110,7 +110,7 @@ namespace AlephNote.Plugins.Filesystem
 			return RemoteDownloadResult.Updated;
 		}
 
-		public void StartSync()
+		public void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes)
 		{
 			_syncScan = Directory
 				.EnumerateFiles(_config.Folder)

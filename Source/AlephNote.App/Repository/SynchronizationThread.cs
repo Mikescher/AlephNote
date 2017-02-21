@@ -15,6 +15,7 @@ namespace AlephNote.Repository
 		private readonly ConflictResolutionStrategy conflictStrategy;
 		private int delay;
 
+		private static object syncobj = new object();
 		private Thread thread;
 
 		private bool prioritysync = false;
@@ -35,8 +36,7 @@ namespace AlephNote.Repository
 
 			delay = syncdelay;
 			cancel = false;
-			thread = new Thread(ThreadRun);
-			thread.IsBackground = true;
+			thread = new Thread(ThreadRun) { IsBackground = true };
 			thread.Start();
 		}
 
@@ -46,9 +46,12 @@ namespace AlephNote.Repository
 
 			for (; ; )
 			{
-				isSyncing = true;
-				DoSync();
-				isSyncing = false;
+				lock (syncobj)
+				{
+					isSyncing = true;
+					DoSync();
+					isSyncing = false;
+				}
 
 				var tick = Environment.TickCount;
 				do
@@ -70,20 +73,20 @@ namespace AlephNote.Repository
 
 			try
 			{
+				var data = repo.GetSyncData();
 
-				repo.Connection.StartSync();
+				List<Tuple<INote, INote>> allNotes = new List<Tuple<INote, INote>>();
+				List<INote> notesToDelete = new List<INote>();
+				Invoke(() =>
 				{
-					List<Tuple<INote, INote>> allNotes = new List<Tuple<INote, INote>>();
-					List<Tuple<INote, INote>> notesToUpload = new List<Tuple<INote, INote>>();
-					List<Tuple<INote, INote>> notesToDownload = new List<Tuple<INote, INote>>();
-					List<INote> notesToDelete = new List<INote>();
-					Invoke(() =>
-					{
-						allNotes = repo.Notes.Select(p => Tuple.Create(p, p.Clone())).ToList();
-						notesToUpload = allNotes.Where(p => repo.Connection.NeedsUpload(p.Item2)).ToList();
-						notesToDownload = allNotes.Where(p => repo.Connection.NeedsDownload(p.Item2)).ToList();
-						notesToDelete = repo.LocalDeletedNotes.ToList();
-					});
+					allNotes = repo.Notes.Select(p => Tuple.Create(p, p.Clone())).ToList();
+					notesToDelete = repo.LocalDeletedNotes.ToList();
+				});
+
+				repo.Connection.StartSync(data, allNotes.Select(p => p.Item2).ToList());
+				{
+					var notesToUpload = allNotes.Where(p => repo.Connection.NeedsUpload(p.Item2)).ToList();
+					var notesToDownload = allNotes.Where(p => repo.Connection.NeedsDownload(p.Item2)).ToList();
 
 					UploadNotes(notesToUpload, ref errors);
 
@@ -112,10 +115,10 @@ namespace AlephNote.Repository
 
 		private void UploadNotes(List<Tuple<INote, INote>> notesToUpload, ref List<Tuple<string, Exception>> errors)
 		{
-			foreach (var noteuple in notesToUpload)
+			foreach (var notetuple in notesToUpload)
 			{
-				var realnote = noteuple.Item1;
-				var clonenote = noteuple.Item2;
+				var realnote = notetuple.Item1;
+				var clonenote = notetuple.Item2;
 
 				try
 				{

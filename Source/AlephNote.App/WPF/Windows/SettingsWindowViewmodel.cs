@@ -14,7 +14,7 @@ namespace AlephNote.WPF.Windows
 
 		public AppSettings Settings { get; private set; }
 
-		public IEnumerable<IRemoteProvider> AvailableProvider { get { return PluginManager.LoadedPlugins; } }
+		public IEnumerable<IRemotePlugin> AvailableProvider { get { return PluginManager.LoadedPlugins; } }
 
 		public ICommand InsertCurrentWindowStateCommand { get { return new RelayCommand(InsertCurrentWindowState); } }
 

@@ -35,7 +35,7 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		public void StartSync()
+		public void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes)
 		{
 			RefreshToken();
 

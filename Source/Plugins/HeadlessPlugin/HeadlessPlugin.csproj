@@ -45,6 +45,7 @@
     <Compile Include="HeadlessConnection.cs" />
     <Compile Include="HeadlessPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="HeadlessData.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj">
