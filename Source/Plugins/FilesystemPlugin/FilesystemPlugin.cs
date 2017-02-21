@@ -9,7 +9,7 @@ namespace AlephNote.Plugins.Filesystem
 		public static readonly Version Version = new Version(0, 0, 0, 1);
 		public const string Name = "FilesystemPlugin";
 		
-		public FilesystemPlugin() : base("Filesystem", Version, Guid.Parse("a430b7ef-3526-4cbf-a304-8208de18efb5"))
+		public FilesystemPlugin() : base("Filesystem (Human readable)", Version, Guid.Parse("a430b7ef-3526-4cbf-a304-8208de18efb5"))
 		{
 			//
 		}

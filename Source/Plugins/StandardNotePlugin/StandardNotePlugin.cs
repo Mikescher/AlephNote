@@ -21,10 +21,10 @@ namespace AlephNote.Plugins.StandardNote
 
 		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config)
 		{
-			throw new NotImplementedException();
+			return new StandardNoteConnection(proxy, (StandardNoteConfig)config);
 		}
 
-		public override INote CreateEmptyNote()
+		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
 		{
 			throw new NotImplementedException();
 		}

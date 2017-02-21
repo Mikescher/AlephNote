@@ -12,12 +12,12 @@ namespace AlephNote.Plugins.Filesystem
 	public class FilesystemConfig : IRemoteStorageConfiguration
 	{
 		private const int ID_FOLDER    = 6454;
-		private const int ID_EXTENSION = 6454;
+		private const int ID_EXTENSION = 6455;
+		private const int ID_ENCODING  = 6456;
 
 		public string Folder    = string.Empty;
 		public string Extension = "txt";
 		public Encoding Encoding = Encoding.UTF8;
-		//TODO Encoding setting
 
 		public XElement Serialize()
 		{
@@ -43,14 +43,16 @@ namespace AlephNote.Plugins.Filesystem
 
 		public IEnumerable<DynamicSettingValue> ListProperties()
 		{
-			yield return DynamicSettingValue.CreateText(ID_FOLDER, "Folder", Folder);
-			yield return DynamicSettingValue.CreatePassword(ID_EXTENSION, "Extension", Extension);
+			yield return DynamicSettingValue.CreateFolderChooser(ID_FOLDER, "Folder", Folder);
+			yield return DynamicSettingValue.CreateText(ID_EXTENSION, "Extension", Extension);
+			yield return DynamicSettingValue.CreateCombobox(ID_ENCODING, "Encoding", Encoding.BodyName.ToUpper(), new[] { "UTF-8", "UTF-16", "UTF-32", "ASCII" });
 		}
 
 		public void SetProperty(int id, string value)
 		{
 			if (id == ID_FOLDER) Folder = value;
 			if (id == ID_EXTENSION) Extension = value;
+			if (id == ID_ENCODING) Encoding = Encoding.GetEncoding(value);
 		}
 
 		public void SetProperty(int id, bool value)

@@ -1,12 +1,13 @@
 ﻿using AlephNote.PluginInterface;
 using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace AlephNote.Plugins.StandardNote
 {
 	/// <summary>
 	/// https://github.com/standardnotes/doc/blob/master/Client%20Development%20Guide.md
-	/// http://standardfile.org/api-auth#api
+	/// http://standardfile.org/api#api
 	/// </summary>
 	class StandardNoteConnection : IRemoteStorageConnection
 	{
@@ -33,6 +34,50 @@ namespace AlephNote.Plugins.StandardNote
 				throw new Exception("Could not authenticate with SimpleNote server : " + e.Message, e);
 			}
 		}
-		
+
+		public RemoteUploadResult UploadNoteToRemote(ref INote note, out INote conflict, ConflictResolutionStrategy strategy)
+		{
+			throw new NotImplementedException();
+		}
+
+		public RemoteDownloadResult UpdateNoteFromRemote(INote note)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void StartSync()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void FinishSync()
+		{
+			throw new NotImplementedException();
+		}
+
+		public INote DownloadNote(string id, out bool result)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void DeleteNote(INote note)
+		{
+			throw new NotImplementedException();
+		}
+
+		public List<string> ListMissingNotes(List<INote> localnotes)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool NeedsUpload(INote note)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool NeedsDownload(INote note)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

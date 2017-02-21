@@ -21,8 +21,8 @@ namespace AlephNote.Plugins.Filesystem
 		private string _title = "";
 		public override string Title { get { return _title; } set { _title = value; OnPropertyChanged(); } }
 
-		private string _pathBackup = "";
-		public string PathBackup { get { return _pathBackup; } set { _pathBackup = value; OnPropertyChanged(); } }
+		private string _pathRemote = "";
+		public string PathRemote { get { return _pathRemote; } set { _pathRemote = value; OnPropertyChanged(); } }
 
 		private DateTimeOffset _creationDate = DateTimeOffset.MinValue;
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
@@ -30,20 +30,32 @@ namespace AlephNote.Plugins.Filesystem
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
 		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
 
+		private readonly ObservableCollection<string> _tags = new ObservableCollection<string>();
+		public override ObservableCollection<string> Tags { get { return _tags; } }
+
 		private readonly FilesystemConfig _config;
 
 		public FilesystemNote(Guid uid, FilesystemConfig cfg)
 		{
 			_id = uid;
 			_config = cfg;
+			_creationDate = DateTimeOffset.Now;
 		}
-
-		private readonly ObservableCollection<string> _tags = new ObservableCollection<string>();
-		public override ObservableCollection<string> Tags { get { return _tags; } }
 
 		public string GetPath(FilesystemConfig cfg)
 		{
-			return Path.Combine(cfg.Folder, Title + cfg.Extension);
+			var cleanTitle = Title
+				.Replace(':', '_')
+				.Replace('?', '_')
+				.Replace('/', '_')
+				.Replace('\\', '_')
+				.Replace('*', '_')
+				.Replace('<', '_')
+				.Replace('>', '_')
+				.Replace('|', '_')
+				.Replace('"', '_');
+
+			return Path.Combine(cfg.Folder, cleanTitle + "." + cfg.Extension);
 		}
 
 		public override string GetUniqueName()
@@ -59,7 +71,7 @@ namespace AlephNote.Plugins.Filesystem
 				new XElement("Tags", Tags.Select(p => new XElement("Tag", p)).Cast<object>().ToArray()),
 				new XElement("Text", Convert.ToBase64String(Encoding.UTF8.GetBytes(_text))),
 				new XElement("Title", Convert.ToBase64String(Encoding.UTF8.GetBytes(_title))),
-				new XElement("PathBackup", _pathBackup),
+				new XElement("PathRemote", _pathRemote),
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("ModificationDate", _modificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 			};
@@ -79,7 +91,7 @@ namespace AlephNote.Plugins.Filesystem
 				_tags.Synchronize(XHelper.GetChildValueStringList(input, "Tags", "Tag"));
 				_text = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Text")));
 				_title = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Title")));
-				_pathBackup = XHelper.GetChildValueString(input, "PathBackup");
+				_pathRemote = XHelper.GetChildValueString(input, "PathRemote");
 				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
 			}
@@ -91,7 +103,7 @@ namespace AlephNote.Plugins.Filesystem
 			n._tags.Synchronize(_tags.ToList());
 			n._text = _text;
 			n._title = _title;
-			n._pathBackup = _pathBackup;
+			n._pathRemote = _pathRemote;
 			n._creationDate = _creationDate;
 			n._modificationDate = _modificationDate;
 			return n;
@@ -104,8 +116,7 @@ namespace AlephNote.Plugins.Filesystem
 			using (SuppressDirtyChanges())
 			{
 				_modificationDate = other.ModificationDate;
-				_creationDate     = other.CreationDate;
-				_pathBackup       = other._pathBackup;
+				_pathRemote       = other._pathRemote;
 			}
 		}
 
@@ -116,10 +127,9 @@ namespace AlephNote.Plugins.Filesystem
 			using (SuppressDirtyChanges())
 			{
 				_modificationDate = other.ModificationDate;
-				_creationDate     = other.CreationDate;
 				_text             = other.Text;
 				_title            = other.Title;
-				_pathBackup       = other.PathBackup;
+				_pathRemote       = other.PathRemote;
 			}
 		}
 	}

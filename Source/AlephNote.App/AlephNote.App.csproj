@@ -49,6 +49,10 @@
       <HintPath>..\..\Lib\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Ookii.Dialogs.Wpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0c15020868fd6249, processorArchitecture=MSIL">
+      <HintPath>..\..\Lib\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ScintillaNET">
       <HintPath>..\..\Lib\jacobslusser.ScintillaNET.3.5.10\lib\net40\ScintillaNET.dll</HintPath>
       <Private>True</Private>
@@ -201,16 +205,16 @@
       <Name>StandardNotePlugin</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-		<ProjectReference Include="..\Plugins\HeadlessPlugin\HeadlessPlugin.csproj">
-			<Project>{7F674975-7A10-458E-BDF9-82AEC27CAFAA}</Project>
-			<Name>HeadlessPlugin</Name>
-			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-		</ProjectReference>
-		<ProjectReference Include="..\Plugins\FilesystemPlugin\FilesystemPlugin.csproj">
-			<Project>{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5}</Project>
-			<Name>FilesystemPlugin</Name>
-			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-		</ProjectReference>
+    <ProjectReference Include="..\Plugins\HeadlessPlugin\HeadlessPlugin.csproj">
+      <Project>{7F674975-7A10-458E-BDF9-82AEC27CAFAA}</Project>
+      <Name>HeadlessPlugin</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugins\FilesystemPlugin\FilesystemPlugin.csproj">
+      <Project>{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5}</Project>
+      <Name>FilesystemPlugin</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="IconMain.ico" />

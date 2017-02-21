@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="StandardNote.cs" />
     <Compile Include="StandardNoteConnection.cs" />
     <Compile Include="StandardNoteAPI.cs" />
     <Compile Include="StandardNoteConfig.cs" />

@@ -48,7 +48,7 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			yield return DynamicSettingValue.CreateText(ID_EMAIL, "Email", Email);
 			yield return DynamicSettingValue.CreatePassword(ID_PASSWORD, "Password", Password);
-			yield return DynamicSettingValue.CreatePassword(ID_SERVER, "Host", Server);
+			yield return DynamicSettingValue.CreateText(ID_SERVER, "Host", Server);
 			yield return DynamicSettingValue.CreateHyperlink("Create Standard Notes account", "https://standardnotes.org/");
 		}
 

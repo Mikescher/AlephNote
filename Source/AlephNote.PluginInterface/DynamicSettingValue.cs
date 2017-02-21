@@ -1,9 +1,12 @@
 ﻿
+using System.Collections.Generic;
+using System.Linq;
+
 namespace AlephNote.PluginInterface
 {
 	public class DynamicSettingValue
 	{
-		public enum SettingType { Text, Password, Hyperlink, Checkbox }
+		public enum SettingType { Text, Password, Hyperlink, Checkbox, ComboBox, Folder }
 
 		public readonly int ID;
 		public readonly string Description;
@@ -38,6 +41,16 @@ namespace AlephNote.PluginInterface
 		public static DynamicSettingValue CreateHyperlink(string text, string link)
 		{
 			return new DynamicSettingValue(-1, SettingType.Hyperlink, text, string.Empty, link);
+		}
+
+		public static DynamicSettingValue CreateCombobox(int id, string description, string value, IEnumerable<string> options)
+		{
+			return new DynamicSettingValue(id, SettingType.ComboBox, description, value, options.Cast<object>().ToArray());
+		}
+
+		public static DynamicSettingValue CreateFolderChooser(int id, string description, string value)
+		{
+			return new DynamicSettingValue(id, SettingType.Folder, description, value);
 		}
 	}
 }

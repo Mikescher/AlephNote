@@ -1,9 +1,11 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.Settings;
 using MSHC.WPF.Controls;
+using Ookii.Dialogs.Wpf;
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,8 +31,9 @@ namespace AlephNote.WPF.Converter
 
 			var grid = new Grid();
 
-			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto)   });
+			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star)   });
+			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(35, GridUnitType.Pixel) });
 
 			int row = 0;
 			foreach (var prop in cfg.ListProperties())
@@ -52,9 +55,33 @@ namespace AlephNote.WPF.Converter
 						break;
 
 					case DynamicSettingValue.SettingType.Checkbox:
-						var cb = new CheckBox {IsChecked = (bool)prop.Arguments[0]};
+						var cb = new CheckBox { IsChecked = (bool)prop.Arguments[0] };
 						cb.Checked += (s, a) => cfg.SetProperty(xprop.ID, cb.IsChecked ?? false);
 						AddComponent(prop, ref row, grid, cb);
+						break;
+
+					case DynamicSettingValue.SettingType.ComboBox:
+						var ob = new ComboBox();
+						foreach (var arg in xprop.Arguments.Cast<string>()) ob.Items.Add(arg);
+						ob.SelectedItem = xprop.CurrentValue;
+						ob.SelectionChanged += (s, a) => cfg.SetProperty(xprop.ID, (string)ob.SelectedValue);
+						AddComponent(prop, ref row, grid, ob);
+						break;
+
+					case DynamicSettingValue.SettingType.Folder:
+						var fb = new TextBox { Text = prop.CurrentValue };
+						fb.TextChanged += (s, a) => cfg.SetProperty(xprop.ID, fb.Text);
+						fb.IsReadOnly = true;
+						fb.IsReadOnlyCaretVisible = true;
+						var btn = new Button();
+						btn.Content = "...";
+						btn.Click += (s, a) =>
+						{
+							VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+							if (Directory.Exists(fb.Text)) dialog.SelectedPath = fb.Text;
+							if (dialog.ShowDialog() ?? false) fb.Text = dialog.SelectedPath;
+						};
+						AddComponent(prop, ref row, grid, fb, true, btn);
 						break;
 
 					case DynamicSettingValue.SettingType.Hyperlink:
@@ -78,7 +105,7 @@ namespace AlephNote.WPF.Converter
 			return grid;
 		}
 
-		private void AddComponent(DynamicSettingValue prop, ref int row, Grid grid, FrameworkElement comp, bool addLabel = true)
+		private void AddComponent(DynamicSettingValue prop, ref int row, Grid grid, FrameworkElement comp, bool addLabel = true, FrameworkElement leftElem = null)
 		{
 			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
 
@@ -98,6 +125,18 @@ namespace AlephNote.WPF.Converter
 			Grid.SetRow(comp, row);
 			Grid.SetColumn(comp, 1);
 
+			if (leftElem == null)
+			{
+				Grid.SetColumnSpan(comp, 2);
+			}
+			else
+			{
+				leftElem.Margin = new Thickness(2);
+				Grid.SetRow(leftElem, row);
+				Grid.SetColumn(leftElem, 2);
+				grid.Children.Add(leftElem);
+			}
+			
 			grid.Children.Add(comp);
 
 			row++;

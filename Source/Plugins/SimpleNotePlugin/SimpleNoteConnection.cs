@@ -99,6 +99,9 @@ namespace AlephNote.Plugins.SimpleNote
 			RefreshToken();
 
 			var note = (SimpleNote)inote;
+
+			if (note.IsConflictNote) return;
+			
 			var remote = buckets.index.FirstOrDefault(p => p.id == note.ID);
 
 			if (remote != null)
