@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="ConflictResolutionStrategy.cs" />
     <Compile Include="DynamicSettingValue.cs" />
+    <Compile Include="IAlephLogger.cs" />
     <Compile Include="IRemoteStorageConfiguration.cs" />
     <Compile Include="IRemoteStorageConnection.cs" />
     <Compile Include="IRemotePlugin.cs" />

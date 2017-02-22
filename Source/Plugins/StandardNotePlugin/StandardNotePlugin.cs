@@ -8,10 +8,17 @@ namespace AlephNote.Plugins.StandardNote
 	{
 		public static readonly Version Version = new Version(0, 0, 0, 1);
 		public const string Name = "StandardNotePlugin";
-		
+
+		private IAlephLogger _logger;
+
 		public StandardNotePlugin() : base("Standard Notes", Version, Guid.Parse("30d867a4-cbdc-45c5-950a-c119bf2f2845"))
 		{
 			//
+		}
+
+		public override void Init(IAlephLogger logger)
+		{
+			_logger = logger;
 		}
 
 		public override IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration()
@@ -21,7 +28,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config)
 		{
-			return new StandardNoteConnection(proxy, (StandardNoteConfig)config);
+			return new StandardNoteConnection(_logger, proxy, (StandardNoteConfig)config);
 		}
 
 		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)

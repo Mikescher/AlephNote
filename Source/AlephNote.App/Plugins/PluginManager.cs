@@ -55,6 +55,10 @@ namespace AlephNote.Plugins
 
 					if (instance == null) throw new Exception("Could not instantiate IAlephNotePlugin '" + type.FullName + "'");
 
+					instance.Init(App.Logger);
+
+					App.Logger.Info("PluginManager", string.Format("Loaded plugin {0} in version {1} ({2})", instance.DisplayTitleShort, instance.GetVersion(), instance.GetUniqueID()));
+
 					_provider.Add(instance);
 				}
 			}

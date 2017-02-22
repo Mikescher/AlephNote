@@ -8,10 +8,17 @@ namespace AlephNote.Plugins.Filesystem
 	{
 		public static readonly Version Version = new Version(0, 0, 0, 1);
 		public const string Name = "FilesystemPlugin";
-		
+
+		private IAlephLogger logger;
+
 		public FilesystemPlugin() : base("Filesystem (Human readable)", Version, Guid.Parse("a430b7ef-3526-4cbf-a304-8208de18efb5"))
 		{
 			//
+		}
+
+		public override void Init(IAlephLogger l)
+		{
+			logger = l;
 		}
 
 		public override IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration()
@@ -21,7 +28,7 @@ namespace AlephNote.Plugins.Filesystem
 
 		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config)
 		{
-			return new FilesystemConnection((FilesystemConfig)config);
+			return new FilesystemConnection(logger, (FilesystemConfig)config);
 		}
 
 		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)

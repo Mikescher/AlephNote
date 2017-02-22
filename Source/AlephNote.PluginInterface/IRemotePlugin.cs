@@ -8,6 +8,8 @@ namespace AlephNote.PluginInterface
 		string DisplayTitleLong { get; }
 		string DisplayTitleShort { get; }
 
+		void Init(IAlephLogger logger);
+
 		Guid GetUniqueID();
 		string GetName();
 		Version GetVersion();
@@ -48,6 +50,8 @@ namespace AlephNote.PluginInterface
 		{
 			return version;
 		}
+
+		public abstract void Init(IAlephLogger logger);
 
 		public abstract IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
 		public abstract IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config);

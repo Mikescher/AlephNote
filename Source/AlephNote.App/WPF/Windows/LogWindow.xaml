@@ -1,0 +1,98 @@
+﻿<Window x:Class="AlephNote.WPF.Windows.LogWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:windows="clr-namespace:AlephNote.WPF.Windows"
+		xmlns:log="clr-namespace:AlephNote.Log"
+		xmlns:conv="clr-namespace:AlephNote.WPF.Converter"
+		mc:Ignorable="d" 
+		d:DataContext="{d:DesignInstance windows:LogWindowViewmodel}"
+		WindowStartupLocation="CenterOwner"
+		Icon="/Resources/IconMain.png"
+		MinWidth="200" MinHeight="200"
+		Height="500" Width="950"
+		Title="LogWindow">
+	<Window.Resources>
+		<DataTemplate x:Key="RowTemplateType" DataType="{x:Type log:LogEvent}">
+			<TextBlock Text="{Binding Type, Mode=OneWay}" >
+				<TextBlock.Foreground>
+					<Binding Path="Type" Converter="{conv:LogToForeground}" />
+				</TextBlock.Foreground>
+				<TextBlock.FontWeight>
+					<Binding Path="Type" Converter="{conv:LogToFontWeight}" />
+				</TextBlock.FontWeight>
+				<TextBlock.FontStyle>
+					<Binding Path="Type" Converter="{conv:LogToFontStyle}" />
+				</TextBlock.FontStyle>
+			</TextBlock>
+		</DataTemplate>
+		<DataTemplate x:Key="RowTemplateSource" DataType="{x:Type log:LogEvent}">
+			<TextBlock Text="{Binding Source, Mode=OneWay}"  >
+				<TextBlock.Foreground>
+					<Binding Path="Type" Converter="{conv:LogToForeground}" />
+				</TextBlock.Foreground>
+				<TextBlock.FontWeight>
+					<Binding Path="Type" Converter="{conv:LogToFontWeight}" />
+				</TextBlock.FontWeight>
+				<TextBlock.FontStyle>
+					<Binding Path="Type" Converter="{conv:LogToFontStyle}" />
+				</TextBlock.FontStyle>
+			</TextBlock>
+		</DataTemplate>
+		<DataTemplate x:Key="RowTemplateDate" DataType="{x:Type log:LogEvent}">
+			<TextBlock Text="{Binding DateTime, Converter={conv:TodayDateTimeToDisplay}, Mode=OneWay}"  >
+				<TextBlock.Foreground>
+					<Binding Path="Type" Converter="{conv:LogToForeground}" />
+				</TextBlock.Foreground>
+				<TextBlock.FontWeight>
+					<Binding Path="Type" Converter="{conv:LogToFontWeight}" />
+				</TextBlock.FontWeight>
+				<TextBlock.FontStyle>
+					<Binding Path="Type" Converter="{conv:LogToFontStyle}" />
+				</TextBlock.FontStyle>
+			</TextBlock>
+		</DataTemplate>
+		<DataTemplate x:Key="RowTemplateText" DataType="{x:Type log:LogEvent}">
+			<TextBlock Text="{Binding Text, Mode=OneWay}" >
+				<TextBlock.Foreground>
+					<Binding Path="Type" Converter="{conv:LogToForeground}" />
+				</TextBlock.Foreground>
+				<TextBlock.FontWeight>
+					<Binding Path="Type" Converter="{conv:LogToFontWeight}" />
+				</TextBlock.FontWeight>
+				<TextBlock.FontStyle>
+					<Binding Path="Type" Converter="{conv:LogToFontStyle}" />
+				</TextBlock.FontStyle>
+			</TextBlock>
+		</DataTemplate>
+	</Window.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<ListView ItemsSource="{Binding Log}" SelectedItem="{Binding SelectedLog}" Grid.Row="0">
+			<ListView.Resources>
+				<Style TargetType="ListViewItem">
+					<Style.Triggers>
+						<Trigger Property="ListViewItem.IsSelected" Value="False">
+							<Setter Property="Background" Value="{Binding Type, Converter={conv:LogToBackground}}" />
+						</Trigger>
+					</Style.Triggers>
+				</Style>
+			</ListView.Resources>
+			<ListView.View>
+				<GridView>
+					<GridViewColumn Header="Type"   CellTemplate="{StaticResource RowTemplateType}"   Width="80" />
+					<GridViewColumn Header="Date"   CellTemplate="{StaticResource RowTemplateDate}"   Width="70" />
+					<GridViewColumn Header="Source" CellTemplate="{StaticResource RowTemplateSource}" Width="130" />
+					<GridViewColumn Header="Text"   CellTemplate="{StaticResource RowTemplateText}"   Width="600" />
+				</GridView>
+			</ListView.View>
+		</ListView>
+
+		<TextBox IsReadOnly="True" Height="150" Margin="2" Visibility="{Binding SelectedLog.LongText, Converter={conv:IsNullToVisibility}, ConverterParameter=Collapsed;Visible, FallbackValue=Collapsed}" Grid.Row="1" Text="{Binding SelectedLog.LongText, TargetNullValue='', Mode=OneWay}" />
+		
+	</Grid>
+</Window>

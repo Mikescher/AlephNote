@@ -13,13 +13,15 @@ namespace AlephNote.Plugins.StandardNote
 	{
 		private readonly StandardNoteConfig _config;
 		private readonly IWebProxy _proxy;
+		private readonly IAlephLogger _logger;
 
 		private StandardNoteAPI.APIResultAuthorize _token = null;
 
-		public StandardNoteConnection(IWebProxy proxy, StandardNoteConfig config)
+		public StandardNoteConnection(IAlephLogger log, IWebProxy proxy, StandardNoteConfig config)
 		{
 			_config = config;
 			_proxy = proxy;
+			_logger = log;
 		}
 
 		private void RefreshToken()
@@ -27,7 +29,13 @@ namespace AlephNote.Plugins.StandardNote
 			try
 			{
 				if (_token == null)
-					_token = StandardNoteAPI.Authenticate(_proxy, _config.Server, _config.Email, _config.Password);
+				{
+					_logger.Debug(StandardNotePlugin.Name, "Requesting token from Simplenote server");
+
+					_token = StandardNoteAPI.Authenticate(_proxy, _config.Server, _config.Email, _config.Password, _logger);
+
+					_logger.Debug(StandardNotePlugin.Name, "Simplenote server returned token for user " + _token.user.uuid);
+				}
 			}
 			catch (Exception e)
 			{

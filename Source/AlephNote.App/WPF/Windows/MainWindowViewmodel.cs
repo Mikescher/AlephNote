@@ -29,6 +29,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand DeleteCommand { get { return new RelayCommand(DeleteNote); } }
 		public ICommand ExitCommand { get { return new RelayCommand(Exit); } }
 		public ICommand ShowAboutCommand { get { return new RelayCommand(ShowAbout); } }
+		public ICommand ShowLogCommand { get { return new RelayCommand(ShowLog); } }
 		public ICommand SaveAndSyncCommand { get { return new RelayCommand(SaveAndSync); } }
 
 		public ICommand ClosingEvent { get { return new RelayCommand<CancelEventArgs>(OnClosing); } }
@@ -307,6 +308,11 @@ namespace AlephNote.WPF.Windows
 		private void ShowAbout()
 		{
 			new AboutWindow{Owner = Owner}.ShowDialog();
+		}
+
+		private void ShowLog()
+		{
+			new LogWindow { Owner = Owner }.ShowDialog();
 		}
 
 		private void SaveAndSync()

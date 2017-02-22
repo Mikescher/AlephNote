@@ -58,6 +58,7 @@
 			</MenuItem>
 			<MenuItem Header="Help">
 				<MenuItem Header="Check for Updates" />
+				<MenuItem Header="Show Log" Command="{Binding ShowLogCommand}" />
 				<MenuItem Header="About" Command="{Binding ShowAboutCommand}" />
 			</MenuItem>
 		</Menu>

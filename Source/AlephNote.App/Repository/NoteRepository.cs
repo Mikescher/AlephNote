@@ -57,7 +57,11 @@ namespace AlephNote.Repository
 
 		public void Init()
 		{
-			if (!Directory.Exists(pathLocalFolder)) Directory.CreateDirectory(pathLocalFolder);
+			if (!Directory.Exists(pathLocalFolder))
+			{
+				App.Logger.Info("Repository", "Create local note folder: " + pathLocalFolder);
+				Directory.CreateDirectory(pathLocalFolder);
+			}
 
 			LoadNotesFromLocal();
 
@@ -75,6 +79,8 @@ namespace AlephNote.Repository
 		private void LoadNotesFromLocal()
 		{
 			var noteFiles = Directory.GetFiles(pathLocalFolder, "*.xml");
+
+			App.Logger.Info("Repository", "Found " + noteFiles.Length + " files in local repository");
 
 			foreach (var noteFile in noteFiles)
 			{
@@ -106,6 +112,8 @@ namespace AlephNote.Repository
 					ExceptionDialog.Show(null, "LoadNotes from local cache", "Could not load note from '" + noteFile + "'", e);
 				}
 			}
+
+			App.Logger.Info("Repository", "Loaded " + Notes.Count + " notes from local repository");
 		}
 
 		public INote CreateNewNote()
@@ -115,11 +123,15 @@ namespace AlephNote.Repository
 			note.SetDirty();
 			SaveNote(note);
 
+			App.Logger.Info("Repository", "New Note created");
+
 			return note;
 		}
 
 		private void SaveAllDirtyNotes()
 		{
+			App.Logger.Info("Repository", "Save all dirty notes (" + _notes.Count(n => !n.IsLocalSaved) + ")");
+
 			foreach (var note in _notes)
 			{
 				if (!note.IsLocalSaved) SaveNote(note);
@@ -144,6 +156,8 @@ namespace AlephNote.Repository
 			new XDocument(root).Save(path);
 
 			note.ResetLocalDirty();
+
+			App.Logger.Info("Repository", "Note " + note.GetUniqueName() + " locally saved");
 		}
 
 		private void NoteCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -167,6 +181,8 @@ namespace AlephNote.Repository
 
 		private void NoteChanged(object sender, NoteChangedEventArgs e)
 		{
+			App.Logger.Info("Repository", "Local notes changed");
+
 			invSaveNotesLocal.Request();
 			invSaveNotesRemote.Request();
 
@@ -177,6 +193,8 @@ namespace AlephNote.Repository
 
 		public void DeleteNote(INote note, bool updateRemote)
 		{
+			App.Logger.Info("Repository", string.Format("Delete note {0} (updateRemote={1})", note.GetUniqueName(), updateRemote));
+
 			var found = Notes.Remove(note);
 
 			var path = Path.Combine(pathLocalFolder, note.GetUniqueName() + ".xml");
@@ -191,6 +209,8 @@ namespace AlephNote.Repository
 
 		public void AddNote(INote note, bool updateRemote)
 		{
+			App.Logger.Info("Repository", string.Format("Add note {0} (updateRemote={1})", note.GetUniqueName(), updateRemote));
+
 			Notes.Add(note);
 			SaveNote(note);
 
@@ -204,6 +224,8 @@ namespace AlephNote.Repository
 
 		public void SyncNow()
 		{
+			App.Logger.Info("Repository", "Sync Now");
+
 			thread.SyncNowAsync();
 		}
 
@@ -240,7 +262,7 @@ namespace AlephNote.Repository
 			}
 		}
 
-		private void WriteSyncData(IRemoteStorageSyncPersistance data)
+		public void WriteSyncData(IRemoteStorageSyncPersistance data)
 		{
 			var x = new XDocument(data.Serialize());
 			x.Save(pathLocalData);

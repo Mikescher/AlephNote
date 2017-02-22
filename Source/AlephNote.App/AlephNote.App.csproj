@@ -79,6 +79,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Log\EventLogger.cs" />
+    <Compile Include="Log\LogEvent.cs" />
+    <Compile Include="Log\LogEventType.cs" />
     <Compile Include="Repository\ISynchronizationFeedback.cs" />
     <Compile Include="Repository\NoteRepository.cs" />
     <Compile Include="Repository\SynchronizationThread.cs" />
@@ -91,7 +94,12 @@
     <Compile Include="Settings\SettingType.cs" />
     <Compile Include="Settings\SynchronizationState.cs" />
     <Compile Include="WPF\Controls\TagEditor.cs" />
+    <Compile Include="WPF\Converter\LogToFontStyle.cs" />
+    <Compile Include="WPF\Converter\LogToBackground.cs" />
+    <Compile Include="WPF\Converter\LogToFontWeight.cs" />
+    <Compile Include="WPF\Converter\LogToForeground.cs" />
     <Compile Include="WPF\Converter\GetLine.cs" />
+    <Compile Include="WPF\Converter\TodayDateTimeToDisplay.cs" />
     <Compile Include="WPF\Converter\Subtract.cs" />
     <Compile Include="WPF\Converter\GridLengthToDouble.cs" />
     <Compile Include="WPF\Converter\SubstringLeft.cs" />
@@ -113,6 +121,12 @@
     <Compile Include="WPF\Windows\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Windows\LogWindow.xaml.cs">
+      <DependentUpon>LogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\LogWindowViewmodel.cs">
+      <DependentUpon>LogWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Windows\MainWindowViewmodel.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -130,6 +144,10 @@
       <DependentUpon>SyncErrorDialog.xaml</DependentUpon>
     </Compile>
     <Page Include="WPF\Windows\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Windows\LogWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

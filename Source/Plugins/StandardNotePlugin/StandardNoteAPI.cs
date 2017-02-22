@@ -1,4 +1,5 @@
-﻿using MSHC.Math.Encryption;
+﻿using AlephNote.PluginInterface;
+using MSHC.Math.Encryption;
 using MSHC.Network;
 using Newtonsoft.Json;
 using System;
@@ -49,13 +50,15 @@ namespace AlephNote.Plugins.StandardNote
 				return host + path;
 		}
 
-		public static APIResultAuthorize Authenticate(IWebProxy proxy, string host, string mail, string password)
+		public static APIResultAuthorize Authenticate(IWebProxy proxy, string host, string mail, string password, IAlephLogger logger)
 		{
 			string result;
 
 			try
 			{
 				var uri = CreateUri(host, "auth/params", "email=" + mail);
+
+				logger.Debug(StandardNotePlugin.Name, "Request '" + uri + "'");
 
 				result = CreateClient(proxy, null).DownloadString(uri);
 			}
@@ -67,6 +70,11 @@ namespace AlephNote.Plugins.StandardNote
 			try
 			{
 				var apiparams = JsonConvert.DeserializeObject<APIAuthParams>(result);
+				
+				logger.Debug(StandardNotePlugin.Name, "AutParams.pw_func: " + apiparams.pw_func);
+				logger.Debug(StandardNotePlugin.Name, "AutParams.pw_alg: " + apiparams.pw_alg);
+				logger.Debug(StandardNotePlugin.Name, "AutParams.pw_cost: " + apiparams.pw_cost);
+				logger.Debug(StandardNotePlugin.Name, "AutParams.pw_key_size: " + apiparams.pw_key_size);
 
 				if (apiparams.pw_func != PasswordFunc.pbkdf2) throw new Exception("Unknown pw_func: " + apiparams.pw_func);
 

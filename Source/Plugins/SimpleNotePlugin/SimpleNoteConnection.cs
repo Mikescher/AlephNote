@@ -10,16 +10,18 @@ namespace AlephNote.Plugins.SimpleNote
 	{
 		private readonly SimpleNoteConfig _config;
 		private readonly IWebProxy _proxy;
+		private readonly IAlephLogger _logger;
 
 		private SimpleNoteAPI.APIResultAuthorize _token = null;
 		private SimpleNoteAPI.APIResultIndex buckets = null;
 
-		private HashSet<string> deletedNotesCache = new HashSet<string>(); 
+		private readonly HashSet<string> deletedNotesCache = new HashSet<string>();
 
-		public SimpleNoteConnection(IWebProxy proxy, SimpleNoteConfig config)
+		public SimpleNoteConnection(IAlephLogger log, IWebProxy proxy, SimpleNoteConfig config)
 		{
 			_config = config;
 			_proxy = proxy;
+			_logger = log;
 		}
 
 		private void RefreshToken()
@@ -27,7 +29,13 @@ namespace AlephNote.Plugins.SimpleNote
 			try
 			{
 				if (_token == null)
+				{
+					_logger.Debug(SimpleNotePlugin.Name, "Requesting token from Simplenote server");
+
 					_token = SimpleNoteAPI.Authenticate(_proxy, _config.Username, _config.Password);
+
+					_logger.Debug(SimpleNotePlugin.Name, "Simplenote server returned token for user " + _token.userid);
+				}
 			}
 			catch (Exception e)
 			{
@@ -40,6 +48,8 @@ namespace AlephNote.Plugins.SimpleNote
 			RefreshToken();
 
 			buckets = SimpleNoteAPI.ListBuckets(_proxy, _token.access_token);
+
+			_logger.Debug(SimpleNotePlugin.Name, string.Format("SimpleNoteAPI.ListBuckets returned {0} elements", buckets.index.Count));
 		}
 
 		public void FinishSync()

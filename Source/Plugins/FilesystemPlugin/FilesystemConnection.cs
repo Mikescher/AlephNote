@@ -9,12 +9,14 @@ namespace AlephNote.Plugins.Filesystem
 	public class FilesystemConnection : IRemoteStorageConnection
 	{
 		private readonly FilesystemConfig _config;
+		private readonly IAlephLogger _logger;
 
 		private List<string> _syncScan = null; 
 
-		public FilesystemConnection(FilesystemConfig config)
+		public FilesystemConnection(IAlephLogger log, FilesystemConfig config)
 		{
 			_config = config;
+			_logger = log;
 		}
 
 		public RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, ConflictResolutionStrategy strategy)
@@ -25,6 +27,8 @@ namespace AlephNote.Plugins.Filesystem
 
 			if (File.Exists(note.PathRemote) && path != note.PathRemote && !File.Exists(path))
 			{
+				_logger.Debug(FilesystemPlugin.Name, "Upload note to changed remote path");
+
 				WriteNoteToPath(note, path);
 				conflict = null;
 				File.Delete(note.PathRemote);
@@ -33,6 +37,8 @@ namespace AlephNote.Plugins.Filesystem
 			}
 			else if (File.Exists(note.PathRemote) && path != note.PathRemote && File.Exists(path))
 			{
+				_logger.Debug(FilesystemPlugin.Name, "Upload note to changed remote path");
+
 				var conf = ReadNoteFromPath(note.PathRemote);
 				if (conf.ModificationDate != note.ModificationDate)
 				{
@@ -116,6 +122,8 @@ namespace AlephNote.Plugins.Filesystem
 				.EnumerateFiles(_config.Folder)
 				.Where(p => (Path.GetExtension(p) ?? "").ToLower() == "." + _config.Extension.ToLower())
 				.ToList();
+
+			_logger.Debug(FilesystemPlugin.Name, string.Format("Found {0} note files in directory scan", _syncScan.Count));
 		}
 
 		public void FinishSync()

@@ -1,4 +1,5 @@
-﻿using AlephNote.WPF.Windows;
+﻿using AlephNote.Log;
+using AlephNote.WPF.Windows;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -20,6 +21,8 @@ namespace AlephNote
 		public static readonly string APP_VERSION = GetInformationalVersion();
 
 		public static string AppVersionProperty { get { return APP_VERSION; } }
+
+		public static EventLogger Logger = new EventLogger();
 
 		public App()
 		{
