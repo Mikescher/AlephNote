@@ -50,6 +50,7 @@
     <Compile Include="StandardNoteAPI.cs" />
     <Compile Include="StandardNoteConfig.cs" />
     <Compile Include="StandardNoteAPIException.cs" />
+    <Compile Include="StandardNoteCrypt.cs" />
     <Compile Include="StandardNotePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StandardNoteData.cs" />

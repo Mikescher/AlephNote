@@ -46,6 +46,18 @@ namespace AlephNote.Plugins.StandardNote
 		public void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes)
 		{
 			RefreshToken();
+
+			var upNotes = new List<StandardNote>();
+			foreach (var inote in localnotes)
+			{
+				var note = (StandardNote) inote;
+
+				if (note.IsConflictNote) continue;
+
+				if (!note.IsRemoteSaved) upNotes.Add(note);
+			}
+
+			StandardNoteAPI.Sync(_proxy, _token, _config.Server, (StandardNoteData)data, upNotes);
 		}
 
 		public void FinishSync()

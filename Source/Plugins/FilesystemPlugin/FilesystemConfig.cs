@@ -84,7 +84,7 @@ namespace AlephNote.Plugins.Filesystem
 		{
 			using (var md5 = MD5.Create())
 			{
-				return EncodingConverter.ByteToHexBitFiddle(md5.ComputeHash(Encoding.UTF8.GetBytes(Folder)));
+				return EncodingConverter.ByteToHexBitFiddleUppercase(md5.ComputeHash(Encoding.UTF8.GetBytes(Folder)));
 			}
 		}
 	}

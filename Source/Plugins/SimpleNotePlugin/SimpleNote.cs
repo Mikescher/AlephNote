@@ -193,9 +193,9 @@ namespace AlephNote.Plugins.SimpleNote
 			return n;
 		}
 
-		public override void OnAfterUpload(INote clonenote)
+		public override void OnAfterUpload(INote iother)
 		{
-			var other = (SimpleNote) clonenote;
+			var other = (SimpleNote)iother;
 
 			using (SuppressDirtyChanges())
 			{
@@ -209,15 +209,16 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		public override void ApplyUpdatedData(INote clonenote)
+		public override void ApplyUpdatedData(INote iother)
 		{
-			var other = (SimpleNote)clonenote;
+			var other = (SimpleNote)iother;
 
 			using (SuppressDirtyChanges())
 			{
 				_modificationDate = other.ModificationDate;
 				_localVersion = other.LocalVersion;
 				_systemTags = other.SystemTags;
+				_tags.Synchronize(other.Tags);
 				_publicURL = other.PublicURL;
 				_shareURL = other.ShareURL;
 				_deleted = other.Deleted;

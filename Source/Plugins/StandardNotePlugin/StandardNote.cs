@@ -1,8 +1,10 @@
 ﻿using AlephNote.PluginInterface;
 using MSHC.Lang.Extensions;
+using MSHC.Util.Helper;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 
 namespace AlephNote.Plugins.StandardNote
@@ -18,7 +20,7 @@ namespace AlephNote.Plugins.StandardNote
 		private string _title = "";
 		public override string Title { get { return _title; } set { _title = value; OnPropertyChanged(); } }
 
-		private DateTimeOffset _creationDate = DateTimeOffset.MinValue;
+		private DateTimeOffset _creationDate;
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
 
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
@@ -27,8 +29,8 @@ namespace AlephNote.Plugins.StandardNote
 		private readonly ObservableCollection<string> _tags = new ObservableCollection<string>();
 		public override ObservableCollection<string> Tags { get { return _tags; } }
 
-		private string _encryptionItemKey = "";
-		public string EncryptionItemKey { get { return _encryptionItemKey; } set { _encryptionItemKey = value; OnPropertyChanged(); } }
+		private string _encryptionKey = "";
+		public string EncryptionKey { get { return _encryptionKey; } set { _encryptionKey = value; OnPropertyChanged(); } }
 
 		private readonly StandardNoteConfig _config;
 
@@ -41,27 +43,61 @@ namespace AlephNote.Plugins.StandardNote
 
 		public override XElement Serialize()
 		{
-			throw new NotImplementedException();
+			var data = new object[]
+			{
+				new XElement("ID", _id),
+				new XElement("Tags", Tags.Select(p => new XElement("Tag", p)).Cast<object>().ToArray()),
+				new XElement("Text", Convert.ToBase64String(Encoding.UTF8.GetBytes(_text))),
+				new XElement("Title", _title),
+				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
+				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
+				new XElement("Key", _encryptionKey),
+			};
+
+			var r = new XElement("standardnote", data);
+			r.SetAttributeValue("plugin", StandardNotePlugin.Name);
+			r.SetAttributeValue("pluginversion", StandardNotePlugin.Version.ToString());
+
+			return r;
 		}
 
 		public override void Deserialize(XElement input)
 		{
-			throw new NotImplementedException();
+			using (SuppressDirtyChanges())
+			{
+				_id = XHelper.GetChildValueGUID(input, "ID");
+				_tags.Synchronize(XHelper.GetChildValueStringList(input, "Tags", "Tag"));
+				_text = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Text")));
+				_title = XHelper.GetChildValueString(input, "Title");
+				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
+				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
+				_encryptionKey = XHelper.GetChildValueString(input, "Key");
+			}
 		}
 
 		public override string GetUniqueName()
 		{
-			throw new NotImplementedException();
+			return _id.ToString("N");
 		}
 
-		public override void OnAfterUpload(INote clonenote)
+		public override void OnAfterUpload(INote iother)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void ApplyUpdatedData(INote other)
+		public override void ApplyUpdatedData(INote iother)
 		{
-			throw new NotImplementedException();
+			var other = (StandardNote)iother;
+
+			using (SuppressDirtyChanges())
+			{
+				_modificationDate = other.ModificationDate;
+				_creationDate = other.CreationDate;
+				_tags.Synchronize(other.Tags);
+				_text = other.Text;
+				_title = other.Title;
+				_encryptionKey = other.EncryptionKey;
+			}
 		}
 
 		protected override BasicNote CreateClone()
@@ -72,6 +108,7 @@ namespace AlephNote.Plugins.StandardNote
 			n._title = _title;
 			n._creationDate = _creationDate;
 			n._modificationDate = _modificationDate;
+			n._encryptionKey = _encryptionKey;
 			return n;
 		}
 	}
