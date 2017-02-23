@@ -87,7 +87,7 @@ namespace AlephNote.Repository
 
 				App.Logger.Info("Sync", string.Format("Found {0} alive notes and {1} deleted notes", allNotes.Count, notesToDelete.Count));
 
-				repo.Connection.StartSync(data, allNotes.Select(p => p.Item2).ToList());
+				repo.Connection.StartSync(data, allNotes.Select(p => p.Item2).ToList(), notesToDelete);
 				{
 					var notesToUpload = allNotes.Where(p => repo.Connection.NeedsUpload(p.Item2)).ToList();
 					var notesToDownload = allNotes.Where(p => repo.Connection.NeedsDownload(p.Item2)).ToList();

@@ -42,10 +42,10 @@ namespace AlephNote.Plugins.SimpleNote
 		{
 			if (input.Name.LocalName != "config") throw new Exception("LocalName != 'config'");
 
-			Username = XHelper.GetChildValue(input, "Username", string.Empty);
+			Username = XHelper.GetChildValue(input, "Username", Username);
 			Password = Decrypt(XHelper.GetChildValue(input, "Password", string.Empty));
-			PermanentlyDeleteNotes = XHelper.GetChildValue(input, "PermanentlyDeleteNotes", false);
-			BlankLineBelowTitle = XHelper.GetChildValue(input, "BlankLineBelowTitle", true);
+			PermanentlyDeleteNotes = XHelper.GetChildValue(input, "PermanentlyDeleteNotes", PermanentlyDeleteNotes);
+			BlankLineBelowTitle = XHelper.GetChildValue(input, "BlankLineBelowTitle", BlankLineBelowTitle);
 		}
 
 		public IEnumerable<DynamicSettingValue> ListProperties()

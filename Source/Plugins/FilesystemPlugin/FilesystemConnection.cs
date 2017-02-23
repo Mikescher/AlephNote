@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace AlephNote.Plugins.Filesystem
 {
-	public class FilesystemConnection : IRemoteStorageConnection
+	public class FilesystemConnection : BasicRemoteConnection
 	{
 		private readonly FilesystemConfig _config;
 		private readonly IAlephLogger _logger;
@@ -19,7 +19,53 @@ namespace AlephNote.Plugins.Filesystem
 			_logger = log;
 		}
 
-		public RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, ConflictResolutionStrategy strategy)
+		public override void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes, List<INote> localdeletednotes)
+		{
+			_syncScan = Directory
+				.EnumerateFiles(_config.Folder)
+				.Where(p => (Path.GetExtension(p) ?? "").ToLower() == "." + _config.Extension.ToLower())
+				.ToList();
+
+			_logger.Debug(FilesystemPlugin.Name, string.Format("Found {0} note files in directory scan", _syncScan.Count));
+		}
+
+		public override void FinishSync()
+		{
+			_syncScan = null;
+		}
+
+		public override bool NeedsUpload(INote inote)
+		{
+			var note = (FilesystemNote)inote;
+
+			if (note.IsConflictNote) return false;
+			if (string.IsNullOrWhiteSpace(note.Title)) return false;
+
+			if (!note.IsRemoteSaved) return true;
+			if (string.IsNullOrWhiteSpace(note.PathRemote)) return true;
+			if (!File.Exists(note.PathRemote)) return false;
+
+			return false;
+		}
+
+		public override bool NeedsDownload(INote inote)
+		{
+			var note = (FilesystemNote)inote;
+
+			if (note.IsConflictNote) return false;
+			if (string.IsNullOrWhiteSpace(note.Title)) return false;
+
+			if (!note.IsRemoteSaved) return false;
+
+			if (string.IsNullOrWhiteSpace(note.PathRemote)) return false;
+			if (!File.Exists(note.PathRemote)) return true;
+
+			var remote = ReadNoteFromPath(note.PathRemote);
+
+			return remote.ModificationDate > note.ModificationDate;
+		}
+
+		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, ConflictResolutionStrategy strategy)
 		{
 			FilesystemNote note = (FilesystemNote)inote;
 
@@ -101,7 +147,7 @@ namespace AlephNote.Plugins.Filesystem
 			}
 		}
 
-		public RemoteDownloadResult UpdateNoteFromRemote(INote inote)
+		public override RemoteDownloadResult UpdateNoteFromRemote(INote inote)
 		{
 			FilesystemNote note = (FilesystemNote) inote;
 
@@ -116,22 +162,7 @@ namespace AlephNote.Plugins.Filesystem
 			return RemoteDownloadResult.Updated;
 		}
 
-		public void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes)
-		{
-			_syncScan = Directory
-				.EnumerateFiles(_config.Folder)
-				.Where(p => (Path.GetExtension(p) ?? "").ToLower() == "." + _config.Extension.ToLower())
-				.ToList();
-
-			_logger.Debug(FilesystemPlugin.Name, string.Format("Found {0} note files in directory scan", _syncScan.Count));
-		}
-
-		public void FinishSync()
-		{
-			_syncScan = null;
-		}
-
-		public List<string> ListMissingNotes(List<INote> localnotes)
+		public override List<string> ListMissingNotes(List<INote> localnotes)
 		{
 			var remoteNotes = _syncScan.ToList();
 
@@ -144,58 +175,27 @@ namespace AlephNote.Plugins.Filesystem
 			return remoteNotes;
 		}
 
-		public INote DownloadNote(string path, out bool result)
+		public override INote DownloadNote(string path, out bool success)
 		{
 			if (File.Exists(path))
 			{
-				result = true;
+				success = true;
 				return ReadNoteFromPath(path);
 			}
 			else
 			{
-				result = false;
+				success = false;
 				return null;
 			}
 		}
 
-		public void DeleteNote(INote inote)
+		public override void DeleteNote(INote inote)
 		{
 			var note = (FilesystemNote) inote;
 
 			if (note.IsConflictNote) return;
 
 			if (File.Exists(note.PathRemote)) File.Delete(note.PathRemote);
-		}
-
-		public bool NeedsUpload(INote inote)
-		{
-			var note = (FilesystemNote)inote;
-
-			if (note.IsConflictNote) return false;
-			if (string.IsNullOrWhiteSpace(note.Title)) return false;
-
-			if (!note.IsRemoteSaved) return true;
-			if (string.IsNullOrWhiteSpace(note.PathRemote)) return true;
-			if (!File.Exists(note.PathRemote)) return false;
-
-			return false;
-		}
-
-		public bool NeedsDownload(INote inote)
-		{
-			var note = (FilesystemNote)inote;
-
-			if (note.IsConflictNote) return false;
-			if (string.IsNullOrWhiteSpace(note.Title)) return false;
-
-			if (!note.IsRemoteSaved) return false;
-
-			if (string.IsNullOrWhiteSpace(note.PathRemote)) return false;
-			if (!File.Exists(note.PathRemote)) return true;
-			
-			var remote = ReadNoteFromPath(note.PathRemote);
-
-			return remote.ModificationDate > note.ModificationDate;
 		}
 
 		private FilesystemNote ReadNoteFromPath(string path)

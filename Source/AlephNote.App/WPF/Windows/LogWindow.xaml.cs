@@ -11,7 +11,14 @@ namespace AlephNote.WPF.Windows
 		{
 			InitializeComponent();
 
+			CheckBoxDebug.IsChecked = App.Logger.DebugEnabled;
+
 			this.DataContext = new LogWindowViewmodel();
+		}
+
+		private void OnChangedDebugLog(object sender, RoutedEventArgs e)
+		{
+			App.Logger.DebugEnabled = CheckBoxDebug.IsChecked ?? false;
 		}
 	}
 }

@@ -84,6 +84,8 @@
     <Compile Include="Log\LogEventType.cs" />
     <Compile Include="Repository\ISynchronizationFeedback.cs" />
     <Compile Include="Repository\NoteRepository.cs" />
+    <Compile Include="Repository\RestException.cs" />
+    <Compile Include="Repository\SimpleJsonRest.cs" />
     <Compile Include="Repository\SynchronizationThread.cs" />
     <Compile Include="Settings\AppSettings.cs" />
     <Compile Include="Settings\NotePreviewStyle.cs" />

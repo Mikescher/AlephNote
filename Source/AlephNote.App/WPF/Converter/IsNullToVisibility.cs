@@ -7,7 +7,7 @@ namespace AlephNote.WPF.Converter
 	class IsNullToVisibility : OneWayConverter<object, Visibility>
 	{
 		public IsNullToVisibility() { }
-
+		
 		protected override Visibility Convert(object value, object parameter)
 		{
 			if (value == null)

@@ -1,6 +1,7 @@
 ﻿using AlephNote.PluginInterface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 
 namespace AlephNote.Plugins.StandardNote
@@ -9,13 +10,15 @@ namespace AlephNote.Plugins.StandardNote
 	/// https://github.com/standardnotes/doc/blob/master/Client%20Development%20Guide.md
 	/// http://standardfile.org/#api
 	/// </summary>
-	class StandardNoteConnection : IRemoteStorageConnection
+	class StandardNoteConnection : BasicRemoteConnection
 	{
 		private readonly StandardNoteConfig _config;
 		private readonly IWebProxy _proxy;
 		private readonly IAlephLogger _logger;
 
 		private StandardNoteAPI.APIResultAuthorize _token = null;
+
+		private StandardNoteAPI.SyncResult _syncResult = null;
 
 		public StandardNoteConnection(IAlephLogger log, IWebProxy proxy, StandardNoteConfig config)
 		{
@@ -30,11 +33,14 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				if (_token == null)
 				{
-					_logger.Debug(StandardNotePlugin.Name, "Requesting token from Simplenote server");
+					using (var web = CreateJsonRestClient(_proxy, _config.Server))
+					{
+						_logger.Debug(StandardNotePlugin.Name, "Requesting token from Simplenote server");
 
-					_token = StandardNoteAPI.Authenticate(_proxy, _config.Server, _config.Email, _config.Password, _logger);
+						_token = StandardNoteAPI.Authenticate(web, _config.Email, _config.Password, _logger);
 
-					_logger.Debug(StandardNotePlugin.Name, "Simplenote server returned token for user " + _token.user.uuid);
+						_logger.Debug(StandardNotePlugin.Name, "Simplenote server returned token for user " + _token.user.uuid);
+					}
 				}
 			}
 			catch (Exception e)
@@ -43,61 +49,142 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		public void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes)
+		private ISimpleJsonRest CreateAuthenticatedClient()
 		{
 			RefreshToken();
 
-			var upNotes = new List<StandardNote>();
-			foreach (var inote in localnotes)
+			var client = CreateJsonRestClient(_proxy, _config.Server);
+			client.AddHeader("Authorization", "Bearer " + _token.token);
+
+			return client;
+		}
+
+		public override void StartSync(IRemoteStorageSyncPersistance idata, List<INote> localnotes, List<INote> localdeletednotes)
+		{
+			using (var web = CreateAuthenticatedClient())
 			{
-				var note = (StandardNote) inote;
+				var data = (StandardNoteData)idata;
 
-				if (note.IsConflictNote) continue;
+				var upNotes = localnotes.Cast<StandardNote>().Where(NeedsUpload).ToList();
+				var delNotes = localdeletednotes.Cast<StandardNote>().ToList();
+				var delTags = data.GetUnusedTags(localnotes.Cast<StandardNote>().ToList());
 
-				if (!note.IsRemoteSaved) upNotes.Add(note);
+				_syncResult = StandardNoteAPI.Sync(web, _token, _config, data, upNotes, delNotes, delTags);
+
+				_logger.Debug(StandardNotePlugin.Name, "StandardFile sync finished.",
+					string.Format("upload:[notes={7} deleted={8}]" + "\r\n" + "download:[note:[retrieved={0} deleted={1} saved={2} unsaved={3}] tags:[retrieved={4} saved={5} unsaved={6}]]",
+					_syncResult.retrieved_notes.Count,
+					_syncResult.deleted_notes.Count,
+					_syncResult.saved_notes.Count,
+					_syncResult.unsaved_notes.Count,
+					_syncResult.retrieved_tags.Count,
+					_syncResult.saved_tags.Count,
+					_syncResult.unsaved_tags.Count,
+					upNotes.Count,
+					delNotes.Count));
+			}
+		}
+
+		public override void FinishSync()
+		{
+			_syncResult = null;
+		}
+
+		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, ConflictResolutionStrategy strategy)
+		{
+			var note = (StandardNote) inote;
+
+			if (_syncResult.saved_notes.Any(n => n.ID == note.ID))
+			{
+				note.ApplyUpdatedData(_syncResult.saved_notes.First(n => n.ID == note.ID));
+				conflict = null;
+				return RemoteUploadResult.Uploaded;
+			}
+			
+			if (_syncResult.retrieved_notes.Any(n => n.ID == note.ID))
+			{
+				note.ApplyUpdatedData(_syncResult.retrieved_notes.First(n => n.ID == note.ID));
+				conflict = null;
+				return RemoteUploadResult.Uploaded;
 			}
 
-			StandardNoteAPI.Sync(_proxy, _token, _config.Server, (StandardNoteData)data, upNotes);
+			if (_syncResult.unsaved_notes.Any(n => n.ID == note.ID))
+			{
+				throw new Exception("Could not upload note - server returned note in {unsaved_notes}");
+			}
+
+			conflict = null;
+			return RemoteUploadResult.UpToDate;
 		}
 
-		public void FinishSync()
+		public override RemoteDownloadResult UpdateNoteFromRemote(INote inote)
 		{
-			throw new NotImplementedException();
+			var note = (StandardNote)inote;
+
+			if (_syncResult.deleted_notes.Any(n => n.ID == note.ID))
+			{
+				note.ApplyUpdatedData(_syncResult.deleted_notes.First(n => n.ID == note.ID));
+
+				return RemoteDownloadResult.DeletedOnRemote;
+			}
+
+			if (_syncResult.retrieved_notes.Any(n => n.ID == note.ID))
+			{
+				_logger.Warn(StandardNotePlugin.Name, "Downloaded note found in bucket [retrieved_notes] - possibly an error");
+
+				note.ApplyUpdatedData(_syncResult.retrieved_notes.First(n => n.ID == note.ID));
+
+				return RemoteDownloadResult.Updated;
+			}
+
+			return RemoteDownloadResult.UpToDate;
 		}
 
-		public RemoteUploadResult UploadNoteToRemote(ref INote note, out INote conflict, ConflictResolutionStrategy strategy)
+		public override INote DownloadNote(string id, out bool success)
 		{
-			throw new NotImplementedException();
+			var n1 = _syncResult.retrieved_notes.FirstOrDefault(n => n.ID.ToString("N") == id);
+			if (n1 != null)
+			{
+				success = true;
+				return n1;
+			}
+
+			success = false;
+			return null;
 		}
 
-		public RemoteDownloadResult UpdateNoteFromRemote(INote note)
+		public override void DeleteNote(INote inote)
 		{
-			throw new NotImplementedException();
+			var note = (StandardNote)inote;
+
+			if (_syncResult.deleted_notes.All(n => n.ID != note.ID))
+			{
+				_logger.Warn(StandardNotePlugin.Name, "Delete note returned no result - possibly an error");
+			}
 		}
 
-		public INote DownloadNote(string id, out bool result)
+		public override List<string> ListMissingNotes(List<INote> localnotes)
 		{
-			throw new NotImplementedException();
+			return _syncResult
+				.retrieved_notes
+				.Where(rn => localnotes.All(ln => ((StandardNote) ln).ID != rn.ID))
+				.Select(p => p.ID.ToString("N"))
+				.ToList();
 		}
 
-		public void DeleteNote(INote note)
+		public override bool NeedsUpload(INote note)
 		{
-			throw new NotImplementedException();
+			return !note.IsConflictNote && !note.IsRemoteSaved;
 		}
 
-		public List<string> ListMissingNotes(List<INote> localnotes)
+		public override bool NeedsDownload(INote inote)
 		{
-			throw new NotImplementedException();
-		}
+			var note = (StandardNote)inote;
 
-		public bool NeedsUpload(INote note)
-		{
-			throw new NotImplementedException();
-		}
+			if (_syncResult.retrieved_notes.Any(n => n.ID == note.ID)) return true;
+			if (_syncResult.deleted_notes.Any(n => n.ID == note.ID)) return true;
 
-		public bool NeedsDownload(INote note)
-		{
-			throw new NotImplementedException();
+			return false;
 		}
 	}
 }

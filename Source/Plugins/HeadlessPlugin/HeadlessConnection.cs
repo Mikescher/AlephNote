@@ -3,50 +3,50 @@ using System.Collections.Generic;
 
 namespace AlephNote.Plugins.Headless
 {
-	class HeadlessConnection : IRemoteStorageConnection
+	class HeadlessConnection : BasicRemoteConnection
 	{
-		public void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes)
+		public override void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes, List<INote> localdeletednotes)
 		{
 			// ok
 		}
 
-		public void FinishSync()
+		public override void FinishSync()
 		{
 			//
 		}
 
-		public INote DownloadNote(string id, out bool result)
+		public override bool NeedsUpload(INote note)
 		{
-			result = false;
+			return false;
+		}
+
+		public override bool NeedsDownload(INote note)
+		{
+			return false;
+		}
+
+		public override INote DownloadNote(string id, out bool success)
+		{
+			success = false;
 			return null;
 		}
 
-		public void DeleteNote(INote note)
+		public override void DeleteNote(INote note)
 		{
 			// ok
 		}
 
-		public List<string> ListMissingNotes(List<INote> localnotes)
+		public override List<string> ListMissingNotes(List<INote> localnotes)
 		{
 			return new List<string>();
 		}
 
-		public bool NeedsUpload(INote note)
-		{
-			return false;
-		}
-
-		public bool NeedsDownload(INote note)
-		{
-			return false;
-		}
-
-		public RemoteDownloadResult UpdateNoteFromRemote(INote note)
+		public override RemoteDownloadResult UpdateNoteFromRemote(INote note)
 		{
 			return RemoteDownloadResult.UpToDate;
 		}
 
-		public RemoteUploadResult UploadNoteToRemote(ref INote note, out INote conflict, ConflictResolutionStrategy strategy)
+		public override RemoteUploadResult UploadNoteToRemote(ref INote note, out INote conflict, ConflictResolutionStrategy strategy)
 		{
 			conflict = null;
 			return RemoteUploadResult.UpToDate;

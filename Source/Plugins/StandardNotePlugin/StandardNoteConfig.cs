@@ -15,10 +15,14 @@ namespace AlephNote.Plugins.StandardNote
 		private const int ID_EMAIL    = 6251;
 		private const int ID_PASSWORD = 6252;
 		private const int ID_SERVER   = 6253;
+		private const int ID_ENCRYPT  = 6254;
+		private const int ID_REMTAGS  = 6255;
 
-		public string Email    = string.Empty;
-		public string Password = string.Empty;
-		public string Server   = @"https://n3.standardnotes.org";
+		public string Email       = string.Empty;
+		public string Password    = string.Empty;
+		public string Server      = @"https://n3.standardnotes.org";
+		public bool SendEncrypted = true;
+		public bool RemEmptyTags  = true;
 
 		public XElement Serialize()
 		{
@@ -27,6 +31,8 @@ namespace AlephNote.Plugins.StandardNote
 				new XElement("Email", Email),
 				new XElement("Password", Encrypt(Password)),
 				new XElement("Server", Server),
+				new XElement("Encrypt", SendEncrypted),
+				new XElement("RemEmptyTags", RemEmptyTags),
 			};
 
 			var r = new XElement("config", data);
@@ -39,9 +45,11 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			if (input.Name.LocalName != "config") throw new Exception("LocalName != 'config'");
 
-			Email = XHelper.GetChildValue(input, "Email", string.Empty);
+			Email = XHelper.GetChildValue(input, "Email", Email);
 			Password = Decrypt(XHelper.GetChildValue(input, "Password", string.Empty));
-			Server   = XHelper.GetChildValue(input, "Server", string.Empty);
+			Server = XHelper.GetChildValue(input, "Server", Server);
+			SendEncrypted = XHelper.GetChildValue(input, "Encrypt", SendEncrypted);
+			RemEmptyTags = XHelper.GetChildValue(input, "RemEmptyTags", RemEmptyTags);
 		}
 
 		public IEnumerable<DynamicSettingValue> ListProperties()
@@ -49,6 +57,8 @@ namespace AlephNote.Plugins.StandardNote
 			yield return DynamicSettingValue.CreateText(ID_EMAIL, "Email", Email);
 			yield return DynamicSettingValue.CreatePassword(ID_PASSWORD, "Password", Password);
 			yield return DynamicSettingValue.CreateText(ID_SERVER, "Host", Server);
+			yield return DynamicSettingValue.CreateCheckbox(ID_ENCRYPT, "Encrypt Notes", SendEncrypted);
+			yield return DynamicSettingValue.CreateCheckbox(ID_REMTAGS, "Delete unused tags", RemEmptyTags);
 			yield return DynamicSettingValue.CreateHyperlink("Create Standard Notes account", "https://standardnotes.org/");
 		}
 
@@ -61,7 +71,8 @@ namespace AlephNote.Plugins.StandardNote
 
 		public void SetProperty(int id, bool value)
 		{
-			throw new ArgumentException();
+			if (id == ID_ENCRYPT) SendEncrypted = value;
+			if (id == ID_REMTAGS) RemEmptyTags = value;
 		}
 
 		public bool IsEqual(IRemoteStorageConfiguration iother)
@@ -69,9 +80,11 @@ namespace AlephNote.Plugins.StandardNote
 			var other = iother as StandardNoteConfig;
 			if (other == null) return false;
 
-			if (this.Email    != other.Email) return false;
-			if (this.Password != other.Password) return false;
-			if (this.Server   != other.Server) return false;
+			if (this.Email         != other.Email) return false;
+			if (this.Password      != other.Password) return false;
+			if (this.Server        != other.Server) return false;
+			if (this.SendEncrypted != other.SendEncrypted) return false;
+			if (this.RemEmptyTags  != other.RemEmptyTags) return false;
 
 			return true;
 		}
@@ -80,9 +93,11 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			return new StandardNoteConfig
 			{
-				Email    = this.Email,
-				Password = this.Password,
-				Server   = this.Server,
+				Email         = this.Email,
+				Password      = this.Password,
+				Server        = this.Server,
+				SendEncrypted = this.SendEncrypted,
+				RemEmptyTags  = this.RemEmptyTags,
 			};
 		}
 

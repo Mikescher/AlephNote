@@ -69,10 +69,13 @@
 	</Window.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="1*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
-		<ListView ItemsSource="{Binding Log}" SelectedItem="{Binding SelectedLog}" Grid.Row="0">
+		<TextBlock Grid.Row="0" Text="Eventlog" FontWeight="Bold" FontSize="24" Margin="20,5" HorizontalAlignment="Left" />
+		<CheckBox Grid.Row="0" Content="Log debug events" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10,5" x:Name="CheckBoxDebug" Checked="OnChangedDebugLog" Unchecked="OnChangedDebugLog" />
+		<ListView ItemsSource="{Binding Log}" SelectedItem="{Binding SelectedLog}" Grid.Row="1">
 			<ListView.Resources>
 				<Style TargetType="ListViewItem">
 					<Style.Triggers>
@@ -92,7 +95,8 @@
 			</ListView.View>
 		</ListView>
 
-		<TextBox IsReadOnly="True" Height="150" Margin="2" Visibility="{Binding SelectedLog.LongText, Converter={conv:IsNullToVisibility}, ConverterParameter=Collapsed;Visible, FallbackValue=Collapsed}" Grid.Row="1" Text="{Binding SelectedLog.LongText, TargetNullValue='', Mode=OneWay}" />
+		<TextBox IsReadOnly="True" Height="150" Margin="2" Visibility="{Binding SelectedLog.LongText, Converter={conv:IsNullToVisibility}, ConverterParameter=Collapsed;Visible, FallbackValue=Collapsed}" Grid.Row="2"
+		         Text="{Binding SelectedLog.LongText, TargetNullValue='', Mode=OneWay}" />
 		
 	</Grid>
 </Window>

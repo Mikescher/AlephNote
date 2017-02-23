@@ -1,4 +1,5 @@
 ﻿using AlephNote.PluginInterface;
+using AlephNote.Repository;
 using AlephNote.WPF.Windows;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,8 @@ namespace AlephNote.Plugins
 
 			var pluginPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"plugins\");
 			var pluginfiles = Directory.GetFiles(pluginPath, "*.dll");
+
+			BasicRemoteConnection.SimpleJsonRestWrapper = (p, h) => new SimpleJsonRest(p, h, App.Logger);
 
 			foreach (var path in pluginfiles)
 			{

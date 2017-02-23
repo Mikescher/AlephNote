@@ -6,8 +6,13 @@ using System.Net;
 
 namespace AlephNote.Plugins.SimpleNote
 {
-	class SimpleNoteConnection : IRemoteStorageConnection
+	class SimpleNoteConnection : BasicRemoteConnection
 	{
+		private const string HOST_AUTH = @"https://auth.simperium.com/1/chalk-bump-f49/";
+		private const string HOST_API  = @"https://api.simperium.com/1/chalk-bump-f49/";
+
+		private const string API_KEY = "6ebfbdf6bfa8423e85d8733f6b6bbc25";
+
 		private readonly SimpleNoteConfig _config;
 		private readonly IWebProxy _proxy;
 		private readonly IAlephLogger _logger;
@@ -30,11 +35,14 @@ namespace AlephNote.Plugins.SimpleNote
 			{
 				if (_token == null)
 				{
-					_logger.Debug(SimpleNotePlugin.Name, "Requesting token from Simplenote server");
+					using (var web = CreateJsonRestClient(_proxy, HOST_AUTH))
+					{
+						web.AddHeader("X-Simperium-API-Key", API_KEY);
 
-					_token = SimpleNoteAPI.Authenticate(_proxy, _config.Username, _config.Password);
-
-					_logger.Debug(SimpleNotePlugin.Name, "Simplenote server returned token for user " + _token.userid);
+						_logger.Debug(SimpleNotePlugin.Name, "Requesting token from Simplenote server");
+						_token = SimpleNoteAPI.Authenticate(web, _config.Username, _config.Password);
+						_logger.Debug(SimpleNotePlugin.Name, "Simplenote server returned token for user " + _token.userid);
+					}
 				}
 			}
 			catch (Exception e)
@@ -43,21 +51,33 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		public void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes)
+		private ISimpleJsonRest CreateAuthenticatedClient()
 		{
 			RefreshToken();
 
-			buckets = SimpleNoteAPI.ListBuckets(_proxy, _token.access_token);
+			var client = CreateJsonRestClient(_proxy, HOST_API);
+			client.AddHeader("X-Simperium-API-Key", API_KEY);
+			client.AddHeader("X-Simperium-Token", _token.access_token);
 
-			_logger.Debug(SimpleNotePlugin.Name, string.Format("SimpleNoteAPI.ListBuckets returned {0} elements", buckets.index.Count));
+			return client;
 		}
 
-		public void FinishSync()
+		public override void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes, List<INote> localdeletednotes)
+		{
+			using (var web = CreateAuthenticatedClient())
+			{
+				buckets = SimpleNoteAPI.ListBuckets(web);
+
+				_logger.Debug(SimpleNotePlugin.Name, string.Format("SimpleNoteAPI.ListBuckets returned {0} elements", buckets.index.Count));
+			}
+		}
+
+		public override void FinishSync()
 		{
 			buckets = null;
 		}
 
-		public bool NeedsUpload(INote inote)
+		public override bool NeedsUpload(INote inote)
 		{
 			var note = (SimpleNote)inote;
 
@@ -72,7 +92,7 @@ namespace AlephNote.Plugins.SimpleNote
 			return remote.v < note.LocalVersion;
 		}
 
-		public bool NeedsDownload(INote inote)
+		public override bool NeedsDownload(INote inote)
 		{
 			var note = (SimpleNote)inote;
 
@@ -87,45 +107,47 @@ namespace AlephNote.Plugins.SimpleNote
 			return remote.v > note.LocalVersion;
 		}
 
-		public INote DownloadNote(string id, out bool result)
+		public override INote DownloadNote(string id, out bool success)
 		{
-			RefreshToken();
-
-			var d = SimpleNoteAPI.GetNoteData(_proxy, _token.access_token, id, _config);
-
-			if (d.Deleted)
+			using (var web = CreateAuthenticatedClient())
 			{
-				deletedNotesCache.Add(d.ID);
-				result = false;
-				return null;
-			}
+				var d = SimpleNoteAPI.GetNoteData(web, id, _config);
 
-			result = true;
-			return d;
-		}
+				if (d.Deleted)
+				{
+					deletedNotesCache.Add(d.ID);
+					success = false;
+					return null;
+				}
 
-		public void DeleteNote(INote inote)
-		{
-			RefreshToken();
-
-			var note = (SimpleNote)inote;
-
-			if (note.IsConflictNote) return;
-			
-			var remote = buckets.index.FirstOrDefault(p => p.id == note.ID);
-
-			if (remote != null)
-			{
-				if (_config.PermanentlyDeleteNotes)
-					SimpleNoteAPI.DeleteNotePermanently(_proxy, _token.access_token, note);
-				else
-					SimpleNoteAPI.DeleteNote(_proxy, _token.access_token, note);
-
-				deletedNotesCache.Add(note.ID);
+				success = true;
+				return d;
 			}
 		}
 
-		public List<string> ListMissingNotes(List<INote> localnotes)
+		public override void DeleteNote(INote inote)
+		{
+			using (var web = CreateAuthenticatedClient())
+			{
+				var note = (SimpleNote) inote;
+
+				if (note.IsConflictNote) return;
+
+				var remote = buckets.index.FirstOrDefault(p => p.id == note.ID);
+
+				if (remote != null)
+				{
+					if (_config.PermanentlyDeleteNotes)
+						SimpleNoteAPI.DeleteNotePermanently(web, note);
+					else
+						SimpleNoteAPI.DeleteNote(web, note);
+
+					deletedNotesCache.Add(note.ID);
+				}
+			}
+		}
+
+		public override List<string> ListMissingNotes(List<INote> localnotes)
 		{
 			return buckets.index
 				.Where(b => localnotes.All(p => ((SimpleNote) p).ID != b.id))
@@ -134,70 +156,72 @@ namespace AlephNote.Plugins.SimpleNote
 				.ToList();
 		}
 
-		public RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, ConflictResolutionStrategy strategy)
+		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, ConflictResolutionStrategy strategy)
 		{
-			RefreshToken();
-			
-			var note = (SimpleNote)inote;
-
-			var remote = buckets.index.FirstOrDefault(p => p.id == note.ID);
-
-			if (remote == null)
+			using (var web = CreateAuthenticatedClient())
 			{
-				conflict = null;
-				inote = SimpleNoteAPI.UploadNewNote(_proxy, _token.access_token, note, _config);
-				return RemoteUploadResult.Uploaded;
-			}
-			else
-			{
-				if (remote.v > note.LocalVersion)
+				var note = (SimpleNote) inote;
+
+				var remote = buckets.index.FirstOrDefault(p => p.id == note.ID);
+
+				if (remote == null)
 				{
-					if (strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.UseClientCreateConflictFile)
-					{
-						bool tmp;
-						conflict = SimpleNoteAPI.GetNoteData(_proxy, _token.access_token, note.ID, _config);
-						inote = SimpleNoteAPI.ChangeExistingNote(_proxy, _token.access_token, note, _config, out tmp);
-						return RemoteUploadResult.Conflict;
-					}
-					else if (strategy == ConflictResolutionStrategy.UseServerVersion || strategy == ConflictResolutionStrategy.UseServerCreateConflictFile)
-					{
-						conflict = inote.Clone();
-						inote = SimpleNoteAPI.GetNoteData(_proxy, _token.access_token, note.ID, _config);
-						return RemoteUploadResult.Conflict;
-					}
-					else
-					{
-						throw new ArgumentException("strategy == " + strategy);
-					}
+					conflict = null;
+					inote = SimpleNoteAPI.UploadNewNote(web, note, _config);
+					return RemoteUploadResult.Uploaded;
 				}
 				else
 				{
-					conflict = null;
-					bool updated;
-					inote = SimpleNoteAPI.ChangeExistingNote(_proxy, _token.access_token, note, _config, out updated);
-					return updated ? RemoteUploadResult.Uploaded : RemoteUploadResult.UpToDate;
+					if (remote.v > note.LocalVersion)
+					{
+						if (strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.UseClientCreateConflictFile)
+						{
+							bool tmp;
+							conflict = SimpleNoteAPI.GetNoteData(web, note.ID, _config);
+							inote = SimpleNoteAPI.ChangeExistingNote(web, note, _config, out tmp);
+							return RemoteUploadResult.Conflict;
+						}
+						else if (strategy == ConflictResolutionStrategy.UseServerVersion || strategy == ConflictResolutionStrategy.UseServerCreateConflictFile)
+						{
+							conflict = inote.Clone();
+							inote = SimpleNoteAPI.GetNoteData(web, note.ID, _config);
+							return RemoteUploadResult.Conflict;
+						}
+						else
+						{
+							throw new ArgumentException("strategy == " + strategy);
+						}
+					}
+					else
+					{
+						conflict = null;
+						bool updated;
+						inote = SimpleNoteAPI.ChangeExistingNote(web, note, _config, out updated);
+						return updated ? RemoteUploadResult.Uploaded : RemoteUploadResult.UpToDate;
+					}
 				}
 			}
 		}
 
-		public RemoteDownloadResult UpdateNoteFromRemote(INote inote)
+		public override RemoteDownloadResult UpdateNoteFromRemote(INote inote)
 		{
-			RefreshToken();
+			using (var web = CreateAuthenticatedClient())
+			{
+				var note = (SimpleNote) inote;
 
-			var note = (SimpleNote)inote;
+				var remote = buckets.index.FirstOrDefault(p => p.id == note.ID);
 
-			var remote = buckets.index.FirstOrDefault(p => p.id == note.ID);
+				if (remote == null) return RemoteDownloadResult.DeletedOnRemote;
 
-			if (remote == null) return RemoteDownloadResult.DeletedOnRemote;
+				if (remote.v == note.LocalVersion) return RemoteDownloadResult.UpToDate;
 
-			if (remote.v == note.LocalVersion) return RemoteDownloadResult.UpToDate;
+				var unote = SimpleNoteAPI.GetNoteData(web, note.ID, _config);
+				if (unote.Deleted) return RemoteDownloadResult.DeletedOnRemote;
 
-			var unote = SimpleNoteAPI.GetNoteData(_proxy, _token.access_token, note.ID, _config);
-			if (unote.Deleted) return RemoteDownloadResult.DeletedOnRemote;
+				inote.ApplyUpdatedData(unote);
 
-			inote.ApplyUpdatedData(unote);
-
-			return RemoteDownloadResult.Updated;
+				return RemoteDownloadResult.Updated;
+			}
 		}
 	}
 }
