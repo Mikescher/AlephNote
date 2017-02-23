@@ -20,7 +20,7 @@ namespace AlephNote.Plugins.SimpleNote
 		private SimpleNoteAPI.APIResultAuthorize _token = null;
 		private SimpleNoteAPI.APIResultIndex buckets = null;
 
-		private readonly HashSet<string> deletedNotesCache = new HashSet<string>();
+		private SimpleNoteData _data;
 
 		public SimpleNoteConnection(IAlephLogger log, IWebProxy proxy, SimpleNoteConfig config)
 		{
@@ -64,11 +64,16 @@ namespace AlephNote.Plugins.SimpleNote
 
 		public override void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes, List<INote> localdeletednotes)
 		{
+			_data = (SimpleNoteData) data;
+
 			using (var web = CreateAuthenticatedClient())
 			{
 				buckets = SimpleNoteAPI.ListBuckets(web);
 
-				_logger.Debug(SimpleNotePlugin.Name, string.Format("SimpleNoteAPI.ListBuckets returned {0} elements", buckets.index.Count));
+				_logger.Debug(
+					SimpleNotePlugin.Name, 
+					string.Format("SimpleNoteAPI.ListBuckets returned {0} elements", buckets.index.Count),
+					string.Join(Environment.NewLine, buckets.index.Select(b => b.id + " ("+b.v+")")));
 			}
 		}
 
@@ -115,10 +120,12 @@ namespace AlephNote.Plugins.SimpleNote
 
 				if (d.Deleted)
 				{
-					deletedNotesCache.Add(d.ID);
+					_data.AddDeletedNote(d.ID, d.LocalVersion);
 					success = false;
 					return null;
 				}
+
+				_data.RemoveDeletedNote(d.ID);
 
 				success = true;
 				return d;
@@ -142,7 +149,7 @@ namespace AlephNote.Plugins.SimpleNote
 					else
 						SimpleNoteAPI.DeleteNote(web, note);
 
-					deletedNotesCache.Add(note.ID);
+					_data.AddDeletedNote(note.ID, note.LocalVersion);
 				}
 			}
 		}
@@ -151,7 +158,7 @@ namespace AlephNote.Plugins.SimpleNote
 		{
 			return buckets.index
 				.Where(b => localnotes.All(p => ((SimpleNote) p).ID != b.id))
-				.Where(b => !deletedNotesCache.Contains(b.id))
+				.Where(b => !_data.IsDeleted(b.id, b.v))
 				.Select(buck => buck.id)
 				.ToList();
 		}

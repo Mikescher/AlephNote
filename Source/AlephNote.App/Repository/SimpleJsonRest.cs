@@ -9,6 +9,8 @@ namespace AlephNote.Repository
 {
 	public class SimpleJsonRest : ISimpleJsonRest
 	{
+		private const int LOG_FMT_DEPTH = 2;
+
 		private readonly WebClient _client;
 		private readonly Uri _host;
 		private readonly IAlephLogger _logger;
@@ -107,7 +109,11 @@ namespace AlephNote.Repository
 				throw new RestException("Rest call to " + uri.Host + " returned unexpected data :\r\n" + download, e);
 			}
 
-			_logger.Debug("REST", string.Format("Calling REST API '{0}' [POST]", uri), string.Format("Send:\r\n{0}\r\n\r\n---------------------\r\n\r\nRecieved:\r\n{1}", upload, download));
+			_logger.Debug("REST", 
+				string.Format("Calling REST API '{0}' [POST]", uri), 
+				string.Format("Send:\r\n{0}\r\n\r\n---------------------\r\n\r\nRecieved:\r\n{1}", 
+				CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH), 
+				CompactJsonFormatter.FormatJSON(download, LOG_FMT_DEPTH)));
 
 			return downloadObject;
 		}
@@ -149,7 +155,10 @@ namespace AlephNote.Repository
 				throw new RestException("Could not communicate with server " + uri.Host, e);
 			}
 
-			_logger.Debug("REST", string.Format("Calling REST API '{0}' [POST]", uri), string.Format("Send:\r\n{0}\r\n\r\n", upload));
+			_logger.Debug("REST", 
+				string.Format("Calling REST API '{0}' [POST]", uri), 
+				string.Format("Send:\r\n{0}\r\n\r\nRecieved: Nothing",
+				CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH)));
 		}
 
 		public TResult PostDownload<TResult>(string path, params string[] parameter)
@@ -197,7 +206,10 @@ namespace AlephNote.Repository
 				throw new RestException("Rest call to " + uri.Host + " returned unexpected data :\r\n" + download, e);
 			}
 
-			_logger.Debug("REST", string.Format("Calling REST API '{0}' [POST]", uri), string.Format("Recieved:\r\n{0}", download));
+			_logger.Debug("REST", 
+				string.Format("Calling REST API '{0}' [POST]", uri), 
+				string.Format("Send: Nothing\r\nRecieved:\r\n{0}",
+				CompactJsonFormatter.FormatJSON(download, LOG_FMT_DEPTH)));
 
 			return downloadObject;
 		}
@@ -247,7 +259,10 @@ namespace AlephNote.Repository
 				throw new RestException("Rest call to " + uri.Host + " returned unexpected data :\r\n" + download, e);
 			}
 
-			_logger.Debug("REST", string.Format("Calling REST API '{0}' [GET]", uri), string.Format("Recieved:\r\n{0}", download));
+			_logger.Debug("REST", 
+				string.Format("Calling REST API '{0}' [GET]", uri), 
+				string.Format("Send: Nothing\r\n\r\nRecieved:\r\n{0}",
+				CompactJsonFormatter.FormatJSON(download, LOG_FMT_DEPTH)));
 
 			return downloadObject;
 		}
@@ -289,7 +304,10 @@ namespace AlephNote.Repository
 				throw new RestException("Could not communicate with server " + uri.Host, e);
 			}
 
-			_logger.Debug("REST", string.Format("Calling REST API '{0}' [DELETE]", uri), string.Format("Send:\r\n{0}\r\n\r\n", upload));
+			_logger.Debug("REST", 
+				string.Format("Calling REST API '{0}' [DELETE]", uri), 
+				string.Format("Send:\r\n{0}\r\n\r\nRecieved: Nothing",
+				CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH)));
 		}
 
 		public void DeleteEmpty(string path, params string[] parameter)
@@ -326,7 +344,7 @@ namespace AlephNote.Repository
 				throw new RestException("Could not communicate with server " + uri.Host, e);
 			}
 
-			_logger.Debug("REST", string.Format("Calling REST API '{0}' [DELETE]", uri));
+			_logger.Debug("REST", string.Format("Calling REST API '{0}' [DELETE]", uri), "Send: Nothing\r\n\r\nRecieved: Nothing");
 		}
 	}
 }

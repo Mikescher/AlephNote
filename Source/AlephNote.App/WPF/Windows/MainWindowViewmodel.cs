@@ -312,7 +312,7 @@ namespace AlephNote.WPF.Windows
 
 		private void ShowLog()
 		{
-			new LogWindow { Owner = Owner }.ShowDialog();
+			new LogWindow { Owner = Owner }.Show();
 		}
 
 		private void SaveAndSync()

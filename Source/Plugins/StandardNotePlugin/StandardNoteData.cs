@@ -39,13 +39,15 @@ namespace AlephNote.Plugins.StandardNote
 			Tags = new List<StandardFileTag>();
 			var child = input.Elements("Tags").FirstOrDefault();
 			if (child == null) throw new XMLStructureException("Node not found: " + "Tags");
-			foreach (var xtag in child.Elements("Tag")) 
+			foreach (var xtag in child.Elements("Tag"))
+			{
 				Tags.Add(new StandardFileTag
 				{
 					UUID = XHelper.GetAttributeGuid(xtag, "UUID"),
 					Title = XHelper.GetAttributeString(xtag, "Title"),
 					EncryptionKey = XHelper.GetAttributeString(xtag, "EncryptionKey"),
 				});
+			}
 		}
 
 		public void UpdateTags(IEnumerable<StandardNoteAPI.SyncResultTag> retrievedTags, IEnumerable<StandardNoteAPI.SyncResultTag> savedTags, IEnumerable<StandardNoteAPI.SyncResultTag> unsavedTags)

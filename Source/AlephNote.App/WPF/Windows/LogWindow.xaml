@@ -95,8 +95,7 @@
 			</ListView.View>
 		</ListView>
 
-		<TextBox IsReadOnly="True" Height="150" Margin="2" Visibility="{Binding SelectedLog.LongText, Converter={conv:IsNullToVisibility}, ConverterParameter=Collapsed;Visible, FallbackValue=Collapsed}" Grid.Row="2"
-		         Text="{Binding SelectedLog.LongText, TargetNullValue='', Mode=OneWay}" />
+		<TextBox IsReadOnly="True" Height="150" Margin="2" Grid.Row="2" Text="{Binding SelectedLog.LongText, TargetNullValue='', Mode=OneWay}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
 		
 	</Grid>
 </Window>
