@@ -1,7 +1,10 @@
-﻿using AlephNote.PluginInterface;
-using MSHC.Lang.Extensions;
+﻿using System.Collections.Specialized;
+using AlephNote.PluginInterface;
+using MSHC.Lang.Collections;
+using MSHC.Serialization;
 using MSHC.Util.Helper;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
@@ -9,7 +12,7 @@ using System.Xml.Linq;
 
 namespace AlephNote.Plugins.StandardNote
 {
-	public class StandardNote : BasicNote
+	public class StandardFileNote : BasicNote
 	{
 		private Guid _id;
 		public Guid ID { get { return _id; } set { _id = value; OnPropertyChanged(); } }
@@ -26,19 +29,22 @@ namespace AlephNote.Plugins.StandardNote
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
 		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
 
+		private List<StandardFileTag> _internalTags = new List<StandardFileTag>();
+		public List<StandardFileTag> InternalTags { get { return _internalTags; } }
+
 		private readonly ObservableCollection<string> _tags = new ObservableCollection<string>();
 		public override ObservableCollection<string> Tags { get { return _tags; } }
 
-		private string _encryptionKey = "";
-		public string EncryptionKey { get { return _encryptionKey; } set { _encryptionKey = value; OnPropertyChanged(); } }
-
+		private bool _ignoreTagsChanged = false;
 		private readonly StandardNoteConfig _config;
 
-		public StandardNote(Guid uid, StandardNoteConfig cfg)
+		public StandardFileNote(Guid uid, StandardNoteConfig cfg)
 		{
 			_id = uid;
 			_config = cfg;
 			_creationDate = DateTimeOffset.Now;
+
+			_tags.CollectionChanged += TagsChanged;
 		}
 
 		public override XElement Serialize()
@@ -46,12 +52,11 @@ namespace AlephNote.Plugins.StandardNote
 			var data = new object[]
 			{
 				new XElement("ID", _id),
-				new XElement("Tags", Tags.Select(p => new XElement("Tag", p)).Cast<object>().ToArray()),
+				new XElement("Tags", _internalTags.Select(t => t.Serialize()).Cast<object>().ToArray()),
 				new XElement("Text", Convert.ToBase64String(Encoding.UTF8.GetBytes(_text))),
 				new XElement("Title", _title),
 				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
-				new XElement("Key", _encryptionKey),
 			};
 
 			var r = new XElement("standardnote", data);
@@ -65,13 +70,57 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			using (SuppressDirtyChanges())
 			{
+				_internalTags = XHelper.GetChildOrThrow(input, "Tags").Elements().Select(StandardFileTag.Deserialize).ToList();
+
 				_id = XHelper.GetChildValueGUID(input, "ID");
-				_tags.Synchronize(XHelper.GetChildValueStringList(input, "Tags", "Tag"));
+				_tags.Synchronize(_internalTags.Select(it => it.Title));
 				_text = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Text")));
 				_title = XHelper.GetChildValueString(input, "Title");
 				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
-				_encryptionKey = XHelper.GetChildValueString(input, "Key");
+			}
+		}
+
+		private void TagsChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (_ignoreTagsChanged) return;
+
+			if (e.NewItems != null)
+				foreach (var item in e.NewItems.Cast<string>())
+				{
+					if (_internalTags.All(it => it.Title != item))
+						_internalTags.Add(new StandardFileTag(null, item));
+				}
+
+			if (e.OldItems != null)
+				foreach (var item in e.OldItems.Cast<string>())
+				{
+					_internalTags.RemoveAll(it => it.Title == item);
+				}
+		}
+
+		public void UpgradeTag(StandardFileTag told, StandardFileTag tnew)
+		{
+			int idx = _internalTags.IndexOf(told);
+			_internalTags[idx] = tnew;
+		}
+
+		public void SetTags(IEnumerable<StandardFileTag> newtags)
+		{
+			_internalTags = newtags.ToList();
+			ResyncTags();
+		}
+
+		private void ResyncTags()
+		{
+			try
+			{
+				_ignoreTagsChanged = true;
+				_tags.Synchronize(_internalTags.Select(it => it.Title));
+			}
+			finally
+			{
+				_ignoreTagsChanged = false;
 			}
 		}
 
@@ -82,33 +131,52 @@ namespace AlephNote.Plugins.StandardNote
 
 		public override void OnAfterUpload(INote iother)
 		{
-			throw new NotImplementedException();
-		}
-
-		public override void ApplyUpdatedData(INote iother)
-		{
-			var other = (StandardNote)iother;
+			var other = (StandardFileNote)iother;
 
 			using (SuppressDirtyChanges())
 			{
 				_modificationDate = other.ModificationDate;
 				_creationDate = other.CreationDate;
-				_tags.Synchronize(other.Tags);
+				_internalTags = other._internalTags;
+				ResyncTags();
+			}
+		}
+
+		public override void ApplyUpdatedData(INote iother)
+		{
+			var other = (StandardFileNote)iother;
+
+			using (SuppressDirtyChanges())
+			{
+				_modificationDate = other.ModificationDate;
+				_creationDate = other.CreationDate;
+				_internalTags = other._internalTags.ToList();
+				ResyncTags();
 				_text = other.Text;
 				_title = other.Title;
-				_encryptionKey = other.EncryptionKey;
 			}
+		}
+
+		public bool EqualsIgnoreModificationdate(StandardFileNote other)
+		{
+			if (_id != other._id) return false;
+			if (_creationDate != other._creationDate) return false;
+			if (!new HashSet<StandardFileTag>(_internalTags).SetEquals(other._internalTags)) return false;
+			if (_text != other._text) return false;
+			if (_title != other._title) return false;
+
+			return true;
 		}
 
 		protected override BasicNote CreateClone()
 		{
-			var n = new StandardNote(_id, _config);
-			n._tags.Synchronize(_tags.ToList());
+			var n = new StandardFileNote(_id, _config);
+			n._internalTags = _internalTags.ToList();
+			n.ResyncTags();
 			n._text = _text;
 			n._title = _title;
 			n._creationDate = _creationDate;
 			n._modificationDate = _modificationDate;
-			n._encryptionKey = _encryptionKey;
 			return n;
 		}
 	}

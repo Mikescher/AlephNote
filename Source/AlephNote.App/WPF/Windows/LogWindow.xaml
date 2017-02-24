@@ -74,7 +74,8 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 		<TextBlock Grid.Row="0" Text="Eventlog" FontWeight="Bold" FontSize="24" Margin="20,5" HorizontalAlignment="Left" />
-		<CheckBox Grid.Row="0" Content="Log debug events" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10,5" x:Name="CheckBoxDebug" Checked="OnChangedDebugLog" Unchecked="OnChangedDebugLog" />
+		<CheckBox  Grid.Row="0" Content="Log debug events" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10,2" x:Name="CheckBoxDebug" Checked="OnChangedDebugLog" Unchecked="OnChangedDebugLog" />
+		<Button    Grid.Row="0" Content="Clear" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="0" Margin="10,2" Command="{Binding ClearCommand}" />
 		<ListView ItemsSource="{Binding Log}" SelectedItem="{Binding SelectedLog}" Grid.Row="1">
 			<ListView.Resources>
 				<Style TargetType="ListViewItem">

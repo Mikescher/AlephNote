@@ -55,21 +55,26 @@ namespace AlephNote.Plugins.StandardNote
 
 			var client = CreateJsonRestClient(_proxy, _config.Server);
 			client.AddHeader("Authorization", "Bearer " + _token.token);
+			client.AddConverter(new DTOConverter());
 
 			return client;
 		}
 
-		public override void StartSync(IRemoteStorageSyncPersistance idata, List<INote> localnotes, List<INote> localdeletednotes)
+		public override void StartSync(IRemoteStorageSyncPersistance idata, List<INote> ilocalnotes, List<INote> localdeletednotes)
 		{
+			StandardNoteAPI.Logger = _logger;
+
 			using (var web = CreateAuthenticatedClient())
 			{
 				var data = (StandardNoteData)idata;
 
-				var upNotes = localnotes.Cast<StandardNote>().Where(NeedsUpload).ToList();
-				var delNotes = localdeletednotes.Cast<StandardNote>().ToList();
-				var delTags = data.GetUnusedTags(localnotes.Cast<StandardNote>().ToList());
+				var localnotes = ilocalnotes.Cast<StandardFileNote>().ToList();
 
-				_syncResult = StandardNoteAPI.Sync(web, _token, _config, data, upNotes, delNotes, delTags);
+				var upNotes = localnotes.Where(NeedsUpload).ToList();
+				var delNotes = localdeletednotes.Cast<StandardFileNote>().ToList();
+				var delTags = data.GetUnusedTags(localnotes.ToList());
+
+				_syncResult = StandardNoteAPI.Sync(web, _token, _config, data, localnotes, upNotes, delNotes, delTags);
 
 				_logger.Debug(StandardNotePlugin.Name, "StandardFile sync finished.",
 					string.Format("upload:[notes={7} deleted={8}]" + "\r\n" + "download:[note:[retrieved={0} deleted={1} saved={2} unsaved={3}] tags:[retrieved={4} saved={5} unsaved={6}]]",
@@ -92,7 +97,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, ConflictResolutionStrategy strategy)
 		{
-			var note = (StandardNote) inote;
+			var note = (StandardFileNote) inote;
 
 			if (_syncResult.saved_notes.Any(n => n.ID == note.ID))
 			{
@@ -103,9 +108,10 @@ namespace AlephNote.Plugins.StandardNote
 			
 			if (_syncResult.retrieved_notes.Any(n => n.ID == note.ID))
 			{
+				_logger.Warn(StandardNotePlugin.Name, "Uploaded note found in retrieved notes ... upload failed ?");
 				note.ApplyUpdatedData(_syncResult.retrieved_notes.First(n => n.ID == note.ID));
 				conflict = null;
-				return RemoteUploadResult.Uploaded;
+				return RemoteUploadResult.Merged;
 			}
 
 			if (_syncResult.unsaved_notes.Any(n => n.ID == note.ID))
@@ -119,22 +125,31 @@ namespace AlephNote.Plugins.StandardNote
 
 		public override RemoteDownloadResult UpdateNoteFromRemote(INote inote)
 		{
-			var note = (StandardNote)inote;
+			var note = (StandardFileNote)inote;
 
 			if (_syncResult.deleted_notes.Any(n => n.ID == note.ID))
 			{
-				note.ApplyUpdatedData(_syncResult.deleted_notes.First(n => n.ID == note.ID));
+				var bucketNote = _syncResult.deleted_notes.First(n => n.ID == note.ID);
+
+				note.ApplyUpdatedData(bucketNote);
 
 				return RemoteDownloadResult.DeletedOnRemote;
 			}
 
 			if (_syncResult.retrieved_notes.Any(n => n.ID == note.ID))
 			{
-				_logger.Warn(StandardNotePlugin.Name, "Downloaded note found in bucket [retrieved_notes] - possibly an error");
+				var bucketNote = _syncResult.retrieved_notes.First(n => n.ID == note.ID);
 
-				note.ApplyUpdatedData(_syncResult.retrieved_notes.First(n => n.ID == note.ID));
-
-				return RemoteDownloadResult.Updated;
+				if (note.EqualsIgnoreModificationdate(bucketNote))
+				{
+					note.ApplyUpdatedData(bucketNote);
+					return RemoteDownloadResult.UpToDate;
+				}
+				else
+				{
+					note.ApplyUpdatedData(bucketNote);
+					return RemoteDownloadResult.Updated;
+				}
 			}
 
 			return RemoteDownloadResult.UpToDate;
@@ -155,7 +170,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public override void DeleteNote(INote inote)
 		{
-			var note = (StandardNote)inote;
+			var note = (StandardFileNote)inote;
 
 			if (_syncResult.deleted_notes.All(n => n.ID != note.ID))
 			{
@@ -167,7 +182,7 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			return _syncResult
 				.retrieved_notes
-				.Where(rn => localnotes.All(ln => ((StandardNote) ln).ID != rn.ID))
+				.Where(rn => localnotes.All(ln => ((StandardFileNote) ln).ID != rn.ID))
 				.Select(p => p.ID.ToString("N"))
 				.ToList();
 		}
@@ -179,7 +194,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public override bool NeedsDownload(INote inote)
 		{
-			var note = (StandardNote)inote;
+			var note = (StandardFileNote)inote;
 
 			if (_syncResult.retrieved_notes.Any(n => n.ID == note.ID)) return true;
 			if (_syncResult.deleted_notes.Any(n => n.ID == note.ID)) return true;

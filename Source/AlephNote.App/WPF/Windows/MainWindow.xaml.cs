@@ -70,14 +70,54 @@ namespace AlephNote.WPF.Windows
 
 		private void StartupConfigWindow(AppSettings settings)
 		{
-			WindowStartupLocation = settings.StartupLocation;
-			WindowState = settings.StartupState;
+			if (settings.StartupLocation == ExtendedWindowStartupLocation.CenterScreen)
+			{
+				WindowStartupLocation = WindowStartupLocation.CenterScreen;
+				WindowState = settings.StartupState;
 
-			Left = settings.StartupPositionX;
-			Top = settings.StartupPositionY;
+				Left = settings.StartupPositionX;
+				Top = settings.StartupPositionY;
 
-			Width = settings.StartupPositionWidth;
-			Height = settings.StartupPositionHeight;
+				Width = settings.StartupPositionWidth;
+				Height = settings.StartupPositionHeight;
+			}
+			else if (settings.StartupLocation == ExtendedWindowStartupLocation.Manual)
+			{
+				WindowStartupLocation = WindowStartupLocation.Manual;
+				WindowState = settings.StartupState;
+
+				Left = settings.StartupPositionX;
+				Top = settings.StartupPositionY;
+
+				Width = settings.StartupPositionWidth;
+				Height = settings.StartupPositionHeight;
+			}
+			else if (settings.StartupLocation == ExtendedWindowStartupLocation.ScreenBottomLeft)
+			{
+				var screen = WpfScreen.GetScreenFrom(this);
+
+				WindowStartupLocation = WindowStartupLocation.Manual;
+				WindowState = settings.StartupState;
+
+				Left = screen.WorkingArea.Left + 5;
+				Top = screen.WorkingArea.Bottom - settings.StartupPositionHeight - 5;
+
+				Width = settings.StartupPositionWidth;
+				Height = settings.StartupPositionHeight;
+			}
+			else if (settings.StartupLocation == ExtendedWindowStartupLocation.ScreenLeft)
+			{
+				var screen = WpfScreen.GetScreenFrom(this);
+
+				WindowStartupLocation = WindowStartupLocation.Manual;
+				WindowState = settings.StartupState;
+
+				Left = screen.WorkingArea.Left + 5;
+				Top = screen.WorkingArea.Top + 5;
+
+				Width = settings.StartupPositionWidth;
+				Height = screen.WorkingArea.Height - 10;
+			}
 
 			if (settings.MinimizeToTray && settings.StartupState == WindowState.Minimized)
 				Hide();

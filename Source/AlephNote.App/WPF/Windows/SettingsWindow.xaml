@@ -216,28 +216,26 @@
 									<RowDefinition Height="Auto"/>
 								</Grid.RowDefinitions>
 								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto" MinWidth="150"/>
-									<ColumnDefinition Width="Auto"/>
+									<ColumnDefinition Width="Auto" MinWidth="200"/>
 									<ColumnDefinition Width="1*"/>
 									<ColumnDefinition Width="Auto"/>
 									<ColumnDefinition Width="1*"/>
 								</Grid.ColumnDefinitions>
 
-								<TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Startup" />
 								
-								<TextBlock Grid.Row="0" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Window position" />
-								<TextBox   Grid.Row="0" Grid.Column="2" Margin="3" Text="{Binding Settings.StartupPositionX}" />
-								<TextBox   Grid.Row="0" Grid.Column="4" Margin="3" Text="{Binding Settings.StartupPositionY}" />
+								<TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window position" />
+								<TextBox   Grid.Row="0" Grid.Column="1" Margin="3" Text="{Binding Settings.StartupPositionX}" />
+								<TextBox   Grid.Row="0" Grid.Column="3" Margin="3" Text="{Binding Settings.StartupPositionY}" />
 
-								<TextBlock Grid.Row="1" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Window size" />
-								<TextBox   Grid.Row="1" Grid.Column="2" Margin="3" Text="{Binding Settings.StartupPositionWidth}" />
-								<TextBox   Grid.Row="1" Grid.Column="4" Margin="3" Text="{Binding Settings.StartupPositionHeight}" />
+								<TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window size" />
+								<TextBox   Grid.Row="1" Grid.Column="1" Margin="3" Text="{Binding Settings.StartupPositionWidth}" />
+								<TextBox   Grid.Row="1" Grid.Column="3" Margin="3" Text="{Binding Settings.StartupPositionHeight}" />
 
-								<TextBlock Grid.Row="2" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Window state" />
-								<ComboBox  Grid.Row="2" Grid.Column="2" Margin="3" ItemsSource="{mext:EnumSource WindowState}" SelectedValue="{Binding Settings.StartupState}" />
-								<ComboBox  Grid.Row="2" Grid.Column="4" Margin="3" ItemsSource="{mext:EnumSource WindowStartupLocation}" SelectedValue="{Binding Settings.StartupLocation}" />
+								<TextBlock Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window state" />
+								<ComboBox  Grid.Row="2" Grid.Column="1" Margin="3" ItemsSource="{mext:EnumSource WindowState}" SelectedValue="{Binding Settings.StartupState}" />
+								<ComboBox  Grid.Row="2" Grid.Column="3" Margin="3" ItemsSource="{mext:EnumSource settings:ExtendedWindowStartupLocation}" SelectedValue="{Binding Settings.StartupLocation}" />
 
-								<Button    Grid.Row="3" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Content="Use current" Command="{Binding InsertCurrentWindowStateCommand}" />
+								<Button    Grid.Row="3" Grid.Column="1" Margin="3" Grid.ColumnSpan="3" Content="Use current" Command="{Binding InsertCurrentWindowStateCommand}" />
 								
 							</Grid>
 						</GroupBox>

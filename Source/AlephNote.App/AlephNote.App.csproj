@@ -88,6 +88,7 @@
     <Compile Include="Repository\SimpleJsonRest.cs" />
     <Compile Include="Repository\SynchronizationThread.cs" />
     <Compile Include="Settings\AppSettings.cs" />
+    <Compile Include="Settings\ExtendedWindowStartupLocation.cs" />
     <Compile Include="Settings\NotePreviewStyle.cs" />
     <Compile Include="Settings\SortingMode.cs" />
     <Compile Include="Settings\FontSize.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="WPF\Converter\LogToFontWeight.cs" />
     <Compile Include="WPF\Converter\LogToForeground.cs" />
     <Compile Include="WPF\Converter\GetLine.cs" />
+    <Compile Include="WPF\Converter\DateOnlyToDisplay.cs" />
     <Compile Include="WPF\Converter\TodayDateTimeToDisplay.cs" />
     <Compile Include="WPF\Converter\Subtract.cs" />
     <Compile Include="WPF\Converter\GridLengthToDouble.cs" />
@@ -145,6 +147,7 @@
     <Compile Include="WPF\Windows\SyncErrorDialog.xaml.cs">
       <DependentUpon>SyncErrorDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\WpfScreen.cs" />
     <Page Include="WPF\Windows\AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

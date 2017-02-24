@@ -1,6 +1,7 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.Settings;
 using AlephNote.WPF.Windows;
+using MSHC.Serialization;
 using MSHC.Util.Helper;
 using MSHC.Util.Threads;
 using MSHC.WPF.MVVM;
@@ -68,12 +69,15 @@ namespace AlephNote.Repository
 			thread.Start(appconfig.GetSyncDelay());
 		}
 
-		public void Shutdown()
+		public void Shutdown(bool lastSync = true)
 		{
 			invSaveNotesLocal.CancelPendingRequests();
 			SaveAllDirtyNotes();
 
-			thread.SyncNowAndStopAsync();
+			if (lastSync)
+				thread.SyncNowAndStopAsync();
+			else
+				thread.StopAsync();
 		}
 
 		private void LoadNotesFromLocal()
@@ -226,6 +230,8 @@ namespace AlephNote.Repository
 		{
 			App.Logger.Info("Repository", "Sync Now");
 
+			invSaveNotesRemote.CancelPendingRequests();
+
 			thread.SyncNowAsync();
 		}
 
@@ -266,6 +272,25 @@ namespace AlephNote.Repository
 		{
 			var x = new XDocument(data.Serialize());
 			x.Save(pathLocalData);
+		}
+
+		public void DeleteLocalData()
+		{
+			if (File.Exists(pathLocalData))
+			{
+				App.Logger.Info("Repository", "Delete file from local repository: " + Path.GetFileName(pathLocalData), pathLocalData);
+				File.Delete(pathLocalData);
+			}
+			
+			var noteFiles = Directory.GetFiles(pathLocalFolder, "*.xml");
+			foreach (var path in noteFiles)
+			{
+				App.Logger.Info("Repository", "Delete file from local repository: " + Path.GetFileName(path), path);
+				File.Delete(path);
+			}
+
+			App.Logger.Info("Repository", "Delete folder from local repository: " + Path.GetFileName(pathLocalFolder), pathLocalFolder);
+			Directory.Delete(pathLocalFolder, true);
 		}
 	}
 }

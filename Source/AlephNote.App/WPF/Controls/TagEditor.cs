@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using MSHC.Lang.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
@@ -25,13 +26,13 @@ namespace AlephNote.WPF.Controls
 		public static readonly DependencyProperty TagSourceProperty =
 			DependencyProperty.Register(
 			"TagSource",
-			typeof(ICollection<string>), 
+			typeof(IList<string>), 
 			typeof(TagEditor),
 			new FrameworkPropertyMetadata(TagsChanged));
 
-		public ICollection<string> TagSource
+		public IList<string> TagSource
 		{
-			get { return (ICollection<string>)GetValue(TagSourceProperty); }
+			get { return (IList<string>)GetValue(TagSourceProperty); }
 			set { SetValue(TagSourceProperty, value); }
 		}
 
@@ -57,8 +58,7 @@ namespace AlephNote.WPF.Controls
 				
 				if (!TagSource.SequenceEqual(doctags))
 				{
-					TagSource.Clear();
-					foreach (var t in doctags) TagSource.Add(t);
+					TagSource.SynchronizeSequence(doctags);
 				}
 			}
 		}

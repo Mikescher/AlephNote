@@ -37,13 +37,12 @@ namespace AlephNote.PluginInterface
 
 		INote Clone();
 		IDisposable SuppressDirtyChanges();
-		void TriggerOnChanged();
+		void TriggerOnChanged(bool doNotSendChangeEvents);
 	}
 
 	public abstract class BasicNote : INotifyPropertyChanged,  INote
 	{
 		private int _dirtySupressor = 0;
-		private bool _ignoreChangeEvent = false;
 
 		private bool _isLocalSaved = false;
 		public bool IsLocalSaved { get { return _isLocalSaved; } set { _isLocalSaved = value; OnPropertyChanged(); } }
@@ -92,18 +91,13 @@ namespace AlephNote.PluginInterface
 
 		private void Changed(object sender, PropertyChangedEventArgs e)
 		{
-			if (_ignoreChangeEvent) return;
+			if (_dirtySupressor > 0) return;
 
-			if (e.PropertyName == "Text" || e.PropertyName == "Title" || e.PropertyName == "ModificationDate")
+			if (e.PropertyName == "Text" || e.PropertyName == "Title")
 			{
 				SetDirty();
 
-				if (e.PropertyName != "ModificationDate")
-				{
-					_ignoreChangeEvent = true;
-					ModificationDate = DateTimeOffset.Now;
-					_ignoreChangeEvent = false;
-				}
+				ModificationDate = DateTimeOffset.Now;
 
 				if (IsConflictNote) IsConflictNote = false;
 
@@ -114,6 +108,9 @@ namespace AlephNote.PluginInterface
 		private void TagsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			SetDirty();
+			
+			if (IsConflictNote) IsConflictNote = false;
+
 			if (OnChanged != null) OnChanged(this, new NoteChangedEventArgs(this, "Tags"));
 		}
 
@@ -175,12 +172,23 @@ namespace AlephNote.PluginInterface
 			return new NoteDirtyBlocker(this);
 		}
 
-		public void TriggerOnChanged()
+		public void TriggerOnChanged(bool doNotSendChangeEvents)
 		{
-			OnExplicitPropertyChanged("Text");
-			OnExplicitPropertyChanged("Title");
-			OnExplicitPropertyChanged("Tags");
-			OnExplicitPropertyChanged("ModificationDate");
+			if (doNotSendChangeEvents)
+			{
+				using (SuppressDirtyChanges())
+				{
+					OnExplicitPropertyChanged("Text");
+					OnExplicitPropertyChanged("Title");
+					OnExplicitPropertyChanged("Tags");
+				}
+			}
+			else
+			{
+				OnExplicitPropertyChanged("Text");
+				OnExplicitPropertyChanged("Title");
+				OnExplicitPropertyChanged("Tags");
+			}
 		}
 
 		public abstract void ApplyUpdatedData(INote other);

@@ -33,7 +33,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
 		{
-			return new StandardNote(Guid.NewGuid(), (StandardNoteConfig)cfg);
+			return new StandardFileNote(Guid.NewGuid(), (StandardNoteConfig)cfg);
 		}
 
 		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()

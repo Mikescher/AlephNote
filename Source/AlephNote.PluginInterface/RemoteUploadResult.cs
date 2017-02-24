@@ -5,6 +5,7 @@ namespace AlephNote.PluginInterface
 	{
 		UpToDate,
 		Uploaded,
+		Merged,
 		Conflict,
 	}
 }

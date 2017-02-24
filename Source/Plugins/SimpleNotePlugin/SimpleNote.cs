@@ -1,5 +1,6 @@
 ﻿using AlephNote.PluginInterface;
-using MSHC.Lang.Extensions;
+using MSHC.Lang.Collections;
+using MSHC.Serialization;
 using MSHC.Util.Helper;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,6 @@
 ﻿using AlephNote.PluginInterface;
 using MSHC.Lang.Exceptions;
+using MSHC.Serialization;
 using MSHC.Util.Helper;
 using System.Collections.Generic;
 using System.Linq;

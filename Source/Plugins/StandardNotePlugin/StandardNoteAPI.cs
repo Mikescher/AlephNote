@@ -1,5 +1,5 @@
-﻿using AlephNote.PluginInterface;
-using MSHC.Lang.Extensions;
+﻿using System.Diagnostics;
+using AlephNote.PluginInterface;
 using MSHC.Math.Encryption;
 using MSHC.Network;
 using Newtonsoft.Json;
@@ -30,12 +30,14 @@ namespace AlephNote.Plugins.StandardNote
 		public class APIBodySync { public int limit; public List<APIBodyItem> items; public string sync_token, cursor_token; }
 		public class APIResultSync { public List<APIResultItem> retrieved_items, saved_items, unsaved; public string sync_token, cursor_token; }
 		public class SyncResultTag { public Guid uuid; public string title; public bool deleted; public string enc_item_key, item_key; }
-		public class SyncResult { public List<StandardNote> retrieved_notes, saved_notes, unsaved_notes, deleted_notes; public List<SyncResultTag> retrieved_tags, saved_tags, unsaved_tags; }
+		public class SyncResult { public List<StandardFileNote> retrieved_notes, saved_notes, unsaved_notes, deleted_notes; public List<SyncResultTag> retrieved_tags, saved_tags, unsaved_tags, deleted_tags; }
 		public class APIResultContentRef { public Guid uuid; public string content_type; }
 		public class ContentNote { public string title, text; public List<APIResultContentRef> references; }
 		public class ContentTag { public string title; public List<APIResultContentRef> references; }
 		// ReSharper restore All
 #pragma warning restore 0649
+
+		public static IAlephLogger Logger;
 
 		private static WebClient CreateClient(IWebProxy proxy, APIResultAuthorize authToken)
 		{
@@ -67,10 +69,12 @@ namespace AlephNote.Plugins.StandardNote
 
 			try
 			{
-				logger.Debug(StandardNotePlugin.Name, "AutParams.pw_func: " + apiparams.pw_func);
-				logger.Debug(StandardNotePlugin.Name, "AutParams.pw_alg: " + apiparams.pw_alg);
-				logger.Debug(StandardNotePlugin.Name, "AutParams.pw_cost: " + apiparams.pw_cost);
-				logger.Debug(StandardNotePlugin.Name, "AutParams.pw_key_size: " + apiparams.pw_key_size);
+				logger.Debug(StandardNotePlugin.Name, 
+					string.Format("AutParams[pw_func:{0}, pw_alg:{1}, pw_cost:{2}, pw_key_size:{3}]", 
+					apiparams.pw_func, 
+					apiparams.pw_alg, 
+					apiparams.pw_cost, 
+					apiparams.pw_key_size));
 
 				if (apiparams.pw_func != PasswordFunc.pbkdf2) throw new Exception("Unknown pw_func: " + apiparams.pw_func);
 
@@ -104,32 +108,40 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		public static SyncResult Sync(ISimpleJsonRest web, APIResultAuthorize authToken, StandardNoteConfig cfg, StandardNoteData dat, List<StandardNote> notesUpload, List<StandardNote> notesDelete, List<StandardFileTag> tagsDelete)
+		public static SyncResult Sync(ISimpleJsonRest web, APIResultAuthorize authToken, StandardNoteConfig cfg, StandardNoteData dat, List<StandardFileNote> allNotes, List<StandardFileNote> notesUpload, List<StandardFileNote> notesDelete, List<StandardFileTag> tagsDelete)
 		{
 			APIBodySync d = new APIBodySync();
 			d.cursor_token = null;
-			d.sync_token = dat.SyncToken;
+			d.sync_token = string.IsNullOrWhiteSpace(dat.SyncToken) ? null : dat.SyncToken;
+			d.limit = 9999;
 			d.items = new List<APIBodyItem>();
 
 			var allTags = dat.Tags.ToList();
 
+			// Upload new notes
 			foreach (var mvNote in notesUpload)
 			{
 				PrepareForUpload(d, mvNote, allTags, authToken, cfg, false);
 			}
 
+			// Delete deleted notes
 			foreach (var rmNote in notesDelete)
 			{
 				PrepareForUpload(d, rmNote, allTags, authToken, cfg, true);
 			}
 
-			//TODO Do i need to update references on tags ??
+			// Update references on tags (from changed notes)
+			foreach (var upTag in notesUpload.SelectMany(n => n.InternalTags).Concat(notesDelete.SelectMany(n => n.InternalTags)).Except(tagsDelete))
+			{
+				PrepareForUpload(d, upTag, allNotes, authToken, cfg, false);
+			}
 
+			// Remove unused tags
 			if (cfg.RemEmptyTags)
 			{
 				foreach (var rmTag in tagsDelete)
 				{
-					PrepareForUpload(d, rmTag, authToken, cfg, true);
+					PrepareForUpload(d, rmTag, allNotes, authToken, cfg, true);
 				}
 			}
 			
@@ -142,6 +154,14 @@ namespace AlephNote.Plugins.StandardNote
 			syncresult.retrieved_tags = result
 				.retrieved_items
 				.Where(p => p.content_type.ToLower() == "tag")
+				.Where(p => !p.deleted)
+				.Select(n => CreateTag(n, authToken))
+				.ToList();
+
+			syncresult.deleted_tags = result
+				.retrieved_items
+				.Where(p => p.content_type.ToLower() == "tag")
+				.Where(p => p.deleted)
 				.Select(n => CreateTag(n, authToken))
 				.ToList();
 
@@ -157,7 +177,7 @@ namespace AlephNote.Plugins.StandardNote
 				.Select(n => CreateTag(n, authToken))
 				.ToList();
 
-			dat.UpdateTags(syncresult.retrieved_tags, syncresult.saved_tags, syncresult.unsaved_tags);
+			dat.UpdateTags(syncresult.retrieved_tags, syncresult.saved_tags, syncresult.unsaved_tags, syncresult.deleted_tags);
 
 			syncresult.retrieved_notes = result
 				.retrieved_items
@@ -188,30 +208,37 @@ namespace AlephNote.Plugins.StandardNote
 			return syncresult;
 		}
 
-		private static void PrepareForUpload(APIBodySync body, StandardNote note, List<StandardFileTag> tags, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
+		private static void PrepareForUpload(APIBodySync body, StandardFileNote note, List<StandardFileTag> tags, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
 		{
 			var jsnContent = new ContentNote
 			{
 				title = note.Title,
-				text = note.Text
+				text = note.Text,
+				references = new List<APIResultContentRef>(),
 			};
 
-			foreach (var tagTitle in note.Tags)
+			foreach (var itertag in note.InternalTags.ToList())
 			{
-				if (tags.All(t => t.Title != tagTitle))
+				var itag = itertag;
+
+				if (itag.UUID == null)
 				{
-					var newtag = new StandardFileTag {EncryptionKey = null, Title = tagTitle, UUID = Guid.NewGuid()};
+					var newTag = tags.FirstOrDefault(e => e.Title == itag.Title);
+					if (newTag == null)
+					{
+						newTag = new StandardFileTag(Guid.NewGuid(), itag.Title);
+						tags.Add(newTag);
+					}
 
-					PrepareForUpload(body, newtag, token, cfg, false);
-
-					tags.Add(newtag);
+					note.UpgradeTag(itag, newTag);
+					itag = newTag;
 				}
 
-				var rt = tags.First(e => e.Title == tagTitle);
-				jsnContent.references.Add(new APIResultContentRef { content_type = "Tag", uuid = rt.UUID });
+				Debug.Assert(itag.UUID != null, "itag.UUID != null");
+				jsnContent.references.Add(new APIResultContentRef { content_type = "Tag", uuid = itag.UUID.Value });
 			}
 
-			var cdNote = StandardNoteCrypt.EncryptContent(note.EncryptionKey, JsonConvert.SerializeObject(jsnContent), token.masterkey, cfg.SendEncrypted);
+			var cdNote = StandardNoteCrypt.EncryptContent(JsonConvert.SerializeObject(jsnContent), token.masterkey, cfg.SendEncrypted);
 
 			body.items.Add(new APIBodyItem
 			{
@@ -225,21 +252,25 @@ namespace AlephNote.Plugins.StandardNote
 			});
 		}
 
-		private static void PrepareForUpload(APIBodySync body, StandardFileTag tag, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
+		private static void PrepareForUpload(APIBodySync body, StandardFileTag tag, List<StandardFileNote> allNotes, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
 		{
 			var jsnContent = new ContentTag
 			{
 				title = tag.Title,
+				references = allNotes
+					.Where(n => n.InternalTags.Any(it => it.UUID == tag.UUID))
+					.Select(n => new APIResultContentRef{content_type = "Note", uuid = n.ID})
+					.ToList(),
 			};
 			
-			var cdNote = StandardNoteCrypt.EncryptContent(tag.EncryptionKey, JsonConvert.SerializeObject(jsnContent), token.masterkey, cfg.SendEncrypted);
+			var cdNote = StandardNoteCrypt.EncryptContent(JsonConvert.SerializeObject(jsnContent), token.masterkey, cfg.SendEncrypted);
 
-			tag.EncryptionKey = cdNote.item_key;
+			Debug.Assert(tag.UUID != null, "tag.UUID != null");
 
 			body.items.Add(new APIBodyItem
 			{
 				content_type = "Tag",
-				uuid = tag.UUID,
+				uuid = tag.UUID.Value,
 				enc_item_key = cdNote.enc_item_key,
 				auth_hash = cdNote.auth_hash,
 				content = cdNote.enc_content,
@@ -247,13 +278,24 @@ namespace AlephNote.Plugins.StandardNote
 			});
 		}
 
-		private static StandardNote CreateNote(APIResultItem encNote, APIResultAuthorize authToken, StandardNoteConfig cfg, StandardNoteData dat)
+		private static StandardFileNote CreateNote(APIResultItem encNote, APIResultAuthorize authToken, StandardNoteConfig cfg, StandardNoteData dat)
 		{
+			if (encNote.deleted)
+			{
+				var nd = new StandardFileNote(encNote.uuid, cfg)
+				{
+					CreationDate = encNote.created_at,
+					Text = "",
+					Title = "",
+				};
+				nd.ModificationDate = encNote.updated_at;
+				return nd;
+			}
+
 			ContentNote content;
-			string itemKey;
 			try
 			{
-				var contentJson = StandardNoteCrypt.DecryptContent(encNote.content, encNote.enc_item_key, encNote.auth_hash, authToken.masterkey, out itemKey);
+				var contentJson = StandardNoteCrypt.DecryptContent(encNote.content, encNote.enc_item_key, encNote.auth_hash, authToken.masterkey);
 				content = JsonConvert.DeserializeObject<ContentNote>(contentJson);
 			}
 			catch (Exception e)
@@ -261,27 +303,54 @@ namespace AlephNote.Plugins.StandardNote
 				throw new StandardNoteAPIException("Cannot decrypt note with local masterkey", e);
 			}
 
-			var n = new StandardNote(encNote.uuid, cfg)
+			var n = new StandardFileNote(encNote.uuid, cfg)
 			{
-				CreationDate = encNote.created_at,
-				ModificationDate = encNote.updated_at,
-				EncryptionKey = itemKey,
 				Text = content.text,
 				Title = content.title,
 			};
 
-			n.Tags.Synchronize(content.references.Select(p => dat.Tags.First(t => t.UUID == p.uuid).Title));
+			var refTags = new List<StandardFileTag>();
+			foreach (var cref in content.references)
+			{
+				if (cref.content_type == "Note")
+				{
+					// ignore
+				}
+				else if (dat.Tags.Any(t => t.UUID == cref.uuid))
+				{
+					refTags.Add(new StandardFileTag(cref.uuid, dat.Tags.First(t => t.UUID == cref.uuid).Title));
+				}
+				else
+				{
+					Logger.Error(StandardNotePlugin.Name, string.Format("Downloaded note contains an unknown reference :{0} ({1})", cref.uuid, cref.content_type));
+				}
+			}
+
+			n.SetTags(refTags);
+			n.CreationDate = encNote.created_at;
+			n.ModificationDate = encNote.updated_at;
 
 			return n;
 		}
 
 		private static SyncResultTag CreateTag(APIResultItem encTag, APIResultAuthorize authToken)
 		{
+			if (encTag.deleted)
+			{
+				return new SyncResultTag
+				{
+					deleted = encTag.deleted,
+					title = "",
+					uuid = encTag.uuid,
+					enc_item_key = encTag.enc_item_key,
+					item_key = "",
+				};
+			}
+
 			ContentTag content;
-			string itemKey;
 			try
 			{
-				var contentJson = StandardNoteCrypt.DecryptContent(encTag.content, encTag.enc_item_key, encTag.auth_hash, authToken.masterkey, out itemKey);
+				var contentJson = StandardNoteCrypt.DecryptContent(encTag.content, encTag.enc_item_key, encTag.auth_hash, authToken.masterkey);
 				content = JsonConvert.DeserializeObject<ContentTag>(contentJson);
 			}
 			catch (Exception e)
@@ -295,7 +364,6 @@ namespace AlephNote.Plugins.StandardNote
 				title = content.title,
 				uuid = encTag.uuid,
 				enc_item_key = encTag.enc_item_key,
-				item_key = itemKey,
 			};
 		}
 	}

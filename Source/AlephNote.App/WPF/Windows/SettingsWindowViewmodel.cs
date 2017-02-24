@@ -28,7 +28,7 @@ namespace AlephNote.WPF.Windows
 		{
 			if (mainWindow.WindowState == WindowState.Maximized)
 			{
-				Settings.StartupLocation = WindowStartupLocation.CenterScreen;
+				Settings.StartupLocation = ExtendedWindowStartupLocation.CenterScreen;
 				Settings.StartupState = WindowState.Maximized;
 				Settings.StartupPositionX = (int)mainWindow.Left;
 				Settings.StartupPositionY = (int)mainWindow.Top;
@@ -37,7 +37,7 @@ namespace AlephNote.WPF.Windows
 			}
 			else if (mainWindow.WindowState == WindowState.Minimized)
 			{
-				Settings.StartupLocation = WindowStartupLocation.Manual;
+				Settings.StartupLocation = ExtendedWindowStartupLocation.Manual;
 				Settings.StartupState = WindowState.Minimized;
 				Settings.StartupPositionX = (int)mainWindow.Left;
 				Settings.StartupPositionY = (int)mainWindow.Top;
@@ -46,7 +46,7 @@ namespace AlephNote.WPF.Windows
 			}
 			else if (mainWindow.WindowState == WindowState.Normal)
 			{
-				Settings.StartupLocation = WindowStartupLocation.Manual;
+				Settings.StartupLocation = ExtendedWindowStartupLocation.Manual;
 				Settings.StartupState = WindowState.Normal;
 				Settings.StartupPositionX = (int)mainWindow.Left;
 				Settings.StartupPositionY = (int)mainWindow.Top;

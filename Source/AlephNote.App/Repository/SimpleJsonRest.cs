@@ -9,16 +9,19 @@ namespace AlephNote.Repository
 {
 	public class SimpleJsonRest : ISimpleJsonRest
 	{
-		private const int LOG_FMT_DEPTH = 2;
+		private const int LOG_FMT_DEPTH = 3;
 
 		private readonly WebClient _client;
 		private readonly Uri _host;
 		private readonly IAlephLogger _logger;
 
+		private JsonConverter[] _converter = new JsonConverter[0];
+
 		public SimpleJsonRest(IWebProxy proxy, string host, IAlephLogger log)
 		{
 			_client = new GZWebClient();
-			_client.Headers["User-Agent"] = "AlephNote/" + App.APP_VERSION;
+			_client.Headers[HttpRequestHeader.UserAgent] = "AlephNote/" + App.APP_VERSION;
+			_client.Headers[HttpRequestHeader.ContentType] = "application/json";
 			if (proxy != null) _client.Proxy = proxy;
 			_host = new Uri(host);
 
@@ -27,7 +30,14 @@ namespace AlephNote.Repository
 
 		public void Dispose()
 		{
-			_client?.Dispose();
+			if (_client != null) _client.Dispose();
+		}
+
+		public void AddConverter(object ic)
+		{
+			var c = (JsonConverter) ic;
+
+			_converter = _converter.Concat(new[] {c}).ToArray();
 		}
 
 		private Uri CreateUri(string path, params string[] parameter)
@@ -74,7 +84,7 @@ namespace AlephNote.Repository
 			try
 			{
 
-				upload = JsonConvert.SerializeObject(body);
+				upload = JsonConvert.SerializeObject(body, _converter);
 
 				download = _client.UploadString(uri, upload);
 			}
@@ -102,7 +112,7 @@ namespace AlephNote.Repository
 			TResult downloadObject;
 			try
 			{
-				downloadObject = JsonConvert.DeserializeObject<TResult>(download);
+				downloadObject = JsonConvert.DeserializeObject<TResult>(download, _converter);
 			}
 			catch (Exception e)
 			{
@@ -130,7 +140,7 @@ namespace AlephNote.Repository
 			string upload;
 			try
 			{
-				upload = JsonConvert.SerializeObject(body);
+				upload = JsonConvert.SerializeObject(body, _converter);
 
 				_client.UploadString(uri, upload);
 			}
@@ -199,7 +209,7 @@ namespace AlephNote.Repository
 			TResult downloadObject;
 			try
 			{
-				downloadObject = JsonConvert.DeserializeObject<TResult>(download);
+				downloadObject = JsonConvert.DeserializeObject<TResult>(download, _converter);
 			}
 			catch (Exception e)
 			{
@@ -252,7 +262,7 @@ namespace AlephNote.Repository
 			TResult downloadObject;
 			try
 			{
-				downloadObject = JsonConvert.DeserializeObject<TResult>(download);
+				downloadObject = JsonConvert.DeserializeObject<TResult>(download, _converter);
 			}
 			catch (Exception e)
 			{
@@ -279,7 +289,7 @@ namespace AlephNote.Repository
 			string upload;
 			try
 			{
-				upload = JsonConvert.SerializeObject(body);
+				upload = JsonConvert.SerializeObject(body, _converter);
 
 				_client.UploadString(uri, "DELETE", upload);
 			}

@@ -55,6 +55,7 @@
 			<MenuItem Header="Edit">
 				<MenuItem Header="Settings" Command="{Binding SettingsCommand}" />
 				<MenuItem Header="Synchronize now" Command="{Binding ResyncCommand}" InputGestureText="Ctrl+S" />
+				<MenuItem Header="Delete local data and sync new" Command="{Binding FullResyncCommand}" />
 			</MenuItem>
 			<MenuItem Header="Help">
 				<MenuItem Header="Check for Updates" />
@@ -249,6 +250,8 @@
 			<StatusBarItem Content="{Binding SelectedNote.Text.Length, FallbackValue=''}"/>
 			<StatusBarItem Content="Lines: " />
 			<StatusBarItem Content="{Binding SelectedNote.Text, Converter={conv:TextToLines}, FallbackValue=''}"/>
+			<StatusBarItem Content="Created: " />
+			<StatusBarItem Content="{Binding SelectedNote.CreationDate, Converter={conv:DateOnlyToDisplay}, FallbackValue=''}" ToolTip="{Binding SelectedNote.CreationDate, Converter={conv:DateTimeToDisplay}, FallbackValue=''}"/>
 			<StatusBarItem Content="Synchronized: " />
 			<StatusBarItem Content="{Binding SelectedNote.IsRemoteSaved, FallbackValue='?'}"/>
 			<StatusBarItem Content="{Binding Repository.ConnectionName}" HorizontalAlignment="Right" Margin="0,0,15,0"/>

@@ -45,8 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTOConverter.cs" />
     <Compile Include="StandardFileTag.cs" />
-    <Compile Include="StandardNote.cs" />
+    <Compile Include="StandardFileNote.cs" />
     <Compile Include="StandardNoteConnection.cs" />
     <Compile Include="StandardNoteAPI.cs" />
     <Compile Include="StandardNoteConfig.cs" />

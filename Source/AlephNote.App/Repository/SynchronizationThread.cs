@@ -1,10 +1,10 @@
 ﻿using AlephNote.PluginInterface;
-using MSHC.Lang.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using MSHC.Lang.Collections;
 
 namespace AlephNote.Repository
 {
@@ -159,10 +159,22 @@ namespace AlephNote.Repository
 								}
 							});
 							break;
+
+						case RemoteUploadResult.Merged:
+							Invoke(() =>
+							{
+								realnote.ApplyUpdatedData(clonenote);
+								realnote.TriggerOnChanged(true);
+								realnote.SetLocalDirty();
+								realnote.ResetRemoteDirty();
+							});
+							break;
+
 						case RemoteUploadResult.Conflict:
 							App.Logger.Warn("Sync", "Uploading note " + clonenote.GetUniqueName() + " resulted in conflict");
 							ResolveUploadConflict(realnote, clonenote, conflictnote);
 							break;
+
 						default:
 							throw new ArgumentOutOfRangeException();
 					}
@@ -206,7 +218,7 @@ namespace AlephNote.Repository
 					Invoke(() =>
 					{
 						realnote.ApplyUpdatedData(clonenote);
-						realnote.TriggerOnChanged();
+						realnote.TriggerOnChanged(true);
 						realnote.SetLocalDirty();
 						realnote.ResetRemoteDirty();
 						repo.SaveNote(realnote);
@@ -242,7 +254,7 @@ namespace AlephNote.Repository
 					Invoke(() =>
 					{
 						realnote.ApplyUpdatedData(clonenote);
-						realnote.TriggerOnChanged();
+						realnote.TriggerOnChanged(true);
 						realnote.SetLocalDirty();
 						realnote.ResetRemoteDirty();
 						repo.SaveNote(realnote);
@@ -285,7 +297,19 @@ namespace AlephNote.Repository
 					{
 						case RemoteDownloadResult.UpToDate:
 							App.Logger.Info("Sync", "Downloading note -> UpToDate");
-							// OK
+							if (realnote.ModificationDate != clonenote.ModificationDate)
+							{
+								App.Logger.Info("Sync", "Downloading note -> UpToDate (but update local mdate)");
+								Invoke(() =>
+								{
+									if (realnote.IsLocalSaved)
+									{
+										// Even when up to date - perhaps local mod date is wrong ...
+										realnote.ModificationDate = clonenote.ModificationDate;
+										realnote.ResetRemoteDirty();
+									}
+								});
+							}
 							break;
 
 						case RemoteDownloadResult.Updated:
@@ -295,7 +319,7 @@ namespace AlephNote.Repository
 								if (realnote.IsLocalSaved)
 								{
 									realnote.ApplyUpdatedData(clonenote);
-									realnote.TriggerOnChanged();
+									realnote.TriggerOnChanged(true);
 									realnote.SetLocalDirty();
 									realnote.ResetRemoteDirty();
 								}
@@ -406,6 +430,41 @@ namespace AlephNote.Repository
 		{
 			App.Logger.Info("Sync", "Requesting priorty sync");
 			prioritysync = true;
+		}
+
+		public void StopAsync()
+		{
+			App.Logger.Info("Sync", "Requesting stop");
+
+			if (isSyncing)
+			{
+				App.Logger.Info("Sync", "Requesting stop (early exit due to isSyncing)");
+
+				cancel = true;
+				return;
+			}
+
+			prioritysync = false;
+			cancel = true;
+			for (int i = 0; i < 100; i++)
+			{
+				if (!running)
+				{
+					App.Logger.Info("Sync", "Requesting stop - finished waiting (running=false)");
+					return;
+				}
+
+				if (isSyncing)
+				{
+					App.Logger.Info("Sync", "Requesting stop - abort waiting (isSyncing=true)");
+					return;
+				}
+
+				Thread.Sleep(100);
+			}
+
+			App.Logger.Error("Sync", "Requesting stop failed after timeout");
+			throw new Exception("Background thread timeout after 10sec");
 		}
 
 		public void SyncNowAndStopAsync()

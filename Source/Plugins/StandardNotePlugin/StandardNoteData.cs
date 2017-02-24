@@ -1,5 +1,6 @@
 ﻿using AlephNote.PluginInterface;
 using MSHC.Lang.Exceptions;
+using MSHC.Serialization;
 using MSHC.Util.Helper;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +19,7 @@ namespace AlephNote.Plugins.StandardNote
 			var data = new object[]
 			{
 				new XElement("SyncToken", SyncToken),
-				new XElement("Tags", Tags.Select(t => 
-					new XElement("Tag", 
-						new XAttribute("UUID", t.UUID), 
-						new XAttribute("Title", t.Title), 
-						new XAttribute("EncryptionKey", t.EncryptionKey)))),
+				new XElement("Tags", Tags.Select(t => t.Serialize()).Cast<object>().ToArray()),
 			};
 
 			var r = new XElement("data", data);
@@ -36,23 +33,12 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			SyncToken = XHelper.GetChildValueString(input, "SyncToken");
 
-			Tags = new List<StandardFileTag>();
-			var child = input.Elements("Tags").FirstOrDefault();
-			if (child == null) throw new XMLStructureException("Node not found: " + "Tags");
-			foreach (var xtag in child.Elements("Tag"))
-			{
-				Tags.Add(new StandardFileTag
-				{
-					UUID = XHelper.GetAttributeGuid(xtag, "UUID"),
-					Title = XHelper.GetAttributeString(xtag, "Title"),
-					EncryptionKey = XHelper.GetAttributeString(xtag, "EncryptionKey"),
-				});
-			}
+			Tags = XHelper.GetChildOrThrow(input, "Tags").Elements().Select(StandardFileTag.Deserialize).ToList();
 		}
 
-		public void UpdateTags(IEnumerable<StandardNoteAPI.SyncResultTag> retrievedTags, IEnumerable<StandardNoteAPI.SyncResultTag> savedTags, IEnumerable<StandardNoteAPI.SyncResultTag> unsavedTags)
+		public void UpdateTags(IEnumerable<StandardNoteAPI.SyncResultTag> retrievedTags, IEnumerable<StandardNoteAPI.SyncResultTag> savedTags, IEnumerable<StandardNoteAPI.SyncResultTag> unsavedTags, IEnumerable<StandardNoteAPI.SyncResultTag> deletedTags)
 		{
-			foreach (var tag in retrievedTags.Concat(savedTags).Concat(unsavedTags))
+			foreach (var tag in retrievedTags.Concat(savedTags).Concat(unsavedTags).Concat(deletedTags))
 			{
 				if (tag.deleted)
 				{
@@ -64,28 +50,26 @@ namespace AlephNote.Plugins.StandardNote
 					var r = Tags.FirstOrDefault(p => p.UUID == tag.uuid);
 					if (r != null)
 					{
-						r.Title = tag.title;
-						r.EncryptionKey = tag.enc_item_key;
+						if (r.Title != tag.title)
+						{
+							Tags.Remove(r);
+							Tags.Add(new StandardFileTag(tag.uuid, tag.title));
+						}
 					}
 					else
 					{
-						Tags.Add(new StandardFileTag
-						{
-							UUID = tag.uuid,
-							Title = tag.title,
-							EncryptionKey = tag.item_key,
-						});
+						Tags.Add(new StandardFileTag(tag.uuid, tag.title));
 					}
 				}
 			}
 		}
 
-		public List<StandardFileTag> GetUnusedTags(List<StandardNote> notes)
+		public List<StandardFileTag> GetUnusedTags(List<StandardFileNote> notes)
 		{
 			var tList = Tags.ToList();
-			foreach (var strTag in notes.SelectMany(n => n.Tags))
+			foreach (var inTag in notes.SelectMany(n => n.InternalTags))
 			{
-				tList.RemoveAll(t => t.Title == strTag);
+				if (inTag.UUID != null) tList.RemoveAll(t => t.UUID == inTag.UUID);
 			}
 			return tList;
 		}

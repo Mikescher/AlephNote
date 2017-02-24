@@ -4,7 +4,7 @@ using AlephNote.Settings;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Win32;
 using MSHC.Util.Threads;
-using MSHC.WPF.Extensions.Methods;
+using MSHC.WPF;
 using MSHC.WPF.MVVM;
 using System;
 using System.Collections.Generic;
@@ -31,6 +31,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand ShowAboutCommand { get { return new RelayCommand(ShowAbout); } }
 		public ICommand ShowLogCommand { get { return new RelayCommand(ShowLog); } }
 		public ICommand SaveAndSyncCommand { get { return new RelayCommand(SaveAndSync); } }
+		public ICommand FullResyncCommand { get { return new RelayCommand(FullResync); } }
 
 		public ICommand ClosingEvent { get { return new RelayCommand<CancelEventArgs>(OnClosing); } }
 		public ICommand CloseEvent { get { return new RelayCommand<EventArgs>(OnClose); } }
@@ -125,43 +126,51 @@ namespace AlephNote.WPF.Windows
 
 		public void ChangeSettings(AppSettings newSettings)
 		{
-			var reconnectRepo = Settings.NoteProvider != newSettings.NoteProvider || !Settings.PluginSettings[Settings.NoteProvider.GetUniqueID()].IsEqual(newSettings.PluginSettings[newSettings.NoteProvider.GetUniqueID()]);
-
-			if (reconnectRepo)
+			try
 			{
-				_repository.Shutdown();
+				var reconnectRepo = Settings.NoteProvider != newSettings.NoteProvider || !Settings.PluginSettings[Settings.NoteProvider.GetUniqueID()].IsEqual(newSettings.PluginSettings[newSettings.NoteProvider.GetUniqueID()]);
+
+				if (reconnectRepo)
+				{
+					_repository.Shutdown();
+				}
+
+				Settings = newSettings;
+				Settings.Save();
+
+				if (reconnectRepo)
+				{
+					_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.NoteProvider, Settings.PluginSettings[Settings.NoteProvider.GetUniqueID()]);
+					_repository.Init();
+
+					OnExplicitPropertyChanged("Repository");
+
+					SelectedNote = NotesView.FirstOrDefault<INote>();
+					OnExplicitPropertyChanged("NotesView");
+				}
+
+				Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
+
+				if (Settings.LaunchOnBoot)
+				{
+					var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+					if (registryKey != null) registryKey.SetValue(App.APPNAME_REG, App.PATH_EXECUTABLE);
+				}
+				else
+				{
+					var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+					if (registryKey != null && registryKey.GetValue(App.APPNAME_REG) != null) registryKey.DeleteValue(App.APPNAME_REG);
+				}
+
+				Owner.SetupScintilla(Settings);
+
+				SearchText = string.Empty;
 			}
-
-			Settings = newSettings;
-			Settings.Save();
-
-			if (reconnectRepo)
+			catch (Exception e)
 			{
-				_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.NoteProvider, Settings.PluginSettings[Settings.NoteProvider.GetUniqueID()]);
-				_repository.Init();
-
-				OnExplicitPropertyChanged("Repository");
-
-				SelectedNote = NotesView.FirstOrDefault<INote>();
-				OnExplicitPropertyChanged("NotesView");
+				App.Logger.Error("Main", "Apply Settings failed", e);
+				ExceptionDialog.Show(Owner, "Apply Settings failed.\r\nSettings and Local notes could be in an invalid state.\r\nContinue with caution.", e);
 			}
-
-			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
-
-			if (Settings.LaunchOnBoot)
-			{
-				var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-				if (registryKey != null) registryKey.SetValue(App.APPNAME_REG, App.PATH_EXECUTABLE);
-			}
-			else
-			{
-				var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-				if (registryKey != null && registryKey.GetValue(App.APPNAME_REG) != null) registryKey.DeleteValue(App.APPNAME_REG);
-			}
-
-			Owner.SetupScintilla(Settings);
-
-			SearchText = string.Empty;
 		}
 
 		private void SelectedNoteChanged()
@@ -216,6 +225,8 @@ namespace AlephNote.WPF.Windows
 			}
 
 			SynchronizationState = SynchronizationState.Error;
+
+			App.Logger.Error("Sync", string.Join(Environment.NewLine, errors.Select(p => p.Item1)), string.Join("\r\n\r\n\r\n", errors.Select(p => p.Item2.ToString())));
 
 			if (Owner.Visibility == Visibility.Hidden)
 			{
@@ -283,6 +294,7 @@ namespace AlephNote.WPF.Windows
 				}
 				catch (Exception e)
 				{
+					App.Logger.Error("Main", "Could not write to file", e);
 					ExceptionDialog.Show(Owner, "Could not write to file", e);
 				}
 			}
@@ -290,13 +302,21 @@ namespace AlephNote.WPF.Windows
 
 		private void DeleteNote()
 		{
-			if (SelectedNote == null) return;
+			try
+			{
+				if (SelectedNote == null) return;
 
-			if (MessageBox.Show(Owner, "Do you really want to delete this note?", "Delete note ?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+				if (MessageBox.Show(Owner, "Do you really want to delete this note?", "Delete note ?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
 
-			Repository.DeleteNote(SelectedNote, true);
+				Repository.DeleteNote(SelectedNote, true);
 
-			SelectedNote = NotesView.FirstOrDefault<INote>();
+				SelectedNote = NotesView.FirstOrDefault<INote>();
+			}
+			catch (Exception e)
+			{
+				App.Logger.Error("Main", "Could not delete note", e);
+				ExceptionDialog.Show(Owner, "Could not delete note", e);
+			}
 		}
 
 		private void Exit()
@@ -317,8 +337,39 @@ namespace AlephNote.WPF.Windows
 
 		private void SaveAndSync()
 		{
-			Repository.SaveAll();
-			Repository.SyncNow();
+			try
+			{
+				Repository.SaveAll();
+				Repository.SyncNow();
+			}
+			catch (Exception e)
+			{
+				App.Logger.Error("Main", "Synchronization failed", e);
+				ExceptionDialog.Show(Owner, "Synchronization failed", e);
+			}
+		}
+
+		private void FullResync()
+		{
+			try
+			{
+				Repository.Shutdown(false);
+
+				Repository.DeleteLocalData();
+
+				_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.NoteProvider, Settings.PluginSettings[Settings.NoteProvider.GetUniqueID()]);
+				_repository.Init();
+
+				OnExplicitPropertyChanged("Repository");
+
+				SelectedNote = null;
+				OnExplicitPropertyChanged("NotesView");
+			}
+			catch (Exception e)
+			{
+				App.Logger.Error("Main", "Full Synchronization failed", e);
+				ExceptionDialog.Show(Owner, "Full Synchronization failed", e);
+			}
 		}
 
 		private void FilterNoteList()

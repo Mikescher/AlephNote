@@ -1,5 +1,6 @@
 ﻿using AlephNote.PluginInterface;
 using MSHC.Math.Encryption;
+using MSHC.Serialization;
 using MSHC.Util.Helper;
 using System;
 using System.Collections.Generic;

@@ -6,6 +6,7 @@ namespace AlephNote.PluginInterface
 	{
 		void AddHeader(string name, string value);
 		string GetResponseHeader(string name);
+		void AddConverter(object c);  // we keep the type of ic object so not all plugins need to reference Json.Net, but typof(c) should be JsonConverter
 
 		TResult PostTwoWay<TResult>(object body, string path, params string[] parameter);
 		TResult PostTwoWay<TResult>(object body, string path, int[] allowedStatusCodes, params string[] parameter);

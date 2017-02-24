@@ -1,7 +1,7 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.Plugins;
 using MSHC.Lang.Collections;
-using MSHC.Lang.Extensions;
+using MSHC.Serialization;
 using MSHC.Util.Helper;
 using MSHC.WPF.MVVM;
 using System;
@@ -147,8 +147,8 @@ namespace AlephNote.Settings
 		private int _startupPositionHeight = 350;
 
 		[Setting]
-		public WindowStartupLocation StartupLocation { get { return _startupLocation; } set { _startupLocation = value; OnPropertyChanged(); } }
-		private WindowStartupLocation _startupLocation = WindowStartupLocation.CenterScreen;
+		public ExtendedWindowStartupLocation StartupLocation { get { return _startupLocation; } set { _startupLocation = value; OnPropertyChanged(); } }
+		private ExtendedWindowStartupLocation _startupLocation = ExtendedWindowStartupLocation.ScreenBottomLeft;
 		
 		[Setting]
 		public WindowState StartupState { get { return _startupState; } set { _startupState = value; OnPropertyChanged(); } }
