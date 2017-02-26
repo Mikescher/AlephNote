@@ -1,12 +1,13 @@
 ﻿using AlephNote.PluginInterface;
 using System;
 using System.Net;
+using System.Reflection;
 
 namespace AlephNote.Plugins.StandardNote
 {
 	public class StandardNotePlugin : BasicRemotePlugin
 	{
-		public static readonly Version Version = new Version(0, 0, 0, 1);
+		public static readonly Version Version = GetInformationalVersion(Assembly.GetExecutingAssembly());
 		public const string Name = "StandardNotePlugin";
 
 		private IAlephLogger _logger;

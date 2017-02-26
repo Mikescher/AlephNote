@@ -18,9 +18,9 @@ namespace AlephNote
 		public static readonly string APPNAME_REG = "AlephNoteApp";
 		public static readonly string PATH_EXECUTABLE = System.Reflection.Assembly.GetExecutingAssembly().Location;
 
-		public static readonly string APP_VERSION = GetInformationalVersion();
+		public static readonly Version APP_VERSION = GetInformationalVersion();
 
-		public static string AppVersionProperty { get { return APP_VERSION; } }
+		public static string AppVersionProperty { get { return APP_VERSION.ToString(); } }
 
 		public static EventLogger Logger = new EventLogger();
 
@@ -47,19 +47,20 @@ namespace AlephNote
 #endif
 		}
 
-		private static string GetInformationalVersion()
+		private static Version GetInformationalVersion()
 		{
 			try
 			{
 				var assembly = ResourceAssembly;
 
 				var loc = assembly.Location;
-				if (loc == null) return "???.???.???.???";
-				return FileVersionInfo.GetVersionInfo(loc).ProductVersion;
+				if (loc == null) return new Version(0, 0, 0, 0);
+				var vi = FileVersionInfo.GetVersionInfo(loc);
+				return new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
 			}
 			catch (Exception)
 			{
-				return "???.???.???.???";
+				return new Version(0, 0, 0, 0);
 			}
 		}
 	}

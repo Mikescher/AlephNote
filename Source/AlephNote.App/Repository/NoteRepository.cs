@@ -185,8 +185,6 @@ namespace AlephNote.Repository
 
 		private void NoteChanged(object sender, NoteChangedEventArgs e)
 		{
-			App.Logger.Info("Repository", "Local notes changed");
-
 			invSaveNotesLocal.Request();
 			invSaveNotesRemote.Request();
 

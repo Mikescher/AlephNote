@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
+using System.Reflection;
 
 namespace AlephNote.PluginInterface
 {
@@ -49,6 +51,21 @@ namespace AlephNote.PluginInterface
 		public Version GetVersion()
 		{
 			return version;
+		}
+
+		protected static Version GetInformationalVersion(Assembly assembly)
+		{
+			try
+			{
+				var loc = assembly.Location;
+				if (loc == null) return new Version(0, 0, 0, 0);
+				var vi = FileVersionInfo.GetVersionInfo(loc);
+				return new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
+			}
+			catch (Exception)
+			{
+				return new Version(0, 0, 0, 0);
+			}
 		}
 
 		public abstract void Init(IAlephLogger logger);

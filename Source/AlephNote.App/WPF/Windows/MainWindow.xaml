@@ -58,7 +58,7 @@
 				<MenuItem Header="Delete local data and sync new" Command="{Binding FullResyncCommand}" />
 			</MenuItem>
 			<MenuItem Header="Help">
-				<MenuItem Header="Check for Updates" />
+				<!--<MenuItem Header="Check for Updates" />-->
 				<MenuItem Header="Show Log" Command="{Binding ShowLogCommand}" />
 				<MenuItem Header="About" Command="{Binding ShowAboutCommand}" />
 			</MenuItem>
@@ -80,7 +80,9 @@
 				</services:WatermarkService.Watermark>
 			</controls:ClickSelectTextBox>
 
-			<Button Grid.Row="0" Grid.Column="1" Content="+" Margin="2" Background="Transparent" BorderThickness="0" FontWeight="Bold" Command="{Binding CreateNewNoteCommand}"/>
+			<Button Grid.Row="0" Grid.Column="1" Margin="2" BorderThickness="0" Padding="0" FontWeight="Bold" Command="{Binding CreateNewNoteCommand}">
+				<Image Source="/Resources/plus.png" />
+			</Button>
 
 			<ListView Grid.Column="0"  Grid.Row="1" Grid.ColumnSpan="2"
 					  services:MultiDatatemplateService.MultiTemplateSelector="{Binding Settings.NotePreviewStyle}"
@@ -240,10 +242,8 @@
 
 			<StatusBarItem  Content="Last Synchronized: " />
 			<StatusBarItem Content="{Binding LastSynchronizedText}" />
-			<Button Content="R" Padding="0" Command="{Binding ResyncCommand}" ToolTip="Synchronize Now">
-				<Button.LayoutTransform>
-					<ScaleTransform ScaleX="1" ScaleY="0.6" />
-				</Button.LayoutTransform>
+			<Button ToolTip="Synchronize Now" Padding="0" BorderThickness="0" Height="14" Command="{Binding ResyncCommand}"  >
+				<Image Source="/Resources/refresh.png" />
 			</Button>
 			<Separator Margin="5,2" Foreground="Beige" />
 			<StatusBarItem Content="Length: " />

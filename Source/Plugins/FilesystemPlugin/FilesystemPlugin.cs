@@ -1,17 +1,18 @@
 ﻿using AlephNote.PluginInterface;
 using System;
 using System.Net;
+using System.Reflection;
 
 namespace AlephNote.Plugins.Filesystem
 {
 	public class FilesystemPlugin : BasicRemotePlugin
 	{
-		public static readonly Version Version = new Version(0, 0, 0, 1);
+		public static readonly Version Version = GetInformationalVersion(Assembly.GetExecutingAssembly());
 		public const string Name = "FilesystemPlugin";
 
 		private IAlephLogger logger;
 
-		public FilesystemPlugin() : base("Filesystem (Human readable)", Version, Guid.Parse("a430b7ef-3526-4cbf-a304-8208de18efb5"))
+		public FilesystemPlugin() : base("Filesystem", Version, Guid.Parse("a430b7ef-3526-4cbf-a304-8208de18efb5"))
 		{
 			//
 		}

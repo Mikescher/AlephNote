@@ -9,7 +9,7 @@
 		WindowStartupLocation="CenterOwner"
 		d:DataContext="{d:DesignInstance windows:AboutWindowViewmodel}"
 		Icon="/Resources/IconMain.png"
-		Title="About AlephNote" Height="310" Width="300" MinWidth="300" MinHeight="310">
+		Title="About AlephNote" Height="330" Width="320" MinWidth="300" MinHeight="310">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -49,6 +49,7 @@
 			<TextBlock Text="Newtonsoft.Json"              Tag="http://www.newtonsoft.com/json"                  Foreground="Blue" TextDecorations="Underline" Cursor="Hand" MouseDown="Hyperlink_Clicked" />
 			<TextBlock Text="Scintilla.Net"                Tag="https://github.com/jacobslusser/ScintillaNET"    Foreground="Blue" TextDecorations="Underline" Cursor="Hand" MouseDown="Hyperlink_Clicked" />
 			<TextBlock Text="Hardcodet.NotifyIcon"         Tag="https://bitbucket.org/hardcodet/notifyicon-wpf/" Foreground="Blue" TextDecorations="Underline" Cursor="Hand" MouseDown="Hyperlink_Clicked" />
+			<TextBlock Text="FatCow Icon Set"              Tag="https://www.fatcow.com/free-icons"               Foreground="Blue" TextDecorations="Underline" Cursor="Hand" MouseDown="Hyperlink_Clicked" />
 		</StackPanel>
 
 		<StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="3">
