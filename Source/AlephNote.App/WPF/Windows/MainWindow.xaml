@@ -58,7 +58,7 @@
 				<MenuItem Header="Delete local data and sync new" Command="{Binding FullResyncCommand}" />
 			</MenuItem>
 			<MenuItem Header="Help">
-				<!--<MenuItem Header="Check for Updates" />-->
+				<MenuItem Header="Check for Updates" Command="{Binding ManuallyCheckForUpdatesCommand}" />
 				<MenuItem Header="Show Log" Command="{Binding ShowLogCommand}" />
 				<MenuItem Header="About" Command="{Binding ShowAboutCommand}" />
 			</MenuItem>
@@ -114,17 +114,17 @@
 				<!-- ReSharper disable Xaml.RedundantResource -->
 				<services:MultiDatatemplateService.MultiTemplate>
 
-					<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.Simple}" d:DataContext="{d:DesignInstance pi:INote}">
+					<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.Simple}">
 						<DataTemplate >
-							<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}">
+							<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}"  d:DataContext="{d:DesignInstance pi:INote}">
 								<TextBlock Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" TextTrimming="CharacterEllipsis" />
 							</Grid>
 						</DataTemplate>
 					</services:ConditionalDataTemplate>
 
-					<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.Extended}" d:DataContext="{d:DesignInstance pi:INote}">
+					<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.Extended}">
 						<DataTemplate>
-							<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}">
+							<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}"  d:DataContext="{d:DesignInstance pi:INote}">
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="*" />
 									<ColumnDefinition Width="Auto" />
@@ -139,9 +139,9 @@
 						</DataTemplate>
 					</services:ConditionalDataTemplate>
 
-					<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.FullPreview}" d:DataContext="{d:DesignInstance pi:INote}">
+					<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.FullPreview}">
 						<DataTemplate>
-							<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}">
+							<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}" d:DataContext="{d:DesignInstance pi:INote}">
 								<Grid.RowDefinitions>
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />

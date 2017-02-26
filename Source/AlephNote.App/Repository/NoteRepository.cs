@@ -134,8 +134,6 @@ namespace AlephNote.Repository
 
 		private void SaveAllDirtyNotes()
 		{
-			App.Logger.Info("Repository", "Save all dirty notes (" + _notes.Count(n => !n.IsLocalSaved) + ")");
-
 			foreach (var note in _notes)
 			{
 				if (!note.IsLocalSaved) SaveNote(note);
@@ -160,8 +158,6 @@ namespace AlephNote.Repository
 			new XDocument(root).Save(path);
 
 			note.ResetLocalDirty();
-
-			App.Logger.Info("Repository", "Note " + note.GetUniqueName() + " locally saved");
 		}
 
 		private void NoteCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

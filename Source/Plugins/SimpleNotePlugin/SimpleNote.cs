@@ -1,7 +1,6 @@
 ﻿using AlephNote.PluginInterface;
 using MSHC.Lang.Collections;
 using MSHC.Serialization;
-using MSHC.Util.Helper;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,7 +30,7 @@ namespace AlephNote.Plugins.SimpleNote
 		private string _content = "";
 		public string Content { get { return _content; } set { _content = value; OnPropertyChanged(); } }
 
-		private DateTimeOffset _creationDate = DateTimeOffset.MinValue;
+		private DateTimeOffset _creationDate = DateTimeOffset.Now;
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
 
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
@@ -200,7 +199,7 @@ namespace AlephNote.Plugins.SimpleNote
 
 			using (SuppressDirtyChanges())
 			{
-				_modificationDate = other.ModificationDate;
+				//_modificationDate = other.ModificationDate; //Don't update mod date - simple note sometimes returns old data in this field (???)
 				_creationDate = other.CreationDate;
 				_localVersion = other.LocalVersion;
 				_systemTags = other.SystemTags;

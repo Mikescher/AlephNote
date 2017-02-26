@@ -2,7 +2,6 @@
 using AlephNote.Plugins;
 using MSHC.Lang.Collections;
 using MSHC.Serialization;
-using MSHC.Util.Helper;
 using MSHC.WPF.MVVM;
 using System;
 using System.Collections;
@@ -177,6 +176,9 @@ namespace AlephNote.Settings
 		[Setting]
 		public ConflictResolutionStrategy ConflictResolution { get { return _conflictResolution; } set { _conflictResolution = value; OnPropertyChanged(); } }
 		private ConflictResolutionStrategy _conflictResolution = ConflictResolutionStrategy.UseClientCreateConflictFile;
+
+		public bool CheckForUpdates { get { return _checkForUpdates; } set { _checkForUpdates = value; OnPropertyChanged(); } }
+		private bool _checkForUpdates = true;
 
 		public Dictionary<Guid, IRemoteStorageConfiguration> PluginSettings = new Dictionary<Guid, IRemoteStorageConfiguration>();
 

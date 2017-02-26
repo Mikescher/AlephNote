@@ -1,4 +1,5 @@
 ﻿using AlephNote.PluginInterface;
+using AlephNote.Plugins;
 using AlephNote.Repository;
 using AlephNote.Settings;
 using Hardcodet.Wpf.TaskbarNotification;
@@ -13,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -32,6 +34,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand ShowLogCommand { get { return new RelayCommand(ShowLog); } }
 		public ICommand SaveAndSyncCommand { get { return new RelayCommand(SaveAndSync); } }
 		public ICommand FullResyncCommand { get { return new RelayCommand(FullResync); } }
+		public ICommand ManuallyCheckForUpdatesCommand { get { return new RelayCommand(ManuallyCheckForUpdates); } }
 
 		public ICommand ClosingEvent { get { return new RelayCommand<CancelEventArgs>(OnClosing); } }
 		public ICommand CloseEvent { get { return new RelayCommand<EventArgs>(OnClose); } }
@@ -100,6 +103,12 @@ namespace AlephNote.WPF.Windows
 
 			SelectedNote = NotesView.FirstOrDefault<INote>();
 			OverviewListWidth = new GridLength(settings.OverviewListWidth);
+
+			if (settings.CheckForUpdates)
+			{
+				var t = new Thread(CheckForUpdatesAsync) { Name = "UPDATE_CHECK" };
+				t.Start();
+			}
 		}
 
 		private void ShowSettings()
@@ -441,6 +450,45 @@ namespace AlephNote.WPF.Windows
 		public void RequestSettingsSave()
 		{
 			_invSaveSettings.Request();
+		}
+
+		private void ManuallyCheckForUpdates()
+		{
+			try
+			{
+				var r = GithubConnection.GetLatestRelease();
+
+				if (r.Item1 > App.APP_VERSION)
+				{
+					UpdateWindow.Show(Owner, r.Item1, r.Item2, r.Item3);
+				}
+				else
+				{
+					MessageBox.Show("You are using the latest version");
+				}
+			}
+			catch (Exception e)
+			{
+				App.Logger.Error("Main", "Can't get latest version from github", e);
+				MessageBox.Show("Cannot get latest version from github API");
+			}
+		}
+
+		private void CheckForUpdatesAsync()
+		{
+			try
+			{
+				var r = GithubConnection.GetLatestRelease();
+
+				if (r.Item1 > App.APP_VERSION)
+				{
+					Application.Current.Dispatcher.BeginInvoke(new Action(() => { UpdateWindow.Show(Owner, r.Item1, r.Item2, r.Item3); }));
+				}
+			}
+			catch (Exception e)
+			{
+				App.Logger.Error("Main", "Can't get latest version from github", e);
+			}
 		}
 	}
 }

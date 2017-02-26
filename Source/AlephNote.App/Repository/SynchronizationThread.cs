@@ -1,10 +1,10 @@
 ﻿using AlephNote.PluginInterface;
+using MSHC.Lang.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using MSHC.Lang.Collections;
 
 namespace AlephNote.Repository
 {
@@ -36,7 +36,7 @@ namespace AlephNote.Repository
 
 			delay = syncdelay;
 			cancel = false;
-			thread = new Thread(ThreadRun) { IsBackground = true };
+			thread = new Thread(ThreadRun) { Name = "SYNC_THREAD", IsBackground = true };
 			thread.Start();
 		}
 

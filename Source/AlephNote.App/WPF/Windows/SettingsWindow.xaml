@@ -113,6 +113,7 @@
 						<GroupBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Padding="4" Header="Application">
 							<StackPanel>
 								<CheckBox Margin="3" VerticalAlignment="Center" Content="Start with Windows" IsChecked="{Binding Settings.LaunchOnBoot}" />
+								<CheckBox Margin="3" VerticalAlignment="Center" Content="Automatically check for updates" IsChecked="{Binding Settings.CheckForUpdates}" />
 							</StackPanel>
 						</GroupBox>
 						

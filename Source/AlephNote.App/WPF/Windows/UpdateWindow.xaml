@@ -1,0 +1,26 @@
+﻿<controls:DialogWindow x:Class="AlephNote.WPF.Windows.UpdateWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:AlephNote.WPF.Windows"
+		xmlns:controls="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
+		mc:Ignorable="d" 
+		d:DataContext="{d:DesignInstance local:UpdateWindowViewmodel}"
+		Title="Update found" Height="300" Width="500">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+			<Button Margin="5" Content="Manually download" />
+			<Button Margin="5" Content="Update automatically" FontWeight="Bold" />
+			<Button Margin="5" Content="Ignore" />
+		</StackPanel>
+		
+	</Grid>
+</controls:DialogWindow>
+

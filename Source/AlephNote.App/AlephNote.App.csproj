@@ -82,6 +82,7 @@
     <Compile Include="Log\EventLogger.cs" />
     <Compile Include="Log\LogEvent.cs" />
     <Compile Include="Log\LogEventType.cs" />
+    <Compile Include="Plugins\GithubConnection.cs" />
     <Compile Include="Repository\ISynchronizationFeedback.cs" />
     <Compile Include="Repository\NoteRepository.cs" />
     <Compile Include="Repository\RestException.cs" />
@@ -147,6 +148,12 @@
     <Compile Include="WPF\Windows\SyncErrorDialog.xaml.cs">
       <DependentUpon>SyncErrorDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Windows\UpdateWindowViewmodel.cs" >
+      <DependentUpon>UpdateWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\UpdateWindow.xaml.cs" >
+      <DependentUpon>UpdateWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\WpfScreen.cs" />
     <Page Include="WPF\Windows\AboutWindow.xaml">
       <SubType>Designer</SubType>
@@ -177,6 +184,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="WPF\Windows\SyncErrorDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Windows\UpdateWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
