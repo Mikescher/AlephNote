@@ -16,6 +16,7 @@ namespace AlephNote.Repository
 		private readonly IAlephLogger _logger;
 
 		private JsonConverter[] _converter = new JsonConverter[0];
+		private StringEscapeHandling _seHandling = StringEscapeHandling.Default;
 
 		public SimpleJsonRest(IWebProxy proxy, string host, IAlephLogger log)
 		{
@@ -38,6 +39,11 @@ namespace AlephNote.Repository
 			var c = (JsonConverter) ic;
 
 			_converter = _converter.Concat(new[] {c}).ToArray();
+		}
+
+		public void DoEscapeAllNonASCIICharacters()
+		{
+			_seHandling = StringEscapeHandling.EscapeNonAscii;
 		}
 
 		private Uri CreateUri(string path, params string[] parameter)
@@ -70,6 +76,15 @@ namespace AlephNote.Repository
 			return _client.ResponseHeaders[name];
 		}
 
+		private JsonSerializerSettings GetSerializerSettings()
+		{
+			return new JsonSerializerSettings
+			{
+				Converters = _converter,
+				StringEscapeHandling = _seHandling,
+			};
+		}
+
 		public TResult PostTwoWay<TResult>(object body, string path, params string[] parameter)
 		{
 			return PostTwoWay<TResult>(body, path, new int[0], parameter);
@@ -84,7 +99,7 @@ namespace AlephNote.Repository
 			try
 			{
 
-				upload = JsonConvert.SerializeObject(body, _converter);
+				upload = JsonConvert.SerializeObject(body, GetSerializerSettings());
 
 				download = _client.UploadString(uri, upload);
 			}
@@ -140,7 +155,7 @@ namespace AlephNote.Repository
 			string upload;
 			try
 			{
-				upload = JsonConvert.SerializeObject(body, _converter);
+				upload = JsonConvert.SerializeObject(body, GetSerializerSettings());
 
 				_client.UploadString(uri, upload);
 			}
@@ -289,7 +304,7 @@ namespace AlephNote.Repository
 			string upload;
 			try
 			{
-				upload = JsonConvert.SerializeObject(body, _converter);
+				upload = JsonConvert.SerializeObject(body, GetSerializerSettings());
 
 				_client.UploadString(uri, "DELETE", upload);
 			}

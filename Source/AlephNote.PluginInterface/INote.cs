@@ -159,11 +159,13 @@ namespace AlephNote.PluginInterface
 		public abstract DateTimeOffset ModificationDate { get; set; }
 
 		protected abstract BasicNote CreateClone();
+
 		public INote Clone()
 		{
 			var n = CreateClone();
 			n._isLocalSaved = _isLocalSaved;
 			n._isRemoteSaved = _isRemoteSaved;
+			n._isConflictNote = _isConflictNote;
 			return n;
 		}
 
