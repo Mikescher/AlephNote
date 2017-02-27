@@ -59,3 +59,11 @@ build-iPhoneSimulator/
 .rvmrc
 
 # End of https://www.gitignore.io/api/jekyll,ruby
+
+##############################################################################################
+
+_site
+.bundle
+.sass-cache
+Gemfile.lock
+.DS_Store
