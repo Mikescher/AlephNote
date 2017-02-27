@@ -19,13 +19,13 @@ namespace AlephNote.Plugins.Nextcloud
 
 		public static List<NoteRef> ListNotes(ISimpleJsonRest web)
 		{
-			return web.Get<List<NoteRef>>("notes/", "exclude=title,category,content,favorite");
+			return web.Get<List<NoteRef>>("notes", "exclude=title,category,content,favorite");
 		}
 
 		public static NextcloudNote UploadNewNote(ISimpleJsonRest web, NextcloudNote note, NextcloudConfig config)
 		{
 			var data = new ApiCreateNote { content = note.Content };
-			var result = web.PostTwoWay<ApiNoteResult>(data, "notes/");
+			var result = web.PostTwoWay<ApiNoteResult>(data, "notes");
 
 			return new NextcloudNote(result.id, note.LocalID, config)
 			{

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text;
 
 namespace AlephNote.Plugins.Nextcloud
 {
@@ -30,7 +31,8 @@ namespace AlephNote.Plugins.Nextcloud
 		private ISimpleJsonRest CreateAuthenticatedClient()
 		{
 			var client = CreateJsonRestClient(_proxy, new Uri(new Uri(_config.Host), API_URL).ToString());
-			client.SetURLAuthentication(_config.Username, _config.Password);
+			//client.SetURLAuthentication(_config.Username, _config.Password); // specs say this works - but it doesn't
+			client.AddHeader("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_config.Username + ":" + _config.Password)));
 
 			return client;
 		}
