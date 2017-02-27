@@ -17,6 +17,7 @@ namespace AlephNote.Repository
 
 		private JsonConverter[] _converter = new JsonConverter[0];
 		private StringEscapeHandling _seHandling = StringEscapeHandling.Default;
+		private Tuple<string, string> _urlAuthentication = null;
 
 		public SimpleJsonRest(IWebProxy proxy, string host, IAlephLogger log)
 		{
@@ -46,11 +47,27 @@ namespace AlephNote.Repository
 			_seHandling = StringEscapeHandling.EscapeNonAscii;
 		}
 
+		public void SetURLAuthentication(string username, string password)
+		{
+			_urlAuthentication = Tuple.Create(username, password);
+		}
+
 		private Uri CreateUri(string path, params string[] parameter)
 		{
 			var uri = new Uri(_host, path);
 
 			var result = uri.ToString();
+
+			if (_urlAuthentication != null)
+			{
+				result = string.Format("{0}://{1}:{2}@{3}:{4}{5}",
+					uri.Scheme,
+					Uri.EscapeDataString(_urlAuthentication.Item1),
+					Uri.EscapeDataString(_urlAuthentication.Item2),
+					uri.Host,
+					uri.Port,
+					uri.AbsolutePath);
+			}
 
 			bool first = true;
 			foreach (var param in parameter)

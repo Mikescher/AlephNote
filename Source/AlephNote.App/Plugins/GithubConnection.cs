@@ -6,8 +6,12 @@ namespace AlephNote.Plugins
 {
 	static class GithubConnection
 	{
+#pragma warning disable 0649
+// ReSharper disable All
 		private class JsonResponseAsset { public string browser_download_url; }
 		private class JsonResponse { public string tag_name; public DateTime published_at; public List<JsonResponseAsset> assets; }
+// ReSharper restore All
+#pragma warning restore 0649
 
 		public static Tuple<Version, DateTime, string> GetLatestRelease()
 		{

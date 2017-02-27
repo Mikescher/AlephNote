@@ -1,8 +1,8 @@
 ﻿using AlephNote.PluginInterface;
+using MSHC.Lang.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MSHC.Lang.Collections;
 
 namespace AlephNote.Plugins.SimpleNote
 {
@@ -14,7 +14,7 @@ namespace AlephNote.Plugins.SimpleNote
 		private static readonly DateTimeOffset TIMESTAMP_ORIGIN = new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0));
 
 #pragma warning disable 0649
-		// ReSharper disable All
+// ReSharper disable All
 		public class APIResultAuthorize { public string username, access_token, userid; }
 		public class APIResultIndex { public string current, mark; public List<APIResultIndexObj> index = new List<APIResultIndexObj>(); }
 		public class APIResultIndexObj { public string id; public int v; }
@@ -22,7 +22,7 @@ namespace AlephNote.Plugins.SimpleNote
 		public class APISendNoteData { public List<string> tags = new List<string>(); public string content; }
 		public class APIDeleteNoteData { public bool deleted; }
 		public class APISendAuth { public string username, password; }
-		// ReSharper restore All
+// ReSharper restore All
 #pragma warning restore 0649
 
 		public static APIResultAuthorize Authenticate(ISimpleJsonRest web, string userName, string password)

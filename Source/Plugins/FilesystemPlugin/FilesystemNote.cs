@@ -1,11 +1,9 @@
 ﻿using AlephNote.PluginInterface;
 using MSHC.Lang.Collections;
 using MSHC.Serialization;
-using MSHC.Util.Helper;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
@@ -31,7 +29,7 @@ namespace AlephNote.Plugins.Filesystem
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
 		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
 
-		private readonly ObservableCollection<string> _tags = new ObservableCollection<string>();
+		private readonly ObservableCollection<string> _tags = new VoidObservableCollection<string>();
 		public override ObservableCollection<string> Tags { get { return _tags; } }
 
 		private readonly FilesystemConfig _config;
@@ -69,7 +67,6 @@ namespace AlephNote.Plugins.Filesystem
 			var data = new object[]
 			{
 				new XElement("ID", _id.ToString("D")),
-				new XElement("Tags", Tags.Select(p => new XElement("Tag", p)).Cast<object>().ToArray()),
 				new XElement("Text", Convert.ToBase64String(Encoding.UTF8.GetBytes(_text))),
 				new XElement("Title", Convert.ToBase64String(Encoding.UTF8.GetBytes(_title))),
 				new XElement("PathRemote", _pathRemote),
@@ -89,7 +86,6 @@ namespace AlephNote.Plugins.Filesystem
 			using (SuppressDirtyChanges())
 			{
 				_id = XHelper.GetChildValueGUID(input, "ID");
-				_tags.Synchronize(XHelper.GetChildValueStringList(input, "Tags", "Tag"));
 				_text = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Text")));
 				_title = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Title")));
 				_pathRemote = XHelper.GetChildValueString(input, "PathRemote");
@@ -101,7 +97,6 @@ namespace AlephNote.Plugins.Filesystem
 		protected override BasicNote CreateClone()
 		{
 			var n = new FilesystemNote(_id, _config);
-			n._tags.Synchronize(_tags.ToList());
 			n._text = _text;
 			n._title = _title;
 			n._pathRemote = _pathRemote;

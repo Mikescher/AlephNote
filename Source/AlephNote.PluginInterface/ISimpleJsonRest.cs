@@ -9,6 +9,7 @@ namespace AlephNote.PluginInterface
 
 		void AddConverter(object c);  // we keep the type of ic object so not all plugins need to reference Json.Net, but typof(c) should be JsonConverter
 		void DoEscapeAllNonASCIICharacters();
+		void SetURLAuthentication(string username, string password);
 
 		TResult PostTwoWay<TResult>(object body, string path, params string[] parameter);
 		TResult PostTwoWay<TResult>(object body, string path, int[] allowedStatusCodes, params string[] parameter);

@@ -11,7 +11,7 @@ namespace AlephNote.Plugins.StandardNote
 {
 	public class StandardNoteConfig : IRemoteStorageConfiguration
 	{
-		private const string ENCRYPTION_KEY = @"HuIpJachKuRyJuOmVelThufCeck";
+		private const string ENCRYPTION_KEY = @"HuIpJachKuRyJuOmVelThufCeck"; // https://duckduckgo.com/?q=random+password+32+characters
 		
 		private const int ID_EMAIL    = 6251;
 		private const int ID_PASSWORD = 6252;

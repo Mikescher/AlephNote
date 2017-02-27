@@ -244,11 +244,16 @@
       <Name>HeadlessPlugin</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\Plugins\FilesystemPlugin\FilesystemPlugin.csproj">
-      <Project>{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5}</Project>
-      <Name>FilesystemPlugin</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
+		<ProjectReference Include="..\Plugins\FilesystemPlugin\FilesystemPlugin.csproj">
+			<Project>{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5}</Project>
+			<Name>FilesystemPlugin</Name>
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
+		<ProjectReference Include="..\Plugins\NextcloudPlugin\NextcloudPlugin.csproj">
+			<Project>{FC14805A-04E4-4205-B360-BF9548714B49}</Project>
+			<Name>NextcloudPlugin</Name>
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="IconMain.ico" />
