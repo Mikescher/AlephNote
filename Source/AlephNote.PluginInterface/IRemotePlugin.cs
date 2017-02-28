@@ -14,7 +14,7 @@ namespace AlephNote.PluginInterface
 
 		Guid GetUniqueID();
 		string GetName();
-		Version GetVersion();
+		Version GetVersion(); //SemVer. set last digit <> 0 to create a debug version (will not be loaded in RELEASE) 
 
 		IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
 		IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config);
@@ -28,7 +28,7 @@ namespace AlephNote.PluginInterface
 		private readonly string name;
 		private readonly Version version;
 
-		public string DisplayTitleLong { get { return GetName() + " v" + GetVersion(); } }
+		public string DisplayTitleLong { get { return GetName() + " v" + (version.Revision == 0 ? version.ToString(3) : (version.ToString(4) + " BETA")); } }
 		public string DisplayTitleShort { get { return GetName(); } }
 
 		protected BasicRemotePlugin(string name, Version version, Guid uuid)

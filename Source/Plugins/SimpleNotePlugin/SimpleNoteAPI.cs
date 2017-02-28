@@ -11,7 +11,7 @@ namespace AlephNote.Plugins.SimpleNote
 	/// </summary>
 	static class SimpleNoteAPI
 	{
-		private static readonly DateTimeOffset TIMESTAMP_ORIGIN = new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0));
+		private static readonly DateTimeOffset TIMESTAMP_ORIGIN = new DateTimeOffset(1970, 1, 1, 0, 0, 0, 0, TimeSpan.Zero);
 
 #pragma warning disable 0649
 // ReSharper disable All
@@ -19,7 +19,7 @@ namespace AlephNote.Plugins.SimpleNote
 		public class APIResultIndex { public string current, mark; public List<APIResultIndexObj> index = new List<APIResultIndexObj>(); }
 		public class APIResultIndexObj { public string id; public int v; }
 		public class APIResultNoteData { public List<string> tags = new List<string>(); public bool deleted; public string shareURL, content, publishURL; public List<string> systemTags = new List<string>(); public double modificationDate, creationDate; }
-		public class APISendNoteData { public List<string> tags = new List<string>(); public string content; }
+		public class APISendNoteData { public List<string> tags = new List<string>(); public string content; public double modificationDate; }
 		public class APIDeleteNoteData { public bool deleted; }
 		public class APISendAuth { public string username, password; }
 // ReSharper restore All
@@ -87,6 +87,7 @@ namespace AlephNote.Plugins.SimpleNote
 			{
 				tags = note.Tags.ToList(),
 				content = note.Content,
+				modificationDate = ConvertToEpochDate(note.ModificationDate),
 			};
 			
 			var r = web.PostTwoWay<APIResultNoteData>(data, "note/i/" + note.ID, new[] {412}, "response=1");

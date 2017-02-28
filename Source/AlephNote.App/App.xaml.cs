@@ -20,7 +20,7 @@ namespace AlephNote
 
 		public static readonly Version APP_VERSION = GetInformationalVersion();
 
-		public static string AppVersionProperty { get { return APP_VERSION.ToString(); } }
+		public static string AppVersionProperty { get { return APP_VERSION.Revision == 0 ? APP_VERSION.ToString(3) : (APP_VERSION.ToString(4) + " BETA"); } }
 
 		public static EventLogger Logger = new EventLogger();
 

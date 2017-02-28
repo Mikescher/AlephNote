@@ -322,6 +322,7 @@ namespace AlephNote.Repository
 									realnote.TriggerOnChanged(true);
 									realnote.SetLocalDirty();
 									realnote.ResetRemoteDirty();
+									repo.SaveNote(realnote);
 								}
 								else
 								{

@@ -38,7 +38,7 @@ namespace AlephNote.Plugins.SimpleNote
 					using (var web = CreateJsonRestClient(_proxy, HOST_AUTH))
 					{
 						web.AddHeader("X-Simperium-API-Key", API_KEY);
-						web.DoEscapeAllNonASCIICharacters();
+						web.SetEscapeAllNonASCIICharacters(true);
 
 						_logger.Debug(SimpleNotePlugin.Name, "Requesting token from Simplenote server");
 						_token = SimpleNoteAPI.Authenticate(web, _config.Username, _config.Password);
@@ -59,7 +59,7 @@ namespace AlephNote.Plugins.SimpleNote
 			var client = CreateJsonRestClient(_proxy, HOST_API);
 			client.AddHeader("X-Simperium-API-Key", API_KEY);
 			client.AddHeader("X-Simperium-Token", _token.access_token);
-			client.DoEscapeAllNonASCIICharacters();
+			client.SetEscapeAllNonASCIICharacters(true);
 
 			return client;
 		}

@@ -6,7 +6,7 @@ namespace AlephNote.Plugins.Nextcloud
 {
 	public static class NextcloudAPI
 	{
-		private static readonly DateTimeOffset TIMESTAMP_ORIGIN = new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0));
+		private static readonly DateTimeOffset TIMESTAMP_ORIGIN = new DateTimeOffset(1970, 1, 1, 0, 0, 0, 0, TimeSpan.Zero);
 
 #pragma warning disable 0649
 // ReSharper disable All
@@ -52,7 +52,7 @@ namespace AlephNote.Plugins.Nextcloud
 		public static NextcloudNote ChangeExistingNote(ISimpleJsonRest web, NextcloudNote note, NextcloudConfig config)
 		{
 			var data = new ApiUpdateNote { content = note.Content };
-			var result = web.PostTwoWay<ApiNoteResult>(data, "notes/" + note.RemoteID);
+			var result = web.PutTwoWay<ApiNoteResult>(data, "notes/" + note.RemoteID);
 
 			return new NextcloudNote(result.id, note.LocalID, config)
 			{
