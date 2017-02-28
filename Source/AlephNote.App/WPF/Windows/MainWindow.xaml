@@ -24,7 +24,7 @@
 		Closed="{mext:EventBinding CloseEvent, CommandParameter=$e}"
 		Loaded="MainWindow_OnLoaded"
 		KeyDown="MainWindow_OnKeyDown"
-		Title="Common Note" Height="350" Width="525">
+		Title="AlephNote" Height="350" Width="525">
 	
 	<Window.InputBindings>
 		<KeyBinding Command="{Binding CreateNewNoteCommand}" Modifiers="Control" Key="N"/>

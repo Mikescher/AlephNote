@@ -1,13 +1,13 @@
 # Setup
-title:        Project or Site name
-tagline:      A responsive theme for your project on GitHub Pages
+title:        AlephNote
+tagline:      An extensible, lightweight desktop note client for multiple backends
 baseurl:      ""
 paginate:     1
 
 # About/contact
 author:
-  name:       Author name
-  url:        http://yourhomepage.com 
+  name:       Mike Schwörer
+  url:        http://mikescher.com 
 
 # Gems
 gems:

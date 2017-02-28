@@ -190,3 +190,19 @@ a:hover { text-decoration: underline; }
 .site-footer-owner { display: block; font-weight: bold; }
 
 .site-footer-credits { color: #819198; }
+
+.button-3d {
+ position:relative;
+ width: auto;
+ color:#ecf0f1;
+ text-decoration:none;
+ border-radius:5px;
+ border:solid 1px #2C81B9;
+ background:#1590EE;
+ text-align:center;
+ padding:16px 18px 14px;
+ 
+ -webkit-transition: all 0.1s;
+ -moz-transition: all 0.1s;
+ transition: all 0.1s;
+}

@@ -3,11 +3,11 @@ layout: default
 title: {{ site.name }}
 ---
 
-<div id="home">
-  <h1>Blog Posts</h1>
-  <ul class="posts">
-    {% for post in site.posts %}
-      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></li>
-    {% endfor %}
-  </ul>
+AlephNote is a client for multiple online note services, provided through plugins
+
+<div style="margin: 60px 0; display:flex; justify-content:center">
+<a href="https://simplenote.com/"            style="margin: 10px;" class="button-3d">Simplenote</a>
+<a href="https://standardnotes.org/"         style="margin: 10px;" class="button-3d">Standard Notes</a>
+<a href="https://github.com/nextcloud/notes" style="margin: 10px;" class="button-3d">Nextcloud Notes</a>
+<a href="#"                                  style="margin: 10px;" class="button-3d">Filesystem</a>
 </div>
