@@ -1,0 +1,17 @@
+﻿<Window x:Class="AlephNote.AutoUpdater.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		ResizeMode="NoResize"
+		WindowStartupLocation="CenterScreen"
+		Topmost="True"
+		Title="AlephNote Auto Updater" Height="130" Width="525">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="50"/>
+		</Grid.RowDefinitions>
+		
+		<ProgressBar Grid.Row="0" x:Name="Progress" Margin="2" Minimum="0" Value="0" Maximum="1" />
+		<TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="InfoBox" Text="Updating ..." FontSize="16"></TextBlock>
+	</Grid>
+</Window>
