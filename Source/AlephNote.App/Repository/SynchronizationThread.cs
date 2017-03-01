@@ -365,7 +365,7 @@ namespace AlephNote.Repository
 			{
 				var note = xnote;
 
-				App.Logger.Info("Sync", string.Format("Delete note {0}", note));
+				App.Logger.Info("Sync", string.Format("Delete note {0}", note.GetUniqueName()));
 
 				try
 				{

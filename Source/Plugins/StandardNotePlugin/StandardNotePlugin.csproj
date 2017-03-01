@@ -66,6 +66,7 @@
     <ProjectReference Include="..\..\External\CSharpUtils\CSharpUtils.csproj">
       <Project>{d661cd9f-8934-496d-8332-bc82aab77598}</Project>
       <Name>CSharpUtils</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
