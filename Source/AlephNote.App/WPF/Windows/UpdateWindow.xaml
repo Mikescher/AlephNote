@@ -5,21 +5,40 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:AlephNote.WPF.Windows"
 		xmlns:controls="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
+		xmlns:converter="clr-namespace:AlephNote.WPF.Converter"
 		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance local:UpdateWindowViewmodel}"
-		Title="Update found" Height="300" Width="500">
+		Title="Update found" Height="250" Width="500">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="1*"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
+		<StackPanel Grid.Row="0" Orientation="Vertical">
+			<TextBlock Text="Neue Version gefunden" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="10" />
+			<TextBlock HorizontalAlignment="Center" FontSize="16" Margin="10" >
+				<Run Text="Lokale Version: " />
+				<Run Text="{Binding VersionLocal}" />
+			</TextBlock>
+			<TextBlock HorizontalAlignment="Center" FontSize="16" Margin="10" >
+				<Run Text="Online Version: " />
+				<Run Text="{Binding VersionOnline}" />
+				<Run Text="(" />
+				<Run Text="{Binding DateOnline, Converter={converter:DateTimeToDisplay}}" />
+				<Run Text=")" />
+			</TextBlock>
+
+		</StackPanel>
 		
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-			<Button Margin="5" Content="Manually download" />
-			<Button Margin="5" Content="Update automatically" FontWeight="Bold" />
-			<Button Margin="5" Content="Ignore" />
+			<Button Margin="5" FontSize="16" IsEnabled="{Binding ButtonsEnabled}" MinWidth="100" Content="Manually download" Command="{Binding UpdateManualCommand}" />
+			<Button Margin="5" FontSize="16" IsEnabled="{Binding ButtonsEnabled}" MinWidth="100" Content="Update automatically" FontWeight="Bold" IsDefault="True" Command="{Binding UpdateAutoCommand}" />
+			<Button Margin="5" FontSize="16" IsEnabled="{Binding ButtonsEnabled}" MinWidth="100" Content="Ignore" Command="{Binding CloseCommand}" />
 		</StackPanel>
+		
+		<ProgressBar Grid.Row="2" Visibility="{Binding ButtonsEnabled, Converter={converter:BoolToVisibility}, ConverterParameter=Collapsed;Visible}" Value="{Binding ProgressValue}" Maximum="{Binding ProgressMax}" Height="30" />
 		
 	</Grid>
 </controls:DialogWindow>

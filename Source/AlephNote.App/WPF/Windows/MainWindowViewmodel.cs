@@ -328,7 +328,7 @@ namespace AlephNote.WPF.Windows
 			}
 		}
 
-		private void Exit()
+		public void Exit()
 		{
 			_forceClose = true;
 			Owner.Close();
@@ -460,7 +460,7 @@ namespace AlephNote.WPF.Windows
 
 				if (r.Item1 > App.APP_VERSION)
 				{
-					UpdateWindow.Show(Owner, r.Item1, r.Item2, r.Item3);
+					UpdateWindow.Show(Owner, this, r.Item1, r.Item2, r.Item3);
 				}
 				else
 				{
@@ -482,7 +482,7 @@ namespace AlephNote.WPF.Windows
 
 				if (r.Item1 > App.APP_VERSION)
 				{
-					Application.Current.Dispatcher.BeginInvoke(new Action(() => { UpdateWindow.Show(Owner, r.Item1, r.Item2, r.Item3); }));
+					Application.Current.Dispatcher.BeginInvoke(new Action(() => { UpdateWindow.Show(Owner, this, r.Item1, r.Item2, r.Item3); }));
 				}
 			}
 			catch (Exception e)

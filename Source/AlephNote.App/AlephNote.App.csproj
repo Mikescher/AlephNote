@@ -60,6 +60,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -98,6 +99,7 @@
     <Compile Include="Settings\SettingType.cs" />
     <Compile Include="Settings\SynchronizationState.cs" />
     <Compile Include="WPF\Controls\TagEditor.cs" />
+    <Compile Include="WPF\Converter\DateTimeToDisplay.cs" />
     <Compile Include="WPF\Converter\LogToFontStyle.cs" />
     <Compile Include="WPF\Converter\LogToBackground.cs" />
     <Compile Include="WPF\Converter\LogToFontWeight.cs" />
@@ -115,7 +117,7 @@
     <Compile Include="WPF\Converter\FontSizeToInt.cs" />
     <Compile Include="WPF\Converter\TextToLines.cs" />
     <Compile Include="WPF\Converter\StringCoalesce.cs" />
-    <Compile Include="WPF\Converter\DateTimeToDisplay.cs" />
+    <Compile Include="WPF\Converter\DTOToDisplay.cs" />
     <Compile Include="WPF\Converter\IsNullToVisibility.cs" />
     <Compile Include="WPF\Converter\CreatePluginSettingsGrid.cs" />
     <Compile Include="WPF\Converter\BoolToVisibility.cs" />
@@ -148,10 +150,10 @@
     <Compile Include="WPF\Windows\SyncErrorDialog.xaml.cs">
       <DependentUpon>SyncErrorDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WPF\Windows\UpdateWindowViewmodel.cs" >
+    <Compile Include="WPF\Windows\UpdateWindowViewmodel.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WPF\Windows\UpdateWindow.xaml.cs" >
+    <Compile Include="WPF\Windows\UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\WpfScreen.cs" />
@@ -244,16 +246,16 @@
       <Name>HeadlessPlugin</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-		<ProjectReference Include="..\Plugins\FilesystemPlugin\FilesystemPlugin.csproj">
-			<Project>{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5}</Project>
-			<Name>FilesystemPlugin</Name>
-			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-		</ProjectReference>
-		<ProjectReference Include="..\Plugins\NextcloudPlugin\NextcloudPlugin.csproj">
-			<Project>{FC14805A-04E4-4205-B360-BF9548714B49}</Project>
-			<Name>NextcloudPlugin</Name>
-			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-		</ProjectReference>
+    <ProjectReference Include="..\Plugins\FilesystemPlugin\FilesystemPlugin.csproj">
+      <Project>{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5}</Project>
+      <Name>FilesystemPlugin</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugins\NextcloudPlugin\NextcloudPlugin.csproj">
+      <Project>{FC14805A-04E4-4205-B360-BF9548714B49}</Project>
+      <Name>NextcloudPlugin</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="IconMain.ico" />

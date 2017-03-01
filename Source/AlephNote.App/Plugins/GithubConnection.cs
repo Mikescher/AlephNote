@@ -1,6 +1,7 @@
 ﻿using AlephNote.Repository;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AlephNote.Plugins
 {
@@ -19,7 +20,7 @@ namespace AlephNote.Plugins
 
 			var response = rest.Get<JsonResponse>("repos/Mikescher/AlephNote/releases/latest");
 
-			var url = response.assets[0].browser_download_url;
+			var url = response.assets.First(a => a.browser_download_url.EndsWith(".zip")).browser_download_url;
 			var date = response.published_at;
 			var version = ParseVersion(response.tag_name);
 

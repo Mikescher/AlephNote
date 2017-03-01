@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows;
 
 namespace AlephNote.WPF.Windows
 {
@@ -8,17 +7,25 @@ namespace AlephNote.WPF.Windows
 	/// </summary>
 	public partial class UpdateWindow
 	{
-		private UpdateWindowViewmodel viewmodel;
+		private readonly UpdateWindowViewmodel viewmodel;
+
+		public MainWindow MainWindow;
+		public MainWindowViewmodel MainViewmodel;
 
 		private UpdateWindow()
 		{
 			InitializeComponent();
-			this.DataContext = viewmodel = new UpdateWindowViewmodel();
+			this.DataContext = viewmodel = new UpdateWindowViewmodel(this);
 		}
 
-		public static void Show(Window owner, Version onlineVersion, DateTime onlinePublishDate, string onlineDownloadUrl)
+		public static void Show(MainWindow owner, MainWindowViewmodel vm, Version onlineVersion, DateTime onlinePublishDate, string onlineDownloadUrl)
 		{
-			var dlg = new UpdateWindow { Owner = owner };
+			var dlg = new UpdateWindow { Owner = owner, MainWindow = owner, MainViewmodel = vm };
+
+			dlg.viewmodel.DateOnline = onlinePublishDate;
+			dlg.viewmodel.VersionOnline = onlineVersion.ToString(3);
+
+			dlg.viewmodel.URL = onlineDownloadUrl;
 
 			dlg.ShowDialog();
 		}

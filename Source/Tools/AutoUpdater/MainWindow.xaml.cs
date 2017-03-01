@@ -67,7 +67,8 @@ namespace AlephNote.AutoUpdater
 
 			List<Tuple<string, string>> files = FILEPATTERN
 				.SelectMany(pattern => Directory
-					.EnumerateFiles(sourcePath, pattern)
+					.EnumerateFiles(Path.Combine(new[]{sourcePath}.Concat(pattern.Split('/').Reverse().Skip(1).Reverse()).ToArray()), pattern.Split('/').Last())
+					.Where(f => (Path.GetFileNameWithoutExtension(f) ?? "").ToLower() != "autoupdater")
 					.Select(file => Tuple.Create(file, Path.Combine(targetPath, MakeRelative(file, sourcePath)))))
 				.ToList();
 
@@ -77,37 +78,28 @@ namespace AlephNote.AutoUpdater
 			d.Invoke(() => InfoBox.Text = "Stop running process");
 
 			var processes = Process.GetProcessesByName("AlephNote");
-			while (processes.Length > 0)
+			if (processes.Length > 1) Thread.Sleep(1000);
+
+			while ((processes = Process.GetProcessesByName("AlephNote")).Length > 0)
 			{
 				var messageResult = processes[0].CloseMainWindow();
 
 				if (messageResult)
 				{
 					Thread.Sleep(100);
-					processes = Process.GetProcessesByName("AlephNote");
 					continue;
 				}
 
 				Thread.Sleep(500);
 
-				if (processes[0].HasExited)
-				{
-					processes = Process.GetProcessesByName("AlephNote");
-					continue;
-				}
-
-				//TODO Exit gracefully
-
-				Thread.Sleep(500);
+				if (processes[0].HasExited) continue;
 
 				processes[0].Kill();
 
 				Thread.Sleep(500);
-
-				processes = Process.GetProcessesByName("AlephNote");
 			}
 
-			d.Invoke(() => Progress.Value = 1);
+			d.Invoke(() => Progress.Value = 2);
 
 			foreach (var ffile in files)
 			{
@@ -119,6 +111,7 @@ namespace AlephNote.AutoUpdater
 
 				try
 				{
+					Directory.CreateDirectory(Path.GetDirectoryName(file.Item2) ?? "");
 					File.Copy(file.Item1, file.Item2, true);
 				}
 				catch (Exception)
@@ -126,16 +119,23 @@ namespace AlephNote.AutoUpdater
 					Fail("Could not copy " + Path.GetFileName(file.Item1));
 				}
 
-				var delta = 133 - (Environment.TickCount - start);
+				var delta = 333 - (Environment.TickCount - start);
 				if (delta > 0) Thread.Sleep(delta);
+
+				d.Invoke(() => Progress.Value++);
 			}
 
+			d.Invoke(() => Progress.Value++);
+			d.Invoke(() => InfoBox.Text = "Restarting");
+
 			Process.Start(Path.Combine(targetPath, "AlephNote.exe"));
+
+			Thread.Sleep(500);
 
 			d.Invoke(Close);
 		}
 
-		static public String MakeRelative(String fromPath, String baseDir)
+		private static String MakeRelative(String fromPath, String baseDir)
 		{
 			const string pathSep = "\\";
 			string[] p1 = Regex.Split(fromPath, "[\\\\/]").Where(x => x.Length != 0).ToArray();
@@ -147,9 +147,7 @@ namespace AlephNote.AutoUpdater
 				if (string.Compare(p1[i], p2[i], StringComparison.OrdinalIgnoreCase) != 0) break;
 			}
 
-			string r = string.Join(pathSep, Enumerable.Repeat("..", p1.Length - i - 1).Concat(p2.Skip(i).Take(p2.Length - i)));
-
-			return (r.Length == 0) ? p1.Last() : String.Join(pathSep, r, p1.Last());
+			return string.Join(pathSep, p1.Skip(i));
 		}
 	}
 }
