@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Windows;
 
 namespace AlephNote.Repository
 {
@@ -17,6 +16,8 @@ namespace AlephNote.Repository
 
 		private static readonly object _syncobj = new object();
 		private Thread thread;
+
+		private readonly SynchronizationDispatcher dispatcher = new SynchronizationDispatcher();
 
 		private bool prioritysync = false;
 		private bool cancel = false;
@@ -71,7 +72,7 @@ namespace AlephNote.Repository
 
 			List<Tuple<string, Exception>> errors = new List<Tuple<string, Exception>>();
 
-			BeginInvoke(() => listener.StartSync());
+			dispatcher.BeginInvoke(() => listener.StartSync());
 
 			try
 			{
@@ -79,7 +80,7 @@ namespace AlephNote.Repository
 
 				List<Tuple<INote, INote>> allNotes = new List<Tuple<INote, INote>>();
 				List<INote> notesToDelete = new List<INote>();
-				Invoke(() =>
+				dispatcher.Invoke(() =>
 				{
 					allNotes = repo.Notes.Select(p => Tuple.Create(p, p.Clone())).ToList();
 					notesToDelete = repo.LocalDeletedNotes.ToList();
@@ -113,11 +114,11 @@ namespace AlephNote.Repository
 
 			if (errors.Any())
 			{
-				BeginInvoke(() => listener.SyncError(errors));
+				dispatcher.BeginInvoke(() => listener.SyncError(errors));
 			}
 			else
 			{
-				BeginInvoke(() => listener.SyncSuccess(DateTimeOffset.Now));
+				dispatcher.BeginInvoke(() => listener.SyncSuccess(DateTimeOffset.Now));
 			}
 
 			App.Logger.Info("Sync", "Finished remote synchronization");
@@ -136,7 +137,7 @@ namespace AlephNote.Repository
 				{
 					if (!clonenote.IsLocalSaved)
 					{
-						Invoke(() =>
+						dispatcher.Invoke(() =>
 						{
 							if (!realnote.IsLocalSaved) repo.SaveNote(realnote);
 						});
@@ -149,7 +150,7 @@ namespace AlephNote.Repository
 					{
 						case RemoteUploadResult.UpToDate:
 						case RemoteUploadResult.Uploaded:
-							Invoke(() =>
+							dispatcher.Invoke(() =>
 							{
 								if (realnote.IsLocalSaved)
 								{
@@ -161,7 +162,7 @@ namespace AlephNote.Repository
 							break;
 
 						case RemoteUploadResult.Merged:
-							Invoke(() =>
+							dispatcher.Invoke(() =>
 							{
 								realnote.ApplyUpdatedData(clonenote);
 								realnote.TriggerOnChanged(true);
@@ -198,7 +199,7 @@ namespace AlephNote.Repository
 			switch (conflictStrategy)
 			{
 				case ConflictResolutionStrategy.UseClientVersion:
-					Invoke(() =>
+					dispatcher.Invoke(() =>
 					{
 						if (realnote.IsLocalSaved)
 						{
@@ -215,7 +216,7 @@ namespace AlephNote.Repository
 					});
 					break;
 				case ConflictResolutionStrategy.UseServerVersion:
-					Invoke(() =>
+					dispatcher.Invoke(() =>
 					{
 						realnote.ApplyUpdatedData(clonenote);
 						realnote.TriggerOnChanged(true);
@@ -227,7 +228,7 @@ namespace AlephNote.Repository
 					});
 					break;
 				case ConflictResolutionStrategy.UseClientCreateConflictFile:
-					Invoke(() =>
+					dispatcher.Invoke(() =>
 					{
 						if (realnote.IsLocalSaved)
 						{
@@ -251,7 +252,7 @@ namespace AlephNote.Repository
 					});
 					break;
 				case ConflictResolutionStrategy.UseServerCreateConflictFile:
-					Invoke(() =>
+					dispatcher.Invoke(() =>
 					{
 						realnote.ApplyUpdatedData(clonenote);
 						realnote.TriggerOnChanged(true);
@@ -300,7 +301,7 @@ namespace AlephNote.Repository
 							if (realnote.ModificationDate != clonenote.ModificationDate)
 							{
 								App.Logger.Info("Sync", "Downloading note -> UpToDate (but update local mdate)");
-								Invoke(() =>
+								dispatcher.Invoke(() =>
 								{
 									if (realnote.IsLocalSaved)
 									{
@@ -314,7 +315,7 @@ namespace AlephNote.Repository
 
 						case RemoteDownloadResult.Updated:
 							App.Logger.Info("Sync", "Downloading note -> Updated");
-							Invoke(() =>
+							dispatcher.Invoke(() =>
 							{
 								if (realnote.IsLocalSaved)
 								{
@@ -333,7 +334,7 @@ namespace AlephNote.Repository
 
 						case RemoteDownloadResult.DeletedOnRemote:
 							App.Logger.Info("Sync", "Downloading note -> DeletedOnRemote");
-							Invoke(() =>
+							dispatcher.Invoke(() =>
 							{
 								if (realnote.IsLocalSaved)
 								{
@@ -370,7 +371,7 @@ namespace AlephNote.Repository
 				try
 				{
 					repo.Connection.DeleteNote(note);
-					Invoke(() => repo.LocalDeletedNotes.Remove(note));
+					dispatcher.Invoke(() => repo.LocalDeletedNotes.Remove(note));
 				}
 				catch (Exception e)
 				{
@@ -399,7 +400,7 @@ namespace AlephNote.Repository
 					{
 						note.SetLocalDirty();
 						note.ResetRemoteDirty();
-						Invoke(() => repo.AddNote(note, false));
+						dispatcher.Invoke(() => repo.AddNote(note, false));
 					}
 					else
 					{
@@ -413,18 +414,6 @@ namespace AlephNote.Repository
 					errors.Add(Tuple.Create(message, e));
 				}
 			}
-		}
-
-		private void Invoke(Action a)
-		{
-			var app = Application.Current;
-			app.Dispatcher.Invoke(a);
-		}
-
-		private void BeginInvoke(Action a)
-		{
-			var app = Application.Current;
-			app.Dispatcher.BeginInvoke(a);
 		}
 		
 		public void SyncNowAsync()
@@ -458,7 +447,19 @@ namespace AlephNote.Repository
 				if (isSyncing)
 				{
 					App.Logger.Info("Sync", "Requesting stop - abort waiting (isSyncing=true)");
-					return;
+					cancel = true;
+
+					for (int j = 0; j < 300; j++)
+					{
+						if (!isSyncing)
+						{
+							App.Logger.Info("Sync", "Requesting sync&stop finished (isSyncing=false)");
+							return;
+						}
+						SleepDoEvents(100);
+					}
+					App.Logger.Error("Sync", "Requesting sync&stop failed after timeout (waiting on isSyncing)");
+					throw new Exception("Background thread timeout after 30sec");
 				}
 
 				Thread.Sleep(100);
@@ -470,37 +471,72 @@ namespace AlephNote.Repository
 
 		public void SyncNowAndStopAsync()
 		{
-			App.Logger.Info("Sync", "Requesting sync&stop");
-
-			if (isSyncing)
+			using (dispatcher.EnableCustomDispatcher())
 			{
-				App.Logger.Info("Sync", "Requesting sync&stop (early exit due to isSyncing)");
+				App.Logger.Info("Sync", "Requesting sync&stop");
 
-				cancel = true;
-				return;
-			}
-
-			prioritysync = true;
-			for (int i = 0; i < 100; i++)
-			{
-				if (!running)
+				if (isSyncing)
 				{
-					App.Logger.Info("Sync", "Requesting sync&stop stop waiting (running=false)");
-					return;
-				}
-
-				if (!prioritysync)
-				{
-					App.Logger.Info("Sync", "Requesting sync&stop stop waiting (prioritysync=false)");
+					App.Logger.Info("Sync", "Requesting sync&stop (early exit due to isSyncing)");
 					cancel = true;
-					return;
+
+					for (int j = 0; j < 300; j++)
+					{
+						if (!isSyncing)
+						{
+							App.Logger.Info("Sync", "Requesting sync&stop finished (isSyncing=false)");
+							return;
+						}
+						SleepDoEvents(100);
+					}
+					App.Logger.Error("Sync", "Requesting sync&stop failed after timeout (waiting on isSyncing)");
+					throw new Exception("Background thread timeout after 30sec");
 				}
 
-				Thread.Sleep(100);
-			}
+				prioritysync = true;
+				for (int i = 0; i < 100; i++)
+				{
+					if (!running)
+					{
+						App.Logger.Info("Sync", "Requesting sync&stop stop waiting (running=false)");
+						return;
+					}
 
-			App.Logger.Error("Sync", "Requesting sync&stop failed after timeout");
-			throw new Exception("Background thread timeout after 10sec");
+					if (!prioritysync)
+					{
+						App.Logger.Info("Sync", "Requesting sync&stop stop waiting (prioritysync=false)");
+						cancel = true;
+					
+						for (int j = 0; j < 300; j++)
+						{
+							if (!isSyncing)
+							{
+								App.Logger.Info("Sync", "Requesting sync&stop finished (isSyncing=false)");
+								return;
+							}
+							SleepDoEvents(100);
+						}
+						App.Logger.Error("Sync", "Requesting sync&stop failed after timeout (waiting on isSyncing)");
+						throw new Exception("Background thread timeout after 30sec");
+					}
+
+					SleepDoEvents(100);
+				}
+
+				App.Logger.Error("Sync", "Requesting sync&stop failed after timeout (waiting on prioritysync)");
+				throw new Exception("Background thread timeout after 10sec");
+			}
+		}
+
+		public void Kill()
+		{
+			if (thread != null) thread.Abort();
+		}
+
+		private void SleepDoEvents(int sleep)
+		{
+			Thread.Sleep(sleep);
+			dispatcher.Work();
 		}
 	}
 }

@@ -84,6 +84,7 @@
     <Compile Include="Log\LogEvent.cs" />
     <Compile Include="Log\LogEventType.cs" />
     <Compile Include="Plugins\GithubConnection.cs" />
+    <Compile Include="Repository\SynchronizationDispatcher.cs" />
     <Compile Include="Repository\ISynchronizationFeedback.cs" />
     <Compile Include="Repository\NoteRepository.cs" />
     <Compile Include="Repository\RestException.cs" />

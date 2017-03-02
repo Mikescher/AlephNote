@@ -141,7 +141,16 @@ namespace AlephNote.WPF.Windows
 
 				if (reconnectRepo)
 				{
-					_repository.Shutdown();
+					try
+					{
+						_repository.Shutdown();
+					}
+					catch (Exception e)
+					{
+						App.Logger.Error("Main", "Shutting down current connection failed", e);
+						ExceptionDialog.Show(Owner, "Shutting down current connection failed.\r\nConnection will be forcefully aborted", e);
+						_repository.KillThread();
+					}
 				}
 
 				Settings = newSettings;
@@ -268,8 +277,20 @@ namespace AlephNote.WPF.Windows
 			}
 		}
 
-		private void OnClose(EventArgs e)
+		private void OnClose(EventArgs args)
 		{
+			try
+			{
+				_repository.Shutdown();
+			}
+			catch (Exception e)
+			{
+				App.Logger.Error("Main", "Shutting down connection failed", e);
+				ExceptionDialog.Show(Owner, "Shutting down connection failed.\r\nConnection will be forcefully aborted.", e);
+				_repository.KillThread();
+			}
+
+
 			Repository.Shutdown();
 
 			if (_invSaveSettings.HasPendingRequests())

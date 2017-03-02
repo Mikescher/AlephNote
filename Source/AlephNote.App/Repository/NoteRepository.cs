@@ -74,10 +74,15 @@ namespace AlephNote.Repository
 			invSaveNotesLocal.CancelPendingRequests();
 			SaveAllDirtyNotes();
 
-			if (lastSync)
+			if (lastSync && Notes.Any(n => !n.IsRemoteSaved))
 				thread.SyncNowAndStopAsync();
 			else
 				thread.StopAsync();
+		}
+
+		public void KillThread()
+		{
+			thread.Kill();
 		}
 
 		private void LoadNotesFromLocal()

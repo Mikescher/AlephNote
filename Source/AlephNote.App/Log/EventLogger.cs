@@ -1,6 +1,7 @@
 ﻿using AlephNote.PluginInterface;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows;
 
 namespace AlephNote.Log
@@ -17,7 +18,21 @@ namespace AlephNote.Log
 
 		private void Log(LogEvent e)
 		{
-			var disp = Application.Current.Dispatcher;
+			var curr = Application.Current;
+
+			if (curr == null)
+			{
+				Debugger.Break();
+
+				Console.Error.WriteLine("Could not Log event ... Application.Current == null");
+				Console.Out.WriteLine(e.Source);
+				Console.Out.WriteLine(e.Type);
+				Console.Out.WriteLine(e.Text);
+				Console.Out.WriteLine(e.LongText);
+				return;
+			}
+
+			var disp = curr.Dispatcher;
 
 			if (disp.CheckAccess())
 				Events.Add(e);
