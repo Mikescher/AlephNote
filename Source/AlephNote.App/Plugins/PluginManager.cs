@@ -11,6 +11,7 @@ namespace AlephNote.Plugins
 {
 	public static class PluginManager
 	{
+		private static HashSet<Guid> _pluginIDs = new HashSet<Guid>(); 
 		private static List<IRemotePlugin> _provider = new List<IRemotePlugin>();
 		public static IEnumerable<IRemotePlugin> LoadedPlugins { get { return _provider; } }
 
@@ -27,7 +28,7 @@ namespace AlephNote.Plugins
 			{
 				try
 				{
-					LoadPlugin(path);
+					LoadPluginsFromAssembly(path);
 				}
 				catch (ReflectionTypeLoadException e)
 				{
@@ -40,7 +41,7 @@ namespace AlephNote.Plugins
 			}
 		}
 
-		private static void LoadPlugin(string path)
+		private static void LoadPluginsFromAssembly(string path)
 		{
 			AssemblyName an = AssemblyName.GetAssemblyName(path);
 			Assembly assembly = Assembly.Load(an);
@@ -68,9 +69,15 @@ namespace AlephNote.Plugins
 					}
 #endif
 
-					App.Logger.Info("PluginManager", string.Format("Loaded plugin {0} in version {1} ({2})", instance.DisplayTitleShort, instance.GetVersion(), instance.GetUniqueID()));
-
-					_provider.Add(instance);
+					if (_pluginIDs.Add(instance.GetUniqueID()))
+					{
+						App.Logger.Info("PluginManager", string.Format("Loaded plugin {0} in version {1} ({2})", instance.DisplayTitleShort, instance.GetVersion(), instance.GetUniqueID()));
+						_provider.Add(instance);
+					}
+					else
+					{
+						App.Logger.Error("PluginManager", string.Format("Multiple plugins with the same ID ({0}) found", instance.GetUniqueID()));
+					}
 				}
 			}
 		}

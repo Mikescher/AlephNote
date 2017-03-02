@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{7F0D98A2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoUpdater", "Tools\AutoUpdater\AutoUpdater.csproj", "{87C4DBB7-6B02-485F-993F-568E1F624760}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvernotePlugin", "Plugins\EvernotePlugin\EvernotePlugin.csproj", "{2CACC90B-1A12-4B88-8D91-8CFAE1A52377}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{87C4DBB7-6B02-485F-993F-568E1F624760}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87C4DBB7-6B02-485F-993F-568E1F624760}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87C4DBB7-6B02-485F-993F-568E1F624760}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CACC90B-1A12-4B88-8D91-8CFAE1A52377}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CACC90B-1A12-4B88-8D91-8CFAE1A52377}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CACC90B-1A12-4B88-8D91-8CFAE1A52377}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CACC90B-1A12-4B88-8D91-8CFAE1A52377}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,5 +93,6 @@ Global
 		{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5} = {0B76231E-AA47-46DF-A894-ACBE698F2ECE}
 		{FC14805A-04E4-4205-B360-BF9548714B49} = {0B76231E-AA47-46DF-A894-ACBE698F2ECE}
 		{87C4DBB7-6B02-485F-993F-568E1F624760} = {7F0D98A2-01BE-4F0E-AAF3-AC4823ECB0B6}
+		{2CACC90B-1A12-4B88-8D91-8CFAE1A52377} = {0B76231E-AA47-46DF-A894-ACBE698F2ECE}
 	EndGlobalSection
 EndGlobal

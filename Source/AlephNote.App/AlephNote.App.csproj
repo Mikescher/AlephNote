@@ -252,11 +252,16 @@
       <Name>FilesystemPlugin</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\Plugins\NextcloudPlugin\NextcloudPlugin.csproj">
-      <Project>{FC14805A-04E4-4205-B360-BF9548714B49}</Project>
-      <Name>NextcloudPlugin</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
+		<ProjectReference Include="..\Plugins\NextcloudPlugin\NextcloudPlugin.csproj">
+			<Project>{FC14805A-04E4-4205-B360-BF9548714B49}</Project>
+			<Name>NextcloudPlugin</Name>
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
+		<ProjectReference Include="..\Plugins\EvernotePlugin\EvernotePlugin.csproj">
+			<Project>{64d5215f-8ac8-4a53-acd1-2a9acffc0329}</Project>
+			<Name>EvernotePlugin</Name>
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="IconMain.ico" />

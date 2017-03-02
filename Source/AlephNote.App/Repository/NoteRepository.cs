@@ -188,9 +188,9 @@ namespace AlephNote.Repository
 		{
 			invSaveNotesLocal.Request();
 			invSaveNotesRemote.Request();
-
+			
 			listener.OnSyncRequest();
-
+			
 			listener.OnNoteChanged(e);
 		}
 
