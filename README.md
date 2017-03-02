@@ -24,6 +24,13 @@ The NextcloudPlugin syncs your notes with the [notes app](https://github.com/nex
 You can also simply not use a remote backend and either use the HeadlessPlugin (don't sync the notes anywhere) or the FilesystemPlugin (sync the notes with another folder).
 
 
+## Installation
+
+Simply download the latest [release](https://github.com/Mikescher/AlephNote/releases/latest) and extract it where you want (all settings etc are portable).
+By default the program automatically searches for new versions and downloads them.
+If there is demand for an installer I could make one, but personally I like portable programs more.
+
+
 ## Contribution
 
 Contributions are always welcome, either with additional plugins for other backends or improvements to the core app.
@@ -36,6 +43,8 @@ Also anyone with an ounce of design talent: Feel free to improve the [website](h
  - [ ] Get history from provider that support it (SimpleNote + Standard Notes)
  - [ ] In-editor markdown rendering (similar to [qownnotes](http://www.qownnotes.org/))
  - [ ] Ctrl+F search function
+ - [ ] Installer (if there is demand)
+
 
 ## License
 

@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{CB81B812-6639-4CA4-A949-1C952858B263}"
 	ProjectSection(SolutionItems) = preProject
 		nuget.config = nuget.config
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlephNote.App", "AlephNote.App\AlephNote.App.csproj", "{9E913271-F271-4DC6-BF19-79B43C91EE23}"

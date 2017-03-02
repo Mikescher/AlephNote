@@ -4,6 +4,7 @@ using ScintillaNET;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -26,7 +27,6 @@ namespace AlephNote.WPF.Windows
 			PluginManager.LoadPlugins();
 
 			bool firstLaunch = false;
-
 			AppSettings settings;
 			try
 			{
@@ -66,6 +66,8 @@ namespace AlephNote.WPF.Windows
 					MessageBoxButton.OK, 
 					MessageBoxImage.Information);
 			}
+
+			FocusScintillaDelayed(250);
 		}
 
 		private void StartupConfigWindow(AppSettings settings)
@@ -187,21 +189,16 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.EmptyUndoBuffer();
 		}
 
+		public void FocusScintillaDelayed(int d = 50)
+		{
+			new Thread(() => { Thread.Sleep(d); System.Windows.Application.Current.Dispatcher.Invoke(FocusScintilla); }).Start();
+		}
+
 		public void FocusScintilla()
 		{
 			NoteEditHost.Focus();
 			Keyboard.Focus(NoteEditHost);
 			NoteEdit.Focus();
-		}
-
-		private void ContextMenuExport(object sender, RoutedEventArgs e)
-		{
-			viewmodel.ExportCommand.Execute(null);
-		}
-
-		private void ContextMenuDelete(object sender, RoutedEventArgs e)
-		{
-			viewmodel.DeleteCommand.Execute(null);
 		}
 
 		private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
