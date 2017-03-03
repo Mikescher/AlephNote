@@ -260,12 +260,13 @@ namespace AlephNote.WPF.Windows
 
 		}
 
-		public void ShowMainWindow()
+		private void ShowMainWindow()
 		{
 			Owner.Show();
 			WindowState = WindowState.Normal;
 			Owner.Activate();
 			Owner.Focus();
+			Owner.FocusScintillaDelayed(150);
 		}
 
 		private void OnClosing(CancelEventArgs e)
