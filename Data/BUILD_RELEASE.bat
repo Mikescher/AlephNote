@@ -1,11 +1,12 @@
-REM ================ BUILD ================
+@REM ================ BUILD ================
 
 cd ..
 cd Source
 nuget restore
-msbuild /t:Build /nologo /t:Build /p:Configuration=Release /verbosity:m
+msbuild /nologo /t:Clean /p:Configuration=Release /verbosity:m
+msbuild /nologo /t:Build /p:Configuration=Release /verbosity:m
 
-REM ================ CLEAN ================
+@REM ================ CLEAN ================
 
 cd ..
 cd Bin
@@ -22,7 +23,7 @@ del /s *.vshost.exe
 del /s *.manifest
 del /s *.xml
 
-REM ================ PACKAGE ================
+@REM ================ PACKAGE ================
 
 cd ..
 cd ..
@@ -34,7 +35,7 @@ cd Data
 
 7za.exe a .\..\AlephNote.zip .\..\Bin\Release\*
 
-REM ================ FINISHED ================
+@REM ================ FINISHED ================
 
 echo "Finished successfully"
 PAUSE

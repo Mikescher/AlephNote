@@ -153,7 +153,6 @@ namespace AlephNote.Plugins.Evernote
 				{
 					if (strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.UseClientCreateConflictFile)
 					{
-						bool tmp;
 						conflict = APIDownloadNote(note.ID);
 						inote = APIUpdateNote(note);
 						return RemoteUploadResult.Conflict;
