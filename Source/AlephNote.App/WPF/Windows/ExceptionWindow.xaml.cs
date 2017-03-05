@@ -26,7 +26,7 @@ namespace AlephNote.WPF.Windows
 			dlg.ErrorTrace.Text = FormatExecption(e);
 			dlg.Title = title;
 
-			if (owner != null)
+			if (owner != null && owner.IsLoaded)
 				dlg.Owner = owner;
 			else
 				dlg.WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -44,7 +44,7 @@ namespace AlephNote.WPF.Windows
 			dlg.ErrorTrace.Text = string.Join(SPLIT, new List<Exception> {e}.Concat(additionalExceptions).Select(FormatExecption));
 			dlg.Title = title;
 
-			if (owner != null)
+			if (owner != null && owner.IsLoaded)
 				dlg.Owner = owner;
 			else
 				dlg.WindowStartupLocation = WindowStartupLocation.CenterScreen;

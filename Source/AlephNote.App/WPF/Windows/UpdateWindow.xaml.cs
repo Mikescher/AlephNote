@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 
 namespace AlephNote.WPF.Windows
 {
@@ -20,7 +21,12 @@ namespace AlephNote.WPF.Windows
 
 		public static void Show(MainWindow owner, MainWindowViewmodel vm, Version onlineVersion, DateTime onlinePublishDate, string onlineDownloadUrl)
 		{
-			var dlg = new UpdateWindow { Owner = owner, MainWindow = owner, MainViewmodel = vm };
+			var dlg = new UpdateWindow { MainWindow = owner, MainViewmodel = vm };
+
+			if (owner != null && owner.IsLoaded)
+				dlg.Owner = owner;
+			else
+				dlg.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
 			dlg.viewmodel.DateOnline = onlinePublishDate;
 			dlg.viewmodel.VersionOnline = onlineVersion.ToString(3);

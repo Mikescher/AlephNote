@@ -358,7 +358,7 @@ namespace AlephNote.WPF.Windows
 
 		private void ShowAbout()
 		{
-			new AboutWindow{Owner = Owner}.ShowDialog();
+			new AboutWindow{ Owner = Owner }.ShowDialog();
 		}
 
 		private void ShowLog()

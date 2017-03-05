@@ -35,7 +35,10 @@ namespace AlephNote.WPF.Windows
 			dlg.ErrorMessage.Text = message;
 			dlg.ErrorTrace.Text = trace;
 
-			dlg.Owner = owner;
+			if (owner != null && owner.IsLoaded)
+				dlg.Owner = owner;
+			else
+				dlg.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
 			dlg.ShowDialog();
 		}
@@ -49,7 +52,10 @@ namespace AlephNote.WPF.Windows
 			dlg.ErrorMessage.Text = string.Join(Environment.NewLine, messages);
 			dlg.ErrorTrace.Text = string.Join(split, exceptions.Select(FormatExecption));
 
-			dlg.Owner = owner;
+			if (owner != null && owner.IsLoaded)
+				dlg.Owner = owner;
+			else
+				dlg.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
 			dlg.ShowDialog();
 		}
