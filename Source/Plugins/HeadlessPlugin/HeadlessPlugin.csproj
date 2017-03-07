@@ -48,11 +48,6 @@
     <Compile Include="HeadlessData.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj">
-      <Project>{a18f5e8c-5894-41f1-9b4c-f66c66490e2d}</Project>
-      <Name>AlephNote.PluginInterface</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\External\CSharpUtils\CSharpUtils.csproj">
       <Project>{D661CD9F-8934-496D-8332-BC82AAB77598}</Project>
       <Name>CSharpUtils</Name>

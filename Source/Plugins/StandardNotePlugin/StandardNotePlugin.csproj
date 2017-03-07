@@ -58,11 +58,6 @@
     <Compile Include="StandardNoteData.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj">
-      <Project>{a18f5e8c-5894-41f1-9b4c-f66c66490e2d}</Project>
-      <Name>AlephNote.PluginInterface</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\External\CSharpUtils\CSharpUtils.csproj">
       <Project>{d661cd9f-8934-496d-8332-bc82aab77598}</Project>
       <Name>CSharpUtils</Name>

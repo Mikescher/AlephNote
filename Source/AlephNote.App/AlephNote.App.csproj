@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AlephNote</RootNamespace>
     <AssemblyName>AlephNote</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -42,7 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Lib\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net45\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+      <HintPath>..\..\Lib\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
@@ -214,54 +214,13 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj">
-      <Project>{a18f5e8c-5894-41f1-9b4c-f66c66490e2d}</Project>
-      <Name>AlephNote.PluginInterface</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\External\CSharpUtils\CSharpUtils.csproj">
-      <Project>{d661cd9f-8934-496d-8332-bc82aab77598}</Project>
-      <Name>CSharpUtils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Plugins\SimpleNotePlugin\SimpleNotePlugin.csproj">
-      <Project>{AA8A52AA-2A00-46DC-9649-BDB801A48380}</Project>
-      <Name>SimpleNotePlugin</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="..\Plugins\StandardNotePlugin\StandardNotePlugin.csproj">
-      <Project>{D4F7E915-D101-4500-A01D-B9C366575662}</Project>
-      <Name>StandardNotePlugin</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="..\Plugins\HeadlessPlugin\HeadlessPlugin.csproj">
-      <Project>{7F674975-7A10-458E-BDF9-82AEC27CAFAA}</Project>
-      <Name>HeadlessPlugin</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="..\Plugins\FilesystemPlugin\FilesystemPlugin.csproj">
-      <Project>{26B8AA9B-CDD9-4B3A-8D0F-6649393070C5}</Project>
-      <Name>FilesystemPlugin</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-		<ProjectReference Include="..\Plugins\NextcloudPlugin\NextcloudPlugin.csproj">
-			<Project>{FC14805A-04E4-4205-B360-BF9548714B49}</Project>
-			<Name>NextcloudPlugin</Name>
-			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-		</ProjectReference>
-		<ProjectReference Include="..\Plugins\EvernotePlugin\EvernotePlugin.csproj">
-			<Project>{64d5215f-8ac8-4a53-acd1-2a9acffc0329}</Project>
-			<Name>EvernotePlugin</Name>
-			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-		</ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="IconMain.ico" />
@@ -284,6 +243,20 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AlephNote.Common\AlephNote.Common.csproj">
+      <Project>{1177d8f5-9496-4262-b41f-b31197d851ae}</Project>
+      <Name>AlephNote.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj">
+      <Project>{a43f999d-30fb-44f0-9cef-9e24a100651c}</Project>
+      <Name>AlephNote.PluginInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\External\CSharpUtils\CSharpUtils.csproj">
+      <Project>{d661cd9f-8934-496d-8332-bc82aab77598}</Project>
+      <Name>CSharpUtils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

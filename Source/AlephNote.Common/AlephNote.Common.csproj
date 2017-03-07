@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFrameworks>net452;netstandard1.6</TargetFrameworks>
-    <AssemblyName>AlephNote.PluginInterface</AssemblyName>
-    <PackageId>AlephNote.PluginInterface</PackageId>
+    <AssemblyName>AlephNote.Common</AssemblyName>
+    <PackageId>AlephNote.Common</PackageId>
     <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -12,12 +12,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Xml.XDocument" Version="4.0.11" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.0.0" />
   </ItemGroup>
 
 </Project>

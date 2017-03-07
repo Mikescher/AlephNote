@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{CB81B812-6639-4CA4-A949-1C952858B263}"
 	ProjectSection(SolutionItems) = preProject
@@ -9,17 +9,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{0B76231E-AA47-46DF-A894-ACBE698F2ECE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{680C7441-8AC2-444D-A35F-135A70381F1E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{7F0D98A2-01BE-4F0E-AAF3-AC4823ECB0B6}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlephNote.App", "AlephNote.App\AlephNote.App.csproj", "{9E913271-F271-4DC6-BF19-79B43C91EE23}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleNotePlugin", "Plugins\SimpleNotePlugin\SimpleNotePlugin.csproj", "{AA8A52AA-2A00-46DC-9649-BDB801A48380}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{0B76231E-AA47-46DF-A894-ACBE698F2ECE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlephNote.PluginInterface", "AlephNote.PluginInterface\AlephNote.PluginInterface.csproj", "{A18F5E8C-5894-41F1-9B4C-F66C66490E2D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandardNotePlugin", "Plugins\StandardNotePlugin\StandardNotePlugin.csproj", "{D4F7E915-D101-4500-A01D-B9C366575662}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{680C7441-8AC2-444D-A35F-135A70381F1E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpUtils", "External\CSharpUtils\CSharpUtils.csproj", "{D661CD9F-8934-496D-8332-BC82AAB77598}"
 EndProject
@@ -29,11 +29,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilesystemPlugin", "Plugins
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextcloudPlugin", "Plugins\NextcloudPlugin\NextcloudPlugin.csproj", "{FC14805A-04E4-4205-B360-BF9548714B49}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{7F0D98A2-01BE-4F0E-AAF3-AC4823ECB0B6}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoUpdater", "Tools\AutoUpdater\AutoUpdater.csproj", "{87C4DBB7-6B02-485F-993F-568E1F624760}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvernotePlugin", "Plugins\EvernotePlugin\EvernotePlugin.csproj", "{2CACC90B-1A12-4B88-8D91-8CFAE1A52377}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlephNote.Common", "AlephNote.Common\AlephNote.Common.csproj", "{1177D8F5-9496-4262-B41F-B31197D851AE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlephNote.PluginInterface", "AlephNote.PluginInterface\AlephNote.PluginInterface.csproj", "{A43F999D-30FB-44F0-9CEF-9E24A100651C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,10 +51,6 @@ Global
 		{AA8A52AA-2A00-46DC-9649-BDB801A48380}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA8A52AA-2A00-46DC-9649-BDB801A48380}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA8A52AA-2A00-46DC-9649-BDB801A48380}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A18F5E8C-5894-41F1-9B4C-F66C66490E2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A18F5E8C-5894-41F1-9B4C-F66C66490E2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A18F5E8C-5894-41F1-9B4C-F66C66490E2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A18F5E8C-5894-41F1-9B4C-F66C66490E2D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D4F7E915-D101-4500-A01D-B9C366575662}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D4F7E915-D101-4500-A01D-B9C366575662}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4F7E915-D101-4500-A01D-B9C366575662}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -81,6 +79,14 @@ Global
 		{2CACC90B-1A12-4B88-8D91-8CFAE1A52377}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CACC90B-1A12-4B88-8D91-8CFAE1A52377}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CACC90B-1A12-4B88-8D91-8CFAE1A52377}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1177D8F5-9496-4262-B41F-B31197D851AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1177D8F5-9496-4262-B41F-B31197D851AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1177D8F5-9496-4262-B41F-B31197D851AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1177D8F5-9496-4262-B41F-B31197D851AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A43F999D-30FB-44F0-9CEF-9E24A100651C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A43F999D-30FB-44F0-9CEF-9E24A100651C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A43F999D-30FB-44F0-9CEF-9E24A100651C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A43F999D-30FB-44F0-9CEF-9E24A100651C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
