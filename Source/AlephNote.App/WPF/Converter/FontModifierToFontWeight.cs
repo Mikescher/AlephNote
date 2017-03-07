@@ -1,5 +1,5 @@
 ﻿using AlephNote.Settings;
-using MSHC.WPF.MVVM;
+using AlephNote.WPF.MVVM;
 using System.Windows;
 
 namespace AlephNote.WPF.Converter

@@ -1,8 +1,6 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.Plugins;
-using MSHC.Lang.Collections;
-using MSHC.Serialization;
-using MSHC.WPF.MVVM;
+using AlephNote.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;

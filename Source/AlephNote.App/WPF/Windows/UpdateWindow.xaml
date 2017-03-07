@@ -4,7 +4,7 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:AlephNote.WPF.Windows"
-		xmlns:controls="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
+		xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
 		xmlns:converter="clr-namespace:AlephNote.WPF.Converter"
 		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance local:UpdateWindowViewmodel}"

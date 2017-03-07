@@ -1,10 +1,7 @@
 ﻿using AlephNote.PluginInterface;
+using AlephNote.Serialization;
 using AlephNote.Settings;
 using AlephNote.WPF.Windows;
-using MSHC.Serialization;
-using MSHC.Util.Helper;
-using MSHC.Util.Threads;
-using MSHC.WPF.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

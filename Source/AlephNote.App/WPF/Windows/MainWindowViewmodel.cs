@@ -2,11 +2,9 @@
 using AlephNote.Plugins;
 using AlephNote.Repository;
 using AlephNote.Settings;
+using AlephNote.WPF.MVVM;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Win32;
-using MSHC.Util.Threads;
-using MSHC.WPF;
-using MSHC.WPF.MVVM;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

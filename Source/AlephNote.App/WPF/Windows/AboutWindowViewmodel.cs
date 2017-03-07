@@ -1,6 +1,5 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.Plugins;
-using MSHC.WPF.MVVM;
 using System.Collections.Generic;
 
 namespace AlephNote.WPF.Windows

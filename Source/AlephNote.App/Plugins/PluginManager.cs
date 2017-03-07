@@ -1,4 +1,5 @@
-﻿using AlephNote.PluginInterface;
+﻿using AlephNote.Common;
+using AlephNote.PluginInterface;
 using AlephNote.Repository;
 using AlephNote.WPF.Windows;
 using System;

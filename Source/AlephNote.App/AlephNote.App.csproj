@@ -80,16 +80,32 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AESThenHMAC.cs" />
+    <Compile Include="CollectionExtension.cs" />
+    <Compile Include="CollectionViewExtension.cs" />
+    <Compile Include="CompactJsonFormatter.cs" />
+    <Compile Include="DelayedCombiningInvoker.cs" />
+    <Compile Include="DependencyObjectExtension.cs" />
+    <Compile Include="FilenameHelper.cs" />
+    <Compile Include="GZWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Log\EventLogger.cs" />
     <Compile Include="Log\LogEvent.cs" />
     <Compile Include="Log\LogEventType.cs" />
+    <Compile Include="ObservableCollectionNoReset.cs" />
+    <Compile Include="ObservableObject.cs" />
     <Compile Include="Plugins\GithubConnection.cs" />
+    <Compile Include="ProjectionComparer.cs" />
     <Compile Include="Repository\SynchronizationDispatcher.cs" />
     <Compile Include="Repository\ISynchronizationFeedback.cs" />
     <Compile Include="Repository\NoteRepository.cs" />
     <Compile Include="Repository\RestException.cs" />
     <Compile Include="Repository\SimpleJsonRest.cs" />
     <Compile Include="Repository\SynchronizationThread.cs" />
+    <Compile Include="Serialization\XElementExtensions.cs" />
+    <Compile Include="Serialization\XHelper.cs" />
+    <Compile Include="Serialization\XMLStructureException.cs" />
     <Compile Include="Settings\AppSettings.cs" />
     <Compile Include="Settings\ExtendedWindowStartupLocation.cs" />
     <Compile Include="Settings\NotePreviewStyle.cs" />
@@ -99,6 +115,19 @@
     <Compile Include="Settings\SettingAttribute.cs" />
     <Compile Include="Settings\SettingType.cs" />
     <Compile Include="Settings\SynchronizationState.cs" />
+    <Compile Include="WPF\BindingProxies\AbstractLegacyBinding.cs" />
+    <Compile Include="WPF\BindingProxies\AbstractRawBinding.cs" />
+    <Compile Include="WPF\BindingProxies\EventProxy.cs" />
+    <Compile Include="WPF\BindingProxies\IndirectProperty.cs" />
+    <Compile Include="WPF\BindingProxies\LegacyBindings.cs" />
+    <Compile Include="WPF\BindingProxies\RawBindings.cs" />
+    <Compile Include="WPF\BindingProxies\ReflectionPathResolver.cs" />
+    <Compile Include="WPF\Controls\BindablePasswordBox.cs" />
+    <Compile Include="WPF\Controls\ClickSelectTextBox.cs" />
+    <Compile Include="WPF\Controls\DialogWindow.cs" />
+    <Compile Include="WPF\Controls\FontBox.xaml.cs">
+      <DependentUpon>FontBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Controls\TagEditor.cs" />
     <Compile Include="WPF\Converter\DateTimeToDisplay.cs" />
     <Compile Include="WPF\Converter\LogToFontStyle.cs" />
@@ -123,6 +152,16 @@
     <Compile Include="WPF\Converter\CreatePluginSettingsGrid.cs" />
     <Compile Include="WPF\Converter\BoolToVisibility.cs" />
     <Compile Include="WPF\Converter\SmartDateTimeToDisplay.cs" />
+    <Compile Include="WPF\MarkupExtensions\EnumSourceExtension.cs" />
+    <Compile Include="WPF\MarkupExtensions\EventBindingExtension.cs" />
+    <Compile Include="WPF\MVVM\OneWayConverter.cs" />
+    <Compile Include="WPF\MVVM\RelayCommand.cs" />
+    <Compile Include="WPF\MVVM\TwoWayConverter.cs" />
+    <Compile Include="WPF\MVVM\TypedRelayCommand.cs" />
+    <Compile Include="WPF\Services\ConditionalDataTemplate.cs" />
+    <Compile Include="WPF\Services\MultiDatatemplateService.cs" />
+    <Compile Include="WPF\Services\WatermarkAdorner.cs" />
+    <Compile Include="WPF\Services\WatermarkService.cs" />
     <Compile Include="WPF\Windows\AboutWindowViewmodel.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
@@ -158,6 +197,10 @@
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\WpfScreen.cs" />
+    <Page Include="WPF\Controls\FontBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="WPF\Windows\AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -253,11 +296,8 @@
       <Project>{a43f999d-30fb-44f0-9cef-9e24a100651c}</Project>
       <Name>AlephNote.PluginInterface</Name>
     </ProjectReference>
-    <ProjectReference Include="..\External\CSharpUtils\CSharpUtils.csproj">
-      <Project>{d661cd9f-8934-496d-8332-bc82aab77598}</Project>
-      <Name>CSharpUtils</Name>
-    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

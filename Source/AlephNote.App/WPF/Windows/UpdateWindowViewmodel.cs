@@ -1,5 +1,5 @@
-﻿using Microsoft.Win32;
-using MSHC.WPF.MVVM;
+﻿using AlephNote.WPF.MVVM;
+using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
