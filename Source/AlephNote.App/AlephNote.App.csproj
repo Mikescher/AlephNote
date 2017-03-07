@@ -80,41 +80,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AESThenHMAC.cs" />
-    <Compile Include="CollectionExtension.cs" />
-    <Compile Include="CollectionViewExtension.cs" />
-    <Compile Include="CompactJsonFormatter.cs" />
-    <Compile Include="DelayedCombiningInvoker.cs" />
-    <Compile Include="DependencyObjectExtension.cs" />
-    <Compile Include="FilenameHelper.cs" />
-    <Compile Include="GZWebClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Log\EventLogger.cs" />
-    <Compile Include="Log\LogEvent.cs" />
-    <Compile Include="Log\LogEventType.cs" />
-    <Compile Include="ObservableCollectionNoReset.cs" />
-    <Compile Include="ObservableObject.cs" />
-    <Compile Include="Plugins\GithubConnection.cs" />
-    <Compile Include="ProjectionComparer.cs" />
-    <Compile Include="Repository\SynchronizationDispatcher.cs" />
-    <Compile Include="Repository\ISynchronizationFeedback.cs" />
-    <Compile Include="Repository\NoteRepository.cs" />
-    <Compile Include="Repository\RestException.cs" />
-    <Compile Include="Repository\SimpleJsonRest.cs" />
-    <Compile Include="Repository\SynchronizationThread.cs" />
-    <Compile Include="Serialization\XElementExtensions.cs" />
-    <Compile Include="Serialization\XHelper.cs" />
-    <Compile Include="Serialization\XMLStructureException.cs" />
-    <Compile Include="Settings\AppSettings.cs" />
-    <Compile Include="Settings\ExtendedWindowStartupLocation.cs" />
-    <Compile Include="Settings\NotePreviewStyle.cs" />
-    <Compile Include="Settings\SortingMode.cs" />
-    <Compile Include="Settings\FontSize.cs" />
-    <Compile Include="Settings\FontModifier.cs" />
-    <Compile Include="Settings\SettingAttribute.cs" />
-    <Compile Include="Settings\SettingType.cs" />
-    <Compile Include="Settings\SynchronizationState.cs" />
     <Compile Include="WPF\BindingProxies\AbstractLegacyBinding.cs" />
     <Compile Include="WPF\BindingProxies\AbstractRawBinding.cs" />
     <Compile Include="WPF\BindingProxies\EventProxy.cs" />
@@ -152,6 +117,7 @@
     <Compile Include="WPF\Converter\CreatePluginSettingsGrid.cs" />
     <Compile Include="WPF\Converter\BoolToVisibility.cs" />
     <Compile Include="WPF\Converter\SmartDateTimeToDisplay.cs" />
+    <Compile Include="WPF\Extensions\DependencyObjectExtension.cs" />
     <Compile Include="WPF\MarkupExtensions\EnumSourceExtension.cs" />
     <Compile Include="WPF\MarkupExtensions\EventBindingExtension.cs" />
     <Compile Include="WPF\MVVM\OneWayConverter.cs" />
@@ -183,7 +149,6 @@
     <Compile Include="WPF\Windows\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Settings\ConfigInterval.cs" />
     <Compile Include="WPF\Windows\ExceptionWindow.xaml.cs">
       <DependentUpon>ExceptionWindow.xaml</DependentUpon>
     </Compile>
@@ -239,7 +204,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

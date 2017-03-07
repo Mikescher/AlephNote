@@ -30,4 +30,10 @@
     <PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Network\GZWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

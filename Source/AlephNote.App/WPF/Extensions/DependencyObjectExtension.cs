@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 
-namespace AlephNote
+namespace AlephNote.WPF.Extensions
 {
 	// https://github.com/JonghoL/EventBindingMarkup/blob/master/src/EventBinding/MVVM/DependencyObjectExtensions.cs
 	public static class DependencyObjectExtensions

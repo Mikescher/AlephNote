@@ -1,7 +1,6 @@
 ﻿using AlephNote.Common;
 using AlephNote.PluginInterface;
 using AlephNote.Repository;
-using AlephNote.WPF.Windows;
 using System;
 using System.Collections.Generic;
 using System.IO;

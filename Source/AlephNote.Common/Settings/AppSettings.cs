@@ -148,8 +148,8 @@ namespace AlephNote.Settings
 		private ExtendedWindowStartupLocation _startupLocation = ExtendedWindowStartupLocation.ScreenBottomLeft;
 		
 		[Setting]
-		public WindowState StartupState { get { return _startupState; } set { _startupState = value; OnPropertyChanged(); } }
-		private WindowState _startupState = WindowState.Normal;
+		public ExtendedWindowState StartupState { get { return _startupState; } set { _startupState = value; OnPropertyChanged(); } }
+		private ExtendedWindowState _startupState = ExtendedWindowState.Normal;
 
 		[Setting]
 		public bool LaunchOnBoot { get { return _launchOnBoot; } set { _launchOnBoot = value; OnPropertyChanged(); } }
@@ -192,14 +192,16 @@ namespace AlephNote.Settings
 				.ToList();
 		}
 
-		private AppSettings()
+		private readonly string _path;
+
+		private AppSettings(string path)
 		{
-			
+			_path = path;
 		}
 
-		public static AppSettings CreateEmpty()
+		public static AppSettings CreateEmpty(string path)
 		{
-			var r = new AppSettings();
+			var r = new AppSettings(path);
 			r._noteProvider = PluginManager.GetDefaultPlugin();
 
 			foreach (var plugin in PluginManager.LoadedPlugins)
@@ -213,12 +215,12 @@ namespace AlephNote.Settings
 
 		public void Save()
 		{
-			File.WriteAllText(App.PATH_SETTINGS, Serialize());
+			File.WriteAllText(_path, Serialize());
 		}
 
-		public static AppSettings Load()
+		public static AppSettings Load(string path)
 		{
-			return Deserialize(File.ReadAllText(App.PATH_SETTINGS));
+			return Deserialize(File.ReadAllText(path), path);
 		}
 
 		public string Serialize()
@@ -241,13 +243,13 @@ namespace AlephNote.Settings
 			return XHelper.ConvertToString(new XDocument(root));
 		}
 
-		public static AppSettings Deserialize(string xml)
+		public static AppSettings Deserialize(string xml, string path)
 		{
 			var xd = XDocument.Parse(xml);
 			var root = xd.Root;
 			if (root == null) throw new Exception("XDocument needs root");
 			
-			var r = new AppSettings();
+			var r = new AppSettings(path);
 
 			foreach (var prop in _settingProperties)
 			{
@@ -279,7 +281,7 @@ namespace AlephNote.Settings
 		
 		public AppSettings Clone()
 		{
-			var r = new AppSettings();
+			var r = new AppSettings(_path);
 
 			foreach (var prop in _settingProperties)
 			{
