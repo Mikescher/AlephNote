@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -15,6 +15,6 @@ using System.Windows;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 
-[assembly: AssemblyVersion("1.2.1.0")]
-[assembly: AssemblyFileVersion("1.2.1.0")]
-[assembly: AssemblyInformationalVersion("1.2.1.0")]
+[assembly: AssemblyVersion("1.2.2.0")]
+[assembly: AssemblyFileVersion("1.2.2.0")]
+[assembly: AssemblyInformationalVersion("1.2.2.1-master")]
