@@ -1,8 +1,10 @@
 using AlephNote.PluginInterface;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 
 namespace AlephNote.Repository
 {
@@ -10,19 +12,20 @@ namespace AlephNote.Repository
 	{
 		private const int LOG_FMT_DEPTH = 3;
 
-		private readonly WebClient _client;
+		private readonly HttpClient _client;
 		private readonly Uri _host;
 		private readonly IAlephLogger _logger;
 
 		private JsonConverter[] _converter = new JsonConverter[0];
 		private StringEscapeHandling _seHandling = StringEscapeHandling.Default;
 		private Tuple<string, string> _urlAuthentication = null;
+		private Dictionary<string, string> _headers = new Dictionary<string, string>();
 
 		public SimpleJsonRest(IWebProxy proxy, string host, IAlephLogger log)
 		{
-			_client = new GZWebClient();
-			_client.Headers[HttpRequestHeader.UserAgent] = "AlephNote/" + App.APP_VERSION;
-			_client.Headers[HttpRequestHeader.ContentType] = "application/json";
+			_client = new HttpClient();
+			_headers["UserAgent"] = "AlephNote/Common";
+			_headers["ContentType"] = "application/json";
 			if (proxy != null) _client.Proxy = proxy;
 			_host = new Uri(host);
 
@@ -31,7 +34,7 @@ namespace AlephNote.Repository
 
 		public void Dispose()
 		{
-			if (_client != null) _client.Dispose();
+			_client?.Dispose();
 		}
 
 		public void AddConverter(object ic)
@@ -84,7 +87,7 @@ namespace AlephNote.Repository
 
 		public void AddHeader(string name, string value)
 		{
-			_client.Headers[name] = value;
+			_headers[name] = value;
 		}
 
 		public string GetResponseHeader(string name)
@@ -292,7 +295,7 @@ namespace AlephNote.Repository
 
 		#region GENERIC
 
-		private TResult GenericTwoWay<TResult>(object body, string path, string method, int[] allowedStatusCodes, params string[] parameter)
+		private TResult GenericTwoWay<TResult>(object body, string path, HttpMethod method, int[] allowedStatusCodes, params string[] parameter)
 		{
 			var uri = CreateUri(path, parameter);
 
@@ -300,10 +303,28 @@ namespace AlephNote.Repository
 			string upload;
 			try
 			{
+				var request = new HttpRequestMessage
+				{
+					Content = new StringContent(JsonConvert.SerializeObject(body, GetSerializerSettings())),
+					RequestUri = uri,
+					Method = method,
+				};
+				_headers.ToList().ForEach(h => request.Headers.Add(h.Key, h.Value));
+				
+				var resp = _client.SendAsync(request).Result;
 
-				upload = JsonConvert.SerializeObject(body, GetSerializerSettings());
+				if (!resp.IsSuccessStatusCode)
+				{
+					if (allowedStatusCodes.Any(sc => sc == (int)resp.StatusCode))
+					{
+						_logger.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
+						return default(TResult);
+					}
 
-				download = _client.UploadString(uri, method, upload);
+					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.StatusDescription, e);
+				}
+
+				download = _client.Content;
 			}
 			catch (WebException e)
 			{

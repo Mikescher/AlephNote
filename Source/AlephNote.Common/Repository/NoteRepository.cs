@@ -1,15 +1,14 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.Serialization;
 using AlephNote.Settings;
-using AlephNote.WPF.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Windows;
 using System.Xml.Linq;
+using AlephNote.Common.MVVM;
 
 namespace AlephNote.Repository
 {
@@ -23,6 +22,8 @@ namespace AlephNote.Repository
 		private readonly AppSettings appconfig;
 		private readonly SynchronizationThread thread;
 		private readonly ISynchronizationFeedback listener;
+		private readonly IDispatcher dispatcher;
+		private readonly IAlephLogger logger;
 
 		public readonly List<INote> LocalDeletedNotes = new List<INote>(); // deleted local but not on remote
 
@@ -36,7 +37,7 @@ namespace AlephNote.Repository
 
 		public string ConnectionName { get { return provider.DisplayTitleShort; } }
 
-		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, IRemotePlugin prov, IRemoteStorageConfiguration config)
+		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, IRemotePlugin prov, IRemoteStorageConfiguration config, IAlephLogger log, IDispatcher disp)
 		{
 			pathLocalFolder = Path.Combine(path, prov.GetUniqueID().ToString("B"), FilenameHelper.ConvertStringForFilename(config.GetUniqueName()));
 			pathLocalData = Path.Combine(path, prov.GetUniqueID().ToString("B"), FilenameHelper.ConvertStringForFilename(config.GetUniqueName()) + ".xml");
@@ -45,10 +46,12 @@ namespace AlephNote.Repository
 			provider = prov;
 			appconfig = cfg;
 			listener = fb;
+			logger = log;
+			dispatcher = disp;
 			thread = new SynchronizationThread(this, fb, cfg.ConflictResolution);
 
-			invSaveNotesLocal = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SaveAllDirtyNotes)),  1 * 1000,  1 * 60 * 1000);
-			invSaveNotesRemote = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SyncNow)),          30 * 1000, 15 * 60 * 1000);
+			invSaveNotesLocal = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SaveAllDirtyNotes),  1 * 1000,  1 * 60 * 1000);
+			invSaveNotesRemote = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SyncNow),          30 * 1000, 15 * 60 * 1000);
 
 			_notes.CollectionChanged += NoteCollectionChanged;
 		}
@@ -57,7 +60,7 @@ namespace AlephNote.Repository
 		{
 			if (!Directory.Exists(pathLocalFolder))
 			{
-				App.Logger.Info("Repository", "Create local note folder: " + pathLocalFolder);
+				logger.Info("Repository", "Create local note folder: " + pathLocalFolder);
 				Directory.CreateDirectory(pathLocalFolder);
 			}
 
@@ -86,7 +89,7 @@ namespace AlephNote.Repository
 		{
 			var noteFiles = Directory.GetFiles(pathLocalFolder, "*.xml");
 
-			App.Logger.Info("Repository", "Found " + noteFiles.Length + " files in local repository");
+			logger.Info("Repository", "Found " + noteFiles.Length + " files in local repository");
 
 			foreach (var noteFile in noteFiles)
 			{
@@ -115,11 +118,11 @@ namespace AlephNote.Repository
 				}
 				catch (Exception e)
 				{
-					ExceptionDialog.Show(null, "LoadNotes from local cache", "Could not load note from '" + noteFile + "'", e);
+					logger.ShowExceptionDialog("LoadNotes from local cache", "Could not load note from '" + noteFile + "'", e);
 				}
 			}
 
-			App.Logger.Info("Repository", "Loaded " + Notes.Count + " notes from local repository");
+			logger.Info("Repository", "Loaded " + Notes.Count + " notes from local repository");
 		}
 
 		public INote CreateNewNote()
@@ -129,7 +132,7 @@ namespace AlephNote.Repository
 			note.SetDirty();
 			SaveNote(note);
 
-			App.Logger.Info("Repository", "New Note created");
+			logger.Info("Repository", "New Note created");
 
 			return note;
 		}
@@ -157,8 +160,8 @@ namespace AlephNote.Repository
 
 			root.Add(new XElement("data", note.Serialize()));
 
-			new XDocument(root).Save(path);
-
+			using (var file = File.OpenWrite(path)) new XDocument(root).Save(file);
+			
 			note.ResetLocalDirty();
 		}
 
@@ -193,7 +196,7 @@ namespace AlephNote.Repository
 
 		public void DeleteNote(INote note, bool updateRemote)
 		{
-			App.Logger.Info("Repository", string.Format("Delete note {0} (updateRemote={1})", note.GetUniqueName(), updateRemote));
+			logger.Info("Repository", string.Format("Delete note {0} (updateRemote={1})", note.GetUniqueName(), updateRemote));
 
 			var found = Notes.Remove(note);
 
@@ -209,7 +212,7 @@ namespace AlephNote.Repository
 
 		public void AddNote(INote note, bool updateRemote)
 		{
-			App.Logger.Info("Repository", string.Format("Add note {0} (updateRemote={1})", note.GetUniqueName(), updateRemote));
+			logger.Info("Repository", string.Format("Add note {0} (updateRemote={1})", note.GetUniqueName(), updateRemote));
 
 			Notes.Add(note);
 			SaveNote(note);
@@ -224,7 +227,7 @@ namespace AlephNote.Repository
 
 		public void SyncNow()
 		{
-			App.Logger.Info("Repository", "Sync Now");
+			logger.Info("Repository", "Sync Now");
 
 			invSaveNotesRemote.CancelPendingRequests();
 
@@ -267,25 +270,26 @@ namespace AlephNote.Repository
 		public void WriteSyncData(IRemoteStorageSyncPersistance data)
 		{
 			var x = new XDocument(data.Serialize());
-			x.Save(pathLocalData);
+
+			using (var file = File.OpenWrite(pathLocalData)) x.Save(file);
 		}
 
 		public void DeleteLocalData()
 		{
 			if (File.Exists(pathLocalData))
 			{
-				App.Logger.Info("Repository", "Delete file from local repository: " + Path.GetFileName(pathLocalData), pathLocalData);
+				logger.Info("Repository", "Delete file from local repository: " + Path.GetFileName(pathLocalData), pathLocalData);
 				File.Delete(pathLocalData);
 			}
 			
 			var noteFiles = Directory.GetFiles(pathLocalFolder, "*.xml");
 			foreach (var path in noteFiles)
 			{
-				App.Logger.Info("Repository", "Delete file from local repository: " + Path.GetFileName(path), path);
+				logger.Info("Repository", "Delete file from local repository: " + Path.GetFileName(path), path);
 				File.Delete(path);
 			}
 
-			App.Logger.Info("Repository", "Delete folder from local repository: " + Path.GetFileName(pathLocalFolder), pathLocalFolder);
+			logger.Info("Repository", "Delete folder from local repository: " + Path.GetFileName(pathLocalFolder), pathLocalFolder);
 			Directory.Delete(pathLocalFolder, true);
 		}
 	}

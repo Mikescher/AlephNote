@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 
 namespace AlephNote.Plugins
 {
@@ -13,16 +14,19 @@ namespace AlephNote.Plugins
 	{
 		private static HashSet<Guid> _pluginIDs = new HashSet<Guid>(); 
 		private static List<IRemotePlugin> _provider = new List<IRemotePlugin>();
+		private static IAlephLogger _logger;
 		public static IEnumerable<IRemotePlugin> LoadedPlugins { get { return _provider; } }
+		
 
-		public static void LoadPlugins()
+		public static void LoadPlugins(string baseDirectory, IAlephLogger logger)
 		{
 			_provider = new List<IRemotePlugin>();
+			_logger = logger;
 
-			var pluginPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"plugins\");
+			var pluginPath = Path.Combine(baseDirectory, @"plugins\");
 			var pluginfiles = Directory.GetFiles(pluginPath, "*.dll");
 
-			BasicRemoteConnection.SimpleJsonRestWrapper = (p, h) => new SimpleJsonRest(p, h, App.Logger);
+			BasicRemoteConnection.SimpleJsonRestWrapper = (p, h) => new SimpleJsonRest(p, h, logger);
 
 			foreach (var path in pluginfiles)
 			{
@@ -32,34 +36,33 @@ namespace AlephNote.Plugins
 				}
 				catch (ReflectionTypeLoadException e)
 				{
-					ExceptionDialog.Show(null, "Plugin load Error", "Could not load plugin from " + path, e, e.LoaderExceptions);
+					logger.ShowExceptionDialog("Plugin load Error", "Could not load plugin from " + path, e, e.LoaderExceptions);
 				}
 				catch (Exception e)
 				{
-					ExceptionDialog.Show(null, "Plugin load Error", "Could not load plugin from " + path, e);
+					logger.ShowExceptionDialog("Plugin load Error", "Could not load plugin from " + path, e);
 				}
 			}
 		}
 
 		private static void LoadPluginsFromAssembly(string path)
 		{
-			AssemblyName an = AssemblyName.GetAssemblyName(path);
-			Assembly assembly = Assembly.Load(an);
+			Assembly assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
 
-			if (assembly == null) throw new Exception("Could not load assembly '" + an.FullName + "'");
+			if (assembly == null) throw new Exception("Could not load assembly '" + path + "'");
 
 			Type[] types = assembly.GetTypes();
 			foreach (Type type in types)
 			{
-				if (type.IsInterface || type.IsAbstract) continue;
+				if (type.GetTypeInfo().IsInterface || type.GetTypeInfo().IsAbstract) continue;
 
-				if (type.GetInterface(typeof(IRemotePlugin).FullName) != null)
+				if (type.GetTypeInfo().GetInterface(typeof(IRemotePlugin).FullName) != null)
 				{
 					IRemotePlugin instance = (IRemotePlugin)Activator.CreateInstance(type);
 
 					if (instance == null) throw new Exception("Could not instantiate IAlephNotePlugin '" + type.FullName + "'");
 
-					instance.Init(App.Logger);
+					instance.Init(_logger);
 
 #if !DEBUG
 					if (instance.GetVersion().Revision != 0)
@@ -71,12 +74,12 @@ namespace AlephNote.Plugins
 
 					if (_pluginIDs.Add(instance.GetUniqueID()))
 					{
-						App.Logger.Info("PluginManager", string.Format("Loaded plugin {0} in version {1} ({2})", instance.DisplayTitleShort, instance.GetVersion(), instance.GetUniqueID()));
+						_logger.Info("PluginManager", string.Format("Loaded plugin {0} in version {1} ({2})", instance.DisplayTitleShort, instance.GetVersion(), instance.GetUniqueID()));
 						_provider.Add(instance);
 					}
 					else
 					{
-						App.Logger.Error("PluginManager", string.Format("Multiple plugins with the same ID ({0}) found", instance.GetUniqueID()));
+						_logger.Error("PluginManager", string.Format("Multiple plugins with the same ID ({0}) found", instance.GetUniqueID()));
 					}
 				}
 			}

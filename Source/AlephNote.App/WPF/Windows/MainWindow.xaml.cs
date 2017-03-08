@@ -24,7 +24,7 @@ namespace AlephNote.WPF.Windows
 		{
 			InitializeComponent();
 
-			PluginManager.LoadPlugins();
+			PluginManager.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory, App.Logger);
 
 			bool firstLaunch = false;
 			AppSettings settings;

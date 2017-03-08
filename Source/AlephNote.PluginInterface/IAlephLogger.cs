@@ -9,5 +9,8 @@ namespace AlephNote.PluginInterface
 		void Warn (string src, string text, string longtext = null);
 		void Error(string src, string text, string longtext = null);
 		void Error(string src, string text, Exception e);
+
+		void ShowExceptionDialog(string title, Exception e);
+		void ShowExceptionDialog(string title, string message, Exception e, params Exception[] additionalExceptions);
 	}
 }
