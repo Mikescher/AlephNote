@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net452;netstandard1.6</TargetFrameworks>
+    <TargetFrameworks>net46;netstandard1.6</TargetFrameworks>
     <AssemblyName>AlephNote.PluginInterface</AssemblyName>
     <PackageId>AlephNote.PluginInterface</PackageId>
     <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
@@ -15,7 +15,7 @@
     <PackageReference Include="System.Xml.XDocument" Version="4.0.11" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>

@@ -20,13 +20,22 @@ namespace AlephNote.Repository
 		private StringEscapeHandling _seHandling = StringEscapeHandling.Default;
 		private Tuple<string, string> _urlAuthentication = null;
 		private Dictionary<string, string> _headers = new Dictionary<string, string>();
+		private HttpResponseMessage _lastResponse = null;
 
 		public SimpleJsonRest(IWebProxy proxy, string host, IAlephLogger log)
 		{
-			_client = new HttpClient();
+			if (proxy != null)
+			{
+				_client = new HttpClient(new HttpClientHandler {Proxy = proxy});
+			}
+			else
+			{
+				_client = new HttpClient();
+			}
+
 			_headers["UserAgent"] = "AlephNote/Common";
 			_headers["ContentType"] = "application/json";
-			if (proxy != null) _client.Proxy = proxy;
+
 			_host = new Uri(host);
 
 			_logger = log;
@@ -92,7 +101,7 @@ namespace AlephNote.Repository
 
 		public string GetResponseHeader(string name)
 		{
-			return _client.ResponseHeaders[name];
+			return string.Join("\n", _lastResponse.Headers.GetValues(name));
 		}
 
 		private JsonSerializerSettings GetSerializerSettings()
@@ -108,42 +117,42 @@ namespace AlephNote.Repository
 
 		public TResult PostTwoWay<TResult>(object body, string path, params string[] parameter)
 		{
-			return GenericTwoWay<TResult>(body, path, "POST", new int[0], parameter);
+			return GenericTwoWay<TResult>(body, path, HttpMethod.Post, new int[0], parameter);
 		}
 
 		public TResult PostTwoWay<TResult>(object body, string path, int[] allowedStatusCodes, params string[] parameter)
 		{
-			return GenericTwoWay<TResult>(body, path, "POST", allowedStatusCodes, parameter);
+			return GenericTwoWay<TResult>(body, path, HttpMethod.Post, allowedStatusCodes, parameter);
 		}
 
 		public void PostUpload(object body, string path, params string[] parameter)
 		{
-			GenericUpload(body, path, "POST", new int[0], parameter);
+			GenericUpload(body, path, HttpMethod.Post, new int[0], parameter);
 		}
 
 		public void PostUpload(object body, string path, int[] allowedStatusCodes, params string[] parameter)
 		{
-			GenericUpload(body, path, "POST", allowedStatusCodes, parameter);
+			GenericUpload(body, path, HttpMethod.Post, allowedStatusCodes, parameter);
 		}
 
 		public TResult PostDownload<TResult>(string path, params string[] parameter)
 		{
-			return GenericDownload<TResult>(path, "POST", new int[0], parameter);
+			return GenericDownload<TResult>(path, HttpMethod.Post, new int[0], parameter);
 		}
 
 		public TResult PostDownload<TResult>(string path, int[] allowedStatusCodes, params string[] parameter)
 		{
-			return GenericDownload<TResult>(path, "POST", allowedStatusCodes, parameter);
+			return GenericDownload<TResult>(path, HttpMethod.Post, allowedStatusCodes, parameter);
 		}
 
 		public void PostEmpty(string path, params string[] parameter)
 		{
-			GenericEmpty(path, "POST", new int[0], parameter);
+			GenericEmpty(path, HttpMethod.Post, new int[0], parameter);
 		}
 
 		public void PostEmpty(string path, int[] allowedStatusCodes, params string[] parameter)
 		{
-			GenericEmpty(path, "POST", allowedStatusCodes, parameter);
+			GenericEmpty(path, HttpMethod.Post, allowedStatusCodes, parameter);
 		}
 
 		#endregion
@@ -152,42 +161,42 @@ namespace AlephNote.Repository
 
 		public TResult PutTwoWay<TResult>(object body, string path, params string[] parameter)
 		{
-			return GenericTwoWay<TResult>(body, path, "PUT", new int[0], parameter);
+			return GenericTwoWay<TResult>(body, path, HttpMethod.Put, new int[0], parameter);
 		}
 
 		public TResult PutTwoWay<TResult>(object body, string path, int[] allowedStatusCodes, params string[] parameter)
 		{
-			return GenericTwoWay<TResult>(body, path, "PUT", allowedStatusCodes, parameter);
+			return GenericTwoWay<TResult>(body, path, HttpMethod.Put, allowedStatusCodes, parameter);
 		}
 
 		public void PutUpload(object body, string path, params string[] parameter)
 		{
-			GenericUpload(body, path, "PUT", new int[0], parameter);
+			GenericUpload(body, path, HttpMethod.Put, new int[0], parameter);
 		}
 
 		public void PutUpload(object body, string path, int[] allowedStatusCodes, params string[] parameter)
 		{
-			GenericUpload(body, path, "PUT", allowedStatusCodes, parameter);
+			GenericUpload(body, path, HttpMethod.Put, allowedStatusCodes, parameter);
 		}
 
 		public TResult PutDownload<TResult>(string path, params string[] parameter)
 		{
-			return GenericDownload<TResult>(path, "PUT", new int[0], parameter);
+			return GenericDownload<TResult>(path, HttpMethod.Put, new int[0], parameter);
 		}
 
 		public TResult PutDownload<TResult>(string path, int[] allowedStatusCodes, params string[] parameter)
 		{
-			return GenericDownload<TResult>(path, "PUT", allowedStatusCodes, parameter);
+			return GenericDownload<TResult>(path, HttpMethod.Put, allowedStatusCodes, parameter);
 		}
 
 		public void PutEmpty(string path, params string[] parameter)
 		{
-			GenericEmpty(path, "PUT", new int[0], parameter);
+			GenericEmpty(path, HttpMethod.Put, new int[0], parameter);
 		}
 
 		public void PutEmpty(string path, int[] allowedStatusCodes, params string[] parameter)
 		{
-			GenericEmpty(path, "PUT", allowedStatusCodes, parameter);
+			GenericEmpty(path, HttpMethod.Put, allowedStatusCodes, parameter);
 		}
 
 		#endregion
@@ -196,42 +205,42 @@ namespace AlephNote.Repository
 
 		public TResult DeleteTwoWay<TResult>(object body, string path, params string[] parameter)
 		{
-			return GenericTwoWay<TResult>(body, path, "DELETE", new int[0], parameter);
+			return GenericTwoWay<TResult>(body, path, HttpMethod.Delete, new int[0], parameter);
 		}
 
 		public TResult DeleteTwoWay<TResult>(object body, string path, int[] allowedStatusCodes, params string[] parameter)
 		{
-			return GenericTwoWay<TResult>(body, path, "DELETE", allowedStatusCodes, parameter);
+			return GenericTwoWay<TResult>(body, path, HttpMethod.Delete, allowedStatusCodes, parameter);
 		}
 
 		public void DeleteUpload(object body, string path, params string[] parameter)
 		{
-			GenericUpload(body, path, "DELETE", new int[0], parameter);
+			GenericUpload(body, path, HttpMethod.Delete, new int[0], parameter);
 		}
 
 		public void DeleteUpload(object body, string path, int[] allowedStatusCodes, params string[] parameter)
 		{
-			GenericUpload(body, path, "DELETE", allowedStatusCodes, parameter);
+			GenericUpload(body, path, HttpMethod.Delete, allowedStatusCodes, parameter);
 		}
 
 		public TResult DeleteDownload<TResult>(string path, params string[] parameter)
 		{
-			return GenericDownload<TResult>(path, "DELETE", new int[0], parameter);
+			return GenericDownload<TResult>(path, HttpMethod.Delete, new int[0], parameter);
 		}
 
 		public TResult DeleteDownload<TResult>(string path, int[] allowedStatusCodes, params string[] parameter)
 		{
-			return GenericDownload<TResult>(path, "DELETE", allowedStatusCodes, parameter);
+			return GenericDownload<TResult>(path, HttpMethod.Delete, allowedStatusCodes, parameter);
 		}
 
 		public void DeleteEmpty(string path, params string[] parameter)
 		{
-			GenericEmpty(path, "DELETE", new int[0], parameter);
+			GenericEmpty(path, HttpMethod.Delete, new int[0], parameter);
 		}
 
 		public void DeleteEmpty(string path, int[] allowedStatusCodes, params string[] parameter)
 		{
-			GenericEmpty(path, "DELETE", allowedStatusCodes, parameter);
+			GenericEmpty(path, HttpMethod.Delete, allowedStatusCodes, parameter);
 		}
 
 		#endregion
@@ -245,50 +254,7 @@ namespace AlephNote.Repository
 
 		public TResult Get<TResult>(string path, int[] allowedStatusCodes, params string[] parameter)
 		{
-			var uri = CreateUri(path, parameter);
-
-			string download;
-			try
-			{
-				download = _client.DownloadString(uri);
-			}
-			catch (WebException e)
-			{
-				var resp = e.Response as HttpWebResponse;
-				if (resp != null)
-				{
-					if (allowedStatusCodes.Any(sc => sc == (int)resp.StatusCode))
-					{
-						_logger.Debug("REST", string.Format("REST call to '{0}' [GET] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode));
-						return default(TResult);
-					}
-
-					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.StatusDescription, e);
-				}
-
-				throw new RestException("Could not communicate with server " + uri.Host, e);
-			}
-			catch (Exception e)
-			{
-				throw new RestException("Could not communicate with server " + uri.Host, e);
-			}
-
-			TResult downloadObject;
-			try
-			{
-				downloadObject = JsonConvert.DeserializeObject<TResult>(download, _converter);
-			}
-			catch (Exception e)
-			{
-				throw new RestException("Rest call to " + uri.Host + " returned unexpected data :\r\n" + download, e);
-			}
-
-			_logger.Debug("REST",
-				string.Format("Calling REST API '{0}' [GET]", uri),
-				string.Format("Send: Nothing\r\n\r\nRecieved:\r\n{0}",
-				CompactJsonFormatter.FormatJSON(download, LOG_FMT_DEPTH)));
-
-			return downloadObject;
+			return GenericDownload<TResult>(path, HttpMethod.Get, allowedStatusCodes, parameter);
 		}
 
 		#endregion
@@ -298,49 +264,44 @@ namespace AlephNote.Repository
 		private TResult GenericTwoWay<TResult>(object body, string path, HttpMethod method, int[] allowedStatusCodes, params string[] parameter)
 		{
 			var uri = CreateUri(path, parameter);
-
+			
+			string upload = JsonConvert.SerializeObject(body, GetSerializerSettings());
 			string download;
-			string upload;
+			HttpResponseMessage resp;
 			try
 			{
 				var request = new HttpRequestMessage
 				{
-					Content = new StringContent(JsonConvert.SerializeObject(body, GetSerializerSettings())),
+					Content = new StringContent(upload),
 					RequestUri = uri,
 					Method = method,
+					
 				};
 				_headers.ToList().ForEach(h => request.Headers.Add(h.Key, h.Value));
 				
-				var resp = _client.SendAsync(request).Result;
+				resp = _client.SendAsync(request).Result;
 
 				if (!resp.IsSuccessStatusCode)
 				{
 					if (allowedStatusCodes.Any(sc => sc == (int)resp.StatusCode))
 					{
 						_logger.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
+						_lastResponse = resp;
+
 						return default(TResult);
 					}
 
-					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.StatusDescription, e);
+					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.ReasonPhrase);
 				}
 
-				download = _client.Content;
+				download = resp.Content.ReadAsStringAsync().Result;
 			}
-			catch (WebException e)
+			catch (AggregateException e)
 			{
-				var resp = e.Response as HttpWebResponse;
-				if (resp != null)
-				{
-					if (allowedStatusCodes.Any(sc => sc == (int)resp.StatusCode))
-					{
-						_logger.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
-						return default(TResult);
-					}
-
-					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.StatusDescription, e);
-				}
-
-				throw new RestException("Could not communicate with server " + uri.Host, e);
+				if (e.InnerExceptions.Count == 1)
+					throw new RestException("Could not communicate with server " + uri.Host, e.InnerExceptions.First());
+				else
+					throw new RestException("Could not communicate with server " + uri.Host, e);
 			}
 			catch (Exception e)
 			{
@@ -363,35 +324,48 @@ namespace AlephNote.Repository
 				CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH),
 				CompactJsonFormatter.FormatJSON(download, LOG_FMT_DEPTH)));
 
+			_lastResponse = resp;
 			return downloadObject;
 		}
 
-		private void GenericUpload(object body, string path, string method, int[] allowedStatusCodes, params string[] parameter)
+		private void GenericUpload(object body, string path, HttpMethod method, int[] allowedStatusCodes, params string[] parameter)
 		{
 			var uri = CreateUri(path, parameter);
 
-			string upload;
+			string upload = JsonConvert.SerializeObject(body, GetSerializerSettings());
+			HttpResponseMessage resp;
+
 			try
 			{
-				upload = JsonConvert.SerializeObject(body, GetSerializerSettings());
+				var request = new HttpRequestMessage
+				{
+					Content = new StringContent(upload),
+					RequestUri = uri,
+					Method = method,
+				};
+				_headers.ToList().ForEach(h => request.Headers.Add(h.Key, h.Value));
 
-				_client.UploadString(uri, method, upload);
-			}
-			catch (WebException e)
-			{
-				var resp = e.Response as HttpWebResponse;
-				if (resp != null)
+				resp = _client.SendAsync(request).Result;
+
+				if (!resp.IsSuccessStatusCode)
 				{
 					if (allowedStatusCodes.Any(sc => sc == (int)resp.StatusCode))
 					{
 						_logger.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
+						_lastResponse = resp;
+
 						return;
 					}
 
-					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.StatusDescription, e);
+					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.ReasonPhrase);
 				}
-
-				throw new RestException("Could not communicate with server " + uri.Host, e);
+			}
+			catch (AggregateException e)
+			{
+				if (e.InnerExceptions.Count == 1)
+					throw new RestException("Could not communicate with server " + uri.Host, e.InnerExceptions.First());
+				else
+					throw new RestException("Could not communicate with server " + uri.Host, e);
 			}
 			catch (Exception e)
 			{
@@ -402,32 +376,49 @@ namespace AlephNote.Repository
 				string.Format("Calling REST API '{0}' [{1}]", uri, method),
 				string.Format("Send:\r\n{0}\r\n\r\nRecieved: Nothing",
 				CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH)));
+
+			_lastResponse = resp;
 		}
 
-		private TResult GenericDownload<TResult>(string path, string method, int[] allowedStatusCodes, params string[] parameter)
+		private TResult GenericDownload<TResult>(string path, HttpMethod method, int[] allowedStatusCodes, params string[] parameter)
 		{
 			var uri = CreateUri(path, parameter);
 
 			string download;
+			HttpResponseMessage resp;
+
 			try
 			{
-				download = _client.UploadString(uri, method, string.Empty);
-			}
-			catch (WebException e)
-			{
-				var resp = e.Response as HttpWebResponse;
-				if (resp != null)
+				var request = new HttpRequestMessage
+				{
+					RequestUri = uri,
+					Method = method,
+				};
+				_headers.ToList().ForEach(h => request.Headers.Add(h.Key, h.Value));
+
+				resp = _client.SendAsync(request).Result;
+
+				if (!resp.IsSuccessStatusCode)
 				{
 					if (allowedStatusCodes.Any(sc => sc == (int)resp.StatusCode))
 					{
 						_logger.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
+						_lastResponse = resp;
+
 						return default(TResult);
 					}
 
-					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.StatusDescription, e);
+					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.ReasonPhrase);
 				}
 
-				throw new RestException("Could not communicate with server " + uri.Host, e);
+				download = resp.Content.ReadAsStringAsync().Result;
+			}
+			catch (AggregateException e)
+			{
+				if (e.InnerExceptions.Count == 1)
+					throw new RestException("Could not communicate with server " + uri.Host, e.InnerExceptions.First());
+				else
+					throw new RestException("Could not communicate with server " + uri.Host, e);
 			}
 			catch (Exception e)
 			{
@@ -443,38 +434,52 @@ namespace AlephNote.Repository
 			{
 				throw new RestException("Rest call to " + uri.Host + " returned unexpected data :\r\n" + download, e);
 			}
-
+			
 			_logger.Debug("REST",
 				string.Format("Calling REST API '{0}' [{1}]", uri, method),
 				string.Format("Send: Nothing\r\nRecieved:\r\n{0}",
 				CompactJsonFormatter.FormatJSON(download, LOG_FMT_DEPTH)));
 
+			_lastResponse = resp;
 			return downloadObject;
 		}
 
-		private void GenericEmpty(string path, string method, int[] allowedStatusCodes, params string[] parameter)
+		private void GenericEmpty(string path, HttpMethod method, int[] allowedStatusCodes, params string[] parameter)
 		{
 			var uri = CreateUri(path, parameter);
 
+			HttpResponseMessage resp;
+
 			try
 			{
-				_client.UploadString(uri, method, string.Empty);
-			}
-			catch (WebException e)
-			{
-				var resp = e.Response as HttpWebResponse;
-				if (resp != null)
+				var request = new HttpRequestMessage
+				{
+					RequestUri = uri,
+					Method = method,
+				};
+				_headers.ToList().ForEach(h => request.Headers.Add(h.Key, h.Value));
+
+				resp = _client.SendAsync(request).Result;
+
+				if (!resp.IsSuccessStatusCode)
 				{
 					if (allowedStatusCodes.Any(sc => sc == (int)resp.StatusCode))
 					{
 						_logger.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
+						_lastResponse = resp;
+
 						return;
 					}
 
-					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.StatusDescription, e);
+					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.ReasonPhrase);
 				}
-
-				throw new RestException("Could not communicate with server " + uri.Host, e);
+			}
+			catch (AggregateException e)
+			{
+				if (e.InnerExceptions.Count == 1)
+					throw new RestException("Could not communicate with server " + uri.Host, e.InnerExceptions.First());
+				else
+					throw new RestException("Could not communicate with server " + uri.Host, e);
 			}
 			catch (Exception e)
 			{
@@ -482,6 +487,8 @@ namespace AlephNote.Repository
 			}
 
 			_logger.Debug("REST", string.Format("Calling REST API '{0}' [{1}]", uri, method), "Send: Nothing\r\n\r\nRecieved: Nothing");
+
+			_lastResponse = resp;
 		}
 
 		#endregion
