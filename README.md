@@ -49,3 +49,7 @@ Also anyone with an ounce of design talent: Feel free to improve the [website](h
 ## License
 
 [MIT](https://github.com/Mikescher/AlephNote/blob/master/LICENSE)
+
+## Build
+
+[![Build status](https://img.shields.io/appveyor/ci/pitermarx/alephnote.svg)](https://ci.appveyor.com/project/pitermarx/alephnote/branch/master)
