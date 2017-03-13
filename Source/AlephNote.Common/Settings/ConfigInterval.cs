@@ -1,28 +1,28 @@
-﻿using System.ComponentModel;
+﻿using AlephNote.Common.Settings;
 
 namespace AlephNote.Settings
 {
 	public enum ConfigInterval
 	{
-		[Description("1 minute")]
+		[EnumDescriptor("1 minute")]
 		Sync01Min,
-		[Description("2 minutes")]
+		[EnumDescriptor("2 minutes")]
 		Sync02Min,
-		[Description("5 minutes")]
+		[EnumDescriptor("5 minutes")]
 		Sync05Min,
-		[Description("10 minutes")]
+		[EnumDescriptor("10 minutes")]
 		Sync10Min,
-		[Description("15 minutes")]
+		[EnumDescriptor("15 minutes")]
 		Sync15Min,
-		[Description("30 minutes")]
+		[EnumDescriptor("30 minutes")]
 		Sync30Min,
-		[Description("1 hour")]
+		[EnumDescriptor("1 hour")]
 		Sync01Hour,
-		[Description("2 hours")]
+		[EnumDescriptor("2 hours")]
 		Sync02Hour,
-		[Description("3 hours")]
+		[EnumDescriptor("3 hours")]
 		Sync06Hour,
-		[Description("12 hours")]
+		[EnumDescriptor("12 hours")]
 		Sync12Hour,
 	}
 }

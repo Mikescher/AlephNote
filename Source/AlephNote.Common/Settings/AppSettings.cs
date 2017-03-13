@@ -8,9 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Xml.Linq;
 
 namespace AlephNote.Settings
@@ -21,7 +18,7 @@ namespace AlephNote.Settings
 	{
 		public const string ENCRYPTION_KEY = @"jcgkZJvoykjpoGkDWHqiNoXoLZRJxpdb";
 
-		public static readonly FontFamily DEFAULT_FONT = new TextBlock().FontFamily;
+		private class AttrObj { public PropertyInfo Info; public List<object> Attributes;}
 
 		[Setting]
 		public ConfigInterval SynchronizationFrequency { get { return _synchronizationFreq; } set { _synchronizationFreq = value; OnPropertyChanged(); } }
@@ -60,8 +57,8 @@ namespace AlephNote.Settings
 		private bool _closeToTray = false;
 
 		[Setting]
-		public FontFamily TitleFontFamily { get { return _titleFontFamily; } set { _titleFontFamily = value; OnPropertyChanged(); } }
-		private FontFamily _titleFontFamily = DEFAULT_FONT;
+		public string TitleFontFamily { get { return _titleFontFamily; } set { _titleFontFamily = value; OnPropertyChanged(); } }
+		private string _titleFontFamily = string.Empty;
 
 		[Setting]
 		public FontModifier TitleFontModifier { get { return _titleFontModifier; } set { _titleFontModifier = value; OnPropertyChanged(); } }
@@ -72,8 +69,8 @@ namespace AlephNote.Settings
 		private FontSize _titleFontSize = FontSize.Size16;
 
 		[Setting]
-		public FontFamily NoteFontFamily { get { return _noteFontFamily; } set { _noteFontFamily = value; OnPropertyChanged(); } }
-		private FontFamily _noteFontFamily = DEFAULT_FONT;
+		public string NoteFontFamily { get { return _noteFontFamily; } set { _noteFontFamily = value; OnPropertyChanged(); } }
+		private string _noteFontFamily = string.Empty;
 
 		[Setting]
 		public FontModifier NoteFontModifier { get { return _noteFontModifier; } set { _noteFontModifier = value; OnPropertyChanged(); } }
@@ -84,8 +81,8 @@ namespace AlephNote.Settings
 		private FontSize _noteFontSize = FontSize.Size08;
 
 		[Setting]
-		public FontFamily ListFontFamily { get { return _listFontFamily; } set { _listFontFamily = value; OnPropertyChanged(); } }
-		private FontFamily _listFontFamily = DEFAULT_FONT;
+		public string ListFontFamily { get { return _listFontFamily; } set { _listFontFamily = value; OnPropertyChanged(); } }
+		private string _listFontFamily = string.Empty;
 
 		[Setting]
 		public FontModifier ListFontModifier { get { return _listFontModifier; } set { _listFontModifier = value; OnPropertyChanged(); } }
@@ -186,9 +183,9 @@ namespace AlephNote.Settings
 		{
 			_settingProperties = typeof(AppSettings)
 				.GetProperties()
-				.Select(p => new {P = p, A = p.GetCustomAttributes(typeof(SettingAttribute), false) })
-				.Where(p => p.A.Length == 1)
-				.Select(p => Tuple.Create(((SettingAttribute)p.A.Single()).GetSettingType(p.P), (SettingAttribute)p.A.Single(), p.P))
+				.Select(p => new AttrObj { Info = p, Attributes = p.GetCustomAttributes(typeof(SettingAttribute), false).Cast<object>().ToList() })
+				.Where(p => p.Attributes.Count == 1)
+				.Select(p => Tuple.Create(((SettingAttribute)p.Attributes.Single()).GetSettingType(p.Info), (SettingAttribute)p.Attributes.Single(), p.Info))
 				.ToList();
 		}
 

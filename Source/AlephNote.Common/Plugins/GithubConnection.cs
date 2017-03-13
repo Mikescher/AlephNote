@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AlephNote.PluginInterface;
 
 namespace AlephNote.Plugins
 {
-	static class GithubConnection
+	public class GithubConnection
 	{
 #pragma warning disable 0649
 // ReSharper disable All
@@ -14,9 +15,16 @@ namespace AlephNote.Plugins
 // ReSharper restore All
 #pragma warning restore 0649
 
-		public static Tuple<Version, DateTime, string> GetLatestRelease()
+		private readonly IAlephLogger _log;
+
+		public GithubConnection(IAlephLogger log)
 		{
-			var rest = new SimpleJsonRest(null, @"https://api.github.com", App.Logger);
+			_log = log;
+		}
+
+		public Tuple<Version, DateTime, string> GetLatestRelease()
+		{
+			var rest = new SimpleJsonRest(null, @"https://api.github.com", _log);
 
 			var response = rest.Get<JsonResponse>("repos/Mikescher/AlephNote/releases/latest");
 

@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace AlephNote.Repository
 {
-	class SynchronizationDispatcher
+	class SynchronizationDispatcher : IAlephDispatcher
 	{
 		public enum DispatcherMode { AppDispatcher, CustomDispatcher }
 

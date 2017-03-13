@@ -10,7 +10,6 @@
 		EncryptedString,
 		String,
 		Enum,
-		FontFamily,
 		RemoteProvider,
 	}
 }

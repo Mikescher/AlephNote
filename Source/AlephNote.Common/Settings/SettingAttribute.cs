@@ -50,9 +50,6 @@ namespace AlephNote.Settings
 				case SettingType.Enum:
 					data = Convert.ToString(prop.GetValue(obj));
 					break;
-				case SettingType.FontFamily:
-					data = ((FontFamily)prop.GetValue(obj)).Source;
-					break;
 				case SettingType.RemoteProvider:
 					data = ((IRemotePlugin)prop.GetValue(obj)).GetUniqueID().ToString("B");
 					break;
@@ -93,9 +90,6 @@ namespace AlephNote.Settings
 				case SettingType.Enum:
 					prop.SetValue(data, XHelper.GetChildValue(xroot, prop.Name, prop.GetValue(data), prop.PropertyType));
 					break;
-				case SettingType.FontFamily:
-					prop.SetValue(data, GetFontByNameOrDefault(XHelper.GetChildValue(xroot, prop.Name, ((FontFamily)prop.GetValue(data)).Source), (FontFamily)prop.GetValue(data)));
-					break;
 				case SettingType.RemoteProvider:
 					prop.SetValue(data, PluginManager.GetPlugin(XHelper.GetChildValue(xroot, prop.Name, PluginManager.GetDefaultPlugin().GetUniqueID())));
 					break;
@@ -127,20 +121,13 @@ namespace AlephNote.Settings
 					return Math.Abs((double)va - (double)vb) < double.Epsilon;
 				case SettingType.Enum:
 					return (int)va == (int)vb;
-				case SettingType.FontFamily:
-					return ((FontFamily)va).Source == ((FontFamily)vb).Source;
 				case SettingType.RemoteProvider:
 					return ((IRemotePlugin)va).GetUniqueID() == ((IRemotePlugin)vb).GetUniqueID();
 				default:
 					throw new ArgumentOutOfRangeException("ptype", ptype, null);
 			}
 		}
-
-		private static FontFamily GetFontByNameOrDefault(string name, FontFamily defaultFamily)
-		{
-			return Fonts.SystemFontFamilies.FirstOrDefault(p => p.Source == name) ?? defaultFamily;
-		}
-
+		
 		private static string Encrypt(string data)
 		{
 			if (string.IsNullOrWhiteSpace(data)) return string.Empty;
@@ -163,8 +150,7 @@ namespace AlephNote.Settings
 			if (prop.PropertyType == typeof(string)) return Encrypted ? SettingType.EncryptedString : SettingType.String;
 			if (prop.PropertyType == typeof(bool)) return SettingType.Boolean;
 			if (prop.PropertyType == typeof(Guid)) return SettingType.Guid;
-			if (prop.PropertyType == typeof(FontFamily)) return SettingType.FontFamily;
-			if (prop.PropertyType.IsEnum) return SettingType.Enum;
+			if (prop.PropertyType.GetTypeInfo().IsEnum) return SettingType.Enum;
 			if (typeof(IRemotePlugin).IsAssignableFrom(prop.PropertyType)) return SettingType.RemoteProvider;
 
 			throw new NotSupportedException("Setting of type " + prop.PropertyType + " not supported");

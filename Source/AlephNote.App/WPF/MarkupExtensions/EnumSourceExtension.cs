@@ -46,12 +46,21 @@ namespace AlephNote.WPF.MarkupExtensions
 
 		private string GetDescription(object enumValue)
 		{
-			var descriptionAttribute = _enumType
+			var descriptionAttribute1 = _enumType
 										.GetField(enumValue.ToString())
 										.GetCustomAttributes(typeof(DescriptionAttribute), false)
 										.FirstOrDefault() as DescriptionAttribute;
+		
+			if (descriptionAttribute1 != null) return descriptionAttribute1.Description;
+			
+			var descriptionAttribute2 = _enumType
+										.GetField(enumValue.ToString())
+										.GetCustomAttributes(typeof(EnumDescriptorAttribute), false)
+										.FirstOrDefault() as EnumDescriptorAttribute;
 
-			return (descriptionAttribute != null) ? descriptionAttribute.Description : enumValue.ToString();
+			if (descriptionAttribute2 != null) return descriptionAttribute2.Description;
+
+			return enumValue.ToString();
 		}
 
 	}

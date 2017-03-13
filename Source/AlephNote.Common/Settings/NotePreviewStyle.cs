@@ -1,16 +1,16 @@
-﻿using System.ComponentModel;
+﻿using AlephNote.Common.Settings;
 
 namespace AlephNote.Settings
 {
 	public enum NotePreviewStyle
 	{
-		[Description("Simple one line")]
+		[EnumDescriptor("Simple one line")]
 		Simple,
 
-		[Description("One line with date")]
+		[EnumDescriptor("One line with date")]
 		Extended,
 
-		[Description("Multiple lines with preview")]
+		[EnumDescriptor("Multiple lines with preview")]
 		FullPreview,
 	}
 }

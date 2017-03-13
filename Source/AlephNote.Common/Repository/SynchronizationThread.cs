@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using AlephNote.Common.Repository;
 
 namespace AlephNote.Repository
 {
@@ -16,18 +17,21 @@ namespace AlephNote.Repository
 		private static readonly object _syncobj = new object();
 		private Thread thread;
 
-		private readonly SynchronizationDispatcher dispatcher = new SynchronizationDispatcher();
+		private readonly IAlephDispatcher dispatcher;
+		private readonly IAlephLogger _log;
 
 		private bool prioritysync = false;
 		private bool cancel = false;
 		private bool running = false;
 		private bool isSyncing = false;
 		
-		public SynchronizationThread(NoteRepository repository, ISynchronizationFeedback synclistener, ConflictResolutionStrategy strat)
+		public SynchronizationThread(NoteRepository repository, ISynchronizationFeedback synclistener, ConflictResolutionStrategy strat, IAlephLogger log, IAlephDispatcher disp)
 		{
 			repo = repository;
 			listener = synclistener;
 			conflictStrategy = strat;
+			_log = log;
+			dispatcher = disp;
 		}
 
 		public void Start(int syncdelay)
@@ -56,8 +60,8 @@ namespace AlephNote.Repository
 				var tick = Environment.TickCount;
 				do
 				{
-					if (cancel) { running = false; App.Logger.Info("Sync", "Thread cancelled"); return; }
-					if (prioritysync) { prioritysync = false; App.Logger.Info("Sync", "Thread ffwd (priority sync)"); break; }
+					if (cancel) { running = false; _log.Info("Sync", "Thread cancelled"); return; }
+					if (prioritysync) { prioritysync = false; _log.Info("Sync", "Thread ffwd (priority sync)"); break; }
 					
 					Thread.Sleep(333);
 
@@ -67,7 +71,7 @@ namespace AlephNote.Repository
 
 		private void DoSync()
 		{
-			App.Logger.Info("Sync", "Starting remote synchronization");
+			_log.Info("Sync", "Starting remote synchronization");
 
 			List<Tuple<string, Exception>> errors = new List<Tuple<string, Exception>>();
 
@@ -85,14 +89,14 @@ namespace AlephNote.Repository
 					notesToDelete = repo.LocalDeletedNotes.ToList();
 				});
 
-				App.Logger.Info("Sync", string.Format("Found {0} alive notes and {1} deleted notes", allNotes.Count, notesToDelete.Count));
+				_log.Info("Sync", string.Format("Found {0} alive notes and {1} deleted notes", allNotes.Count, notesToDelete.Count));
 
 				repo.Connection.StartSync(data, allNotes.Select(p => p.Item2).ToList(), notesToDelete);
 				{
 					var notesToUpload = allNotes.Where(p => repo.Connection.NeedsUpload(p.Item2)).ToList();
 					var notesToDownload = allNotes.Where(p => repo.Connection.NeedsDownload(p.Item2)).ToList();
 
-					App.Logger.Info("Sync", string.Format("Found {0} notes for upload and {1} notes for download", notesToUpload.Count, notesToDownload.Count));
+					_log.Info("Sync", string.Format("Found {0} notes for upload and {1} notes for download", notesToUpload.Count, notesToDownload.Count));
 
 					UploadNotes(notesToUpload, ref errors);
 
@@ -120,7 +124,7 @@ namespace AlephNote.Repository
 				dispatcher.BeginInvoke(() => listener.SyncSuccess(DateTimeOffset.Now));
 			}
 
-			App.Logger.Info("Sync", "Finished remote synchronization");
+			_log.Info("Sync", "Finished remote synchronization");
 		}
 
 		private void UploadNotes(List<Tuple<INote, INote>> notesToUpload, ref List<Tuple<string, Exception>> errors)
@@ -130,7 +134,7 @@ namespace AlephNote.Repository
 				var realnote = notetuple.Item1;
 				var clonenote = notetuple.Item2;
 
-				App.Logger.Info("Sync", string.Format("Upload note {0}", clonenote.GetUniqueName()));
+				_log.Info("Sync", string.Format("Upload note {0}", clonenote.GetUniqueName()));
 
 				try
 				{
@@ -171,7 +175,7 @@ namespace AlephNote.Repository
 							break;
 
 						case RemoteUploadResult.Conflict:
-							App.Logger.Warn("Sync", "Uploading note " + clonenote.GetUniqueName() + " resulted in conflict");
+							_log.Warn("Sync", "Uploading note " + clonenote.GetUniqueName() + " resulted in conflict");
 							ResolveUploadConflict(realnote, clonenote, conflictnote);
 							break;
 
@@ -184,7 +188,7 @@ namespace AlephNote.Repository
 				{
 					var message = string.Format("Could not upload note '{2}' ({0}) cause of {1}", clonenote.GetUniqueName(), e.Message, clonenote.Title);
 
-					App.Logger.Error("Sync", message, e);
+					_log.Error("Sync", message, e);
 					errors.Add(Tuple.Create(message, e));
 				}
 			}
@@ -206,11 +210,11 @@ namespace AlephNote.Repository
 							realnote.ResetRemoteDirty();
 							repo.SaveNote(realnote);
 
-							App.Logger.Warn("Sync", "Resolve conflict: UseClientVersion");
+							_log.Warn("Sync", "Resolve conflict: UseClientVersion");
 						}
 						else
 						{
-							App.Logger.Warn("Sync", "Resolve conflict: UseClientVersion (do nothing cause note changed locally)");
+							_log.Warn("Sync", "Resolve conflict: UseClientVersion (do nothing cause note changed locally)");
 						}
 					});
 					break;
@@ -223,7 +227,7 @@ namespace AlephNote.Repository
 						realnote.ResetRemoteDirty();
 						repo.SaveNote(realnote);
 
-						App.Logger.Warn("Sync", "Resolve conflict: UseServerVersion");
+						_log.Warn("Sync", "Resolve conflict: UseServerVersion");
 					});
 					break;
 				case ConflictResolutionStrategy.UseClientCreateConflictFile:
@@ -242,11 +246,11 @@ namespace AlephNote.Repository
 							conflict.IsConflictNote = true;
 							repo.SaveNote(conflict);
 
-							App.Logger.Warn("Sync", "Resolve conflict: UseClientCreateConflictFile (conflictnote: " + conflict.GetUniqueName() + ")");
+							_log.Warn("Sync", "Resolve conflict: UseClientCreateConflictFile (conflictnote: " + conflict.GetUniqueName() + ")");
 						}
 						else
 						{
-							App.Logger.Warn("Sync", "Resolve conflict: UseClientCreateConflictFile");
+							_log.Warn("Sync", "Resolve conflict: UseClientCreateConflictFile");
 						}
 					});
 					break;
@@ -266,7 +270,7 @@ namespace AlephNote.Repository
 						conflict.IsConflictNote = true;
 						repo.SaveNote(conflict);
 
-						App.Logger.Warn("Sync", "Resolve conflict: UseServerCreateConflictFile (conflictnote: " + conflict.GetUniqueName() + ")");
+						_log.Warn("Sync", "Resolve conflict: UseServerCreateConflictFile (conflictnote: " + conflict.GetUniqueName() + ")");
 					});
 					break;
 				default:
@@ -281,13 +285,13 @@ namespace AlephNote.Repository
 				var realnote = noteuple.Item1;
 				var clonenote = noteuple.Item2;
 
-				App.Logger.Info("Sync", string.Format("Download note {0}", clonenote.GetUniqueName()));
+				_log.Info("Sync", string.Format("Download note {0}", clonenote.GetUniqueName()));
 
 				try
 				{
 					if (!clonenote.IsLocalSaved)
 					{
-						App.Logger.Warn("Sync", "Downloading note skipped (unsaved changes)");
+						_log.Warn("Sync", "Downloading note skipped (unsaved changes)");
 						continue;
 					}
 
@@ -296,10 +300,10 @@ namespace AlephNote.Repository
 					switch (result)
 					{
 						case RemoteDownloadResult.UpToDate:
-							App.Logger.Info("Sync", "Downloading note -> UpToDate");
+							_log.Info("Sync", "Downloading note -> UpToDate");
 							if (realnote.ModificationDate != clonenote.ModificationDate)
 							{
-								App.Logger.Info("Sync", "Downloading note -> UpToDate (but update local mdate)");
+								_log.Info("Sync", "Downloading note -> UpToDate (but update local mdate)");
 								dispatcher.Invoke(() =>
 								{
 									if (realnote.IsLocalSaved)
@@ -313,7 +317,7 @@ namespace AlephNote.Repository
 							break;
 
 						case RemoteDownloadResult.Updated:
-							App.Logger.Info("Sync", "Downloading note -> Updated");
+							_log.Info("Sync", "Downloading note -> Updated");
 							dispatcher.Invoke(() =>
 							{
 								if (realnote.IsLocalSaved)
@@ -326,13 +330,13 @@ namespace AlephNote.Repository
 								}
 								else
 								{
-									App.Logger.Info("Sync", "Downloading (->Updated) skipped (unsaved local changes)");
+									_log.Info("Sync", "Downloading (->Updated) skipped (unsaved local changes)");
 								}
 							});
 							break;
 
 						case RemoteDownloadResult.DeletedOnRemote:
-							App.Logger.Info("Sync", "Downloading note -> DeletedOnRemote");
+							_log.Info("Sync", "Downloading note -> DeletedOnRemote");
 							dispatcher.Invoke(() =>
 							{
 								if (realnote.IsLocalSaved)
@@ -341,7 +345,7 @@ namespace AlephNote.Repository
 								}
 								else
 								{
-									App.Logger.Info("Sync", "Downloading (->DeletedOnRemote) skipped (unsaved local changes)");
+									_log.Info("Sync", "Downloading (->DeletedOnRemote) skipped (unsaved local changes)");
 								}
 							});
 							break;
@@ -353,7 +357,7 @@ namespace AlephNote.Repository
 				catch (Exception e)
 				{
 					var message = string.Format("Could not synchronize note '{2}' ({0}) cause of {1}", clonenote.GetUniqueName(), e.Message, clonenote.Title);
-					App.Logger.Error("Sync", message, e);
+					_log.Error("Sync", message, e);
 					errors.Add(Tuple.Create(message, e));
 				}
 			}
@@ -365,7 +369,7 @@ namespace AlephNote.Repository
 			{
 				var note = xnote;
 
-				App.Logger.Info("Sync", string.Format("Delete note {0}", note.GetUniqueName()));
+				_log.Info("Sync", string.Format("Delete note {0}", note.GetUniqueName()));
 
 				try
 				{
@@ -375,7 +379,7 @@ namespace AlephNote.Repository
 				catch (Exception e)
 				{
 					var message = string.Format("Could not delete note {2} ({0}) on remote cause of {1}", note.GetUniqueName(), e.Message, note.Title);
-					App.Logger.Error("Sync", message, e);
+					_log.Error("Sync", message, e);
 					errors.Add(Tuple.Create(message, e));
 				}
 			}
@@ -389,7 +393,7 @@ namespace AlephNote.Repository
 			{
 				var noteid = xnoteid;
 
-				App.Logger.Info("Sync", string.Format("Download new note {{id:'{0}'}}", noteid));
+				_log.Info("Sync", string.Format("Download new note {{id:'{0}'}}", noteid));
 
 				try
 				{
@@ -403,13 +407,13 @@ namespace AlephNote.Repository
 					}
 					else
 					{
-						App.Logger.Warn("Sync", string.Format("Download new note {{id:'{0}'}} returned false", noteid));
+						_log.Warn("Sync", string.Format("Download new note {{id:'{0}'}} returned false", noteid));
 					}
 				}
 				catch (Exception e)
 				{
 					var message = string.Format("Could not download new note '{0}' on remote cause of {1}", noteid, e.Message);
-					App.Logger.Error("Sync", message, e);
+					_log.Error("Sync", message, e);
 					errors.Add(Tuple.Create(message, e));
 				}
 			}
@@ -417,17 +421,17 @@ namespace AlephNote.Repository
 		
 		public void SyncNowAsync()
 		{
-			App.Logger.Info("Sync", "Requesting priorty sync");
+			_log.Info("Sync", "Requesting priorty sync");
 			prioritysync = true;
 		}
 
 		public void StopAsync()
 		{
-			App.Logger.Info("Sync", "Requesting stop");
+			_log.Info("Sync", "Requesting stop");
 
 			if (isSyncing)
 			{
-				App.Logger.Info("Sync", "Requesting stop (early exit due to isSyncing)");
+				_log.Info("Sync", "Requesting stop (early exit due to isSyncing)");
 
 				cancel = true;
 				return;
@@ -439,32 +443,32 @@ namespace AlephNote.Repository
 			{
 				if (!running)
 				{
-					App.Logger.Info("Sync", "Requesting stop - finished waiting (running=false)");
+					_log.Info("Sync", "Requesting stop - finished waiting (running=false)");
 					return;
 				}
 
 				if (isSyncing)
 				{
-					App.Logger.Info("Sync", "Requesting stop - abort waiting (isSyncing=true)");
+					_log.Info("Sync", "Requesting stop - abort waiting (isSyncing=true)");
 					cancel = true;
 
 					for (int j = 0; j < 300; j++)
 					{
 						if (!isSyncing)
 						{
-							App.Logger.Info("Sync", "Requesting sync&stop finished (isSyncing=false)");
+							_log.Info("Sync", "Requesting sync&stop finished (isSyncing=false)");
 							return;
 						}
 						SleepDoEvents(100);
 					}
-					App.Logger.Error("Sync", "Requesting sync&stop failed after timeout (waiting on isSyncing)");
+					_log.Error("Sync", "Requesting sync&stop failed after timeout (waiting on isSyncing)");
 					throw new Exception("Background thread timeout after 30sec");
 				}
 
 				Thread.Sleep(100);
 			}
 
-			App.Logger.Error("Sync", "Requesting stop failed after timeout");
+			_log.Error("Sync", "Requesting stop failed after timeout");
 			throw new Exception("Background thread timeout after 10sec");
 		}
 
@@ -472,23 +476,23 @@ namespace AlephNote.Repository
 		{
 			using (dispatcher.EnableCustomDispatcher())
 			{
-				App.Logger.Info("Sync", "Requesting sync&stop");
+				_log.Info("Sync", "Requesting sync&stop");
 
 				if (isSyncing)
 				{
-					App.Logger.Info("Sync", "Requesting sync&stop (early exit due to isSyncing)");
+					_log.Info("Sync", "Requesting sync&stop (early exit due to isSyncing)");
 					cancel = true;
 
 					for (int j = 0; j < 300; j++)
 					{
 						if (!isSyncing)
 						{
-							App.Logger.Info("Sync", "Requesting sync&stop finished (isSyncing=false)");
+							_log.Info("Sync", "Requesting sync&stop finished (isSyncing=false)");
 							return;
 						}
 						SleepDoEvents(100);
 					}
-					App.Logger.Error("Sync", "Requesting sync&stop failed after timeout (waiting on isSyncing)");
+					_log.Error("Sync", "Requesting sync&stop failed after timeout (waiting on isSyncing)");
 					throw new Exception("Background thread timeout after 30sec");
 				}
 
@@ -497,32 +501,32 @@ namespace AlephNote.Repository
 				{
 					if (!running)
 					{
-						App.Logger.Info("Sync", "Requesting sync&stop stop waiting (running=false)");
+						_log.Info("Sync", "Requesting sync&stop stop waiting (running=false)");
 						return;
 					}
 
 					if (!prioritysync)
 					{
-						App.Logger.Info("Sync", "Requesting sync&stop stop waiting (prioritysync=false)");
+						_log.Info("Sync", "Requesting sync&stop stop waiting (prioritysync=false)");
 						cancel = true;
 					
 						for (int j = 0; j < 300; j++)
 						{
 							if (!isSyncing)
 							{
-								App.Logger.Info("Sync", "Requesting sync&stop finished (isSyncing=false)");
+								_log.Info("Sync", "Requesting sync&stop finished (isSyncing=false)");
 								return;
 							}
 							SleepDoEvents(100);
 						}
-						App.Logger.Error("Sync", "Requesting sync&stop failed after timeout (waiting on isSyncing)");
+						_log.Error("Sync", "Requesting sync&stop failed after timeout (waiting on isSyncing)");
 						throw new Exception("Background thread timeout after 30sec");
 					}
 
 					SleepDoEvents(100);
 				}
 
-				App.Logger.Error("Sync", "Requesting sync&stop failed after timeout (waiting on prioritysync)");
+				_log.Error("Sync", "Requesting sync&stop failed after timeout (waiting on prioritysync)");
 				throw new Exception("Background thread timeout after 10sec");
 			}
 		}

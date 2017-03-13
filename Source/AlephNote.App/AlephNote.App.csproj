@@ -80,6 +80,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Impl\SynchronizationDispatcher.cs" />
     <Compile Include="Log\EventLogger.cs" />
     <Compile Include="Log\LogEvent.cs" />
     <Compile Include="Log\LogEventType.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="WPF\Converter\CreatePluginSettingsGrid.cs" />
     <Compile Include="WPF\Converter\BoolToVisibility.cs" />
     <Compile Include="WPF\Converter\SmartDateTimeToDisplay.cs" />
+    <Compile Include="WPF\Extensions\CollectionViewExtension.cs" />
     <Compile Include="WPF\Extensions\DependencyObjectExtension.cs" />
     <Compile Include="WPF\MarkupExtensions\EnumSourceExtension.cs" />
     <Compile Include="WPF\MarkupExtensions\EventBindingExtension.cs" />

@@ -1,19 +1,19 @@
-﻿using System.ComponentModel;
+﻿using AlephNote.Common.Settings;
 
 namespace AlephNote.Settings
 {
 	public enum FontModifier
 	{
-		[Description("Normal")]
+		[EnumDescriptor("Normal")]
 		Normal,
 
-		[Description("Bold")]
+		[EnumDescriptor("Bold")]
 		Bold,
 
-		[Description("Italic")]
+		[EnumDescriptor("Italic")]
 		Italic,
 
-		[Description("Bold Italic")]
+		[EnumDescriptor("Bold Italic")]
 		BoldItalic,
 	}
 }

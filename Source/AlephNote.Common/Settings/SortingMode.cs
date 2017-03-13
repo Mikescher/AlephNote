@@ -1,20 +1,19 @@
-﻿
-using System.ComponentModel;
+﻿using AlephNote.Common.Settings;
 
 namespace AlephNote.Settings
 {
 	public enum SortingMode
 	{
-		[Description("None")]
+		[EnumDescriptor("None")]
 		None,
 
-		[Description("Title")]
+		[EnumDescriptor("Title")]
 		ByName,
 
-		[Description("Creation date")]
+		[EnumDescriptor("Creation date")]
 		ByCreationDate,
 
-		[Description("Last modified date")]
+		[EnumDescriptor("Last modified date")]
 		ByModificationDate,
 	}
 }
