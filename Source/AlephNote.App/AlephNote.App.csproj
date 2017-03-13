@@ -80,6 +80,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Impl\PluginManager.cs" />
+    <Compile Include="Impl\ProxyFactory.cs" />
     <Compile Include="Impl\SynchronizationDispatcher.cs" />
     <Compile Include="Log\EventLogger.cs" />
     <Compile Include="Log\LogEvent.cs" />

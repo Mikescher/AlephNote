@@ -6,19 +6,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Loader;
 
 namespace AlephNote.Plugins
 {
-	public static class PluginManager
+	public class PluginManager : IPluginManager
 	{
 		private static HashSet<Guid> _pluginIDs = new HashSet<Guid>(); 
 		private static List<IRemotePlugin> _provider = new List<IRemotePlugin>();
 		private static IAlephLogger _logger;
 		public static IEnumerable<IRemotePlugin> LoadedPlugins { get { return _provider; } }
-		
 
-		public static void LoadPlugins(string baseDirectory, IAlephLogger logger)
+		public void LoadPlugins(string baseDirectory, IAlephLogger logger)
 		{
 			_provider = new List<IRemotePlugin>();
 			_logger = logger;
@@ -45,24 +43,25 @@ namespace AlephNote.Plugins
 			}
 		}
 
-		private static void LoadPluginsFromAssembly(string path)
+		private void LoadPluginsFromAssembly(string path)
 		{
-			Assembly assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
+			AssemblyName an = AssemblyName.GetAssemblyName(path);
+			Assembly assembly = Assembly.Load(an);
 
-			if (assembly == null) throw new Exception("Could not load assembly '" + path + "'");
+			if (assembly == null) throw new Exception("Could not load assembly '" + an.FullName + "'");
 
 			Type[] types = assembly.GetTypes();
 			foreach (Type type in types)
 			{
-				if (type.GetTypeInfo().IsInterface || type.GetTypeInfo().IsAbstract) continue;
+				if (type.IsInterface || type.IsAbstract) continue;
 
-				if (type.GetTypeInfo().GetInterface(typeof(IRemotePlugin).FullName) != null)
+				if (type.GetInterface(typeof(IRemotePlugin).FullName) != null)
 				{
 					IRemotePlugin instance = (IRemotePlugin)Activator.CreateInstance(type);
 
 					if (instance == null) throw new Exception("Could not instantiate IAlephNotePlugin '" + type.FullName + "'");
 
-					instance.Init(_logger);
+					instance.Init(App.Logger);
 
 #if !DEBUG
 					if (instance.GetVersion().Revision != 0)
@@ -74,18 +73,18 @@ namespace AlephNote.Plugins
 
 					if (_pluginIDs.Add(instance.GetUniqueID()))
 					{
-						_logger.Info("PluginManager", string.Format("Loaded plugin {0} in version {1} ({2})", instance.DisplayTitleShort, instance.GetVersion(), instance.GetUniqueID()));
+						App.Logger.Info("PluginManager", string.Format("Loaded plugin {0} in version {1} ({2})", instance.DisplayTitleShort, instance.GetVersion(), instance.GetUniqueID()));
 						_provider.Add(instance);
 					}
 					else
 					{
-						_logger.Error("PluginManager", string.Format("Multiple plugins with the same ID ({0}) found", instance.GetUniqueID()));
+						App.Logger.Error("PluginManager", string.Format("Multiple plugins with the same ID ({0}) found", instance.GetUniqueID()));
 					}
 				}
 			}
 		}
 
-		public static IRemotePlugin GetDefaultPlugin()
+		public IRemotePlugin GetDefaultPlugin()
 		{
 			foreach (var plugin in LoadedPlugins)
 			{
@@ -95,7 +94,7 @@ namespace AlephNote.Plugins
 			return LoadedPlugins.First();
 		}
 
-		public static IRemotePlugin GetPlugin(Guid uuid)
+		public IRemotePlugin GetPlugin(Guid uuid)
 		{
 			return LoadedPlugins.FirstOrDefault(p => p.GetUniqueID() == uuid);
 		}

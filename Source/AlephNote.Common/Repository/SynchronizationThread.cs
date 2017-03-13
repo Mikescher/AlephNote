@@ -533,7 +533,7 @@ namespace AlephNote.Repository
 
 		public void Kill()
 		{
-			if (thread != null) thread.Abort();
+			//if (thread != null) thread.Abort(); //TODO
 		}
 
 		private void SleepDoEvents(int sleep)

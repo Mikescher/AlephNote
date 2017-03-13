@@ -8,7 +8,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using AlephNote.Common.MVVM;
+using AlephNote.Common.Repository;
 
 namespace AlephNote.Repository
 {
@@ -22,7 +22,7 @@ namespace AlephNote.Repository
 		private readonly AppSettings appconfig;
 		private readonly SynchronizationThread thread;
 		private readonly ISynchronizationFeedback listener;
-		private readonly IDispatcher dispatcher;
+		private readonly IAlephDispatcher dispatcher;
 		private readonly IAlephLogger logger;
 
 		public readonly List<INote> LocalDeletedNotes = new List<INote>(); // deleted local but not on remote
@@ -37,7 +37,7 @@ namespace AlephNote.Repository
 
 		public string ConnectionName { get { return provider.DisplayTitleShort; } }
 
-		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, IRemotePlugin prov, IRemoteStorageConfiguration config, IAlephLogger log, IDispatcher disp)
+		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, IRemotePlugin prov, IRemoteStorageConfiguration config, IAlephLogger log, IAlephDispatcher disp)
 		{
 			pathLocalFolder = Path.Combine(path, prov.GetUniqueID().ToString("B"), FilenameHelper.ConvertStringForFilename(config.GetUniqueName()));
 			pathLocalData = Path.Combine(path, prov.GetUniqueID().ToString("B"), FilenameHelper.ConvertStringForFilename(config.GetUniqueName()) + ".xml");
@@ -48,7 +48,7 @@ namespace AlephNote.Repository
 			listener = fb;
 			logger = log;
 			dispatcher = disp;
-			thread = new SynchronizationThread(this, fb, cfg.ConflictResolution);
+			thread = new SynchronizationThread(this, fb, cfg.ConflictResolution, log, dispatcher);
 
 			invSaveNotesLocal = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SaveAllDirtyNotes),  1 * 1000,  1 * 60 * 1000);
 			invSaveNotesRemote = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SyncNow),          30 * 1000, 15 * 60 * 1000);

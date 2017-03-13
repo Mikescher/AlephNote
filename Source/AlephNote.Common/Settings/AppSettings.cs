@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Xml.Linq;
+using AlephNote.Common.Plugins;
 
 namespace AlephNote.Settings
 {
@@ -199,9 +200,9 @@ namespace AlephNote.Settings
 		public static AppSettings CreateEmpty(string path)
 		{
 			var r = new AppSettings(path);
-			r._noteProvider = PluginManager.GetDefaultPlugin();
+			r._noteProvider = PluginManagerSingleton.Inst.GetDefaultPlugin();
 
-			foreach (var plugin in PluginManager.LoadedPlugins)
+			foreach (var plugin in PluginManagerSingleton.Inst.LoadedPlugins)
 			{
 				if (!r.PluginSettings.ContainsKey(plugin.GetUniqueID()))
 					r.PluginSettings[plugin.GetUniqueID()] = plugin.CreateEmptyRemoteStorageConfiguration();
@@ -258,7 +259,7 @@ namespace AlephNote.Settings
 			foreach (var pluginNode in root.Descendants("Plugin"))
 			{
 				var id = pluginNode.GuidAttribute("uuid");
-				var plugin = PluginManager.GetPlugin(id);
+				var plugin = PluginManagerSingleton.Inst.GetPlugin(id);
 				if (plugin != null)
 				{
 					var cfg = plugin.CreateEmptyRemoteStorageConfiguration();
@@ -267,7 +268,7 @@ namespace AlephNote.Settings
 				}
 			}
 
-			foreach (var plugin in PluginManager.LoadedPlugins)
+			foreach (var plugin in PluginManagerSingleton.Inst.LoadedPlugins)
 			{
 				if (!r.PluginSettings.ContainsKey(plugin.GetUniqueID()))
 					r.PluginSettings[plugin.GetUniqueID()] = plugin.CreateEmptyRemoteStorageConfiguration();
@@ -318,19 +319,16 @@ namespace AlephNote.Settings
 			{
 				if (string.IsNullOrWhiteSpace(ProxyUsername) && string.IsNullOrWhiteSpace(ProxyPassword))
 				{
-					return new WebProxy(ProxyHost, ProxyPort ?? 443);
+					return PluginManagerSingleton.Inst.GetProxyFactory().Build(ProxyHost, ProxyPort ?? 443);
 				}
 				else
 				{
-					return new WebProxy(ProxyHost, ProxyPort ?? 443)
-					{
-						Credentials = new NetworkCredential(ProxyUsername, ProxyPassword)
-					};
+					return PluginManagerSingleton.Inst.GetProxyFactory().Build(ProxyHost, ProxyPort ?? 443, ProxyUsername, ProxyPassword);
 				}
 			}
 			else
 			{
-				return new WebProxy();
+				return PluginManagerSingleton.Inst.GetProxyFactory().Build();
 			}
 		}
 

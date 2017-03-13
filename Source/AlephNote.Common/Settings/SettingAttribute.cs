@@ -5,8 +5,8 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Windows.Media;
 using System.Xml.Linq;
+using AlephNote.Common.Plugins;
 
 namespace AlephNote.Settings
 {
@@ -91,7 +91,7 @@ namespace AlephNote.Settings
 					prop.SetValue(data, XHelper.GetChildValue(xroot, prop.Name, prop.GetValue(data), prop.PropertyType));
 					break;
 				case SettingType.RemoteProvider:
-					prop.SetValue(data, PluginManager.GetPlugin(XHelper.GetChildValue(xroot, prop.Name, PluginManager.GetDefaultPlugin().GetUniqueID())));
+					prop.SetValue(data, PluginManagerSingleton.Inst.GetPlugin(XHelper.GetChildValue(xroot, prop.Name, PluginManagerSingleton.Inst.GetDefaultPlugin().GetUniqueID())));
 					break;
 				default:
 					throw new ArgumentOutOfRangeException("ptype", ptype, null);
