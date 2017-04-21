@@ -10,14 +10,8 @@
     <FileVersion>0.0.0.2</FileVersion>
 
     <DefineConstants>NETFX_CORE</DefineConstants>
-  </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <OutputPath>..\..\Bin\$(ConfigurationName)\Windows\Plugins\</OutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <OutputPath>..\..\Bin\$(ConfigurationName)\Core\Plugins\</OutputPath>
+    <OutDir>..\..\..\Bin\$(Configuration)\$(TargetFramework)\Plugins\</OutDir>
   </PropertyGroup>
 
   <ItemGroup>

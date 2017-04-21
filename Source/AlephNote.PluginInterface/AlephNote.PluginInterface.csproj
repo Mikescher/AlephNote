@@ -1,32 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net46;netstandard1.6</TargetFrameworks>
-    
-    <AssemblyName>AlephNote.PluginInterface</AssemblyName>
-    <PackageId>AlephNote.PluginInterface</PackageId>
-  </PropertyGroup>
-
-	<PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-		<OutputPath>..\..\Bin\$(ConfigurationName)\Windows\</OutputPath>
-	</PropertyGroup>
-
-	<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-		<OutputPath>..\..\Bin\$(ConfigurationName)\Core\</OutputPath>
+	<PropertyGroup>
+		<TargetFrameworks>net46;netstandard1.6</TargetFrameworks>
+		
+		<AssemblyName>AlephNote.PluginInterface</AssemblyName>
+		<PackageId>AlephNote.PluginInterface</PackageId>
+		
+		<OutDir>..\..\Bin\$(Configuration)\$(TargetFramework)\</OutDir>
 	</PropertyGroup>
 
 	<ItemGroup>
-    <PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
+		<PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
 		<PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.0.0" />
-  </ItemGroup>
+	</ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Util\" />
-  </ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
+		<Reference Include="System" />
+		<Reference Include="Microsoft.CSharp" />
+	</ItemGroup>
 
 </Project>
