@@ -162,14 +162,12 @@ namespace AlephNote
 			byte[] cipherText;
 			byte[] iv;
 
-			using (var aes = new AesManaged
+			using (var aes = Aes.Create())
 			{
-				KeySize = KeyBitSize,
-				BlockSize = BlockBitSize,
-				Mode = CipherMode.CBC,
-				Padding = PaddingMode.PKCS7
-			})
-			{
+				aes.KeySize = KeyBitSize;
+				aes.BlockSize = BlockBitSize;
+				aes.Mode = CipherMode.CBC;
+				aes.Padding = PaddingMode.PKCS7;
 
 				//Use random IV
 				aes.GenerateIV();
@@ -258,14 +256,12 @@ namespace AlephNote
 				if (compare != 0)
 					return null;
 
-				using (var aes = new AesManaged
+				using (var aes = Aes.Create())
 				{
-					KeySize = KeyBitSize,
-					BlockSize = BlockBitSize,
-					Mode = CipherMode.CBC,
-					Padding = PaddingMode.PKCS7
-				})
-				{
+					aes.KeySize = KeyBitSize;
+					aes.BlockSize = BlockBitSize;
+					aes.Mode = CipherMode.CBC;
+					aes.Padding = PaddingMode.PKCS7;
 
 					//Grab IV from message
 					var iv = new byte[ivLength];

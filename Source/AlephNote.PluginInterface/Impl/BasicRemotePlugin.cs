@@ -1,15 +1,10 @@
-﻿using AlephNote.PluginInterface;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Threading.Tasks;
 
-namespace AlephNote.Common
+namespace AlephNote.PluginInterface.Impl
 {
-
 	public abstract class BasicRemotePlugin : IRemotePlugin
 	{
 		private readonly Guid uuid;

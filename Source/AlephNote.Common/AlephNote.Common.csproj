@@ -6,15 +6,21 @@
     <AssemblyName>AlephNote.Common</AssemblyName>
     <PackageId>AlephNote.Common</PackageId>
     
-    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
+    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
     
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+	</PropertyGroup>
 
-    <OutputPath>..\..\Bin\$(Configuration)\</OutputPath>
-  </PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
+		<OutputPath>..\..\Bin\$(ConfigurationName)\Windows\</OutputPath>
+	</PropertyGroup>
+	
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+		<OutputPath>..\..\Bin\$(ConfigurationName)\Core\</OutputPath>
+	</PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj" />

@@ -8,6 +8,6 @@ namespace AlephNote.WPF.Windows
 	{
 		public string Appversion { get { return App.AppVersionProperty; } }
 
-		public IEnumerable<IRemotePlugin> AvailableProvider { get { return PluginManager.LoadedPlugins; } }
+		public IEnumerable<IRemotePlugin> AvailableProvider { get { return PluginManager.Inst.LoadedPlugins; } }
 	}
 }

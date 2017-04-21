@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlephNote.Common.Repository;
+using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Windows;

@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AlephNote.Plugins.Filesystem</RootNamespace>
     <AssemblyName>FilesystemPlugin</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,6 +48,10 @@
     <Compile Include="FilesystemNote.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj">
+      <Project>{a43f999d-30fb-44f0-9cef-9e24a100651c}</Project>
+      <Name>AlephNote.PluginInterface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\External\CSharpUtils\CSharpUtils.csproj">
       <Project>{d661cd9f-8934-496d-8332-bc82aab77598}</Project>
       <Name>CSharpUtils</Name>

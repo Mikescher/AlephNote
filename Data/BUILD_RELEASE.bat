@@ -11,6 +11,7 @@ msbuild /nologo /t:Build /p:Configuration=Release /verbosity:m
 cd ..
 cd Bin
 cd Release
+cd Windows
 
 del /s *.pdb
 del /s *.vshost.exe
@@ -28,12 +29,13 @@ del /s *.xml
 cd ..
 cd ..
 cd ..
+cd ..
 
 if exist AlephNote.zip del AlephNote.zip
 
 cd Data
 
-7za.exe a .\..\AlephNote.zip .\..\Bin\Release\*
+7za.exe a .\..\AlephNote.zip .\..\Bin\Release\Windows\*
 
 @REM ================ FINISHED ================
 

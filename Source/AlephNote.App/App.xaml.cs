@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using AlephNote.Plugins;
+using AlephNote.Common.Plugins;
 
 namespace AlephNote
 {

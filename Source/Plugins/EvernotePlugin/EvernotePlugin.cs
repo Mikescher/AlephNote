@@ -2,6 +2,7 @@
 using System.Net;
 using System.Reflection;
 using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.Impl;
 
 namespace AlephNote.Plugins.Evernote
 {

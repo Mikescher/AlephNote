@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlephNote.WPF.Extensions;
+using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Windows;

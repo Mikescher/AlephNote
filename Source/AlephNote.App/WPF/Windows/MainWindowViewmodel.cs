@@ -45,7 +45,7 @@ namespace AlephNote.WPF.Windows
 		public NoteRepository Repository { get { return _repository; } private set { _repository = value; OnPropertyChanged(); OnExplicitPropertyChanged("NotesView"); } }
 
 		private INote _selectedNote;
-		public INote SelectedNote { get { return _selectedNote; } private set { if (_selectedNote != value) { _selectedNote = value; OnPropertyChanged(); SelectedNoteChanged();} } }
+		public INote SelectedNote { get { return _selectedNote; } set { if (_selectedNote != value) { _selectedNote = value; OnPropertyChanged(); SelectedNoteChanged();} } }
 
 		private DateTimeOffset? _lastSynchronized = null;
 
@@ -53,7 +53,7 @@ namespace AlephNote.WPF.Windows
 		public string LastSynchronizedText { get { return _lastSynchronizedText; } set { _lastSynchronizedText = value; OnPropertyChanged(); } }
 
 		private string _searchText = string.Empty;
-		public string SearchText { get { return _searchText; } private set { if (_searchText != value) { _searchText = value; OnPropertyChanged(); FilterNoteList();} } }
+		public string SearchText { get { return _searchText; } set { if (_searchText != value) { _searchText = value; OnPropertyChanged(); FilterNoteList();} } }
 
 		private WindowState _windowState = WindowState.Normal;
 		public WindowState WindowState { get { return _windowState; } set { _windowState = value; OnPropertyChanged(); } }
@@ -80,6 +80,7 @@ namespace AlephNote.WPF.Windows
 
 		public string FullVersion { get { return "AlephNote v" + App.APP_VERSION; } }
 
+		private readonly SynchronizationDispatcher dispatcher = new SynchronizationDispatcher();
 		private readonly DelayedCombiningInvoker _invSaveSettings;
 
 		private bool _preventScintillaFocus = false;
@@ -94,7 +95,7 @@ namespace AlephNote.WPF.Windows
 			_settings = settings;
 			_invSaveSettings = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SaveSettings)), 5 * 1000, 60 * 1000);
 
-			_repository = new NoteRepository(App.PATH_LOCALDB, this, settings, settings.NoteProvider, settings.PluginSettings[settings.NoteProvider.GetUniqueID()]);
+			_repository = new NoteRepository(App.PATH_LOCALDB, this, settings, settings.NoteProvider, settings.PluginSettings[settings.NoteProvider.GetUniqueID()], App.Logger, dispatcher);
 			Repository.Init();
 			
 			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
@@ -156,7 +157,7 @@ namespace AlephNote.WPF.Windows
 
 				if (reconnectRepo)
 				{
-					_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.NoteProvider, Settings.PluginSettings[Settings.NoteProvider.GetUniqueID()]);
+					_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.NoteProvider, Settings.PluginSettings[Settings.NoteProvider.GetUniqueID()], App.Logger, dispatcher);
 					_repository.Init();
 
 					OnExplicitPropertyChanged("Repository");
@@ -386,7 +387,7 @@ namespace AlephNote.WPF.Windows
 
 				Repository.DeleteLocalData();
 
-				_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.NoteProvider, Settings.PluginSettings[Settings.NoteProvider.GetUniqueID()]);
+				_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.NoteProvider, Settings.PluginSettings[Settings.NoteProvider.GetUniqueID()], App.Logger, dispatcher);
 				_repository.Init();
 
 				OnExplicitPropertyChanged("Repository");
@@ -476,7 +477,8 @@ namespace AlephNote.WPF.Windows
 		{
 			try
 			{
-				var r = GithubConnection.GetLatestRelease();
+				var ghc = new GithubConnection(App.Logger);
+				var r = ghc.GetLatestRelease();
 
 				if (r.Item1 > App.APP_VERSION)
 				{
@@ -498,7 +500,8 @@ namespace AlephNote.WPF.Windows
 		{
 			try
 			{
-				var r = GithubConnection.GetLatestRelease();
+				var ghc = new GithubConnection(App.Logger);
+				var r = ghc.GetLatestRelease();
 
 				if (r.Item1 > App.APP_VERSION)
 				{

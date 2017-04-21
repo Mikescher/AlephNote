@@ -1,4 +1,5 @@
 ﻿using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.Impl;
 using AlephNote.Plugins.Evernote.EDAM.NoteStore;
 using AlephNote.Plugins.Evernote.EDAM.Type;
 using AlephNote.Plugins.Evernote.Thrift.Protocol;

@@ -7,8 +7,17 @@
     <PackageId>AlephNote.PluginInterface</PackageId>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Xml.XDocument" Version="4.0.11" />
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
+		<OutputPath>..\..\Bin\$(ConfigurationName)\Windows\</OutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+		<OutputPath>..\..\Bin\$(ConfigurationName)\Core\</OutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+    <PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
+		<PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">

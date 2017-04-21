@@ -1,15 +1,11 @@
-﻿using AlephNote.PluginInterface;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Runtime.CompilerServices;
 
-namespace AlephNote.Common
+namespace AlephNote.PluginInterface.Impl
 {
 	public abstract class BasicNote : INotifyPropertyChanged, INote
 	{

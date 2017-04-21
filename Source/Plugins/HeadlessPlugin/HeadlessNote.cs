@@ -1,7 +1,7 @@
 ﻿using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.Impl;
 using MSHC.Lang.Collections;
 using MSHC.Serialization;
-using MSHC.Util.Helper;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
