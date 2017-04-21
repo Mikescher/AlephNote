@@ -1,8 +1,5 @@
 ﻿using System.Collections.Specialized;
 using AlephNote.PluginInterface;
-using MSHC.Lang.Collections;
-using MSHC.Serialization;
-using MSHC.Util.Helper;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using AlephNote.PluginInterface.Impl;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.StandardNote
 {

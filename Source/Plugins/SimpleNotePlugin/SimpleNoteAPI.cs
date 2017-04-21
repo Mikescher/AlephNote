@@ -1,8 +1,8 @@
 ﻿using AlephNote.PluginInterface;
-using MSHC.Lang.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.SimpleNote
 {

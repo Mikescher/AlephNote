@@ -53,11 +53,6 @@
       <Project>{a43f999d-30fb-44f0-9cef-9e24a100651c}</Project>
       <Name>AlephNote.PluginInterface</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\External\CSharpUtils\CSharpUtils.csproj">
-      <Project>{d661cd9f-8934-496d-8332-bc82aab77598}</Project>
-      <Name>CSharpUtils</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

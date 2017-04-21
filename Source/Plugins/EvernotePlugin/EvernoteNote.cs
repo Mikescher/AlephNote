@@ -1,12 +1,11 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
-using MSHC.Lang.Collections;
-using MSHC.Serialization;
 using System;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.Evernote
 {

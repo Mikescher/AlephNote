@@ -4,11 +4,11 @@ using AlephNote.Plugins.Evernote.EDAM.NoteStore;
 using AlephNote.Plugins.Evernote.EDAM.Type;
 using AlephNote.Plugins.Evernote.Thrift.Protocol;
 using AlephNote.Plugins.Evernote.Thrift.Transport;
-using MSHC.Lang.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.Evernote
 {

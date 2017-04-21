@@ -1,8 +1,8 @@
-﻿using MSHC.Math.Encryption;
-using System;
+﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.StandardNote
 {
