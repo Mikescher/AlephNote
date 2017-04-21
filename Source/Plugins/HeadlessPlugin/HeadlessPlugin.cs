@@ -8,7 +8,7 @@ namespace AlephNote.Plugins.Headless
 {
 	public class HeadlessPlugin : BasicRemotePlugin
 	{
-		public static readonly Version Version = GetInformationalVersion(Assembly.GetExecutingAssembly());
+		public static readonly Version Version = GetInformationalVersion(typeof(HeadlessPlugin).GetTypeInfo().Assembly);
 		public const string Name = "HeadlessPlugin";
 
 		public HeadlessPlugin() : base("No Remote", Version, Guid.Parse("37de6de1-26b0-41f5-b252-5e625d9ecfa3"))

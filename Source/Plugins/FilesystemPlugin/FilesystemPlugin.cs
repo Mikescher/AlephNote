@@ -8,7 +8,7 @@ namespace AlephNote.Plugins.Filesystem
 {
 	public class FilesystemPlugin : BasicRemotePlugin
 	{
-		public static readonly Version Version = GetInformationalVersion(Assembly.GetExecutingAssembly());
+		public static readonly Version Version = GetInformationalVersion(typeof(FilesystemPlugin).GetTypeInfo().Assembly);
 		public const string Name = "FilesystemPlugin";
 
 		private IAlephLogger logger;

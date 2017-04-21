@@ -8,7 +8,7 @@ namespace AlephNote.Plugins.StandardNote
 {
 	static class StandardNoteCrypt
 	{
-		private static readonly RandomNumberGenerator RNG = new RNGCryptoServiceProvider();
+		private static readonly RandomNumberGenerator RNG = RandomNumberGenerator.Create();
 
 		public class EncryptResult { public string item_key, enc_item_key, auth_hash, enc_content; }
 

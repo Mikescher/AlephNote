@@ -8,7 +8,7 @@ namespace AlephNote.Plugins.Nextcloud
 {
 	public class NextcloudPlugin : BasicRemotePlugin
 	{
-		public static readonly Version Version = GetInformationalVersion(Assembly.GetExecutingAssembly());
+		public static readonly Version Version = GetInformationalVersion(typeof(NextcloudPlugin).GetTypeInfo().Assembly);
 		public const string Name = "NextcloudPlugin";
 
 		private IAlephLogger _logger;

@@ -8,7 +8,7 @@ namespace AlephNote.Plugins.StandardNote
 {
 	public class StandardNotePlugin : BasicRemotePlugin
 	{
-		public static readonly Version Version = GetInformationalVersion(Assembly.GetExecutingAssembly());
+		public static readonly Version Version = GetInformationalVersion(typeof(StandardNotePlugin).GetTypeInfo().Assembly);
 		public const string Name = "StandardNotePlugin";
 
 		private IAlephLogger _logger;

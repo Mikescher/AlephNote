@@ -309,12 +309,12 @@ namespace AlephNote.Plugins.Evernote
 		{
 			if (seconds <= 0) return TIMESTAMP_ORIGIN;
 
-			return TIMESTAMP_ORIGIN.AddMilliseconds(seconds);
+			return TIMESTAMP_ORIGIN.AddSeconds(seconds);
 		}
 
 		private static long ConvertToEpochDate(DateTimeOffset offset)
 		{
-			return (long)TimeZoneInfo.ConvertTimeToUtc(offset.DateTime, TimeZoneInfo.Local).ToUniversalTime().Subtract(TIMESTAMP_ORIGIN.DateTime).TotalMilliseconds;
+			return (long)offset.DateTime.ToUniversalTime().Subtract(TIMESTAMP_ORIGIN.DateTime).TotalSeconds;
 		}
 	}
 }

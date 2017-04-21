@@ -221,14 +221,7 @@ namespace AlephNote.Plugins.Evernote.Thrift.Server
 
 		public override void Stop()
 		{
-			stop = true;
-			serverTransport.Close();
-			//clean up all the threads myself
-			workerThread.Abort();
-			foreach (Thread t in clientThreads)
-			{
-				t.Abort();
-			}
+			throw new NotImplementedException(); // can't abort Thread in Net Standard (?)
 		}
 	}
 }

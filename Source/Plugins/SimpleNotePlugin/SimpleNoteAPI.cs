@@ -160,7 +160,7 @@ namespace AlephNote.Plugins.SimpleNote
 
 		private static double ConvertToEpochDate(DateTimeOffset offset)
 		{
-			return TimeZoneInfo.ConvertTimeToUtc(offset.DateTime, TimeZoneInfo.Local).ToUniversalTime().Subtract(TIMESTAMP_ORIGIN.DateTime).TotalSeconds;
+			return offset.DateTime.ToUniversalTime().Subtract(TIMESTAMP_ORIGIN.DateTime).TotalSeconds;
 		}
 	}
 }
