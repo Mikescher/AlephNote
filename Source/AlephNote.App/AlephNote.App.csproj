@@ -1,40 +1,280 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<OutputType>Exe</OutputType>
-		<TargetFramework>net46</TargetFramework>
-
-		<AssemblyVersion>1.2.1.0</AssemblyVersion>
-		<FileVersion>1.2.1.0</FileVersion>
-
-		<Company>Mikescher.com</Company>
-		<Description>A Note client for multiple online or local backends</Description>
-		<AssemblyTitle>AlephNote (Windows)</AssemblyTitle>
-
-		<OutDir>..\..\Bin\$(Configuration)\$(TargetFramework)\</OutDir>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.0.8" />
-		<PackageReference Include="jacobslusser.ScintillaNET" Version="3.5.10" />
-		<PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
-		<PackageReference Include="Ookii.Dialogs" Version="1.0.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\AlephNote.Common\AlephNote.Common.csproj" />
-		<ProjectReference Include="..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="Microsoft.CSharp" />
-		<Reference Include="PresentationCore" />
-		<Reference Include="PresentationFramework" />
-		<Reference Include="System.Data.DataSetExtensions" />
-		<Reference Include="System.Windows.Forms" />
-		<Reference Include="System.Xaml" />
-		<Reference Include="WindowsBase" />
-		<Reference Include="WindowsFormsIntegration" />
-	</ItemGroup>
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C6A3DA36-849B-4048-9F40-5F3F7A9D2026}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AlephNote</RootNamespace>
+    <AssemblyName>AlephNote</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\Bin\Debug\net46\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\Bin\Release\net46\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>AlephNote.App</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>IconMain.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Lib\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Lib\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Ookii.Dialogs.Wpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0c15020868fd6249, processorArchitecture=MSIL">
+      <HintPath>..\..\Lib\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ScintillaNET">
+      <HintPath>..\..\Lib\jacobslusser.ScintillaNET.3.5.10\lib\net40\ScintillaNET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Impl\PluginManager.cs" />
+    <Compile Include="Impl\ProxyFactory.cs" />
+    <Compile Include="Impl\SynchronizationDispatcher.cs" />
+    <Compile Include="Log\EventLogger.cs" />
+    <Compile Include="Log\LogEvent.cs" />
+    <Compile Include="Log\LogEventType.cs" />
+    <Compile Include="WPF\BindingProxies\AbstractLegacyBinding.cs" />
+    <Compile Include="WPF\BindingProxies\AbstractRawBinding.cs" />
+    <Compile Include="WPF\BindingProxies\EventProxy.cs" />
+    <Compile Include="WPF\BindingProxies\IndirectProperty.cs" />
+    <Compile Include="WPF\BindingProxies\LegacyBindings.cs" />
+    <Compile Include="WPF\BindingProxies\RawBindings.cs" />
+    <Compile Include="WPF\BindingProxies\ReflectionPathResolver.cs" />
+    <Compile Include="WPF\Controls\BindablePasswordBox.cs" />
+    <Compile Include="WPF\Controls\ClickSelectTextBox.cs" />
+    <Compile Include="WPF\Controls\DialogWindow.cs" />
+    <Compile Include="WPF\Controls\FontBox.xaml.cs">
+      <DependentUpon>FontBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Controls\TagEditor.cs" />
+    <Compile Include="WPF\Converter\DateTimeToDisplay.cs" />
+    <Compile Include="WPF\Converter\LogToFontStyle.cs" />
+    <Compile Include="WPF\Converter\LogToBackground.cs" />
+    <Compile Include="WPF\Converter\LogToFontWeight.cs" />
+    <Compile Include="WPF\Converter\LogToForeground.cs" />
+    <Compile Include="WPF\Converter\GetLine.cs" />
+    <Compile Include="WPF\Converter\DateOnlyToDisplay.cs" />
+    <Compile Include="WPF\Converter\TodayDateTimeToDisplay.cs" />
+    <Compile Include="WPF\Converter\Subtract.cs" />
+    <Compile Include="WPF\Converter\GridLengthToDouble.cs" />
+    <Compile Include="WPF\Converter\SubstringLeft.cs" />
+    <Compile Include="WPF\Converter\SmallDateTimeToDisplay.cs" />
+    <Compile Include="WPF\Converter\StateToAppIcon.cs" />
+    <Compile Include="WPF\Converter\FontModifierToFontStyle.cs" />
+    <Compile Include="WPF\Converter\FontModifierToFontWeight.cs" />
+    <Compile Include="WPF\Converter\FontSizeToInt.cs" />
+    <Compile Include="WPF\Converter\TextToLines.cs" />
+    <Compile Include="WPF\Converter\StringCoalesce.cs" />
+    <Compile Include="WPF\Converter\DTOToDisplay.cs" />
+    <Compile Include="WPF\Converter\IsNullToVisibility.cs" />
+    <Compile Include="WPF\Converter\CreatePluginSettingsGrid.cs" />
+    <Compile Include="WPF\Converter\BoolToVisibility.cs" />
+    <Compile Include="WPF\Converter\SmartDateTimeToDisplay.cs" />
+    <Compile Include="WPF\Extensions\CollectionViewExtension.cs" />
+    <Compile Include="WPF\Extensions\DependencyObjectExtension.cs" />
+    <Compile Include="WPF\MarkupExtensions\EnumSourceExtension.cs" />
+    <Compile Include="WPF\MarkupExtensions\EventBindingExtension.cs" />
+    <Compile Include="WPF\MVVM\OneWayConverter.cs" />
+    <Compile Include="WPF\MVVM\RelayCommand.cs" />
+    <Compile Include="WPF\MVVM\TwoWayConverter.cs" />
+    <Compile Include="WPF\MVVM\TypedRelayCommand.cs" />
+    <Compile Include="WPF\Services\ConditionalDataTemplate.cs" />
+    <Compile Include="WPF\Services\MultiDatatemplateService.cs" />
+    <Compile Include="WPF\Services\WatermarkAdorner.cs" />
+    <Compile Include="WPF\Services\WatermarkService.cs" />
+    <Compile Include="WPF\Windows\AboutWindowViewmodel.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\LogWindow.xaml.cs">
+      <DependentUpon>LogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\LogWindowViewmodel.cs">
+      <DependentUpon>LogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\MainWindowViewmodel.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\SettingsWindowViewmodel.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\ExceptionWindow.xaml.cs">
+      <DependentUpon>ExceptionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\SyncErrorDialog.xaml.cs">
+      <DependentUpon>SyncErrorDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\UpdateWindowViewmodel.cs">
+      <DependentUpon>UpdateWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\UpdateWindow.xaml.cs">
+      <DependentUpon>UpdateWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\WpfScreen.cs" />
+    <Page Include="WPF\Controls\FontBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WPF\Windows\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Windows\LogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Windows\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WPF\Windows\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="WPF\Windows\SettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Windows\ExceptionWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WPF\Windows\SyncErrorDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Windows\UpdateWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="IconMain.ico" />
+    <Resource Include="Resources\IconMain.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\IconGreen.ico" />
+    <Resource Include="Resources\IconRed.ico" />
+    <Resource Include="Resources\IconSync.ico" />
+    <Resource Include="Resources\IconYellow.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\IconMainBig.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\github.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AlephNote.Common\AlephNote.Common.csproj">
+      <Project>{1177d8f5-9496-4262-b41f-b31197d851ae}</Project>
+      <Name>AlephNote.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj">
+      <Project>{a43f999d-30fb-44f0-9cef-9e24a100651c}</Project>
+      <Name>AlephNote.PluginInterface</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>
