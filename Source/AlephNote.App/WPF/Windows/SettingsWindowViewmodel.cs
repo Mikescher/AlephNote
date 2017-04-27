@@ -1,7 +1,7 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.Plugins;
 using AlephNote.Settings;
-using MSHC.WPF.MVVM;
+using AlephNote.WPF.MVVM;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
@@ -14,7 +14,7 @@ namespace AlephNote.WPF.Windows
 
 		public AppSettings Settings { get; private set; }
 
-		public IEnumerable<IRemotePlugin> AvailableProvider { get { return PluginManager.LoadedPlugins; } }
+		public IEnumerable<IRemotePlugin> AvailableProvider { get { return PluginManager.Inst.LoadedPlugins; } }
 
 		public ICommand InsertCurrentWindowStateCommand { get { return new RelayCommand(InsertCurrentWindowState); } }
 
@@ -29,7 +29,7 @@ namespace AlephNote.WPF.Windows
 			if (mainWindow.WindowState == WindowState.Maximized)
 			{
 				Settings.StartupLocation = ExtendedWindowStartupLocation.CenterScreen;
-				Settings.StartupState = WindowState.Maximized;
+				Settings.StartupState = ExtendedWindowState.Maximized;
 				Settings.StartupPositionX = (int)mainWindow.Left;
 				Settings.StartupPositionY = (int)mainWindow.Top;
 				Settings.StartupPositionWidth = (int)mainWindow.Width;
@@ -38,7 +38,7 @@ namespace AlephNote.WPF.Windows
 			else if (mainWindow.WindowState == WindowState.Minimized)
 			{
 				Settings.StartupLocation = ExtendedWindowStartupLocation.Manual;
-				Settings.StartupState = WindowState.Minimized;
+				Settings.StartupState = ExtendedWindowState.Minimized;
 				Settings.StartupPositionX = (int)mainWindow.Left;
 				Settings.StartupPositionY = (int)mainWindow.Top;
 				Settings.StartupPositionWidth = (int)mainWindow.Width;
@@ -47,7 +47,7 @@ namespace AlephNote.WPF.Windows
 			else if (mainWindow.WindowState == WindowState.Normal)
 			{
 				Settings.StartupLocation = ExtendedWindowStartupLocation.Manual;
-				Settings.StartupState = WindowState.Normal;
+				Settings.StartupState = ExtendedWindowState.Normal;
 				Settings.StartupPositionX = (int)mainWindow.Left;
 				Settings.StartupPositionY = (int)mainWindow.Top;
 				Settings.StartupPositionWidth = (int)mainWindow.Width;

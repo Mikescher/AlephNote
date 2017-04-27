@@ -1,6 +1,6 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.Settings;
-using MSHC.WPF.Controls;
+using AlephNote.WPF.Controls;
 using Ookii.Dialogs.Wpf;
 using System;
 using System.Diagnostics;

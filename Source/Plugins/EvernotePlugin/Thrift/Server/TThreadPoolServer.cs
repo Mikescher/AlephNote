@@ -75,14 +75,15 @@ namespace AlephNote.Plugins.Evernote.Thrift.Server
 			:base(processor, serverTransport, inputTransportFactory, outputTransportFactory,
 				  inputProtocolFactory, outputProtocolFactory, logDel)
 		{
-			if (!ThreadPool.SetMinThreads(minThreadPoolThreads, minThreadPoolThreads))
-			{
-				throw new Exception("Error: could not SetMinThreads in ThreadPool");
-			}
-			if (!ThreadPool.SetMaxThreads(maxThreadPoolThreads, maxThreadPoolThreads))
-			{
-				throw new Exception("Error: could not SetMaxThreads in ThreadPool");
-			}
+			// Can't SetMinThreads in NetStandard (?)
+			//if (!ThreadPool.SetMinThreads(minThreadPoolThreads, minThreadPoolThreads))
+			//{
+			//	throw new Exception("Error: could not SetMinThreads in ThreadPool");
+			//}
+			//if (!ThreadPool.SetMaxThreads(maxThreadPoolThreads, maxThreadPoolThreads))
+			//{
+			//	throw new Exception("Error: could not SetMaxThreads in ThreadPool");
+			//}
 		}
 
 		/// <summary>

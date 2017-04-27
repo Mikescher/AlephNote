@@ -1,8 +1,8 @@
 ﻿using AlephNote.PluginInterface;
-using MSHC.Lang.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.SimpleNote
 {
@@ -160,7 +160,7 @@ namespace AlephNote.Plugins.SimpleNote
 
 		private static double ConvertToEpochDate(DateTimeOffset offset)
 		{
-			return TimeZoneInfo.ConvertTimeToUtc(offset.DateTime, TimeZoneInfo.Local).ToUniversalTime().Subtract(TIMESTAMP_ORIGIN.DateTime).TotalSeconds;
+			return offset.DateTime.ToUniversalTime().Subtract(TIMESTAMP_ORIGIN.DateTime).TotalSeconds;
 		}
 	}
 }

@@ -1,13 +1,11 @@
 ﻿using System.Diagnostics;
 using AlephNote.PluginInterface;
-using MSHC.Math.Encryption;
-using MSHC.Network;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.StandardNote
 {
@@ -38,30 +36,6 @@ namespace AlephNote.Plugins.StandardNote
 #pragma warning restore 0649
 
 		public static IAlephLogger Logger;
-
-		private static WebClient CreateClient(IWebProxy proxy, APIResultAuthorize authToken)
-		{
-			var web = new GZWebClient();
-			if (proxy != null) web.Proxy = proxy;
-			web.Headers["User-Agent"] = "AlephNote/1.0.0.0";
-			if (authToken != null) web.Headers["Authorization"] = "Bearer " + authToken.token;
-			return web;
-		}
-
-		private static string CreateUri(string host, string path, string parameter = "")
-		{
-			if (!host.ToLower().StartsWith("http")) host = "http://" + host;
-
-			if (!host.EndsWith("/")) host = host + "/";
-			if (path.StartsWith("/")) path = path.Substring(1);
-
-			if (path.EndsWith("/")) path = path.Substring(path.Length);
-
-			if (parameter != "")
-				return host + path + "?" + parameter;
-			else
-				return host + path;
-		}
 
 		public static APIResultAuthorize Authenticate(ISimpleJsonRest web, string mail, string password, IAlephLogger logger)
 		{

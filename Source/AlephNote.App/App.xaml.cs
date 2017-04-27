@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
+using AlephNote.Plugins;
+using AlephNote.Common.Plugins;
 
 namespace AlephNote
 {
@@ -27,6 +29,8 @@ namespace AlephNote
 		public App()
 		{
 			DispatcherUnhandledException += AppDispatcherUnhandledException;
+
+			PluginManagerSingleton.Register(new PluginManager());
 		}
 		
 		void AppDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

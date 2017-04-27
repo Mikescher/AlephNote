@@ -1,6 +1,6 @@
-﻿using MSHC.Serialization;
-using System;
+﻿using System;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.Evernote
 {

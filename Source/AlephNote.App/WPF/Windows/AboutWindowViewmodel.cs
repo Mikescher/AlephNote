@@ -1,6 +1,5 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.Plugins;
-using MSHC.WPF.MVVM;
 using System.Collections.Generic;
 
 namespace AlephNote.WPF.Windows
@@ -9,6 +8,6 @@ namespace AlephNote.WPF.Windows
 	{
 		public string Appversion { get { return App.AppVersionProperty; } }
 
-		public IEnumerable<IRemotePlugin> AvailableProvider { get { return PluginManager.LoadedPlugins; } }
+		public IEnumerable<IRemotePlugin> AvailableProvider { get { return PluginManager.Inst.LoadedPlugins; } }
 	}
 }

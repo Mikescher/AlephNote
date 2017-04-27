@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net46;netstandard1.6</TargetFrameworks>
+		
+		<AssemblyName>AlephNote.Common</AssemblyName>
+		<PackageId>AlephNote.Common</PackageId>
+		
+		<NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
+		<PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+		
+		<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+		<GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+		<GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+
+		<OutDir>..\..\Bin\$(Configuration)\$(TargetFramework)\</OutDir>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+		<PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.0.0" />
+		<PackageReference Include="System.Net.Http" Version="4.3.1" />
+		<PackageReference Include="System.Threading.Thread" Version="4.3.0" />
+		<PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
+		<Reference Include="Microsoft.CSharp" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
+		<PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
+	</ItemGroup>
+
+</Project>

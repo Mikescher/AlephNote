@@ -1,7 +1,6 @@
-﻿using MSHC.Serialization;
-using MSHC.Util.Helper;
-using System;
+﻿using System;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.StandardNote
 {
@@ -18,7 +17,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public XElement Serialize()
 		{
-			return new XElement("tag", new XAttribute("ID", UUID == null ? "null" : UUID.Value.ToString("P")), new XAttribute("Title", Title));
+			return new XElement("tag", new XAttribute("ID", UUID?.ToString("P") ?? "null"), new XAttribute("Title", Title));
 		}
 
 		public static StandardFileTag Deserialize(XElement e)

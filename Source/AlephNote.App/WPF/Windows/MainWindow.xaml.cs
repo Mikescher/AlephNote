@@ -24,7 +24,7 @@ namespace AlephNote.WPF.Windows
 		{
 			InitializeComponent();
 
-			PluginManager.LoadPlugins();
+			PluginManager.Inst.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory, App.Logger);
 
 			bool firstLaunch = false;
 			AppSettings settings;
@@ -32,11 +32,11 @@ namespace AlephNote.WPF.Windows
 			{
 				if (File.Exists(App.PATH_SETTINGS))
 				{
-					settings = AppSettings.Load();
+					settings = AppSettings.Load(App.PATH_SETTINGS);
 				}
 				else
 				{
-					settings = AppSettings.CreateEmpty();
+					settings = AppSettings.CreateEmpty(App.PATH_SETTINGS);
 					settings.Save();
 
 					firstLaunch = true;
@@ -45,7 +45,7 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				ExceptionDialog.Show(null, "Could not load settings", "Could not load settings from " + App.PATH_SETTINGS, e);
-				settings = AppSettings.CreateEmpty();
+				settings = AppSettings.CreateEmpty(App.PATH_SETTINGS);
 			}
 
 			StartupConfigWindow(settings);
@@ -75,7 +75,7 @@ namespace AlephNote.WPF.Windows
 			if (settings.StartupLocation == ExtendedWindowStartupLocation.CenterScreen)
 			{
 				WindowStartupLocation = WindowStartupLocation.CenterScreen;
-				WindowState = settings.StartupState;
+				WindowState = ConvertWindowStateEnum(settings.StartupState);
 
 				Left = settings.StartupPositionX;
 				Top = settings.StartupPositionY;
@@ -86,7 +86,7 @@ namespace AlephNote.WPF.Windows
 			else if (settings.StartupLocation == ExtendedWindowStartupLocation.Manual)
 			{
 				WindowStartupLocation = WindowStartupLocation.Manual;
-				WindowState = settings.StartupState;
+				WindowState = ConvertWindowStateEnum(settings.StartupState);
 
 				Left = settings.StartupPositionX;
 				Top = settings.StartupPositionY;
@@ -99,7 +99,7 @@ namespace AlephNote.WPF.Windows
 				var screen = WpfScreen.GetScreenFrom(this);
 
 				WindowStartupLocation = WindowStartupLocation.Manual;
-				WindowState = settings.StartupState;
+				WindowState = ConvertWindowStateEnum(settings.StartupState);
 
 				Left = screen.WorkingArea.Left + 5;
 				Top = screen.WorkingArea.Bottom - settings.StartupPositionHeight - 5;
@@ -112,7 +112,7 @@ namespace AlephNote.WPF.Windows
 				var screen = WpfScreen.GetScreenFrom(this);
 
 				WindowStartupLocation = WindowStartupLocation.Manual;
-				WindowState = settings.StartupState;
+				WindowState = ConvertWindowStateEnum(settings.StartupState);
 
 				Left = screen.WorkingArea.Left + 5;
 				Top = screen.WorkingArea.Top + 5;
@@ -121,8 +121,20 @@ namespace AlephNote.WPF.Windows
 				Height = screen.WorkingArea.Height - 10;
 			}
 
-			if (settings.MinimizeToTray && settings.StartupState == WindowState.Minimized)
+			if (settings.MinimizeToTray && settings.StartupState == ExtendedWindowState.Minimized)
 				Hide();
+		}
+
+		private WindowState ConvertWindowStateEnum(ExtendedWindowState s)
+		{
+			switch (s)
+			{
+				case ExtendedWindowState.Minimized: return WindowState.Minimized;
+				case ExtendedWindowState.Maximized: return WindowState.Maximized;
+				case ExtendedWindowState.Normal:    return WindowState.Normal;
+			}
+
+			throw new ArgumentException(s + " is not a valid ExtendedWindowState");
 		}
 
 		public void SetupScintilla(AppSettings s)
@@ -144,11 +156,11 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.AdditionalSelectionTyping = s.SciRectSelection;
 			NoteEdit.VirtualSpaceOptions = s.SciRectSelection ? VirtualSpace.RectangularSelection : VirtualSpace.None;
 
-			NoteEdit.Font = new Font(s.NoteFontFamily.Source, (int)s.NoteFontSize);
+			NoteEdit.Font = new Font(s.NoteFontFamily, (int)s.NoteFontSize);
 			NoteEdit.Styles[0].Bold = s.NoteFontModifier == FontModifier.Bold || s.NoteFontModifier == FontModifier.BoldItalic;
 			NoteEdit.Styles[0].Italic = s.NoteFontModifier == FontModifier.Italic || s.NoteFontModifier == FontModifier.BoldItalic;
 			NoteEdit.Styles[0].Size = (int)s.NoteFontSize;
-			NoteEdit.Styles[0].Font = s.NoteFontFamily.Source;
+			NoteEdit.Styles[0].Font = s.NoteFontFamily;
 
 			NoteEdit.WrapMode = s.SciWordWrap ? WrapMode.Whitespace : WrapMode.None;
 

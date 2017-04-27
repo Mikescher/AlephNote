@@ -1,13 +1,14 @@
 ﻿using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.Impl;
 using AlephNote.Plugins.Evernote.EDAM.NoteStore;
 using AlephNote.Plugins.Evernote.EDAM.Type;
 using AlephNote.Plugins.Evernote.Thrift.Protocol;
 using AlephNote.Plugins.Evernote.Thrift.Transport;
-using MSHC.Lang.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.Evernote
 {
@@ -308,12 +309,12 @@ namespace AlephNote.Plugins.Evernote
 		{
 			if (seconds <= 0) return TIMESTAMP_ORIGIN;
 
-			return TIMESTAMP_ORIGIN.AddMilliseconds(seconds);
+			return TIMESTAMP_ORIGIN.AddSeconds(seconds);
 		}
 
 		private static long ConvertToEpochDate(DateTimeOffset offset)
 		{
-			return (long)TimeZoneInfo.ConvertTimeToUtc(offset.DateTime, TimeZoneInfo.Local).ToUniversalTime().Subtract(TIMESTAMP_ORIGIN.DateTime).TotalMilliseconds;
+			return (long)offset.DateTime.ToUniversalTime().Subtract(TIMESTAMP_ORIGIN.DateTime).TotalSeconds;
 		}
 	}
 }

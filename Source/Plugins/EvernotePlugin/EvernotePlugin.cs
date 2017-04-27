@@ -2,12 +2,13 @@
 using System.Net;
 using System.Reflection;
 using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.Impl;
 
 namespace AlephNote.Plugins.Evernote
 {
 	public class EvernotePlugin : BasicRemotePlugin
 	{
-		public static readonly Version Version = GetInformationalVersion(Assembly.GetExecutingAssembly());
+		public static readonly Version Version = GetInformationalVersion(typeof(EvernotePlugin).GetTypeInfo().Assembly);
 		public const string Name = "EvernotePlugin";
 
 		private IAlephLogger _logger;

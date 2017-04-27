@@ -1,12 +1,10 @@
 ﻿using AlephNote.PluginInterface;
-using MSHC.Math.Encryption;
-using MSHC.Serialization;
-using MSHC.Util.Helper;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.Filesystem
 {
@@ -18,7 +16,9 @@ namespace AlephNote.Plugins.Filesystem
 
 		public string Folder    = string.Empty;
 		public string Extension = "txt";
-		public Encoding Encoding = Encoding.UTF8;
+		public string StrEncoding = "UTF-8";
+
+		public Encoding Encoding => Encoding.GetEncoding(StrEncoding);
 
 		public XElement Serialize()
 		{
@@ -26,6 +26,7 @@ namespace AlephNote.Plugins.Filesystem
 			{
 				new XElement("Folder", Folder),
 				new XElement("Extension", Extension),
+				new XElement("Encoding", StrEncoding),
 			};
 
 			var r = new XElement("config", data);
@@ -40,20 +41,21 @@ namespace AlephNote.Plugins.Filesystem
 
 			Folder = XHelper.GetChildValue(input, "Folder", string.Empty);
 			Extension = XHelper.GetChildValue(input, "Extension", "txt");
+			StrEncoding = XHelper.GetChildValue(input, "Encoding", "UTF-8");
 		}
 
 		public IEnumerable<DynamicSettingValue> ListProperties()
 		{
 			yield return DynamicSettingValue.CreateFolderChooser(ID_FOLDER, "Folder", Folder);
 			yield return DynamicSettingValue.CreateText(ID_EXTENSION, "Extension", Extension);
-			yield return DynamicSettingValue.CreateCombobox(ID_ENCODING, "Encoding", Encoding.BodyName.ToUpper(), new[] { "UTF-8", "UTF-16", "UTF-32", "ASCII" });
+			yield return DynamicSettingValue.CreateCombobox(ID_ENCODING, "Encoding", StrEncoding, new[] { "UTF-8", "UTF-16", "UTF-32", "ASCII" });
 		}
 
 		public void SetProperty(int id, string value)
 		{
 			if (id == ID_FOLDER) Folder = value;
 			if (id == ID_EXTENSION) Extension = value;
-			if (id == ID_ENCODING) Encoding = Encoding.GetEncoding(value);
+			if (id == ID_ENCODING) StrEncoding = value;
 		}
 
 		public void SetProperty(int id, bool value)

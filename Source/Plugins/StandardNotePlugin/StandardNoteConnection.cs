@@ -1,4 +1,5 @@
 ﻿using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.Impl;
 using System;
 using System.Collections.Generic;
 using System.Linq;

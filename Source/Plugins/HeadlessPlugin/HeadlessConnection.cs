@@ -1,4 +1,5 @@
 ﻿using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.Impl;
 using System.Collections.Generic;
 
 namespace AlephNote.Plugins.Headless

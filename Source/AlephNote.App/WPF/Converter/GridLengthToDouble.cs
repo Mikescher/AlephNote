@@ -1,4 +1,4 @@
-﻿using MSHC.WPF.MVVM;
+﻿using AlephNote.WPF.MVVM;
 using System;
 using System.Windows;
 
