@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvernotePlugin", "Plugins\E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlephNote.App", "AlephNote.App\AlephNote.App.csproj", "{C6A3DA36-849B-4048-9F40-5F3F7A9D2026}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlephNote.Eto", "AlephNote.Eto\AlephNote.Eto.csproj", "{B45A313A-E966-4717-9FD4-D932A7D1FD1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,10 @@ Global
 		{C6A3DA36-849B-4048-9F40-5F3F7A9D2026}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6A3DA36-849B-4048-9F40-5F3F7A9D2026}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6A3DA36-849B-4048-9F40-5F3F7A9D2026}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B45A313A-E966-4717-9FD4-D932A7D1FD1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B45A313A-E966-4717-9FD4-D932A7D1FD1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B45A313A-E966-4717-9FD4-D932A7D1FD1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B45A313A-E966-4717-9FD4-D932A7D1FD1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

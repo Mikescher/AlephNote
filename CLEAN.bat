@@ -1,9 +1,7 @@
 RMDIR /S /Q "Source\AlephNote.App\obj"
+RMDIR /S /Q "Source\AlephNote.Eto\obj"
 RMDIR /S /Q "Source\AlephNote.Common\obj"
 RMDIR /S /Q "Source\AlephNote.PluginInterface\obj"
-
-RMDIR /S /Q "Source\External\CSharpUtils\bin"
-RMDIR /S /Q "Source\External\CSharpUtils\obj"
 
 RMDIR /S /Q "Source\Tools\AutoUpdater\obj"
 
