@@ -21,12 +21,18 @@ Task("Restore")
 Task("UpdateAssemblyInfo")
     .Does(() => 
 {
-    var version = GitVersion(new GitVersionSettings
+    var version1 = GitVersion(new GitVersionSettings
     { 
         UpdateAssemblyInfo = true,
         UpdateAssemblyInfoFilePath = "Source/AlephNote.App/Properties/AssemblyInfo.cs"
     });
-    if (AppVeyor.IsRunningOnAppVeyor) AppVeyor.UpdateBuildVersion(version.NuGetVersionV2);
+    var version2 = GitVersion(new GitVersionSettings
+    { 
+        UpdateAssemblyInfo = true,
+        UpdateAssemblyInfoFilePath = "Source/AlephNote.Eto/Properties/AssemblyInfo.cs"
+    });
+    if (AppVeyor.IsRunningOnAppVeyor) AppVeyor.UpdateBuildVersion(version1.NuGetVersionV2);
+    if (AppVeyor.IsRunningOnAppVeyor) AppVeyor.UpdateBuildVersion(version2.NuGetVersionV2);
 });
 
 Task("Build")
@@ -44,17 +50,21 @@ Task("Pack")
     .IsDependentOn("Build")
     .Does(() =>
 {    
-    var root = "Bin/" + configuration;
+    var rootWin  = "Bin/" + configuration + "/net46";
+    var rootCore = "Bin/" + configuration + "/netstandard1.6";
     var filesToDelete =
         GetFiles("Bin/**/*.pdb") + 
         GetFiles("Bin/**/*.xml") + 
         GetFiles("Bin/**/*.vshost.exe") +
         GetFiles("Bin/**/*.manifest");
     DeleteFiles(filesToDelete);
-    if (DirectoryExists(root + "/.notes"))
-        DeleteDirectory(root + "/.notes", true);
 
-    Zip(root, "Bin/AlephNote.zip");
+    if (DirectoryExists(rootWin + "/.notes")) DeleteDirectory(rootWin + "/.notes", true);
+    Zip(rootWin, "Bin/AlephNote.zip");
+
+    if (DirectoryExists(rootCore + "/.notes")) DeleteDirectory(rootCore + "/.notes", true);
+    Zip(rootCore, "Bin/AlephNote.zip");
+
     if (AppVeyor.IsRunningOnAppVeyor) AppVeyor.UploadArtifact("Bin/AlephNote.zip");
 });
 
