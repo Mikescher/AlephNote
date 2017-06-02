@@ -248,11 +248,38 @@ namespace AlephNote.WPF.Windows
 				viewmodel.CreateNewNoteCommand.Execute(sender);
 				e.Handled = true;
 			}
+
+			if (e.Control && e.KeyCode == Keys.F)
+			{
+				viewmodel.DocumentSearchCommand.Execute(sender);
+				e.Handled = true;
+			}
+
+			if (e.KeyCode == Keys.Escape)
+			{
+				viewmodel.CloseDocumentSearchCommand.Execute(sender);
+				e.Handled = true;
+			}
 		}
 
 		private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
 		{
 			ResetScintillaScrollAndUndo();
+		}
+
+		public void ShowDocSearchBar()
+		{
+			DocumentSearchBar.Show();
+		}
+
+		public void HideDocSearchBar()
+		{
+			DocumentSearchBar.Hide();
+		}
+
+		private void OnHideDoumentSearchBox(object sender, EventArgs e)
+		{
+			FocusScintilla();
 		}
 	}
 }

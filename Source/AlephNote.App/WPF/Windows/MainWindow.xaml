@@ -53,6 +53,8 @@
 	<Window.InputBindings>
 		<KeyBinding Command="{Binding CreateNewNoteCommand}" Modifiers="Control" Key="N"/>
 		<KeyBinding Command="{Binding SaveAndSyncCommand}" Modifiers="Control" Key="S"/>
+		<KeyBinding Command="{Binding DocumentSearchCommand}" Modifiers="Control" Key="F"/>
+		<KeyBinding Command="{Binding CloseDocumentSearchCommand}" Key="Escape"/>
 	</Window.InputBindings>
 	
 	<Grid x:Name="LayoutRoot">
@@ -242,11 +244,19 @@
 				<TextBlock Text="{Binding SelectedNote.ModificationDate, Converter={conv:SmartDateTimeToDisplay}}" ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DTOToDisplay}}" Foreground="DarkGray" />
 			</StackPanel>
 
-			<WindowsFormsHost Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="NoteEditHost">
-				<WindowsFormsHost.Child>
-					<scinet:Scintilla x:Name="NoteEdit" KeyPress="NoteEdit_OnKeyPress" KeyDown="NoteEdit_OnKeyDown" />
-				</WindowsFormsHost.Child>
-			</WindowsFormsHost>
+			<Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+				<WindowsFormsHost Grid.Row="0"  x:Name="NoteEditHost">
+					<WindowsFormsHost.Child>
+						<scinet:Scintilla x:Name="NoteEdit" KeyPress="NoteEdit_OnKeyPress" KeyDown="NoteEdit_OnKeyDown" />
+					</WindowsFormsHost.Child>
+				</WindowsFormsHost>
+
+				<ctrl:SearchBox x:Name="DocumentSearchBar" Grid.Row="1" Height="28" HideBox="OnHideDoumentSearchBox" Target="{Binding ElementName=NoteEdit}" Settings="{Binding Settings}" />
+			</Grid>
 
 			<proxy:LegacyStringBinding Grid.Row="0" Grid.Column="0" Element="{Binding ElementName=NoteEdit}" PropertyPath="Text" ChangedEventPath="TextChanged" TargetBinding="{Binding SelectedNote.Text}" />
 

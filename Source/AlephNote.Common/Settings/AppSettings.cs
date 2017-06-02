@@ -10,6 +10,7 @@ using System.Net;
 using System.Reflection;
 using System.Xml.Linq;
 using AlephNote.Common.Plugins;
+using AlephNote.Common.Settings;
 
 namespace AlephNote.Settings
 {
@@ -172,6 +173,31 @@ namespace AlephNote.Settings
 		[Setting]
 		public ConflictResolutionStrategy ConflictResolution { get { return _conflictResolution; } set { _conflictResolution = value; OnPropertyChanged(); } }
 		private ConflictResolutionStrategy _conflictResolution = ConflictResolutionStrategy.UseClientCreateConflictFile;
+
+		[Setting]
+		public bool DocSearchEnabled { get { return _docSearchEnabled; } set { _docSearchEnabled = value; OnPropertyChanged(); } }
+		private bool _docSearchEnabled = true;
+
+		[Setting]
+		public bool DocSearchCaseSensitive { get { return _docSearchCaseSensitive; } set { _docSearchCaseSensitive = value; OnPropertyChanged(); } }
+		private bool _docSearchCaseSensitive = false;
+
+		[Setting]
+		public bool DocSearchWholeWord { get { return _docSearchWholeWord; } set { _docSearchWholeWord = value; OnPropertyChanged(); } }
+		private bool _docSearchWholeWord = false;
+
+		[Setting]
+		public bool DocSearchRegex { get { return _docSearchRegex; } set { _docSearchRegex = value; OnPropertyChanged(); } }
+		private bool _docSearchRegex = false;
+
+		[Setting]
+		public bool DocSearchLiveSearch { get { return _docSearchLiveSearch; } set { _docSearchLiveSearch = value; OnPropertyChanged(); } }
+		private bool _docSearchLiveSearch = true;
+
+		[Setting]
+		public SciRegexEngine DocSearchRegexEngine { get { return _docSearchRegexEngine; } set { _docSearchRegexEngine = value; OnPropertyChanged(); } }
+		private SciRegexEngine _docSearchRegexEngine = SciRegexEngine.CPlusPlus;
+
 
 		public bool CheckForUpdates { get { return _checkForUpdates; } set { _checkForUpdates = value; OnPropertyChanged(); } }
 		private bool _checkForUpdates = true;

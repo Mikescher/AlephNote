@@ -31,6 +31,8 @@ namespace AlephNote.WPF.Windows
 		public ICommand ShowAboutCommand { get { return new RelayCommand(ShowAbout); } }
 		public ICommand ShowLogCommand { get { return new RelayCommand(ShowLog); } }
 		public ICommand SaveAndSyncCommand { get { return new RelayCommand(SaveAndSync); } }
+		public ICommand DocumentSearchCommand { get { return new RelayCommand(ShowDocSearchBar); } }
+		public ICommand CloseDocumentSearchCommand { get { return new RelayCommand(HideDocSearchBar); } }
 		public ICommand FullResyncCommand { get { return new RelayCommand(FullResync); } }
 		public ICommand ManuallyCheckForUpdatesCommand { get { return new RelayCommand(ManuallyCheckForUpdates); } }
 
@@ -512,6 +514,16 @@ namespace AlephNote.WPF.Windows
 			{
 				App.Logger.Error("Main", "Can't get latest version from github", e);
 			}
+		}
+
+		private void ShowDocSearchBar()
+		{
+			Owner.ShowDocSearchBar();
+		}
+
+		private void HideDocSearchBar()
+		{
+			Owner.HideDocSearchBar();
 		}
 	}
 }

@@ -99,7 +99,11 @@
     <Compile Include="WPF\Controls\FontBox.xaml.cs">
       <DependentUpon>FontBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Controls\SearchBox.xaml.cs">
+      <DependentUpon>SearchBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Controls\TagEditor.cs" />
+    <Compile Include="WPF\Converter\BoolToFontWeight.cs" />
     <Compile Include="WPF\Converter\DateTimeToDisplay.cs" />
     <Compile Include="WPF\Converter\LogToFontStyle.cs" />
     <Compile Include="WPF\Converter\LogToBackground.cs" />
@@ -172,6 +176,10 @@
     <Page Include="WPF\Controls\FontBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WPF\Controls\SearchBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WPF\Windows\AboutWindow.xaml">
       <SubType>Designer</SubType>

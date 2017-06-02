@@ -13,7 +13,7 @@
 		d:DataContext="{d:DesignInstance windows:SettingsWindowViewmodel}"
 		WindowStartupLocation="CenterOwner"
 		Icon="/Resources/IconMain.png"
-		Title="Common Note - Configuration" MinHeight="300" MinWidth="300" Height="600" Width="535">
+		Title="Common Note - Configuration" MinHeight="300" MinWidth="300" Height="550" Width="535">
 	<Window.Resources>
 		<converter:CreatePluginSettingsGrid x:Key="CreateGridConv" />
 	</Window.Resources>
@@ -149,6 +149,45 @@
 
 							</Grid>
 						</GroupBox>
+						<GroupBox Header="Startup" Padding="4">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" MinWidth="200"/>
+									<ColumnDefinition Width="1*"/>
+									<ColumnDefinition Width="Auto"/>
+									<ColumnDefinition Width="1*"/>
+								</Grid.ColumnDefinitions>
+
+								
+								<TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window position" />
+								<TextBox   Grid.Row="0" Grid.Column="1" Margin="3" Text="{Binding Settings.StartupPositionX}" />
+								<TextBox   Grid.Row="0" Grid.Column="3" Margin="3" Text="{Binding Settings.StartupPositionY}" />
+
+								<TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window size" />
+								<TextBox   Grid.Row="1" Grid.Column="1" Margin="3" Text="{Binding Settings.StartupPositionWidth}" />
+								<TextBox   Grid.Row="1" Grid.Column="3" Margin="3" Text="{Binding Settings.StartupPositionHeight}" />
+
+								<TextBlock Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window state" />
+								<ComboBox  Grid.Row="2" Grid.Column="1" Margin="3" ItemsSource="{mext:EnumSource settings:ExtendedWindowState}" SelectedValue="{Binding Settings.StartupState}" />
+								<ComboBox  Grid.Row="2" Grid.Column="3" Margin="3" ItemsSource="{mext:EnumSource settings:ExtendedWindowStartupLocation}" SelectedValue="{Binding Settings.StartupLocation}" />
+
+								<Button    Grid.Row="3" Grid.Column="1" Margin="3" Grid.ColumnSpan="3" Content="Use current" Command="{Binding InsertCurrentWindowStateCommand}" />
+								
+							</Grid>
+						</GroupBox>
+					</StackPanel>
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="Text Editor">
+				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+					<StackPanel Orientation="Vertical">
 						<GroupBox Header="Font" Padding="4">
 							<Grid>
 								<Grid.RowDefinitions>
@@ -178,7 +217,7 @@
 								<controls:FontBox  Margin="2" Grid.Row="1" Grid.Column="1" SelectedFont="{Binding Settings.ListFontFamily}" />
 								<ComboBox  Margin="2" Grid.Row="1" Grid.Column="2" ItemsSource="{mext:EnumSource settings:FontModifier}" SelectedValue="{Binding Settings.ListFontModifier}"/>
 								<ComboBox  Margin="2" Grid.Row="1" Grid.Column="3" ItemsSource="{mext:EnumSource settings:FontSize}" SelectedValue="{Binding Settings.ListFontSize}"/>
-							
+
 							</Grid>
 						</GroupBox>
 						<GroupBox Header="Scintilla" Padding="4">
@@ -207,37 +246,28 @@
 								<TextBox   Grid.Row="1" Grid.Column="1" Text="{Binding Settings.SciTabWidth}" />
 							</Grid>
 						</GroupBox>
-						<GroupBox Header="Startup" Padding="4">
+						<GroupBox Header="Document Search" Padding="4">
 							<Grid>
-								<Grid.RowDefinitions>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-								</Grid.RowDefinitions>
 								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto" MinWidth="200"/>
-									<ColumnDefinition Width="1*"/>
-									<ColumnDefinition Width="Auto"/>
-									<ColumnDefinition Width="1*"/>
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
 								</Grid.ColumnDefinitions>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+								<StackPanel Grid.Row="0" Grid.Column="0">
+									<CheckBox Margin="2" Content="Enable Document Search (Ctrl+F)" IsChecked="{Binding Settings.DocSearchEnabled}" />
+									<CheckBox Margin="2" Content="Enable CaseSensitive by default" IsChecked="{Binding Settings.DocSearchCaseSensitive}" />
+									<CheckBox Margin="2" Content="Enable Regex by default" IsChecked="{Binding Settings.DocSearchRegex}" />
+								</StackPanel>
+								<StackPanel Grid.Row="0" Grid.Column="1">
+									<CheckBox Margin="2" Content="Start search while typing" IsChecked="{Binding Settings.DocSearchLiveSearch}" />
+									<CheckBox Margin="2" Content="Enable WholeWord by default" IsChecked="{Binding Settings.DocSearchWholeWord}" />
+								</StackPanel>
 
-								
-								<TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window position" />
-								<TextBox   Grid.Row="0" Grid.Column="1" Margin="3" Text="{Binding Settings.StartupPositionX}" />
-								<TextBox   Grid.Row="0" Grid.Column="3" Margin="3" Text="{Binding Settings.StartupPositionY}" />
-
-								<TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window size" />
-								<TextBox   Grid.Row="1" Grid.Column="1" Margin="3" Text="{Binding Settings.StartupPositionWidth}" />
-								<TextBox   Grid.Row="1" Grid.Column="3" Margin="3" Text="{Binding Settings.StartupPositionHeight}" />
-
-								<TextBlock Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window state" />
-								<ComboBox  Grid.Row="2" Grid.Column="1" Margin="3" ItemsSource="{mext:EnumSource WindowState}" SelectedValue="{Binding Settings.StartupState}" />
-								<ComboBox  Grid.Row="2" Grid.Column="3" Margin="3" ItemsSource="{mext:EnumSource settings:ExtendedWindowStartupLocation}" SelectedValue="{Binding Settings.StartupLocation}" />
-
-								<Button    Grid.Row="3" Grid.Column="1" Margin="3" Grid.ColumnSpan="3" Content="Use current" Command="{Binding InsertCurrentWindowStateCommand}" />
-								
+								<TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Regex Engine" />
+								<ComboBox  Grid.Row="1" Grid.Column="1" ItemsSource="{mext:EnumSource settings:SciRegexEngine}" SelectedValue="{Binding Settings.DocSearchRegexEngine}" />
 							</Grid>
 						</GroupBox>
 					</StackPanel>
