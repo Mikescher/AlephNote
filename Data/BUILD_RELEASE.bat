@@ -3,14 +3,15 @@
 cd ..
 cd Source
 nuget restore
-msbuild /nologo /t:Clean /p:Configuration=Release /verbosity:m
-msbuild /nologo /t:Build /p:Configuration=Release /verbosity:m
+dotnet msbuild /t:Clean /p:Configuration=Release /verbosity:m
+dotnet msbuild /t:Build /p:Configuration=Release /verbosity:m
 
 @REM ================ CLEAN ================
 
 cd ..
 cd Bin
 cd Release
+cd net46
 
 del /s *.pdb
 del /s *.vshost.exe
