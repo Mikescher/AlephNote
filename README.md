@@ -42,8 +42,9 @@ Also anyone with an ounce of design talent: Feel free to improve the [website](h
  - [ ] Client side encryption (for all plugins)
  - [ ] Get history from provider that support it (SimpleNote + Standard Notes)
  - [ ] In-editor markdown rendering (similar to [qownnotes](http://www.qownnotes.org/))
- - [ ] Ctrl+F search function
+ - [X] Ctrl+F search function
  - [ ] Installer (if there is demand)
+ - [ ] Evernote as note provider
 
 
 ## License
