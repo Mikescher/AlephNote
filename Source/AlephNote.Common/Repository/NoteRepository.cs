@@ -30,6 +30,8 @@ namespace AlephNote.Repository
 		private readonly ObservableCollection<INote> _notes = new ObservableCollectionNoReset<INote>();
 		public ObservableCollection<INote> Notes { get { return _notes; } }
 
+		private object _lockSaveNote = new object();
+
 		private readonly DelayedCombiningInvoker invSaveNotesLocal;
 		private readonly DelayedCombiningInvoker invSaveNotesRemote;
 
@@ -147,22 +149,25 @@ namespace AlephNote.Repository
 
 		public void SaveNote(INote note)
 		{
-			var path = Path.Combine(pathLocalFolder, note.GetUniqueName() + ".xml");
+			lock (_lockSaveNote)
+			{
+				var path = Path.Combine(pathLocalFolder, note.GetUniqueName() + ".xml");
 
-			var root = new XElement("note");
+				var root = new XElement("note");
 
-			var meta = new XElement("meta");
-			meta.Add(new XElement("date", DateTime.Now.ToString("O")));
-			meta.Add(new XElement("provider", provider.GetUniqueID().ToString("B")));
-			meta.Add(new XElement("dirty", !note.IsRemoteSaved));
-			meta.Add(new XElement("conflict", note.IsConflictNote));
-			root.Add(meta);
+				var meta = new XElement("meta");
+				meta.Add(new XElement("date", DateTime.Now.ToString("O")));
+				meta.Add(new XElement("provider", provider.GetUniqueID().ToString("B")));
+				meta.Add(new XElement("dirty", !note.IsRemoteSaved));
+				meta.Add(new XElement("conflict", note.IsConflictNote));
+				root.Add(meta);
 
-			root.Add(new XElement("data", note.Serialize()));
+				root.Add(new XElement("data", note.Serialize()));
 
-			using (var file = File.OpenWrite(path)) new XDocument(root).Save(file);
-			
-			note.ResetLocalDirty();
+				using (var file = File.OpenWrite(path)) new XDocument(root).Save(file);
+
+				note.ResetLocalDirty();
+			}
 		}
 
 		private void NoteCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

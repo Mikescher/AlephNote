@@ -17,12 +17,14 @@ del /s *.pdb
 del /s *.vshost.exe
 del /s *.manifest
 del /s *.xml
-if exist .notes del .notes
+del /s *.config
+if exist .notes rd /S /Q .notes
 cd Plugins
 del /s *.pdb
 del /s *.vshost.exe
 del /s *.manifest
 del /s *.xml
+cd ..
 
 @REM ================ PACKAGE ================
 
@@ -34,7 +36,7 @@ if exist AlephNote.zip del AlephNote.zip
 
 cd Data
 
-7za.exe a .\..\AlephNote.zip .\..\Bin\Release\*
+7za.exe a .\..\AlephNote.zip .\..\Bin\Release\net46\*
 
 @REM ================ FINISHED ================
 
