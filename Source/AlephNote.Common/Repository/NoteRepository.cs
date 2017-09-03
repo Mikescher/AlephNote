@@ -97,24 +97,7 @@ namespace AlephNote.Repository
 			{
 				try
 				{
-					var doc = XDocument.Load(noteFile);
-
-					var root = doc.Root;
-					if (root == null) throw new Exception("Root == null");
-
-					var data = root.Element("data");
-					if (data == null) throw new Exception("missing data node");
-
-					var note = provider.CreateEmptyNote(remoteconfig);
-					note.Deserialize(data.Elements().FirstOrDefault());
-					note.ResetLocalDirty();
-					note.ResetRemoteDirty();
-					
-					var meta = root.Element("meta");
-					if (meta == null) throw new Exception("missing meta node");
-
-					if (XHelper.GetChildValue(meta, "dirty", false)) note.SetRemoteDirty();
-					note.IsConflictNote = XHelper.GetChildValue(meta, "conflict", false);
+					var note = LoadNoteFromFile(noteFile);
 
 					Notes.Add(note);
 				}
@@ -125,6 +108,29 @@ namespace AlephNote.Repository
 			}
 
 			logger.Info("Repository", "Loaded " + Notes.Count + " notes from local repository");
+		}
+
+		private INote LoadNoteFromFile(string noteFile)
+		{
+			var doc = XDocument.Load(noteFile);
+
+			var root = doc.Root;
+			if (root == null) throw new Exception("Root == null");
+
+			var data = root.Element("data");
+			if (data == null) throw new Exception("missing data node");
+
+			var note = provider.CreateEmptyNote(remoteconfig);
+			note.Deserialize(data.Elements().FirstOrDefault());
+			note.ResetLocalDirty();
+			note.ResetRemoteDirty();
+
+			var meta = root.Element("meta");
+			if (meta == null) throw new Exception("missing meta node");
+
+			if (XHelper.GetChildValue(meta, "dirty", false)) note.SetRemoteDirty();
+			note.IsConflictNote = XHelper.GetChildValue(meta, "conflict", false);
+			return note;
 		}
 
 		public INote CreateNewNote()
@@ -152,6 +158,7 @@ namespace AlephNote.Repository
 			lock (_lockSaveNote)
 			{
 				var path = Path.Combine(pathLocalFolder, note.GetUniqueName() + ".xml");
+				var tempPath = Path.GetTempFileName();
 
 				var root = new XElement("note");
 
@@ -164,9 +171,25 @@ namespace AlephNote.Repository
 
 				root.Add(new XElement("data", note.Serialize()));
 
-				using (var file = File.OpenWrite(path)) new XDocument(root).Save(file);
+				using (var file = File.OpenWrite(tempPath)) new XDocument(root).Save(file);
 
-				note.ResetLocalDirty();
+				try
+				{
+					var roundtrip = LoadNoteFromFile(tempPath);
+
+					if (roundtrip.Text != note.Text) throw new Exception("a.Text != b.Text");
+					if (roundtrip.Title != note.Title) throw new Exception("a.Title != b.Title");
+
+					File.Copy(tempPath, path, true);
+					note.ResetLocalDirty();
+					File.Delete(tempPath);
+
+					return;
+				}
+				catch (Exception e)
+				{
+					throw new Exception("Serialization failed (Sanity check):" + e.Message, e);
+				}
 			}
 		}
 

@@ -3,8 +3,12 @@
 cd ..
 cd Source
 nuget restore
-dotnet msbuild /t:Clean /p:Configuration=Release /verbosity:m
-dotnet msbuild /t:Build /p:Configuration=Release /verbosity:m
+
+
+echo "Please build RELEASE"
+PAUSE
+REM dotnet msbuild /t:Clean /p:Configuration=Release /verbosity:m
+REM dotnet msbuild /t:Build /p:Configuration=Release /verbosity:m
 
 @REM ================ CLEAN ================
 
