@@ -198,9 +198,33 @@ namespace AlephNote.Settings
 		public SciRegexEngine DocSearchRegexEngine { get { return _docSearchRegexEngine; } set { _docSearchRegexEngine = value; OnPropertyChanged(); } }
 		private SciRegexEngine _docSearchRegexEngine = SciRegexEngine.CPlusPlus;
 
-
+		[Setting]
 		public bool CheckForUpdates { get { return _checkForUpdates; } set { _checkForUpdates = value; OnPropertyChanged(); } }
 		private bool _checkForUpdates = true;
+
+		[Setting]
+		public bool DoGitMirror { get { return _doGitMirror; } set { _doGitMirror = value; OnPropertyChanged(); } }
+		private bool _doGitMirror = false;
+
+		[Setting]
+		public string GitMirrorPath { get { return _gitMirrorPath; } set { _gitMirrorPath = value; OnPropertyChanged(); } }
+		private string _gitMirrorPath = string.Empty;
+
+		[Setting]
+		public string GitMirrorFirstName { get { return _gitMirrorFirstName; } set { _gitMirrorFirstName = value; OnPropertyChanged(); } }
+		private string _gitMirrorFirstName = "AlephNote";
+
+		[Setting]
+		public string GitMirrorLastName { get { return _gitMirrorLastName; } set { _gitMirrorLastName = value; OnPropertyChanged(); } }
+		private string _gitMirrorLastName = "Git";
+
+		[Setting]
+		public string GitMirrorMailAddress { get { return _gitMirrorMailAddress; } set { _gitMirrorMailAddress = value; OnPropertyChanged(); } }
+		private string _gitMirrorMailAddress = "auto@example.com";
+
+		[Setting]
+		public bool GitMirrorDoPush { get { return _gitMirrorDoPush; } set { _gitMirrorDoPush = value; OnPropertyChanged(); } }
+		private bool _gitMirrorDoPush = false;
 
 		public Dictionary<Guid, IRemoteStorageConfiguration> PluginSettings = new Dictionary<Guid, IRemoteStorageConfiguration>();
 

@@ -13,9 +13,12 @@ namespace AlephNote.Log
 
 #if DEBUG
 		public bool DebugEnabled = true;
+
 #else
 		public bool DebugEnabled = false;
 #endif
+
+		public Version AppVersion => App.APP_VERSION;
 
 		private void Log(LogEvent e)
 		{

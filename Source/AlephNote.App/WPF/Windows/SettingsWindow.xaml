@@ -1,4 +1,4 @@
-﻿<controls:DialogWindow x:Class="AlephNote.WPF.Windows.SettingsWindow"
+﻿<ctrl:DialogWindow x:Class="AlephNote.WPF.Windows.SettingsWindow"
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
@@ -6,7 +6,7 @@
 		xmlns:settings="clr-namespace:AlephNote.Settings;assembly=AlephNote.Common"
 		xmlns:converter="clr-namespace:AlephNote.WPF.Converter"
 		xmlns:windows="clr-namespace:AlephNote.WPF.Windows"
-		xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
+		xmlns:ctrl="clr-namespace:AlephNote.WPF.Controls"
 		xmlns:mext="clr-namespace:AlephNote.WPF.MarkupExtensions"
 		xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
 		mc:Ignorable="d" 
@@ -106,7 +106,7 @@
 								<TextBlock Grid.Row="3" Grid.Column="1" Margin="3" VerticalAlignment="Center" Text="Username:" />
 								<TextBox   Grid.Row="3" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Text="{Binding Settings.ProxyUsername}" IsEnabled="{Binding Settings.ProxyEnabled}" />
 								<TextBlock Grid.Row="4" Grid.Column="1" Margin="3" Text="Password:" VerticalAlignment="Center" />
-								<controls:BindablePasswordBox Grid.Row="4" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Password="{Binding Settings.ProxyPassword}" IsEnabled="{Binding Settings.ProxyEnabled}" />
+								<ctrl:BindablePasswordBox Grid.Row="4" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Password="{Binding Settings.ProxyPassword}" IsEnabled="{Binding Settings.ProxyEnabled}" />
 							</Grid>
 						</GroupBox>
 						
@@ -204,17 +204,17 @@
 								</Grid.ColumnDefinitions>
 
 								<TextBlock Margin="2" Grid.Row="2" Grid.Column="0" Text="Title:" VerticalAlignment="Center" />
-								<controls:FontBox  Margin="2" Grid.Row="2" Grid.Column="1" SelectedFont="{Binding Settings.TitleFontFamily}" />
+								<ctrl:FontBox  Margin="2" Grid.Row="2" Grid.Column="1" SelectedFont="{Binding Settings.TitleFontFamily}" />
 								<ComboBox  Margin="2" Grid.Row="2" Grid.Column="2" ItemsSource="{mext:EnumSource settings:FontModifier}" SelectedValue="{Binding Settings.TitleFontModifier}"/>
 								<ComboBox  Margin="2" Grid.Row="2" Grid.Column="3" ItemsSource="{mext:EnumSource settings:FontSize}" SelectedValue="{Binding Settings.TitleFontSize}"/>
 
 								<TextBlock Margin="2" Grid.Row="0" Grid.Column="0" Text="Note:" VerticalAlignment="Center" />
-								<controls:FontBox  Margin="2" Grid.Row="0" Grid.Column="1" SelectedFont="{Binding Settings.NoteFontFamily}" />
+								<ctrl:FontBox  Margin="2" Grid.Row="0" Grid.Column="1" SelectedFont="{Binding Settings.NoteFontFamily}" />
 								<ComboBox  Margin="2" Grid.Row="0" Grid.Column="2" ItemsSource="{mext:EnumSource settings:FontModifier}" SelectedValue="{Binding Settings.NoteFontModifier}"/>
 								<ComboBox  Margin="2" Grid.Row="0" Grid.Column="3" ItemsSource="{mext:EnumSource settings:FontSize}" SelectedValue="{Binding Settings.NoteFontSize}"/>
 
 								<TextBlock Margin="2" Grid.Row="1" Grid.Column="0" Text="List:" VerticalAlignment="Center" />
-								<controls:FontBox  Margin="2" Grid.Row="1" Grid.Column="1" SelectedFont="{Binding Settings.ListFontFamily}" />
+								<ctrl:FontBox  Margin="2" Grid.Row="1" Grid.Column="1" SelectedFont="{Binding Settings.ListFontFamily}" />
 								<ComboBox  Margin="2" Grid.Row="1" Grid.Column="2" ItemsSource="{mext:EnumSource settings:FontModifier}" SelectedValue="{Binding Settings.ListFontModifier}"/>
 								<ComboBox  Margin="2" Grid.Row="1" Grid.Column="3" ItemsSource="{mext:EnumSource settings:FontSize}" SelectedValue="{Binding Settings.ListFontSize}"/>
 
@@ -273,6 +273,46 @@
 					</StackPanel>
 				</ScrollViewer>
 			</TabItem>
+			<TabItem Header="Other">
+				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+					<StackPanel Orientation="Vertical">
+						<GroupBox Header="Local Git Backup" Padding="4">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition/>
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="2*" />
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+								</Grid.ColumnDefinitions>
+
+								<TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Backup Notes to local git repository" />
+								<CheckBox  Grid.Row="0" Grid.Column="1" IsChecked="{Binding Settings.DoGitMirror}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+
+								<TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Push to remote" />
+								<CheckBox  Grid.Row="1" Grid.Column="1" IsChecked="{Binding Settings.GitMirrorDoPush}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+
+								<TextBlock    Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Path" />
+								<ctrl:PathBox Grid.Row="2" Grid.Column="1" PathText="{Binding Settings.GitMirrorPath}" Margin="1" Grid.ColumnSpan="2" />
+								
+								<TextBlock Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Authorname" />
+								<TextBox   Grid.Row="3" Grid.Column="1" Text="{Binding Settings.GitMirrorFirstName}" Margin="1" />
+								<TextBox   Grid.Row="3" Grid.Column="2" Text="{Binding Settings.GitMirrorLastName}"  Margin="1" />
+
+								<TextBlock Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Authormail" />
+								<TextBox   Grid.Row="4" Grid.Column="1" Text="{Binding Settings.GitMirrorMailAddress}" Margin="1" Grid.ColumnSpan="2" />
+
+							</Grid>
+						</GroupBox>
+					</StackPanel>
+				</ScrollViewer>
+			</TabItem>
 		</TabControl>
 
 		<WrapPanel Grid.Row="1" HorizontalAlignment="Right">
@@ -281,4 +321,4 @@
 		</WrapPanel>
 
 	</Grid>
-</controls:DialogWindow>
+</ctrl:DialogWindow>

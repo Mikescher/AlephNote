@@ -47,6 +47,11 @@ namespace AlephNote.Plugins
 					logger.ShowExceptionDialog("Plugin load Error", "Could not load plugin from " + path, e);
 				}
 			}
+
+			if (_provider.Count == 0)
+			{
+				App.Logger.Error("PluginManager", string.Format("No plugins found in folder {0}", pluginPath));
+			}
 		}
 
 		private void LoadPluginsFromAssembly(string path)

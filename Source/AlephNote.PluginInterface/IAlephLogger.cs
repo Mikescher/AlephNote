@@ -4,6 +4,8 @@ namespace AlephNote.PluginInterface
 {
 	public interface IAlephLogger
 	{
+		Version AppVersion { get; }
+
 		void Debug(string src, string text, string longtext = null);
 		void Info (string src, string text, string longtext = null);
 		void Warn (string src, string text, string longtext = null);

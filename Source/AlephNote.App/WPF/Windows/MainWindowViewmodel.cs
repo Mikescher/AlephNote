@@ -167,6 +167,10 @@ namespace AlephNote.WPF.Windows
 					SelectedNote = NotesView.FirstOrDefault<INote>();
 					OnExplicitPropertyChanged("NotesView");
 				}
+				else
+				{
+					_repository.ReplaceSettings(Settings);
+				}
 
 				Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
 

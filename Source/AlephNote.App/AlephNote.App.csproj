@@ -45,17 +45,15 @@
       <HintPath>..\..\Lib\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\Lib\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\Lib\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Ookii.Dialogs.Wpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0c15020868fd6249, processorArchitecture=MSIL">
       <HintPath>..\..\Lib\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ScintillaNET">
-      <HintPath>..\..\Lib\jacobslusser.ScintillaNET.3.5.10\lib\net40\ScintillaNET.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Lib\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -98,6 +96,9 @@
     <Compile Include="WPF\Controls\DialogWindow.cs" />
     <Compile Include="WPF\Controls\FontBox.xaml.cs">
       <DependentUpon>FontBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Controls\PathBox.xaml.cs">
+      <DependentUpon>PathBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Controls\SearchBox.xaml.cs">
       <DependentUpon>SearchBox.xaml</DependentUpon>
@@ -176,6 +177,10 @@
     <Page Include="WPF\Controls\FontBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WPF\Controls\PathBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WPF\Controls\SearchBox.xaml">
       <SubType>Designer</SubType>

@@ -10,7 +10,7 @@ namespace AlephNote.Repository
 	class SynchronizationThread
 	{
 		private readonly NoteRepository repo;
-		private readonly ISynchronizationFeedback listener;
+		private readonly List<ISynchronizationFeedback> listener;
 		private readonly ConflictResolutionStrategy conflictStrategy;
 		private int delay;
 
@@ -25,10 +25,10 @@ namespace AlephNote.Repository
 		private bool running = false;
 		private bool isSyncing = false;
 		
-		public SynchronizationThread(NoteRepository repository, ISynchronizationFeedback synclistener, ConflictResolutionStrategy strat, IAlephLogger log, IAlephDispatcher disp)
+		public SynchronizationThread(NoteRepository repository, ISynchronizationFeedback[] synclistener, ConflictResolutionStrategy strat, IAlephLogger log, IAlephDispatcher disp)
 		{
 			repo = repository;
-			listener = synclistener;
+			listener = synclistener.ToList();
 			conflictStrategy = strat;
 			_log = log;
 			dispatcher = disp;
@@ -75,7 +75,7 @@ namespace AlephNote.Repository
 
 			List<Tuple<string, Exception>> errors = new List<Tuple<string, Exception>>();
 
-			dispatcher.BeginInvoke(() => listener.StartSync());
+			dispatcher.BeginInvoke(() => { foreach (var l in listener) l.StartSync(); });
 
 			try
 			{
@@ -117,11 +117,11 @@ namespace AlephNote.Repository
 
 			if (errors.Any())
 			{
-				dispatcher.BeginInvoke(() => listener.SyncError(errors));
+				dispatcher.BeginInvoke(() => { foreach (var l in listener) l.SyncError(errors); });
 			}
 			else
 			{
-				dispatcher.BeginInvoke(() => listener.SyncSuccess(DateTimeOffset.Now));
+				dispatcher.BeginInvoke(() => { foreach (var l in listener) l.SyncSuccess(DateTimeOffset.Now); });
 			}
 
 			_log.Info("Sync", "Finished remote synchronization");

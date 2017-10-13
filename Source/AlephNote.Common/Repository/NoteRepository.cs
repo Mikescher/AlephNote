@@ -9,17 +9,18 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using AlephNote.Common.Repository;
+using AlephNote.Common.Operations;
 
 namespace AlephNote.Repository
 {
-	public class NoteRepository : ObservableObject
+	public class NoteRepository : ObservableObject, ISynchronizationFeedback
 	{
 		private readonly string pathLocalFolder;
 		private readonly string pathLocalData;
 		private readonly IRemotePlugin provider;
 		private readonly IRemoteStorageConnection conn;
 		private readonly IRemoteStorageConfiguration remoteconfig;
-		private readonly AppSettings appconfig;
+		private          AppSettings appconfig;
 		private readonly SynchronizationThread thread;
 		private readonly ISynchronizationFeedback listener;
 		private readonly IAlephDispatcher dispatcher;
@@ -38,6 +39,7 @@ namespace AlephNote.Repository
 		public IRemoteStorageConnection Connection { get { return conn; } }
 
 		public string ConnectionName { get { return provider.DisplayTitleShort; } }
+		public string ProviderID { get { return provider.GetUniqueID().ToString("B"); } }
 
 		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, IRemotePlugin prov, IRemoteStorageConfiguration config, IAlephLogger log, IAlephDispatcher disp)
 		{
@@ -50,7 +52,7 @@ namespace AlephNote.Repository
 			listener = fb;
 			logger = log;
 			dispatcher = disp;
-			thread = new SynchronizationThread(this, fb, cfg.ConflictResolution, log, dispatcher);
+			thread = new SynchronizationThread(this, new[]{ this, fb }, cfg.ConflictResolution, log, dispatcher);
 
 			invSaveNotesLocal = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SaveAllDirtyNotes),  1 * 1000,  1 * 60 * 1000);
 			invSaveNotesRemote = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SyncNow),          30 * 1000, 15 * 60 * 1000);
@@ -183,13 +185,13 @@ namespace AlephNote.Repository
 					File.Copy(tempPath, path, true);
 					note.ResetLocalDirty();
 					File.Delete(tempPath);
-
-					return;
 				}
 				catch (Exception e)
 				{
 					throw new Exception("Serialization failed (Sanity check):" + e.Message, e);
 				}
+
+				LocalGitBackup.UpdateRepository(this, appconfig, logger);
 			}
 		}
 
@@ -319,6 +321,38 @@ namespace AlephNote.Repository
 
 			logger.Info("Repository", "Delete folder from local repository: " + Path.GetFileName(pathLocalFolder), pathLocalFolder);
 			Directory.Delete(pathLocalFolder, true);
+		}
+
+		public void ReplaceSettings(AppSettings settings)
+		{
+			appconfig = settings;
+		}
+
+		public void StartSync()
+		{
+			// [event from sync thread]
+		}
+
+		public void SyncSuccess(DateTimeOffset now)
+		{
+			// [event from sync thread]
+
+			LocalGitBackup.UpdateRepository(this, appconfig, logger);
+		}
+
+		public void SyncError(List<Tuple<string, Exception>> errors)
+		{
+			// [event from sync thread]
+		}
+
+		public void OnSyncRequest()
+		{
+			// [event from sync thread]
+		}
+
+		public void OnNoteChanged(NoteChangedEventArgs e)
+		{
+			// [event from sync thread]
 		}
 	}
 }
