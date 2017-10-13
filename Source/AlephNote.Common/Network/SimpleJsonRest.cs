@@ -33,7 +33,7 @@ namespace AlephNote.Repository
 				_client = new HttpClient();
 			}
 
-			_headers["UserAgent"] = "AlephNote/Common";
+			_headers["User-Agent"] = "AlephNote/Common";
 			_headers["ContentType"] = "application/json";
 
 			_host = new Uri(host);
