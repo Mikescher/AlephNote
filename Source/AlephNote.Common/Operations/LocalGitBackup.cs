@@ -43,6 +43,12 @@ namespace AlephNote.Common.Operations
 			{
 				lock(_gitAccessLock)
 				{
+					if (!NeedsUpdate(repo, config))
+					{
+						logger.Debug("LocalGitMirror", "git repository is up to date - no need to commit");
+						return;
+					}
+
 					Directory.CreateDirectory(config.GitMirrorPath);
 
 					var githead = Path.Combine(config.GitMirrorPath, ".git", "HEAD");
@@ -64,16 +70,10 @@ namespace AlephNote.Common.Operations
 					}
 					foreach (var note in repo.Notes)
 					{
-						var fn = FilenameHelper.StripStringForFilename(note.Title);
-						if (string.IsNullOrWhiteSpace(fn)) fn = FilenameHelper.StripStringForFilename(note.GetUniqueName());
+						var fn  = GetFilename(note);
+						var txt = GetFileContent(note);
 
-						string txt = note.Text;
-						if (fn != note.Title && !string.IsNullOrWhiteSpace(note.Title))
-						{
-							txt = note.Title + "\n\n" + note.Text;
-						}
-
-						File.WriteAllText(Path.Combine(config.GitMirrorPath, fn + ".txt"), txt, new UTF8Encoding(false));
+						File.WriteAllText(Path.Combine(config.GitMirrorPath, fn), txt, new UTF8Encoding(false));
 					}
 				}
 
@@ -98,6 +98,57 @@ namespace AlephNote.Common.Operations
 			}
 		}
 
+		private static string GetFilename(INote note)
+		{
+			var fn = FilenameHelper.StripStringForFilename(note.Title);
+			if (string.IsNullOrWhiteSpace(fn)) fn = FilenameHelper.StripStringForFilename(note.GetUniqueName());
+
+			return fn + ".txt";
+		}
+
+		private static string GetFileContent(INote note)
+		{
+			var fn = GetFilename(note);
+
+			string txt = note.Text;
+			if (fn != (note.Title + ".txt") && !string.IsNullOrWhiteSpace(note.Title))
+			{
+				txt = note.Title + "\n\n" + note.Text;
+			}
+			return txt;
+		}
+
+		private static bool NeedsUpdate(NoteRepository repo, AppSettings config)
+		{
+			if (!Directory.Exists(config.GitMirrorPath)) return true;
+			if (!File.Exists(Path.Combine(config.GitMirrorPath, ".git", "HEAD"))) return true;
+
+			var filesGit  = Directory.EnumerateFiles(config.GitMirrorPath, "*.txt").Select(Path.GetFileName).Select(f => f.ToLower()).ToList();
+			var filesThis = repo.Notes.Select(GetFilename).Select(f => f.ToLower()).ToList();
+
+			if (filesGit.Count != filesThis.Count) return true;
+			if (filesGit.Except(filesThis).Any()) return true;
+			if (filesThis.Except(filesGit).Any()) return true;
+
+			foreach (var note in repo.Notes)
+			{
+				try
+				{
+					var fn = Path.Combine(config.GitMirrorPath, GetFilename(note));
+					var txtThis = GetFileContent(note);
+					var txtGit = File.ReadAllText(fn, Encoding.UTF8);
+
+					if (txtGit != txtThis) return true;
+				}
+				catch(IOException)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		private static void CommitRepository(string provname, string provid, string repoPath, string firstname, string lastname, string mail, bool pushremote, IAlephLogger logger)
 		{
 			try
@@ -109,8 +160,11 @@ namespace AlephNote.Common.Operations
 
 					var o2 = ProcessHelper.ProcExecute("git", "status", repoPath);
 					logger.Debug("LocalGitMirror", "git mirror [git status]", o2.ToString());
-					if (o2.StdOut.Contains("nothing to commit") || o2.StdErr.Contains("nothing to commit")) return;
-
+					if (o2.StdOut.Contains("nothing to commit") || o2.StdErr.Contains("nothing to commit"))
+					{
+						logger.Debug("LocalGitMirror", "Local git mirror not updated ('nothing to commit')");
+						return;
+					}
 					var msg =
 						"Automatic Mirroring of AlephNote notes" + "\n" +
 						"" + "\n" +
@@ -127,6 +181,8 @@ namespace AlephNote.Common.Operations
 						var o4 = ProcessHelper.ProcExecute("git", "push", repoPath);
 						logger.Debug("LocalGitMirror", "git mirror [git push]", o4.ToString());
 					}
+
+					logger.Info("LocalGitMirror", "Local git mirror updated" + (pushremote ? " (+ pushed)":""));
 				}
 			}
 			catch (Exception e)
