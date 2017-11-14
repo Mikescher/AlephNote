@@ -51,7 +51,7 @@ namespace AlephNote.Plugins.Headless
 			return new HeadlessConfig();
 		}
 
-		public string GetUniqueName()
+		public string GetDisplayIdentifier()
 		{
 			return "headless";
 		}

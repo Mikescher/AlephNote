@@ -83,12 +83,9 @@ namespace AlephNote.Plugins.Filesystem
 			};
 		}
 
-		public string GetUniqueName()
+		public string GetDisplayIdentifier()
 		{
-			using (var md5 = MD5.Create())
-			{
-				return EncodingConverter.ByteToHexBitFiddleUppercase(md5.ComputeHash(Encoding.UTF8.GetBytes(Folder)));
-			}
+			return Folder;
 		}
 	}
 }

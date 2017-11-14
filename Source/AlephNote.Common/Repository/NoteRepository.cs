@@ -1,5 +1,4 @@
 ﻿using AlephNote.PluginInterface;
-using AlephNote.Serialization;
 using AlephNote.Settings;
 using System;
 using System.Collections.Generic;
@@ -10,6 +9,7 @@ using System.Linq;
 using System.Xml.Linq;
 using AlephNote.Common.Repository;
 using AlephNote.Common.Operations;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Repository
 {
@@ -17,9 +17,8 @@ namespace AlephNote.Repository
 	{
 		private readonly string pathLocalFolder;
 		private readonly string pathLocalData;
-		private readonly IRemotePlugin provider;
 		private readonly IRemoteStorageConnection conn;
-		private readonly IRemoteStorageConfiguration remoteconfig;
+		private readonly RemoteStorageAccount account;
 		private          AppSettings appconfig;
 		private readonly SynchronizationThread thread;
 		private readonly ISynchronizationFeedback listener;
@@ -38,16 +37,15 @@ namespace AlephNote.Repository
 
 		public IRemoteStorageConnection Connection { get { return conn; } }
 
-		public string ConnectionName { get { return provider.DisplayTitleShort; } }
-		public string ProviderID { get { return provider.GetUniqueID().ToString("B"); } }
+		public string ConnectionName { get { return account.Plugin.DisplayTitleShort; } }
+		public string ProviderID { get { return account.Plugin.GetUniqueID().ToString("B"); } }
 
-		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, IRemotePlugin prov, IRemoteStorageConfiguration config, IAlephLogger log, IAlephDispatcher disp)
+		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, RemoteStorageAccount acc, IAlephLogger log, IAlephDispatcher disp)
 		{
-			pathLocalFolder = Path.Combine(path, prov.GetUniqueID().ToString("B"), FilenameHelper.ConvertStringForFilename(config.GetUniqueName()));
-			pathLocalData = Path.Combine(path, prov.GetUniqueID().ToString("B"), FilenameHelper.ConvertStringForFilename(config.GetUniqueName()) + ".xml");
-			conn = prov.CreateRemoteStorageConnection(cfg.CreateProxy(), config);
-			remoteconfig = config;
-			provider = prov;
+			pathLocalFolder = Path.Combine(path, acc.ID.ToString("B"));
+			pathLocalData = Path.Combine(path, acc.ID.ToString("B") + ".xml");
+			conn = acc.Plugin.CreateRemoteStorageConnection(cfg.CreateProxy(), acc.Config);
+			account = acc;
 			appconfig = cfg;
 			listener = fb;
 			logger = log;
@@ -122,7 +120,7 @@ namespace AlephNote.Repository
 			var data = root.Element("data");
 			if (data == null) throw new Exception("missing data node");
 
-			var note = provider.CreateEmptyNote(remoteconfig);
+			var note = account.Plugin.CreateEmptyNote(account.Config);
 			note.Deserialize(data.Elements().FirstOrDefault());
 			note.ResetLocalDirty();
 			note.ResetRemoteDirty();
@@ -137,7 +135,7 @@ namespace AlephNote.Repository
 
 		public INote CreateNewNote()
 		{
-			var note = provider.CreateEmptyNote(remoteconfig);
+			var note = account.Plugin.CreateEmptyNote(account.Config);
 			Notes.Add(note);
 			note.SetDirty();
 			SaveNote(note);
@@ -166,7 +164,7 @@ namespace AlephNote.Repository
 
 				var meta = new XElement("meta");
 				meta.Add(new XElement("date", DateTime.Now.ToString("O")));
-				meta.Add(new XElement("provider", provider.GetUniqueID().ToString("B")));
+				meta.Add(new XElement("provider", account.Plugin.GetUniqueID().ToString("B")));
 				meta.Add(new XElement("dirty", !note.IsRemoteSaved));
 				meta.Add(new XElement("conflict", note.IsConflictNote));
 				root.Add(meta);
@@ -271,7 +269,7 @@ namespace AlephNote.Repository
 
 		public IRemoteStorageSyncPersistance GetSyncData()
 		{
-			var d = provider.CreateEmptyRemoteSyncData();
+			var d = account.Plugin.CreateEmptyRemoteSyncData();
 			if (File.Exists(pathLocalData))
 			{
 				try

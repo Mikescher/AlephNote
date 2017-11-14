@@ -102,9 +102,9 @@ namespace AlephNote.Plugins.Nextcloud
 			return Encoding.UTF32.GetString(AESThenHMAC.SimpleDecryptWithPassword(Convert.FromBase64String(data), ENCRYPTION_KEY));
 		}
 
-		public string GetUniqueName()
+		public string GetDisplayIdentifier()
 		{
-			return Username + ";" + FilenameHelper.StripStringForFilename(Host);
+			return Username + "@" + Host;
 		}
 	}
 }

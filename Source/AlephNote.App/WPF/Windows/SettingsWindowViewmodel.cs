@@ -5,6 +5,8 @@ using AlephNote.WPF.MVVM;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
+using System;
+using System.Linq;
 
 namespace AlephNote.WPF.Windows
 {
@@ -13,9 +15,7 @@ namespace AlephNote.WPF.Windows
 		private readonly MainWindow mainWindow;
 
 		public AppSettings Settings { get; private set; }
-
-		public IEnumerable<IRemotePlugin> AvailableProvider { get { return PluginManager.Inst.LoadedPlugins; } }
-
+		
 		public ICommand InsertCurrentWindowStateCommand { get { return new RelayCommand(InsertCurrentWindowState); } }
 
 		public SettingsWindowViewmodel(MainWindow main, AppSettings data)
@@ -53,7 +53,23 @@ namespace AlephNote.WPF.Windows
 				Settings.StartupPositionWidth = (int)mainWindow.Width;
 				Settings.StartupPositionHeight = (int)mainWindow.Height;
 			}
-			
+
+		}
+
+		public void AddAccount(IRemotePlugin p)
+		{
+			var acc = new RemoteStorageAccount(Guid.NewGuid(), p, p.CreateEmptyRemoteStorageConfiguration());
+
+			Settings.AddAccountAndSetActive(acc);
+
+
+		}
+
+		public void RemoveAccount()
+		{
+			if (Settings.Accounts.Count <= 1) return;
+
+			Settings.RemoveAccount(Settings.ActiveAccount);
 		}
 	}
 }

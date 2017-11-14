@@ -104,7 +104,7 @@ namespace AlephNote.Plugins.SimpleNote
 			return Encoding.UTF32.GetString(AESThenHMAC.SimpleDecryptWithPassword(Convert.FromBase64String(data), ENCRYPTION_KEY));
 		}
 
-		public string GetUniqueName()
+		public string GetDisplayIdentifier()
 		{
 			return Username;
 		}

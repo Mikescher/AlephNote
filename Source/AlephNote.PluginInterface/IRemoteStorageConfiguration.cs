@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace AlephNote.PluginInterface
@@ -16,6 +15,6 @@ namespace AlephNote.PluginInterface
 		bool IsEqual(IRemoteStorageConfiguration other);
 		IRemoteStorageConfiguration Clone();
 
-		string GetUniqueName();
+		string GetDisplayIdentifier();
 	}
 }

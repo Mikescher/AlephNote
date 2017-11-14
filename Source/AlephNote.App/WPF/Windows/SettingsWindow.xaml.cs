@@ -1,5 +1,7 @@
-﻿using AlephNote.Settings;
+﻿using AlephNote.Plugins;
+using AlephNote.Settings;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace AlephNote.WPF.Windows
 {
@@ -29,6 +31,27 @@ namespace AlephNote.WPF.Windows
 		private void OnCancelClicked(object sender, RoutedEventArgs e)
 		{
 			Close();
+		}
+
+		private void OnAddAccountClicked(object sender, RoutedEventArgs e)
+		{
+			Button btn = sender as Button;
+			if (btn == null) return;
+
+			btn.ContextMenu = new ContextMenu();
+
+			foreach (var p in PluginManager.Inst.LoadedPlugins)
+			{
+				var i = new MenuItem() { Header = p.DisplayTitleShort };
+				i.Click += (sdr, rea) => viewmodel.AddAccount(p);
+				btn.ContextMenu.Items.Add(i);
+			}
+			btn.ContextMenu.IsOpen = true;
+		}
+
+		private void OnRemAccountClicked(object sender, RoutedEventArgs e)
+		{
+			viewmodel.RemoveAccount();
 		}
 	}
 }

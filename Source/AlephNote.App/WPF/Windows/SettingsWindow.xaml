@@ -37,23 +37,34 @@
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="50"/>
 							<ColumnDefinition Width="1*"/>
+							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 
-						<TextBlock Grid.Row="0" Grid.Column="0" Text="Storage provider:" VerticalAlignment="Center" />
-						<ComboBox Grid.Row="0" Grid.Column="2" Margin="2" ItemsSource="{Binding AvailableProvider}" SelectedValue="{Binding Settings.NoteProvider}" DisplayMemberPath="DisplayTitleShort" />
+						<TextBlock Grid.Row="0" Grid.Column="0" Text="Active account:" VerticalAlignment="Center" Margin="0,6,0,5" />
+						<ComboBox Grid.Row="0" Grid.Column="2" Margin="2" ItemsSource="{Binding Settings.Accounts}" SelectedValue="{Binding Settings.ActiveAccount}" DisplayMemberPath="DisplayTitle" />
+						<Button Grid.Row="0" Grid.Column="3" Content="+" MinWidth="25" Margin="2,2,0,2" Click="OnAddAccountClicked" />
 
-						<GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Header="Storage options" Margin="2" MinHeight="100">
-							<ContentControl>
-								<ContentControl.Content>
-									<MultiBinding Converter="{StaticResource CreateGridConv}">
-										<Binding Path="Settings.NoteProvider" />
-										<Binding Path="Settings" />
-									</MultiBinding>
-								</ContentControl.Content>
-							</ContentControl>
+						<GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Header="Account options" Margin="2" MinHeight="100">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="*"/>
+									<RowDefinition Height="Auto"/>
+								</Grid.RowDefinitions>
+								<ContentControl Grid.Row="0">
+									<ContentControl.Content>
+										<MultiBinding Converter="{StaticResource CreateGridConv}">
+											<Binding Path="Settings.ActiveAccount" />
+											<Binding Path="Settings" />
+										</MultiBinding>
+									</ContentControl.Content>
+								</ContentControl>
+								<WrapPanel Grid.Row="1" HorizontalAlignment="Right" >
+									<Button Content="Remove" Margin="2" Click="OnRemAccountClicked" />
+								</WrapPanel>
+							</Grid>
 						</GroupBox>
 
-						<GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Header="Synchronization" Margin="2">
+						<GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Header="Synchronization" Margin="2">
 							<Grid Margin="4">
 								<Grid.RowDefinitions>
 									<RowDefinition Height="Auto"/>
@@ -67,17 +78,17 @@
 									<ColumnDefinition Width="50"/>
 									<ColumnDefinition Width="1*"/>
 								</Grid.ColumnDefinitions>
-								
-							<TextBlock Grid.Row="2" Grid.Column="0" Text="Synchronization frequency:" VerticalAlignment="Center" />
-							<ComboBox  Grid.Row="2" Grid.Column="2" Margin="2" ItemsSource="{mext:EnumSource {x:Type settings:ConfigInterval}}" SelectedValue="{Binding Settings.SynchronizationFrequency}" />
 
-							<TextBlock Grid.Row="3" Grid.Column="0" Text="Conflict resolution:" VerticalAlignment="Center" />
+								<TextBlock Grid.Row="2" Grid.Column="0" Text="Synchronization frequency:" VerticalAlignment="Center" />
+								<ComboBox  Grid.Row="2" Grid.Column="2" Margin="2" ItemsSource="{mext:EnumSource {x:Type settings:ConfigInterval}}" SelectedValue="{Binding Settings.SynchronizationFrequency}" />
+
+								<TextBlock Grid.Row="3" Grid.Column="0" Text="Conflict resolution:" VerticalAlignment="Center" />
 								<ComboBox  Grid.Row="3" Grid.Column="2" Margin="2" ItemsSource="{mext:EnumSource {x:Type pi:ConflictResolutionStrategy}}" SelectedValue="{Binding Settings.ConflictResolution}" />
 							</Grid>
 						</GroupBox>
-						
 
-						<GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Header="Connection" Margin="2" Padding="5">
+
+						<GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Header="Connection" Margin="2" Padding="5">
 							<Grid>
 								<Grid.RowDefinitions>
 									<RowDefinition Height="Auto"/>
@@ -109,14 +120,14 @@
 								<ctrl:BindablePasswordBox Grid.Row="4" Grid.Column="2" Margin="3" Grid.ColumnSpan="3" Password="{Binding Settings.ProxyPassword}" IsEnabled="{Binding Settings.ProxyEnabled}" />
 							</Grid>
 						</GroupBox>
-						
-						<GroupBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Padding="4" Header="Application">
+
+						<GroupBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Padding="4" Header="Application">
 							<StackPanel>
 								<CheckBox Margin="3" VerticalAlignment="Center" Content="Start with Windows" IsChecked="{Binding Settings.LaunchOnBoot}" />
 								<CheckBox Margin="3" VerticalAlignment="Center" Content="Automatically check for updates" IsChecked="{Binding Settings.CheckForUpdates}" />
 							</StackPanel>
 						</GroupBox>
-						
+
 					</Grid>
 				</ScrollViewer>
 			</TabItem>
@@ -165,7 +176,7 @@
 									<ColumnDefinition Width="1*"/>
 								</Grid.ColumnDefinitions>
 
-								
+
 								<TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window position" />
 								<TextBox   Grid.Row="0" Grid.Column="1" Margin="3" Text="{Binding Settings.StartupPositionX}" />
 								<TextBox   Grid.Row="0" Grid.Column="3" Margin="3" Text="{Binding Settings.StartupPositionY}" />
@@ -179,7 +190,7 @@
 								<ComboBox  Grid.Row="2" Grid.Column="3" Margin="3" ItemsSource="{mext:EnumSource settings:ExtendedWindowStartupLocation}" SelectedValue="{Binding Settings.StartupLocation}" />
 
 								<Button    Grid.Row="3" Grid.Column="1" Margin="3" Grid.ColumnSpan="3" Content="Use current" Command="{Binding InsertCurrentWindowStateCommand}" />
-								
+
 							</Grid>
 						</GroupBox>
 					</StackPanel>
@@ -300,7 +311,7 @@
 
 								<TextBlock    Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Path" />
 								<ctrl:PathBox Grid.Row="2" Grid.Column="1" PathText="{Binding Settings.GitMirrorPath}" Margin="1" Grid.ColumnSpan="2" />
-								
+
 								<TextBlock Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Authorname" />
 								<TextBox   Grid.Row="3" Grid.Column="1" Text="{Binding Settings.GitMirrorFirstName}" Margin="1" />
 								<TextBox   Grid.Row="3" Grid.Column="2" Text="{Binding Settings.GitMirrorLastName}"  Margin="1" />

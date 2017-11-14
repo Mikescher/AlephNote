@@ -97,7 +97,7 @@ namespace AlephNote.WPF.Windows
 			_settings = settings;
 			_invSaveSettings = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SaveSettings)), 5 * 1000, 60 * 1000);
 
-			_repository = new NoteRepository(App.PATH_LOCALDB, this, settings, settings.NoteProvider, settings.PluginSettings[settings.NoteProvider.GetUniqueID()], App.Logger, dispatcher);
+			_repository = new NoteRepository(App.PATH_LOCALDB, this, settings, settings.ActiveAccount, App.Logger, dispatcher);
 			Repository.Init();
 			
 			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
@@ -138,7 +138,7 @@ namespace AlephNote.WPF.Windows
 		{
 			try
 			{
-				var reconnectRepo = Settings.NoteProvider != newSettings.NoteProvider || !Settings.PluginSettings[Settings.NoteProvider.GetUniqueID()].IsEqual(newSettings.PluginSettings[newSettings.NoteProvider.GetUniqueID()]);
+				var reconnectRepo = !Settings.ActiveAccount.IsEqual(newSettings.ActiveAccount);
 
 				if (reconnectRepo)
 				{
@@ -159,7 +159,7 @@ namespace AlephNote.WPF.Windows
 
 				if (reconnectRepo)
 				{
-					_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.NoteProvider, Settings.PluginSettings[Settings.NoteProvider.GetUniqueID()], App.Logger, dispatcher);
+					_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.ActiveAccount, App.Logger, dispatcher);
 					_repository.Init();
 
 					OnExplicitPropertyChanged("Repository");
@@ -393,7 +393,7 @@ namespace AlephNote.WPF.Windows
 
 				Repository.DeleteLocalData();
 
-				_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.NoteProvider, Settings.PluginSettings[Settings.NoteProvider.GetUniqueID()], App.Logger, dispatcher);
+				_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.ActiveAccount, App.Logger, dispatcher);
 				_repository.Init();
 
 				OnExplicitPropertyChanged("Repository");

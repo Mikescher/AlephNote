@@ -1,244 +1,231 @@
 ﻿using AlephNote.PluginInterface;
-using AlephNote.Plugins;
-using AlephNote.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Xml.Linq;
 using AlephNote.Common.Plugins;
-using AlephNote.Common.Settings;
+using AlephNote.Common.AlephXMLSerialization;
+using System.Linq;
 
 namespace AlephNote.Settings
 {
 	// ReSharper disable RedundantThisQualifier
 	// ReSharper disable CompareOfFloatsByEqualityOperator
-	public class AppSettings : ObservableObject
+	public class AppSettings : ObservableObject, IAlephSerializable
 	{
 		public const string ENCRYPTION_KEY = @"jcgkZJvoykjpoGkDWHqiNoXoLZRJxpdb";
 
-		private class AttrObj { public PropertyInfo Info; public List<object> Attributes;}
-
-		[Setting]
+		[AlephXMLField]
 		public ConfigInterval SynchronizationFrequency { get { return _synchronizationFreq; } set { _synchronizationFreq = value; OnPropertyChanged(); } }
 		private ConfigInterval _synchronizationFreq = ConfigInterval.Sync15Min;
 
-		[Setting]
+		[AlephXMLField]
 		public bool ProxyEnabled { get { return _proxyEnabled; } set { _proxyEnabled = value; OnPropertyChanged(); } }
 		private bool _proxyEnabled = false;
 
-		[Setting]
+		[AlephXMLField]
 		public string ProxyHost { get { return _proxyHost; } set { _proxyHost = value; OnPropertyChanged(); } }
 		private string _proxyHost = string.Empty;
 
-		[Setting]
+		[AlephXMLField]
 		public int? ProxyPort { get { return _proxyPort; } set { _proxyPort = value; OnPropertyChanged(); } }
 		private int? _proxyPort = null;
 
-		[Setting]
+		[AlephXMLField]
 		public string ProxyUsername { get { return _proxyUsername; } set { _proxyUsername = value; OnPropertyChanged(); } }
 		private string _proxyUsername = string.Empty;
 
-		[Setting(Encrypted=true)]
+		[AlephXMLField(Encrypted=true)]
 		public string ProxyPassword { get { return _proxyPassword; } set { _proxyPassword = value; OnPropertyChanged(); } }
 		private string _proxyPassword = string.Empty;
 
-		[Setting]
-		public IRemotePlugin NoteProvider { get { return _noteProvider; } set { _noteProvider = value; OnPropertyChanged(); } }
-		private IRemotePlugin _noteProvider = null;
-
-		[Setting]
+		[AlephXMLField]
 		public bool MinimizeToTray { get { return _minimizeToTray; } set { _minimizeToTray = value; OnPropertyChanged(); } }
 		private bool _minimizeToTray = true;
 
-		[Setting]
+		[AlephXMLField]
 		public bool CloseToTray { get { return _closeToTray; } set { _closeToTray = value; OnPropertyChanged(); } }
 		private bool _closeToTray = false;
 
-		[Setting]
+		[AlephXMLField]
 		public string TitleFontFamily { get { return _titleFontFamily; } set { _titleFontFamily = value; OnPropertyChanged(); } }
 		private string _titleFontFamily = string.Empty;
 
-		[Setting]
+		[AlephXMLField]
 		public FontModifier TitleFontModifier { get { return _titleFontModifier; } set { _titleFontModifier = value; OnPropertyChanged(); } }
 		private FontModifier _titleFontModifier = FontModifier.Bold;
 
-		[Setting]
+		[AlephXMLField]
 		public FontSize TitleFontSize { get { return _titleFontSize; } set { _titleFontSize = value; OnPropertyChanged(); } }
 		private FontSize _titleFontSize = FontSize.Size16;
 
-		[Setting]
+		[AlephXMLField]
 		public string NoteFontFamily { get { return _noteFontFamily; } set { _noteFontFamily = value; OnPropertyChanged(); } }
 		private string _noteFontFamily = string.Empty;
 
-		[Setting]
+		[AlephXMLField]
 		public FontModifier NoteFontModifier { get { return _noteFontModifier; } set { _noteFontModifier = value; OnPropertyChanged(); } }
 		private FontModifier _noteFontModifier = FontModifier.Normal;
 
-		[Setting]
+		[AlephXMLField]
 		public FontSize NoteFontSize { get { return _noteFontSize; } set { _noteFontSize = value; OnPropertyChanged(); } }
 		private FontSize _noteFontSize = FontSize.Size08;
 
-		[Setting]
+		[AlephXMLField]
 		public string ListFontFamily { get { return _listFontFamily; } set { _listFontFamily = value; OnPropertyChanged(); } }
 		private string _listFontFamily = string.Empty;
 
-		[Setting]
+		[AlephXMLField]
 		public FontModifier ListFontModifier { get { return _listFontModifier; } set { _listFontModifier = value; OnPropertyChanged(); } }
 		private FontModifier _listFontModifier = FontModifier.Normal;
 
-		[Setting]
+		[AlephXMLField]
 		public FontSize ListFontSize { get { return _listFontSize; } set { _listFontSize = value; OnPropertyChanged(); } }
 		private FontSize _listFontSize = FontSize.Size12;
 
-		[Setting]
+		[AlephXMLField]
 		public bool SciLineNumbers { get { return _sciLineNumbers; } set { _sciLineNumbers = value; OnPropertyChanged(); } }
 		private bool _sciLineNumbers = false;
 
-		[Setting]
+		[AlephXMLField]
 		public bool SciRectSelection { get { return _sciRectSelection; } set { _sciRectSelection = value; OnPropertyChanged(); } }
 		private bool _sciRectSelection = false;
 
-		[Setting]
+		[AlephXMLField]
 		public bool SciZoomable { get { return _sciZoomable; } set { _sciZoomable = value; OnPropertyChanged(); } }
 		private bool _sciZoomable = true;
 
-		[Setting]
+		[AlephXMLField]
 		public bool SciUseTabs { get { return _sciUseTabs; } set { _sciUseTabs = value; OnPropertyChanged(); } }
 		private bool _sciUseTabs = true;
 		
-		[Setting]
+		[AlephXMLField]
 		public bool SciWordWrap { get { return _sciWordWrap; } set { _sciWordWrap = value; OnPropertyChanged(); } }
 		private bool _sciWordWrap = false;
 
-		[Setting]
+		[AlephXMLField]
 		public bool SciShowWhitespace { get { return _sciShowWhitespace; } set { _sciShowWhitespace = value; OnPropertyChanged(); } }
 		private bool _sciShowWhitespace = false;
 
-		[Setting]
+		[AlephXMLField]
 		public bool SciShowEOL { get { return _sciShowEOL; } set { _sciShowEOL = value; OnPropertyChanged(); } }
 		private bool _sciShowEOL = false;
 
-		[Setting]
+		[AlephXMLField]
 		public int SciTabWidth { get { return _sciTabWidth; } set { _sciTabWidth = value; OnPropertyChanged(); } }
 		private int _sciTabWidth = 4;
 
-		[Setting]
+		[AlephXMLField]
 		public int StartupPositionX { get { return _startupPositionX; } set { _startupPositionX = value; OnPropertyChanged(); } }
 		private int _startupPositionX = 64;
 
-		[Setting]
+		[AlephXMLField]
 		public int StartupPositionY { get { return _startupPositionY; } set { _startupPositionY = value; OnPropertyChanged(); } }
 		private int _startupPositionY = 64;
 
-		[Setting]
+		[AlephXMLField]
 		public int StartupPositionWidth { get { return _startupPositionWidth; } set { _startupPositionWidth = value; OnPropertyChanged(); } }
 		private int _startupPositionWidth = 525;
 
-		[Setting]
+		[AlephXMLField]
 		public int StartupPositionHeight { get { return _startupPositionHeight; } set { _startupPositionHeight = value; OnPropertyChanged(); } }
 		private int _startupPositionHeight = 350;
 
-		[Setting]
+		[AlephXMLField]
 		public ExtendedWindowStartupLocation StartupLocation { get { return _startupLocation; } set { _startupLocation = value; OnPropertyChanged(); } }
 		private ExtendedWindowStartupLocation _startupLocation = ExtendedWindowStartupLocation.ScreenBottomLeft;
 		
-		[Setting]
+		[AlephXMLField]
 		public ExtendedWindowState StartupState { get { return _startupState; } set { _startupState = value; OnPropertyChanged(); } }
 		private ExtendedWindowState _startupState = ExtendedWindowState.Normal;
 
-		[Setting]
+		[AlephXMLField]
 		public bool LaunchOnBoot { get { return _launchOnBoot; } set { _launchOnBoot = value; OnPropertyChanged(); } }
 		private bool _launchOnBoot = false;
 
-		[Setting]
+		[AlephXMLField]
 		public SortingMode NoteSorting { get { return _noteSorting; } set { _noteSorting = value; OnPropertyChanged(); } }
 		private SortingMode _noteSorting = SortingMode.ByModificationDate;
 
-		[Setting]
+		[AlephXMLField]
 		public int SciZoom { get { return _sciZoom; } set { _sciZoom = value; OnPropertyChanged(); } }
 		private int _sciZoom = 1;
 
-		[Setting]
+		[AlephXMLField]
 		public double OverviewListWidth { get { return _overviewListWidth; } set { _overviewListWidth = value; OnPropertyChanged(); } }
 		private double _overviewListWidth = 150;
 
-		[Setting]
+		[AlephXMLField]
 		public NotePreviewStyle NotePreviewStyle { get { return _notePreviewStyle; } set { _notePreviewStyle = value; OnPropertyChanged(); } }
 		private NotePreviewStyle _notePreviewStyle = NotePreviewStyle.Extended;
 
-		[Setting]
+		[AlephXMLField]
 		public ConflictResolutionStrategy ConflictResolution { get { return _conflictResolution; } set { _conflictResolution = value; OnPropertyChanged(); } }
 		private ConflictResolutionStrategy _conflictResolution = ConflictResolutionStrategy.UseClientCreateConflictFile;
 
-		[Setting]
+		[AlephXMLField]
 		public bool DocSearchEnabled { get { return _docSearchEnabled; } set { _docSearchEnabled = value; OnPropertyChanged(); } }
 		private bool _docSearchEnabled = true;
 
-		[Setting]
+		[AlephXMLField]
 		public bool DocSearchCaseSensitive { get { return _docSearchCaseSensitive; } set { _docSearchCaseSensitive = value; OnPropertyChanged(); } }
 		private bool _docSearchCaseSensitive = false;
 
-		[Setting]
+		[AlephXMLField]
 		public bool DocSearchWholeWord { get { return _docSearchWholeWord; } set { _docSearchWholeWord = value; OnPropertyChanged(); } }
 		private bool _docSearchWholeWord = false;
 
-		[Setting]
+		[AlephXMLField]
 		public bool DocSearchRegex { get { return _docSearchRegex; } set { _docSearchRegex = value; OnPropertyChanged(); } }
 		private bool _docSearchRegex = false;
 
-		[Setting]
+		[AlephXMLField]
 		public bool DocSearchLiveSearch { get { return _docSearchLiveSearch; } set { _docSearchLiveSearch = value; OnPropertyChanged(); } }
 		private bool _docSearchLiveSearch = true;
 
-		[Setting]
+		[AlephXMLField]
 		public SciRegexEngine DocSearchRegexEngine { get { return _docSearchRegexEngine; } set { _docSearchRegexEngine = value; OnPropertyChanged(); } }
 		private SciRegexEngine _docSearchRegexEngine = SciRegexEngine.CPlusPlus;
 
-		[Setting]
+		[AlephXMLField]
 		public bool CheckForUpdates { get { return _checkForUpdates; } set { _checkForUpdates = value; OnPropertyChanged(); } }
 		private bool _checkForUpdates = true;
 
-		[Setting]
+		[AlephXMLField]
 		public bool DoGitMirror { get { return _doGitMirror; } set { _doGitMirror = value; OnPropertyChanged(); } }
 		private bool _doGitMirror = false;
 
-		[Setting]
+		[AlephXMLField]
 		public string GitMirrorPath { get { return _gitMirrorPath; } set { _gitMirrorPath = value; OnPropertyChanged(); } }
 		private string _gitMirrorPath = string.Empty;
 
-		[Setting]
+		[AlephXMLField]
 		public string GitMirrorFirstName { get { return _gitMirrorFirstName; } set { _gitMirrorFirstName = value; OnPropertyChanged(); } }
 		private string _gitMirrorFirstName = "AlephNote";
 
-		[Setting]
+		[AlephXMLField]
 		public string GitMirrorLastName { get { return _gitMirrorLastName; } set { _gitMirrorLastName = value; OnPropertyChanged(); } }
 		private string _gitMirrorLastName = "Git";
 
-		[Setting]
+		[AlephXMLField]
 		public string GitMirrorMailAddress { get { return _gitMirrorMailAddress; } set { _gitMirrorMailAddress = value; OnPropertyChanged(); } }
 		private string _gitMirrorMailAddress = "auto@example.com";
 
-		[Setting]
+		[AlephXMLField]
 		public bool GitMirrorDoPush { get { return _gitMirrorDoPush; } set { _gitMirrorDoPush = value; OnPropertyChanged(); } }
 		private bool _gitMirrorDoPush = false;
 
-		public Dictionary<Guid, IRemoteStorageConfiguration> PluginSettings = new Dictionary<Guid, IRemoteStorageConfiguration>();
+		[AlephXMLField]
+		public RemoteStorageAccount ActiveAccount { get { return _activeAccount; } set { _activeAccount = value; OnPropertyChanged(); } }
+		private RemoteStorageAccount _activeAccount = null;
 
-		private static readonly List<Tuple<SettingType, SettingAttribute, PropertyInfo>> _settingProperties;
+		[AlephXMLField]
+		public ObservableCollectionNoReset<RemoteStorageAccount> Accounts { get { return _accounts; } set { _accounts = value; OnPropertyChanged(); } }
+		public ObservableCollectionNoReset<RemoteStorageAccount> _accounts = new ObservableCollectionNoReset<RemoteStorageAccount>();
 
-		static AppSettings()
-		{
-			_settingProperties = typeof(AppSettings)
-				.GetProperties()
-				.Select(p => new AttrObj { Info = p, Attributes = p.GetCustomAttributes(typeof(SettingAttribute), false).Cast<object>().ToList() })
-				.Where(p => p.Attributes.Count == 1)
-				.Select(p => Tuple.Create(((SettingAttribute)p.Attributes.Single()).GetSettingType(p.Info), (SettingAttribute)p.Attributes.Single(), p.Info))
-				.ToList();
-		}
+		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;
 
@@ -250,13 +237,11 @@ namespace AlephNote.Settings
 		public static AppSettings CreateEmpty(string path)
 		{
 			var r = new AppSettings(path);
-			r._noteProvider = PluginManagerSingleton.Inst.GetDefaultPlugin();
 
-			foreach (var plugin in PluginManagerSingleton.Inst.LoadedPlugins)
-			{
-				if (!r.PluginSettings.ContainsKey(plugin.GetUniqueID()))
-					r.PluginSettings[plugin.GetUniqueID()] = plugin.CreateEmptyRemoteStorageConfiguration();
-			}
+			var defplugin = PluginManagerSingleton.Inst.GetDefaultPlugin();
+			r._activeAccount = new RemoteStorageAccount(Guid.NewGuid(), defplugin, defplugin.CreateEmptyRemoteStorageConfiguration());
+
+			r._accounts.Add(r._activeAccount);
 
 			return r;
 		}
@@ -273,94 +258,50 @@ namespace AlephNote.Settings
 
 		public string Serialize()
 		{
-			var root = new XElement("configuration");
-
-			foreach (var prop in _settingProperties)
-			{
-				prop.Item2.Serialize(prop.Item1, prop.Item3, this, root);
-			}
-
-			foreach (var setting in PluginSettings)
-			{
-				var pluginNode = new XElement("Plugin");
-				pluginNode.SetAttributeValue("uuid", setting.Key.ToString("B"));
-				pluginNode.Add(setting.Value.Serialize());
-				root.Add(pluginNode);
-			}
-
-			return XHelper.ConvertToString(new XDocument(root));
+			return _serializer.Serialize(this);
 		}
 
 		public static AppSettings Deserialize(string xml, string path)
 		{
-			var xd = XDocument.Parse(xml);
-			var root = xd.Root;
-			if (root == null) throw new Exception("XDocument needs root");
-			
 			var r = new AppSettings(path);
-
-			foreach (var prop in _settingProperties)
-			{
-				prop.Item2.Deserialize(prop.Item1, prop.Item3, r, root);
-			}
-			
-			r.PluginSettings = new Dictionary<Guid, IRemoteStorageConfiguration>();
-
-			foreach (var pluginNode in root.Descendants("Plugin"))
-			{
-				var id = pluginNode.GuidAttribute("uuid");
-				var plugin = PluginManagerSingleton.Inst.GetPlugin(id);
-				if (plugin != null)
-				{
-					var cfg = plugin.CreateEmptyRemoteStorageConfiguration();
-					cfg.Deserialize(pluginNode.Elements().Single());
-					r.PluginSettings[id] = cfg;
-				}
-			}
-
-			foreach (var plugin in PluginManagerSingleton.Inst.LoadedPlugins)
-			{
-				if (!r.PluginSettings.ContainsKey(plugin.GetUniqueID()))
-					r.PluginSettings[plugin.GetUniqueID()] = plugin.CreateEmptyRemoteStorageConfiguration();
-			}
-
+			_serializer.Deserialize(r, xml);
 			return r;
 		}
-		
+
+		public void OnAfterDeserialize()
+		{
+			_activeAccount = _accounts.First(a => a.ID == _activeAccount.ID);
+		}
+
 		public AppSettings Clone()
 		{
 			var r = new AppSettings(_path);
 
-			foreach (var prop in _settingProperties)
-			{
-				var v = prop.Item3.GetValue(this);
-				prop.Item3.SetValue(r, v);
-			}
-			
-			foreach (var setting in PluginSettings)
-			{
-				r.PluginSettings[setting.Key] = setting.Value.Clone();
-			}
+			_serializer.Clone(this, r);
 
 			return r;
 		}
 
 		public bool IsEqual(AppSettings other)
 		{
-			foreach (var prop in _settingProperties)
-			{
-				if (!prop.Item2.TestEquality(prop.Item1, prop.Item3, this, other)) return false;
-			}
+			return _serializer.IsEqual(this, other);
+		}
 
-			foreach (var key in PluginSettings.Keys.Union(other.PluginSettings.Keys))
-			{
-				if (!this.PluginSettings.ContainsKey(key)) return false;
-				if (!other.PluginSettings.ContainsKey(key)) return false;
+		public void RemoveAccount(RemoteStorageAccount acc)
+		{
+			if (_activeAccount == acc) ActiveAccount = Accounts.FirstOrDefault();
 
-				if (!this.PluginSettings[key].IsEqual(other.PluginSettings[key])) return false;
-			}
+			Accounts.Remove(acc);
 
-			return true;
+			OnPropertyChanged("Accounts");
+		}
+
+		public void AddAccountAndSetActive(RemoteStorageAccount acc)
+		{
+			Accounts.Add(acc);
+			ActiveAccount = acc;
+
+			OnPropertyChanged("Accounts");
 		}
 
 		public IWebProxy CreateProxy()

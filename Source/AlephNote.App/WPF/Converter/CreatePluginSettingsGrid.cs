@@ -21,13 +21,13 @@ namespace AlephNote.WPF.Converter
 		{
 			if (values.Length != 2 || values.Any(p => p == DependencyProperty.UnsetValue)) return DependencyProperty.UnsetValue;
 
-			var provider = values[0] as IRemotePlugin;
+			var provider = values[0] as RemoteStorageAccount;
 			var settings = values[1] as AppSettings;
 
 			if (provider == null) return DependencyProperty.UnsetValue;
 			if (settings == null) return DependencyProperty.UnsetValue;
 
-			var cfg = settings.PluginSettings[provider.GetUniqueID()];
+			var cfg = provider.Config;
 
 			var grid = new Grid();
 

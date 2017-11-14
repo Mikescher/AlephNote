@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace AlephNote.PluginInterface.Util
@@ -195,7 +196,10 @@ namespace AlephNote.PluginInterface.Util
 			{
 				doc.Save(writer);
 			}
-			return builder.ToString();
+
+			var lines = Regex.Split(builder.ToString(), @"\r?\n");
+			if (lines.Any()) lines[0] = lines[0].Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+			return string.Join(Environment.NewLine, lines);
 		}
 
 		#region GetAttribute
