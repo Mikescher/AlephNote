@@ -96,12 +96,19 @@ namespace AlephNote.WPF.Controls
 			if (WholeWord) scintilla.SearchFlags |= SearchFlags.WholeWord;
 			if (Regex) scintilla.SearchFlags |= ConvertRegexFlags(Settings.DocSearchRegexEngine);
 
+			bool first = true;
 			while (scintilla.SearchInTarget(text) != -1)
 			{
 				scintilla.IndicatorFillRange(scintilla.TargetStart, scintilla.TargetEnd - scintilla.TargetStart);
 
 				scintilla.TargetStart = scintilla.TargetEnd;
 				scintilla.TargetEnd = scintilla.TextLength;
+
+				if (first)
+				{
+					scintilla.ScrollRange(scintilla.TargetStart, scintilla.TargetEnd);
+					first = false;
+				}
 			}
 		}
 
