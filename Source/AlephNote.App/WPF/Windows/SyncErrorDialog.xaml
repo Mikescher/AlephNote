@@ -3,7 +3,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
 		WindowStartupLocation="CenterOwner"
-		Title="SyncErrorDialog" Height="359" Width="541">
+		Title="SyncErrorDialog" Height="375" Width="550">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
@@ -15,7 +15,9 @@
 		<TextBlock Grid.Row="0" Text="Error while syncing data" HorizontalAlignment="Center" FontWeight="Bold" FontSize="16" Margin="5" />
 		
 		<Border Grid.Row="1" Background="Crimson" BorderBrush="DimGray" BorderThickness="1" Margin="10" CornerRadius="10">
-			<TextBlock Foreground="White" Background="Transparent" TextWrapping="Wrap" x:Name="ErrorMessage" Margin="10" />
+			<ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxHeight="200">
+				<TextBlock Foreground="White" Background="Transparent" TextWrapping="Wrap" x:Name="ErrorMessage" />
+			</ScrollViewer>
 		</Border>
 
 		<TextBox Grid.Row="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" x:Name="ErrorTrace" />

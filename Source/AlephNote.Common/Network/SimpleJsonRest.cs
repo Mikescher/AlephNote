@@ -432,7 +432,7 @@ namespace AlephNote.Repository
 			}
 			catch (Exception e)
 			{
-				throw new RestException("Rest call to " + uri.Host + " returned unexpected data :\r\n" + download, e);
+				throw new RestException("Rest call to " + uri.Host + " returned unexpected data", "Rest call to " + uri.Host + " returned unexpected data :\r\n" + download, e);
 			}
 			
 			_logger.Debug("REST",

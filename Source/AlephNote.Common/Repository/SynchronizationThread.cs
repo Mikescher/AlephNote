@@ -111,6 +111,10 @@ namespace AlephNote.Repository
 
 				repo.WriteSyncData(data);
 			}
+			catch (RestException e)
+			{
+				errors.Add(Tuple.Create<string, Exception>("Execption while syncing notes: " + e.ShortMessage, e));
+			}
 			catch (Exception e)
 			{
 				errors.Add(Tuple.Create("Execption while syncing notes: " + e.Message, e));
