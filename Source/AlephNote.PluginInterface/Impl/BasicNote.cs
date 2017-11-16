@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Xml.Linq;
 using System.Runtime.CompilerServices;
+using System.Globalization;
 
 namespace AlephNote.PluginInterface.Impl
 {
@@ -158,6 +160,11 @@ namespace AlephNote.PluginInterface.Impl
 				OnExplicitPropertyChanged("Title");
 				OnExplicitPropertyChanged("Tags");
 			}
+		}
+
+		public bool HasTagCasInsensitive(string tag)
+		{
+			return Tags.Any(t => tag.ToLower() == t.ToLower());
 		}
 
 		public abstract void ApplyUpdatedData(INote other);

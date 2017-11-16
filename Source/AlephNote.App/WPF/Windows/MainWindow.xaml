@@ -222,10 +222,10 @@
 				</services:WatermarkService.Watermark>
 			</TextBox>
 
-			<ctrl:TagEditor Grid.Row="1" Grid.Column="0" TagSource="{Binding SelectedNote.Tags}" MinHeight="25" BorderThickness="0" AcceptsReturn="False" AcceptsTab="False" VerticalContentAlignment="Bottom">
+			<ctrl:TagEditor Grid.Row="1" Grid.Column="0" TagSource="{Binding SelectedNote.Tags}" Changed="TagEditor_OnChanged" MinHeight="25" BorderThickness="0" AcceptsReturn="False" AcceptsTab="False" VerticalContentAlignment="Bottom">
 				<ctrl:TagEditor.TokenTemplate>
 					<DataTemplate>
-						<Border VerticalAlignment="Center" Background="SeaShell" BorderThickness="1" BorderBrush="LightGray" Margin="-4,1,8,1" Padding="1">
+						<Border VerticalAlignment="Center" Background="SeaShell" BorderThickness="1" BorderBrush="{Binding ., Converter={conv:TagToBorderBrush}}" Margin="-4,1,8,1" Padding="1">
 							<TextBlock Text="{Binding .}" />
 						</Border>
 					</DataTemplate>

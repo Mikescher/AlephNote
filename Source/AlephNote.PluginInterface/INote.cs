@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 
 namespace AlephNote.PluginInterface
@@ -38,5 +35,6 @@ namespace AlephNote.PluginInterface
 		INote Clone();
 		IDisposable SuppressDirtyChanges();
 		void TriggerOnChanged(bool doNotSendChangeEvents);
+		bool HasTagCasInsensitive(string tag);
 	}
 }

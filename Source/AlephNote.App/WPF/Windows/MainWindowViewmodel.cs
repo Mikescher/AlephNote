@@ -320,8 +320,17 @@ namespace AlephNote.WPF.Windows
 			if (SelectedNote == null) return;
 
 			SaveFileDialog sfd = new SaveFileDialog();
-			sfd.Filter = "Text files (*.txt)|*.txt";
-			sfd.FileName = SelectedNote.Title + ".txt";
+
+			if (SelectedNote.HasTagCasInsensitive(AppSettings.TAG_MARKDOWN))
+			{
+				sfd.Filter = "Markdown files (*.md)|*.md";
+				sfd.FileName = SelectedNote.Title + ".md";
+			}
+			else
+			{
+				sfd.Filter = "Text files (*.txt)|*.txt";
+				sfd.FileName = SelectedNote.Title + ".txt";
+			}
 
 			if (sfd.ShowDialog() == true)
 			{

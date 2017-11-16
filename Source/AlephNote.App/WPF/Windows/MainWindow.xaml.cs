@@ -15,6 +15,7 @@ using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
 using System.Diagnostics;
 using AlephNote.Common.Settings.Types;
+using AlephNote.WPF.Controls;
 
 namespace AlephNote.WPF.Windows
 {
@@ -24,6 +25,9 @@ namespace AlephNote.WPF.Windows
 	public partial class MainWindow : Window
 	{
 		private readonly MainWindowViewmodel viewmodel;
+
+		private readonly ScintillaHighlighter _highlighterDefault  = new DefaultHighlighter();
+		private readonly ScintillaHighlighter _highlighterMarkdown = new MarkdownHighlighter();
 
 		public AppSettings Settings => viewmodel.Settings;
 
@@ -144,6 +148,17 @@ namespace AlephNote.WPF.Windows
 			throw new ArgumentException(s + " is not a valid ExtendedWindowState");
 		}
 
+		public ScintillaHighlighter GetHighlighter(AppSettings s)
+		{
+			if (s.MarkdownMode == MarkdownHighlightMode.Always)
+				return _highlighterMarkdown;
+
+			if (s.MarkdownMode == MarkdownHighlightMode.WithTag && viewmodel?.SelectedNote?.HasTagCasInsensitive(AppSettings.TAG_MARKDOWN) == true)
+				return _highlighterMarkdown;
+
+			return _highlighterDefault;
+		}
+
 		public void SetupScintilla(AppSettings s)
 		{
 			NoteEdit.Lexer = Lexer.Container;
@@ -165,7 +180,7 @@ namespace AlephNote.WPF.Windows
 
 			NoteEdit.Font = new Font(s.NoteFontFamily, (int)s.NoteFontSize);
 
-			DefaultHighlighter.SetUpStyles(NoteEdit, s);
+			_highlighterDefault.SetUpStyles(NoteEdit, s);
 
 			NoteEdit.WrapMode = s.SciWordWrap ? WrapMode.Whitespace : WrapMode.None;
 
@@ -177,8 +192,12 @@ namespace AlephNote.WPF.Windows
 
 			ResetScintillaScrollAndUndo();
 
-			var showLinks = (s.LinkMode != LinkHighlightMode.Disabled);
-			DefaultHighlighter.Highlight(NoteEdit, 0, NoteEdit.Text.Length, showLinks); // evtl only re-highlight visible text?
+			ForceNewHighlighting(s);
+		}
+
+		private void ForceNewHighlighting(AppSettings s)
+		{
+			GetHighlighter(s).Highlight(NoteEdit, 0, NoteEdit.Text.Length, s); // evtl only re-highlight visible text?
 		}
 
 		private void NoteEdit_StyleNeeded(object sender, StyleNeededEventArgs e)
@@ -186,22 +205,20 @@ namespace AlephNote.WPF.Windows
 			var startPos = NoteEdit.GetEndStyled();
 			var endPos = e.Position;
 
-			var showLinks = (Settings.LinkMode != LinkHighlightMode.Disabled);
-
-			DefaultHighlighter.Highlight(NoteEdit, startPos, endPos, showLinks);
+			GetHighlighter(Settings).Highlight(NoteEdit, startPos, endPos, Settings);
 		}
 
 		private void NoteEdit_HotspotClick(object sender, HotspotClickEventArgs e)
 		{
 			if (Settings.LinkMode == LinkHighlightMode.SingleClick)
 			{
-				var links = DefaultHighlighter.FindAllLinks(NoteEdit);
+				var links = _highlighterDefault.FindAllLinks(NoteEdit);
 				var link = links.FirstOrDefault(l => l.Item2 <= e.Position && e.Position <= l.Item3);
 				if (link != null) Process.Start(link.Item1);
 			}
 			else if (Settings.LinkMode == LinkHighlightMode.ControlClick && e.Modifiers.HasFlag(Keys.Control))
 			{
-				var links = DefaultHighlighter.FindAllLinks(NoteEdit);
+				var links = _highlighterDefault.FindAllLinks(NoteEdit);
 				var link = links.FirstOrDefault(l => l.Item2 <= e.Position && e.Position <= l.Item3);
 				if (link != null) Process.Start(link.Item1);
 			}
@@ -211,7 +228,7 @@ namespace AlephNote.WPF.Windows
 		{
 			if (Settings.LinkMode == LinkHighlightMode.DoubleClick)
 			{
-				var links = DefaultHighlighter.FindAllLinks(NoteEdit);
+				var links = _highlighterDefault.FindAllLinks(NoteEdit);
 				var link = links.FirstOrDefault(l => l.Item2 <= e.Position && e.Position <= l.Item3);
 				if (link != null) Process.Start(link.Item1);
 			}
@@ -324,6 +341,11 @@ namespace AlephNote.WPF.Windows
 		private void OnHideDoumentSearchBox(object sender, EventArgs e)
 		{
 			FocusScintilla();
+		}
+
+		private void TagEditor_OnChanged(TagEditor source)
+		{
+			ForceNewHighlighting(Settings);
 		}
 	}
 }

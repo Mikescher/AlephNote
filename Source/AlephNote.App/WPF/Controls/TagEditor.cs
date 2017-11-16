@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Security.Policy;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -10,6 +11,8 @@ namespace AlephNote.WPF.Controls
 {
 	public class TagEditor : RichTextBox
 	{
+		public delegate void TagsSourceChanged(TagEditor source);
+
 		public static readonly DependencyProperty TokenTemplateProperty =
 			DependencyProperty.Register(
 			"TokenTemplate", 
@@ -35,6 +38,8 @@ namespace AlephNote.WPF.Controls
 			set { SetValue(TagSourceProperty, value); }
 		}
 
+		public event TagsSourceChanged Changed;
+
 		public TagEditor()
 		{
 			PreviewKeyDown += OnKeyDown;
@@ -58,6 +63,8 @@ namespace AlephNote.WPF.Controls
 				if (!TagSource.SequenceEqual(doctags))
 				{
 					TagSource.SynchronizeSequence(doctags);
+
+					Changed?.Invoke(this);
 				}
 			}
 		}
@@ -73,11 +80,15 @@ namespace AlephNote.WPF.Controls
 			if (vnew != null) vnew.CollectionChanged += editor.OnTagsCollectionChanged;
 
 			editor.RecreateTags();
+
+			editor.Changed?.Invoke(editor);
 		}
 
 		private void OnTagsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			RecreateTags();
+
+			Changed?.Invoke(this);
 		}
 
 		private void OnKeyDown(object sender, KeyEventArgs e)
@@ -98,6 +109,8 @@ namespace AlephNote.WPF.Controls
 				{
 					TagSource.Add(text);
 					e.Handled = true;
+
+					Changed?.Invoke(this);
 				}
 
 			}

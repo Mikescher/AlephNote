@@ -16,6 +16,8 @@ namespace AlephNote.Settings
 	{
 		public const string ENCRYPTION_KEY = @"jcgkZJvoykjpoGkDWHqiNoXoLZRJxpdb";
 
+		public const string TAG_MARKDOWN = "markdown";
+
 		[AlephXMLField]
 		public ConfigInterval SynchronizationFrequency { get { return _synchronizationFreq; } set { _synchronizationFreq = value; OnPropertyChanged(); } }
 		private ConfigInterval _synchronizationFreq = ConfigInterval.Sync15Min;
@@ -227,6 +229,10 @@ namespace AlephNote.Settings
 		[AlephXMLField]
 		public LinkHighlightMode LinkMode { get { return _linkMode; } set { _linkMode = value; OnPropertyChanged(); } }
 		private LinkHighlightMode _linkMode = LinkHighlightMode.ControlClick;
+
+		[AlephXMLField]
+		public MarkdownHighlightMode MarkdownMode { get { return _markdownMode; } set { _markdownMode = value; OnPropertyChanged(); } }
+		private MarkdownHighlightMode _markdownMode = MarkdownHighlightMode.WithTag;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

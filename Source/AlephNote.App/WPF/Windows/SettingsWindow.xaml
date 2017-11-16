@@ -8,7 +8,6 @@
 		xmlns:windows="clr-namespace:AlephNote.WPF.Windows"
 		xmlns:ctrl="clr-namespace:AlephNote.WPF.Controls"
 		xmlns:mext="clr-namespace:AlephNote.WPF.MarkupExtensions"
-		xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
 		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance windows:SettingsWindowViewmodel}"
 		WindowStartupLocation="CenterOwner"
@@ -83,7 +82,7 @@
 								<ComboBox  Grid.Row="2" Grid.Column="2" Margin="2" ItemsSource="{mext:EnumSource {x:Type settings:ConfigInterval}}" SelectedValue="{Binding Settings.SynchronizationFrequency}" />
 
 								<TextBlock Grid.Row="3" Grid.Column="0" Text="Conflict resolution:" VerticalAlignment="Center" />
-								<ComboBox  Grid.Row="3" Grid.Column="2" Margin="2" ItemsSource="{mext:EnumSource {x:Type pi:ConflictResolutionStrategy}}" SelectedValue="{Binding Settings.ConflictResolution}" />
+								<ComboBox  Grid.Row="3" Grid.Column="2" Margin="2" ItemsSource="{mext:EnumSource {x:Type settings:ConflictResolutionStrategyConfig}}" SelectedValue="{Binding Settings.ConflictResolution}" />
 							</Grid>
 						</GroupBox>
 
@@ -293,7 +292,10 @@
 								</Grid.RowDefinitions>
 
 								<TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Hyperlinks" />
-								<ComboBox  Grid.Row="0" Grid.Column="1" ItemsSource="{mext:EnumSource settings:LinkHighlightMode}" SelectedValue="{Binding Settings.LinkMode}" />
+								<ComboBox  Grid.Row="0" Grid.Column="1" Margin="3" ItemsSource="{mext:EnumSource settings:LinkHighlightMode}" SelectedValue="{Binding Settings.LinkMode}" />
+
+								<TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Markdown" />
+								<ComboBox  Grid.Row="1" Grid.Column="1" Margin="3" ItemsSource="{mext:EnumSource settings:MarkdownHighlightMode}" SelectedValue="{Binding Settings.MarkdownMode}" />
 							</Grid>
 						</GroupBox>
 					</StackPanel>
