@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using System;
 using System.Linq;
+using AlephNote.Common.Settings.Types;
 
 namespace AlephNote.WPF.Windows
 {

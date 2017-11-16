@@ -1,13 +1,12 @@
 ﻿using AlephNote.PluginInterface;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Reflection;
 using AlephNote.Common.Plugins;
 using AlephNote.Common.AlephXMLSerialization;
 using System.Linq;
+using AlephNote.Common.Settings.Types;
 
 namespace AlephNote.Settings
 {
@@ -162,8 +161,8 @@ namespace AlephNote.Settings
 		private NotePreviewStyle _notePreviewStyle = NotePreviewStyle.Extended;
 
 		[AlephXMLField]
-		public ConflictResolutionStrategy ConflictResolution { get { return _conflictResolution; } set { _conflictResolution = value; OnPropertyChanged(); } }
-		private ConflictResolutionStrategy _conflictResolution = ConflictResolutionStrategy.UseClientCreateConflictFile;
+		public ConflictResolutionStrategyConfig ConflictResolution { get { return _conflictResolution; } set { _conflictResolution = value; OnPropertyChanged(); } }
+		private ConflictResolutionStrategyConfig _conflictResolution = ConflictResolutionStrategyConfig.UseClientCreateConflictFile;
 
 		[AlephXMLField]
 		public bool DocSearchEnabled { get { return _docSearchEnabled; } set { _docSearchEnabled = value; OnPropertyChanged(); } }
@@ -224,6 +223,10 @@ namespace AlephNote.Settings
 		[AlephXMLField]
 		public ObservableCollectionNoReset<RemoteStorageAccount> Accounts { get { return _accounts; } set { _accounts = value; OnPropertyChanged(); } }
 		public ObservableCollectionNoReset<RemoteStorageAccount> _accounts = new ObservableCollectionNoReset<RemoteStorageAccount>();
+
+		[AlephXMLField]
+		public LinkHighlightMode LinkMode { get { return _linkMode; } set { _linkMode = value; OnPropertyChanged(); } }
+		private LinkHighlightMode _linkMode = LinkHighlightMode.ControlClick;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

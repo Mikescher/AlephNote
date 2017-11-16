@@ -1,6 +1,4 @@
-﻿using AlephNote.Common.Settings;
-
-namespace AlephNote.Settings
+﻿namespace AlephNote.Common.Settings.Types
 {
 	public enum SortingMode
 	{

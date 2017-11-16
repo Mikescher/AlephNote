@@ -7,6 +7,7 @@ using System.Threading;
 using System.Drawing;
 using AlephNote.Common.Settings;
 using AlephNote.Settings;
+using AlephNote.Common.Settings.Types;
 
 namespace AlephNote.WPF.Controls
 {

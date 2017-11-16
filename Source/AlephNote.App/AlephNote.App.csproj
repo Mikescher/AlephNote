@@ -84,6 +84,7 @@
     <Compile Include="Log\EventLogger.cs" />
     <Compile Include="Log\LogEvent.cs" />
     <Compile Include="Log\LogEventType.cs" />
+    <Compile Include="WPF\Util\DefaultHighlighter.cs" />
     <Compile Include="WPF\BindingProxies\AbstractLegacyBinding.cs" />
     <Compile Include="WPF\BindingProxies\AbstractRawBinding.cs" />
     <Compile Include="WPF\BindingProxies\EventProxy.cs" />

@@ -1,4 +1,4 @@
-﻿using AlephNote.Settings;
+﻿using AlephNote.Common.Settings.Types;
 using AlephNote.WPF.MVVM;
 
 namespace AlephNote.WPF.Converter

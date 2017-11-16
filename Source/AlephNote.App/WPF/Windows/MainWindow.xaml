@@ -11,7 +11,7 @@
 		xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
 		xmlns:ctrl="clr-namespace:AlephNote.WPF.Controls"
 		xmlns:tb="http://www.hardcodet.net/taskbar"
-		xmlns:settings="clr-namespace:AlephNote.Settings;assembly=AlephNote.Common"
+		xmlns:settings="clr-namespace:AlephNote.Common.Settings.Types;assembly=AlephNote.Common"
 		xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
 		xmlns:mext="clr-namespace:AlephNote.WPF.MarkupExtensions"
 		mc:Ignorable="d" 
@@ -249,9 +249,9 @@
 					<RowDefinition Height="*"/>
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
-				<WindowsFormsHost Grid.Row="0"  x:Name="NoteEditHost">
+				<WindowsFormsHost Grid.Row="0" x:Name="NoteEditHost">
 					<WindowsFormsHost.Child>
-						<scinet:Scintilla x:Name="NoteEdit" KeyPress="NoteEdit_OnKeyPress" KeyDown="NoteEdit_OnKeyDown" />
+						<scinet:Scintilla x:Name="NoteEdit" KeyPress="NoteEdit_OnKeyPress" KeyDown="NoteEdit_OnKeyDown" StyleNeeded="NoteEdit_StyleNeeded" HotspotClick="NoteEdit_HotspotClick" HotspotDoubleClick="NoteEdit_HotspotDoubleClick" />
 					</WindowsFormsHost.Child>
 				</WindowsFormsHost>
 

@@ -3,7 +3,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:settings="clr-namespace:AlephNote.Settings;assembly=AlephNote.Common"
+		xmlns:settings="clr-namespace:AlephNote.Common.Settings.Types;assembly=AlephNote.Common"
 		xmlns:converter="clr-namespace:AlephNote.WPF.Converter"
 		xmlns:windows="clr-namespace:AlephNote.WPF.Windows"
 		xmlns:ctrl="clr-namespace:AlephNote.WPF.Controls"
@@ -279,6 +279,21 @@
 
 								<TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Regex Engine" />
 								<ComboBox  Grid.Row="1" Grid.Column="1" ItemsSource="{mext:EnumSource settings:SciRegexEngine}" SelectedValue="{Binding Settings.DocSearchRegexEngine}" />
+							</Grid>
+						</GroupBox>
+						<GroupBox Header="Highlighting" Padding="4">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+								</Grid.ColumnDefinitions>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+
+								<TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Hyperlinks" />
+								<ComboBox  Grid.Row="0" Grid.Column="1" ItemsSource="{mext:EnumSource settings:LinkHighlightMode}" SelectedValue="{Binding Settings.LinkMode}" />
 							</Grid>
 						</GroupBox>
 					</StackPanel>

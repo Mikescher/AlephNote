@@ -4,16 +4,16 @@ namespace AlephNote.PluginInterface
 {
 	public enum ConflictResolutionStrategy
 	{
-		//[Description("Use client version, override server")]
-		UseClientVersion,
+		// Use client version, override server
+		UseClientVersion = 1,
 
-		//[Description("Use server version, override client")]
-		UseServerVersion,
+		// Use server version, override client
+		UseServerVersion = 2,
 
-		//[Description("Use client version, create conflict note")]
-		UseClientCreateConflictFile,
+		// Use client version, create conflict note
+		UseClientCreateConflictFile = 3,
 
-		//[Description("Use server version, create conflict note")]
-		UseServerCreateConflictFile,
+		// Use server version, create conflict note
+		UseServerCreateConflictFile = 4,
 	}
 }

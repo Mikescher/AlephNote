@@ -1,15 +1,20 @@
 ﻿using AlephNote.Plugins;
 using AlephNote.Settings;
+using AlephNote.WPF.Util;
 using ScintillaNET;
 using System;
+using System.Linq;
 using System.Drawing;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
+using System.Diagnostics;
+using AlephNote.Common.Settings.Types;
 
 namespace AlephNote.WPF.Windows
 {
@@ -19,6 +24,8 @@ namespace AlephNote.WPF.Windows
 	public partial class MainWindow : Window
 	{
 		private readonly MainWindowViewmodel viewmodel;
+
+		public AppSettings Settings => viewmodel.Settings;
 
 		public MainWindow()
 		{
@@ -139,7 +146,7 @@ namespace AlephNote.WPF.Windows
 
 		public void SetupScintilla(AppSettings s)
 		{
-			NoteEdit.Lexer = Lexer.Null;
+			NoteEdit.Lexer = Lexer.Container;
 
 			NoteEdit.WhitespaceSize = 1;
 			NoteEdit.ViewWhitespace = s.SciShowWhitespace ? WhitespaceMode.VisibleAlways : WhitespaceMode.Invisible;
@@ -157,10 +164,8 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.VirtualSpaceOptions = s.SciRectSelection ? VirtualSpace.RectangularSelection : VirtualSpace.None;
 
 			NoteEdit.Font = new Font(s.NoteFontFamily, (int)s.NoteFontSize);
-			NoteEdit.Styles[0].Bold = s.NoteFontModifier == FontModifier.Bold || s.NoteFontModifier == FontModifier.BoldItalic;
-			NoteEdit.Styles[0].Italic = s.NoteFontModifier == FontModifier.Italic || s.NoteFontModifier == FontModifier.BoldItalic;
-			NoteEdit.Styles[0].Size = (int)s.NoteFontSize;
-			NoteEdit.Styles[0].Font = s.NoteFontFamily;
+
+			DefaultHighlighter.SetUpStyles(NoteEdit, s);
 
 			NoteEdit.WrapMode = s.SciWordWrap ? WrapMode.Whitespace : WrapMode.None;
 
@@ -171,13 +176,52 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.TabWidth = s.SciTabWidth * 2;
 
 			ResetScintillaScrollAndUndo();
+
+			var showLinks = (s.LinkMode != LinkHighlightMode.Disabled);
+			DefaultHighlighter.Highlight(NoteEdit, 0, NoteEdit.Text.Length, showLinks); // evtl only re-highlight visible text?
+		}
+
+		private void NoteEdit_StyleNeeded(object sender, StyleNeededEventArgs e)
+		{
+			var startPos = NoteEdit.GetEndStyled();
+			var endPos = e.Position;
+
+			var showLinks = (Settings.LinkMode != LinkHighlightMode.Disabled);
+
+			DefaultHighlighter.Highlight(NoteEdit, startPos, endPos, showLinks);
+		}
+
+		private void NoteEdit_HotspotClick(object sender, HotspotClickEventArgs e)
+		{
+			if (Settings.LinkMode == LinkHighlightMode.SingleClick)
+			{
+				var links = DefaultHighlighter.FindAllLinks(NoteEdit);
+				var link = links.FirstOrDefault(l => l.Item2 <= e.Position && e.Position <= l.Item3);
+				if (link != null) Process.Start(link.Item1);
+			}
+			else if (Settings.LinkMode == LinkHighlightMode.ControlClick && e.Modifiers.HasFlag(Keys.Control))
+			{
+				var links = DefaultHighlighter.FindAllLinks(NoteEdit);
+				var link = links.FirstOrDefault(l => l.Item2 <= e.Position && e.Position <= l.Item3);
+				if (link != null) Process.Start(link.Item1);
+			}
+		}
+
+		private void NoteEdit_HotspotDoubleClick(object sender, HotspotClickEventArgs e)
+		{
+			if (Settings.LinkMode == LinkHighlightMode.DoubleClick)
+			{
+				var links = DefaultHighlighter.FindAllLinks(NoteEdit);
+				var link = links.FirstOrDefault(l => l.Item2 <= e.Position && e.Position <= l.Item3);
+				if (link != null) Process.Start(link.Item1);
+			}
 		}
 
 		private void ZoomChanged(object sender, EventArgs args)
 		{
-			if (viewmodel.Settings.SciZoomable)
+			if (Settings.SciZoomable)
 			{
-				viewmodel.Settings.SciZoom = NoteEdit.Zoom;
+				Settings.SciZoom = NoteEdit.Zoom;
 				viewmodel.RequestSettingsSave();
 			}
 			else
@@ -185,9 +229,9 @@ namespace AlephNote.WPF.Windows
 				if (NoteEdit.Zoom != 0)
 				{
 					NoteEdit.Zoom = 0;
-					if (viewmodel.Settings.SciZoom != 0)
+					if (Settings.SciZoom != 0)
 					{
-						viewmodel.Settings.SciZoom = NoteEdit.Zoom;
+						Settings.SciZoom = NoteEdit.Zoom;
 						viewmodel.RequestSettingsSave();
 					}
 				}

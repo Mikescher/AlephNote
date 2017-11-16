@@ -1,4 +1,5 @@
-﻿using AlephNote.PluginInterface;
+﻿using AlephNote.Common.Settings.Types;
+using AlephNote.PluginInterface;
 using AlephNote.Plugins;
 using AlephNote.Repository;
 using AlephNote.Settings;

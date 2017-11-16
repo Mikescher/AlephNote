@@ -34,6 +34,7 @@ namespace AlephNote.Repository
 
 		private readonly DelayedCombiningInvoker invSaveNotesLocal;
 		private readonly DelayedCombiningInvoker invSaveNotesRemote;
+		private readonly DelayedCombiningInvoker invSaveNotesGitBackup;
 
 		public IRemoteStorageConnection Connection { get { return conn; } }
 
@@ -52,8 +53,9 @@ namespace AlephNote.Repository
 			dispatcher = disp;
 			thread = new SynchronizationThread(this, new[]{ this, fb }, cfg.ConflictResolution, log, dispatcher);
 
-			invSaveNotesLocal = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SaveAllDirtyNotes),  1 * 1000,  1 * 60 * 1000);
-			invSaveNotesRemote = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SyncNow),          30 * 1000, 15 * 60 * 1000);
+			invSaveNotesLocal     = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SaveAllDirtyNotes),      10 * 1000,  1 * 60 * 1000);
+			invSaveNotesRemote    = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SyncNow),                45 * 1000, 15 * 60 * 1000);
+			invSaveNotesGitBackup = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(CommitToLocalGitBackup), 10 * 1000, 15 * 60 * 1000);
 
 			_notes.CollectionChanged += NoteCollectionChanged;
 		}
@@ -188,8 +190,6 @@ namespace AlephNote.Repository
 				{
 					throw new Exception("Serialization failed (Sanity check):" + e.Message, e);
 				}
-
-				LocalGitBackup.UpdateRepository(this, appconfig, logger);
 			}
 		}
 
@@ -216,6 +216,7 @@ namespace AlephNote.Repository
 		{
 			invSaveNotesLocal.Request();
 			invSaveNotesRemote.Request();
+			invSaveNotesGitBackup.Request();
 			
 			listener.OnSyncRequest();
 			
@@ -246,6 +247,7 @@ namespace AlephNote.Repository
 			SaveNote(note);
 
 			invSaveNotesLocal.Request();
+			invSaveNotesGitBackup.Request();
 
 			if (updateRemote)
 			{
@@ -260,6 +262,11 @@ namespace AlephNote.Repository
 			invSaveNotesRemote.CancelPendingRequests();
 
 			thread.SyncNowAsync();
+		}
+
+		public void CommitToLocalGitBackup()
+		{
+			LocalGitBackup.UpdateRepository(this, appconfig, logger);
 		}
 
 		public void SaveAll()

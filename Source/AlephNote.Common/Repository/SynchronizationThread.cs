@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using AlephNote.Common.Repository;
+using AlephNote.Common.Settings.Types;
 
 namespace AlephNote.Repository
 {
@@ -25,11 +26,11 @@ namespace AlephNote.Repository
 		private bool running = false;
 		private bool isSyncing = false;
 		
-		public SynchronizationThread(NoteRepository repository, ISynchronizationFeedback[] synclistener, ConflictResolutionStrategy strat, IAlephLogger log, IAlephDispatcher disp)
+		public SynchronizationThread(NoteRepository repository, ISynchronizationFeedback[] synclistener, ConflictResolutionStrategyConfig strat, IAlephLogger log, IAlephDispatcher disp)
 		{
 			repo = repository;
 			listener = synclistener.ToList();
-			conflictStrategy = strat;
+			conflictStrategy = ConflictResolutionStrategyHelper.ToInterfaceType(strat);
 			_log = log;
 			dispatcher = disp;
 		}

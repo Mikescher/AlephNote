@@ -1,4 +1,5 @@
-﻿namespace AlephNote.Settings
+﻿
+namespace AlephNote.Common.Settings.Types
 {
 	public enum SynchronizationState
 	{
