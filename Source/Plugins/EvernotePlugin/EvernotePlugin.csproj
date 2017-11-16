@@ -12,6 +12,8 @@
     <DefineConstants>NETFX_CORE</DefineConstants>
 
     <OutDir>..\..\..\Bin\$(Configuration)\$(TargetFramework)\Plugins\</OutDir>
+
+    <RootNamespace>AlephNote.Plugins.Evernote</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

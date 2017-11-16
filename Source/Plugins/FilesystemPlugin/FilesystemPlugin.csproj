@@ -10,6 +10,8 @@
     <FileVersion>1.1.3.0</FileVersion>
 
     <OutDir>..\..\..\Bin\$(Configuration)\$(TargetFramework)\Plugins\</OutDir>
+
+    <RootNamespace>AlephNote.Plugins.Filesystem</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
