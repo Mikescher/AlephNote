@@ -187,6 +187,11 @@ namespace AlephNote.PluginInterface.Util
 			return child;
 		}
 
+		public static XElement GetChildOrNull(XElement parent, string childName)
+		{
+			return parent.Elements(childName).FirstOrDefault();
+		}
+
 		public static string ConvertToString(XDocument doc)
 		{
 			if (doc == null) throw new ArgumentNullException("doc");

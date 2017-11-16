@@ -97,6 +97,8 @@ namespace AlephNote.Plugins
 
 		public IRemotePlugin GetDefaultPlugin()
 		{
+			if (!LoadedPlugins.Any()) throw new Exception("No plugins found - AlephNote needs at east one active plugin");
+
 			foreach (var plugin in LoadedPlugins)
 			{
 				if (plugin.GetUniqueID() == Guid.Parse("37de6de1-26b0-41f5-b252-5e625d9ecfa3")) return plugin; // Local Storage

@@ -131,15 +131,20 @@ namespace AlephNote.Settings
 					break;
 
 				case SettingObjectTypeEnum.RemoteStorageAccount:
-					PropInfo.SetValue(obj, new RemoteStorageAccount(XHelper.GetChildValue(root, PropInfo.Name, Guid.Empty), null, null));
+					var currUUID = ((RemoteStorageAccount)current).ID;
+					PropInfo.SetValue(obj, new RemoteStorageAccount(XHelper.GetChildValue(root, PropInfo.Name, currUUID), null, null));
 					break;
 
 				case SettingObjectTypeEnum.List_RemoteStorageAccount:
 					var list = (IList<RemoteStorageAccount>)current;
-					list.Clear();
-					foreach (var elem in XHelper.GetChildOrThrow(root, PropInfo.Name).Elements())
+					var child = XHelper.GetChildOrNull(root, PropInfo.Name);
+					if (child != null)
 					{
-						list.Add(DeserializeRemoteStorageAccount(elem));
+						list.Clear();
+						foreach (var elem in XHelper.GetChildOrThrow(root, PropInfo.Name).Elements())
+						{
+							list.Add(DeserializeRemoteStorageAccount(elem));
+						}
 					}
 					break;
 

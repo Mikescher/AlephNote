@@ -7,7 +7,10 @@ namespace AlephNote.Plugins.Nextcloud
 	{
 		public XElement Serialize()
 		{
-			return new XElement("data");
+			var r = new XElement("data");
+			r.SetAttributeValue("plugin", NextcloudPlugin.Name);
+			r.SetAttributeValue("pluginversion", NextcloudPlugin.Version.ToString());
+			return r;
 		}
 
 		public void Deserialize(XElement input)

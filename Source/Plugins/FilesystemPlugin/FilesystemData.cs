@@ -7,7 +7,10 @@ namespace AlephNote.Plugins.Filesystem
 	{
 		public XElement Serialize()
 		{
-			return new XElement("data");
+			var r = new XElement("data");
+			r.SetAttributeValue("plugin", FilesystemPlugin.Name);
+			r.SetAttributeValue("pluginversion", FilesystemPlugin.Version.ToString());
+			return r;
 		}
 
 		public void Deserialize(XElement input)

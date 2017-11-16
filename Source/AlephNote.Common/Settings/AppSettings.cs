@@ -263,19 +263,20 @@ namespace AlephNote.Settings
 
 		public static AppSettings Deserialize(string xml, string path)
 		{
-			var r = new AppSettings(path);
+			var r = CreateEmpty(path);
 			_serializer.Deserialize(r, xml);
 			return r;
 		}
 
 		public void OnAfterDeserialize()
 		{
-			_activeAccount = _accounts.First(a => a.ID == _activeAccount.ID);
+			_activeAccount = _accounts.FirstOrDefault(a => a.ID == _activeAccount.ID);
+			if (_activeAccount == null) throw new Exception("Deserialization error: ActiveAccount not found in AccountList");
 		}
 
 		public AppSettings Clone()
 		{
-			var r = new AppSettings(_path);
+			var r = CreateEmpty(_path);
 
 			_serializer.Clone(this, r);
 

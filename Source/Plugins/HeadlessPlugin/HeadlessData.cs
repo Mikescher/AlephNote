@@ -7,7 +7,10 @@ namespace AlephNote.Plugins.Headless
 	{
 		public XElement Serialize()
 		{
-			return new XElement("data");
+			var r = new XElement("data");
+			r.SetAttributeValue("plugin", HeadlessPlugin.Name);
+			r.SetAttributeValue("pluginversion", HeadlessPlugin.Version.ToString());
+			return r;
 		}
 
 		public void Deserialize(XElement input)
