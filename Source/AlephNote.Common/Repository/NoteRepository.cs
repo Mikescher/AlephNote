@@ -262,9 +262,11 @@ namespace AlephNote.Repository
 			invSaveNotesRemote.CancelPendingRequests();
 
 			thread.SyncNowAsync();
+
+			CommitToLocalGitBackup(); // without invoker
 		}
 
-		public void CommitToLocalGitBackup()
+		private void CommitToLocalGitBackup()
 		{
 			LocalGitBackup.UpdateRepository(this, appconfig, logger);
 		}

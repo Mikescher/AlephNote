@@ -219,6 +219,10 @@ namespace AlephNote.Settings
 		private bool _gitMirrorDoPush = false;
 
 		[AlephXMLField]
+		public bool GitMirrorSubfolders { get { return _gitMirrorSubfolders; } set { _gitMirrorSubfolders = value; OnPropertyChanged(); } }
+		private bool _gitMirrorSubfolders = false;
+
+		[AlephXMLField]
 		public RemoteStorageAccount ActiveAccount { get { return _activeAccount; } set { _activeAccount = value; OnPropertyChanged(); } }
 		private RemoteStorageAccount _activeAccount = null;
 

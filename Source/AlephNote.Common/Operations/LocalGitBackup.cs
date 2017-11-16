@@ -12,7 +12,7 @@ namespace AlephNote.Common.Operations
 {
 	public static class LocalGitBackup
 	{
-		private static object _gitAccessLock = new object();
+		private static readonly object _gitAccessLock = new object();
 
 		public static void UpdateRepository(NoteRepository repo, AppSettings config, IAlephLogger logger)
 		{
@@ -64,16 +64,34 @@ namespace AlephNote.Common.Operations
 						logger.Debug("LocalGitMirror", "git mirror [git init]", o.ToString());
 					}
 
-					foreach (var file in Directory.EnumerateFiles(config.GitMirrorPath))
+					if (config.GitMirrorSubfolders)
 					{
-						if (file.ToLower().EndsWith(".txt")) File.Delete(file);
-					}
-					foreach (var note in repo.Notes)
-					{
-						var fn  = GetFilename(note);
-						var txt = GetFileContent(note);
+						CleanFolderFromNotes(config.GitMirrorPath);
 
-						File.WriteAllText(Path.Combine(config.GitMirrorPath, fn), txt, new UTF8Encoding(false));
+						var subfolder = Path.Combine(config.GitMirrorPath, config.ActiveAccount.ID.ToString("B"));
+						Directory.CreateDirectory(subfolder);
+
+						CleanFolderFromNotes(subfolder);
+
+						foreach (var note in repo.Notes)
+						{
+							var fn = GetFilename(note);
+							var txt = GetFileContent(note);
+
+							File.WriteAllText(Path.Combine(subfolder, fn), txt, new UTF8Encoding(false));
+						}
+					}
+					else
+					{
+						CleanFolderFromNotes(config.GitMirrorPath);
+
+						foreach (var note in repo.Notes)
+						{
+							var fn = GetFilename(note);
+							var txt = GetFileContent(note);
+
+							File.WriteAllText(Path.Combine(config.GitMirrorPath, fn), txt, new UTF8Encoding(false));
+						}
 					}
 				}
 
@@ -98,12 +116,24 @@ namespace AlephNote.Common.Operations
 			}
 		}
 
+		private static void CleanFolderFromNotes(string folder)
+		{
+			foreach (var file in Directory.EnumerateFiles(folder))
+			{
+				if (file.ToLower().EndsWith(".txt") || file.ToLower().EndsWith(".md")) File.Delete(file);
+			}
+		}
+
 		private static string GetFilename(INote note)
 		{
 			var fn = FilenameHelper.StripStringForFilename(note.Title);
 			if (string.IsNullOrWhiteSpace(fn)) fn = FilenameHelper.StripStringForFilename(note.GetUniqueName());
 
-			return fn + ".txt";
+			var ext = ".txt";
+
+			if (note.HasTagCasInsensitive(AppSettings.TAG_MARKDOWN)) ext = ".md";
+
+			return fn + ext;
 		}
 
 		private static string GetFileContent(INote note)
@@ -120,10 +150,18 @@ namespace AlephNote.Common.Operations
 
 		private static bool NeedsUpdate(NoteRepository repo, AppSettings config)
 		{
-			if (!Directory.Exists(config.GitMirrorPath)) return true;
 			if (!File.Exists(Path.Combine(config.GitMirrorPath, ".git", "HEAD"))) return true;
 
-			var filesGit  = Directory.EnumerateFiles(config.GitMirrorPath, "*.txt").Select(Path.GetFileName).Select(f => f.ToLower()).ToList();
+			var folder = config.GitMirrorPath;
+			if (config.GitMirrorSubfolders) folder = Path.Combine(config.GitMirrorPath, config.ActiveAccount.ID.ToString("B"));
+
+			if (!Directory.Exists(folder)) return true;
+			
+			var filesGit  = Directory
+				.EnumerateFiles(folder)
+				.Where(f => f.ToLower().EndsWith(".txt") || f.ToLower().EndsWith(".md"))
+				.Select(Path.GetFileName).Select(f => f.ToLower()).ToList();
+
 			var filesThis = repo.Notes.Select(GetFilename).Select(f => f.ToLower()).ToList();
 
 			if (filesGit.Count != filesThis.Count) return true;
@@ -134,7 +172,7 @@ namespace AlephNote.Common.Operations
 			{
 				try
 				{
-					var fn = Path.Combine(config.GitMirrorPath, GetFilename(note));
+					var fn = Path.Combine(folder, GetFilename(note));
 					var txtThis = GetFileContent(note);
 					var txtGit = File.ReadAllText(fn, Encoding.UTF8);
 
@@ -173,7 +211,7 @@ namespace AlephNote.Common.Operations
 						"# Provider: " + provname + "\n" +
 						"# Provider (ID): " + provid + "\n";
 
-					var o3 = ProcessHelper.ProcExecute("git", $"commit -a --allow-empty --message=\"{msg}\" --author=\"AlephNote Git <auto@example.com>\"", repoPath);
+					var o3 = ProcessHelper.ProcExecute("git", $"commit -a --allow-empty --message=\"{msg}\" --author=\"{firstname} {lastname} <{mail}>\"", repoPath);
 					logger.Debug("LocalGitMirror", "git mirror [git commit]", o3.ToString());
 
 					if (pushremote)

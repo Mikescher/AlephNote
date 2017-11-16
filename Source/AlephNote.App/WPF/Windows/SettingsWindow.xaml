@@ -312,6 +312,7 @@
 									<RowDefinition Height="Auto"/>
 									<RowDefinition Height="Auto"/>
 									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
 									<RowDefinition/>
 								</Grid.RowDefinitions>
 								<Grid.ColumnDefinitions>
@@ -329,12 +330,15 @@
 								<TextBlock    Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Path" />
 								<ctrl:PathBox Grid.Row="2" Grid.Column="1" PathText="{Binding Settings.GitMirrorPath}" Margin="1" Grid.ColumnSpan="2" />
 
-								<TextBlock Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Authorname" />
-								<TextBox   Grid.Row="3" Grid.Column="1" Text="{Binding Settings.GitMirrorFirstName}" Margin="1" />
-								<TextBox   Grid.Row="3" Grid.Column="2" Text="{Binding Settings.GitMirrorLastName}"  Margin="1" />
+								<TextBlock Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Separate folders per account" />
+								<CheckBox  Grid.Row="3" Grid.Column="1" IsChecked="{Binding Settings.GitMirrorSubfolders}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
 
-								<TextBlock Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Authormail" />
-								<TextBox   Grid.Row="4" Grid.Column="1" Text="{Binding Settings.GitMirrorMailAddress}" Margin="1" Grid.ColumnSpan="2" />
+								<TextBlock Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Authorname" />
+								<TextBox   Grid.Row="4" Grid.Column="1" Text="{Binding Settings.GitMirrorFirstName}" Margin="1" />
+								<TextBox   Grid.Row="4" Grid.Column="2" Text="{Binding Settings.GitMirrorLastName}"  Margin="1" />
+
+								<TextBlock Grid.Row="5" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Authormail" />
+								<TextBox   Grid.Row="5" Grid.Column="1" Text="{Binding Settings.GitMirrorMailAddress}" Margin="1" Grid.ColumnSpan="2" />
 
 							</Grid>
 						</GroupBox>
