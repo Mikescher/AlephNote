@@ -312,7 +312,7 @@ namespace AlephNote.Settings
 
 		public void RemoveAccount(RemoteStorageAccount acc)
 		{
-			if (_activeAccount == acc) ActiveAccount = Accounts.FirstOrDefault();
+			if (_activeAccount == acc) ActiveAccount = Accounts.Except(new[]{ acc }).FirstOrDefault();
 
 			Accounts.Remove(acc);
 

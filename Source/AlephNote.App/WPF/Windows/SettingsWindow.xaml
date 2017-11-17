@@ -353,7 +353,7 @@
 		</TabControl>
 
 		<WrapPanel Grid.Row="1" HorizontalAlignment="Right">
-			<Button Content="Ok"     Margin="5" MinWidth="100" Click="OnOKClicked" />
+			<Button Content="OK"     Margin="5" MinWidth="100" Click="OnOKClicked" />
 			<Button Content="Cancel" Margin="5" MinWidth="100" Click="OnCancelClicked" />
 		</WrapPanel>
 
