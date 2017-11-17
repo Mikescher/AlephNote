@@ -84,6 +84,7 @@
     <Compile Include="Log\EventLogger.cs" />
     <Compile Include="Log\LogEvent.cs" />
     <Compile Include="Log\LogEventType.cs" />
+    <Compile Include="WPF\Converter\TagsToPlaceholder.cs" />
     <Compile Include="WPF\Converter\TagToBorderBrush.cs" />
     <Compile Include="WPF\Util\MarkdownHighlighter.cs" />
     <Compile Include="WPF\Util\DefaultHighlighter.cs" />

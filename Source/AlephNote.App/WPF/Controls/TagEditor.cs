@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Security.Policy;
 using System.Windows;
@@ -9,7 +10,7 @@ using System.Windows.Input;
 
 namespace AlephNote.WPF.Controls
 {
-	public class TagEditor : RichTextBox
+	public class TagEditor : RichTextBox, INotifyPropertyChanged
 	{
 		public delegate void TagsSourceChanged(TagEditor source);
 
@@ -28,14 +29,22 @@ namespace AlephNote.WPF.Controls
 		public static readonly DependencyProperty TagSourceProperty =
 			DependencyProperty.Register(
 			"TagSource",
-			typeof(IList<string>), 
+			typeof(IList<string>),
 			typeof(TagEditor),
 			new FrameworkPropertyMetadata(TagsChanged));
-
+		
 		public IList<string> TagSource
 		{
 			get { return (IList<string>)GetValue(TagSourceProperty); }
 			set { SetValue(TagSourceProperty, value); }
+		}
+
+		public string FormattedText
+		{
+			get
+			{
+				return ((TagSource != null) ? string.Join(" ", TagSource.Select(t => $"[{t}]")) : string.Empty) + " " + new TextRange(Document.ContentStart, Document.ContentEnd).Text.Trim();
+			}
 		}
 
 		public event TagsSourceChanged Changed;
@@ -49,9 +58,8 @@ namespace AlephNote.WPF.Controls
 		private void OnTextChanged(object sender, TextChangedEventArgs e)
 		{
 			var para = CaretPosition.Paragraph;
-			if (para == null) return;
 
-			if (e.Changes.Any(c => c.RemovedLength > 0))
+			if (para != null && e.Changes.Any(c => c.RemovedLength > 0))
 			{
 				var doctags = para.Inlines
 					.OfType<InlineUIContainer>()
@@ -67,6 +75,8 @@ namespace AlephNote.WPF.Controls
 					Changed?.Invoke(this);
 				}
 			}
+
+			OnExplicitPropertyChanged("FormattedText");
 		}
 
 		private static void TagsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -82,6 +92,8 @@ namespace AlephNote.WPF.Controls
 			editor.RecreateTags();
 
 			editor.Changed?.Invoke(editor);
+
+			editor.OnExplicitPropertyChanged("FormattedText");
 		}
 
 		private void OnTagsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -89,6 +101,8 @@ namespace AlephNote.WPF.Controls
 			RecreateTags();
 
 			Changed?.Invoke(this);
+
+			OnExplicitPropertyChanged("FormattedText");
 		}
 
 		private void OnKeyDown(object sender, KeyEventArgs e)
@@ -147,6 +161,13 @@ namespace AlephNote.WPF.Controls
 
 			// BaselineAlignment is needed to align with Run
 			return new InlineUIContainer(presenter) { BaselineAlignment = BaselineAlignment.Center };
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected virtual void OnExplicitPropertyChanged(string propertyName)
+		{
+			if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }

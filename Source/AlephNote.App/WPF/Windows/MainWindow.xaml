@@ -222,7 +222,16 @@
 				</services:WatermarkService.Watermark>
 			</TextBox>
 
-			<ctrl:TagEditor Grid.Row="1" Grid.Column="0" TagSource="{Binding SelectedNote.Tags}" Changed="TagEditor_OnChanged" MinHeight="25" BorderThickness="0" AcceptsReturn="False" AcceptsTab="False" VerticalContentAlignment="Bottom">
+			<TextBox Grid.Row="1" Grid.Column="0" 
+					 MinHeight="25" BorderThickness="0" 
+					 Focusable="False" IsHitTestVisible="False" Panel.ZIndex="2"
+					 Background="Transparent" Foreground="#888"
+					 Text="{Binding FormattedText, ElementName=TagCtrl, Converter={conv:TagsToPlaceholder}, Mode=OneWay}"
+					 AcceptsReturn="False" AcceptsTab="False" 
+					 Margin="5,0,0,0" VerticalContentAlignment="Top" >
+			</TextBox>
+
+			<ctrl:TagEditor Grid.Row="1" Grid.Column="0" TagSource="{Binding SelectedNote.Tags}" Changed="TagEditor_OnChanged" x:Name="TagCtrl" MinHeight="25" BorderThickness="0" AcceptsReturn="False" AcceptsTab="False" VerticalContentAlignment="Bottom">
 				<ctrl:TagEditor.TokenTemplate>
 					<DataTemplate>
 						<Border VerticalAlignment="Center" Background="SeaShell" BorderThickness="1" BorderBrush="{Binding ., Converter={conv:TagToBorderBrush}}" Margin="-4,1,8,1" Padding="1">
