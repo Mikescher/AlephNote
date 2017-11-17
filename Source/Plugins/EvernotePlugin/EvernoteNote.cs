@@ -46,7 +46,7 @@ namespace AlephNote.Plugins.Evernote
 			{
 				new XElement("ID", _id),
 				new XElement("Title", _title),
-				new XElement("Text", Convert.ToBase64String(Encoding.UTF8.GetBytes(_text))),
+				new XElement("Text", XHelper.ConvertToC80Base64(_text)),
 				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("UpdateSequenceNumber", _updateSequenceNumber),
@@ -65,7 +65,7 @@ namespace AlephNote.Plugins.Evernote
 			{
 				_id = XHelper.GetChildValueGUID(input, "ID");
 				_title = XHelper.GetChildValueString(input, "Title");
-				_text = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Text")));
+				_text = XHelper.GetChildBase64String(input, "Text");
 				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
 				_updateSequenceNumber = XHelper.GetChildValueInt(input, "UpdateSequenceNumber");

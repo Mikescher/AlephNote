@@ -45,7 +45,7 @@ namespace AlephNote.Plugins.Headless
 			{
 				new XElement("ID", _id),
 				new XElement("Title", Title),
-				new XElement("Text", Convert.ToBase64String(Encoding.UTF8.GetBytes(Text))),
+				new XElement("Text", XHelper.ConvertToC80Base64(Text)),
 				new XElement("Tags", Tags.Select(p => new XElement("Tag", p)).Cast<object>().ToArray()),
 				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("CreationDate", CreationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
@@ -62,7 +62,7 @@ namespace AlephNote.Plugins.Headless
 		{
 			_id = XHelper.GetChildValueGUID(input, "ID");
 			Title = XHelper.GetChildValueString(input, "Title");
-			Text = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Text")));
+			Text = XHelper.GetChildBase64String(input, "Text");
 			Tags.Synchronize(XHelper.GetChildValueStringList(input, "Tags", "Tag"));
 			CreationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 			ModificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");

@@ -148,7 +148,7 @@ namespace AlephNote.Plugins.SimpleNote
 				new XElement("ShareURL", _shareURL),
 				new XElement("PublishURL", _publicURL),
 				new XElement("SystemTags", Tags.Select(p => new XElement("Tag", p)).Cast<object>().ToArray()),
-				new XElement("Content", Convert.ToBase64String(Encoding.UTF8.GetBytes(_content))),
+				new XElement("Content", XHelper.ConvertToC80Base64(_content)),
 				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("LocalVersion", _localVersion),
@@ -171,7 +171,7 @@ namespace AlephNote.Plugins.SimpleNote
 				_shareURL = XHelper.GetChildValueString(input, "ShareURL");
 				_publicURL = XHelper.GetChildValueString(input, "PublishURL");
 				_systemTags = XHelper.GetChildValueStringList(input, "SystemTags", "Tag");
-				_content = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Content")));
+				_content = XHelper.GetChildBase64String(input, "Content");
 				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
 				_localVersion = XHelper.GetChildValueInt(input, "LocalVersion");

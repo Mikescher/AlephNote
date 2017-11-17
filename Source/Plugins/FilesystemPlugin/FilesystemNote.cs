@@ -67,7 +67,7 @@ namespace AlephNote.Plugins.Filesystem
 			var data = new object[]
 			{
 				new XElement("ID", _id.ToString("D")),
-				new XElement("Text", Convert.ToBase64String(Encoding.UTF8.GetBytes(_text))),
+				new XElement("Text", XHelper.ConvertToC80Base64(_text)),
 				new XElement("Title", Convert.ToBase64String(Encoding.UTF8.GetBytes(_title))),
 				new XElement("PathRemote", _pathRemote),
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
@@ -86,7 +86,7 @@ namespace AlephNote.Plugins.Filesystem
 			using (SuppressDirtyChanges())
 			{
 				_id = XHelper.GetChildValueGUID(input, "ID");
-				_text = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Text")));
+				_text = XHelper.GetChildBase64String(input, "Text");
 				_title = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Title")));
 				_pathRemote = XHelper.GetChildValueString(input, "PathRemote");
 				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");

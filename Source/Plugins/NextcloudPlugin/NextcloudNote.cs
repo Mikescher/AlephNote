@@ -130,7 +130,7 @@ namespace AlephNote.Plugins.Nextcloud
 			{
 				new XElement("RemoteID", _remoteID),
 				new XElement("LocalID", _localID),
-				new XElement("Content", Convert.ToBase64String(Encoding.UTF8.GetBytes(_content))),
+				new XElement("Content", XHelper.ConvertToC80Base64(_content)),
 				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("Timestamp", _remoteTimestamp),
@@ -149,7 +149,7 @@ namespace AlephNote.Plugins.Nextcloud
 			{
 				_remoteID = XHelper.GetChildValueInt(input, "RemoteID");
 				_localID = XHelper.GetChildValueGUID(input, "LocalID");
-				_content = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Content")));
+				_content = XHelper.GetChildBase64String(input, "Content");
 				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
 				_remoteTimestamp = XHelper.GetChildValueInt(input, "Timestamp");

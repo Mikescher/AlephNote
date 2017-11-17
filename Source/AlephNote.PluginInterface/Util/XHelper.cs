@@ -112,6 +112,11 @@ namespace AlephNote.PluginInterface.Util
 			return GetChildOrThrow(parent, childName).Value;
 		}
 
+		public static string GetChildBase64String(XElement parent, string childName)
+		{
+			return ConvertFromC80Base64(GetChildOrThrow(parent, childName).Value);
+		}
+
 		public static int GetChildValueInt(XElement parent, string childName)
 		{
 			var child = GetChildOrThrow(parent, childName);
@@ -205,6 +210,28 @@ namespace AlephNote.PluginInterface.Util
 			var lines = Regex.Split(builder.ToString(), @"\r?\n");
 			if (lines.Any()) lines[0] = lines[0].Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 			return string.Join(Environment.NewLine, lines);
+		}
+
+		public static string ConvertToC80Base64(string content, int indent = 8, int indentLast = 6)
+		{
+			var chunks = ChunkSplit(Convert.ToBase64String(Encoding.UTF8.GetBytes(content)), 80).ToList();
+
+			if (chunks.Count == 1) return chunks[0];
+
+			var i1 = new string(' ', indent);
+			var i2 = new string(' ', indentLast);
+			return "\n" + string.Join("", chunks.Select(c => i1 + c + '\n')) + i2;
+		}
+
+		public static string ConvertFromC80Base64(string content)
+		{
+			return Encoding.UTF8.GetString(Convert.FromBase64String(content.Replace("\r", "").Replace("\n", "").Replace(" ", "").Replace("\t", "")));
+		}
+
+		public static IEnumerable<string> ChunkSplit(string str, int maxChunkSize)
+		{
+			for (int i = 0; i < str.Length; i += maxChunkSize)
+				yield return str.Substring(i, Math.Min(maxChunkSize, str.Length - i));
 		}
 
 		#region GetAttribute
