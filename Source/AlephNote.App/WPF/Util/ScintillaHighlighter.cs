@@ -10,7 +10,7 @@ namespace AlephNote.WPF.Util
 {
 	public abstract class ScintillaHighlighter
 	{
-		public static readonly Regex REX_URL = new Regex(@"(?:(?:(?:http|https|ftp|file|mailto|irc)://[\w\.]+\.\w+)|(?:www\.[\w\.]+\.\w+))(?=(\s|$))", RegexOptions.Compiled);
+		public static readonly Regex REX_URL = new Regex(@"(?:(?:(?:(?:(?:http|https|ftp|file|irc)://[\w\.\-_äöü]+\.\w\w+)|(?:www\.[\w\.\-_äöü]+\.\w\w+))[/\w\?=&]*)|(?:mailto:(?:[äöüa-z0-9]+(?:[._\-][äöüa-z0-9]+)*)@(?:[äöüa-z0-9]+(?:[.-][äöüa-z0-9]+)*\.[a-z]{2,})))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		public const int STYLE_DEFAULT    = 0;
 		public const int STYLE_URL        = 1;
