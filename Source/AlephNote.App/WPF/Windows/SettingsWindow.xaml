@@ -145,7 +145,8 @@
 									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 								<StackPanel Grid.Row="0" Grid.Column="0">
-									<CheckBox Margin="2" Content="Minimize to Tray" IsChecked="{Binding Settings.MinimizeToTray}" />
+									<CheckBox Margin="2" Content="Minimize to tray" IsChecked="{Binding Settings.MinimizeToTray}" />
+									<CheckBox Margin="2" Content="Show tag autocompletion"  IsChecked="{Binding Settings.TagAutocomplete}" />
 								</StackPanel>
 								<StackPanel Grid.Row="0" Grid.Column="1">
 									<CheckBox Margin="2" Content="Close to Tray" IsChecked="{Binding Settings.CloseToTray}" />

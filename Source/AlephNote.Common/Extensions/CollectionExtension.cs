@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AlephNote
@@ -42,6 +44,34 @@ namespace AlephNote
 						target.Insert(i, source[i]);
 						i++;
 					}
+				}
+			}
+		}
+
+		public static void SynchronizeCollection(this IList target, IEnumerable esource)
+		{
+			var source = esource.OfType<object>().ToList();
+
+			for (int i = 0; i < Math.Max(target.Count, source.Count);)
+			{
+				if (i >= source.Count)
+				{
+					target.RemoveAt(i);
+					// not i++
+				}
+				else if (i >= target.Count)
+				{
+					target.Insert(i, source[i]);
+					i++;
+				}
+				else if (source[i] == target[i])
+				{
+					i++;
+				}
+				else
+				{
+					target.Insert(i, source[i]);
+					i++;
 				}
 			}
 		}

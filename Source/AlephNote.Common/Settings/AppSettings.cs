@@ -238,6 +238,10 @@ namespace AlephNote.Settings
 		public MarkdownHighlightMode MarkdownMode { get { return _markdownMode; } set { _markdownMode = value; OnPropertyChanged(); } }
 		private MarkdownHighlightMode _markdownMode = MarkdownHighlightMode.WithTag;
 
+		[AlephXMLField]
+		public bool TagAutocomplete { get { return _tagAutocomplete; } set { _tagAutocomplete = value; OnPropertyChanged(); } }
+		private bool _tagAutocomplete = true;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

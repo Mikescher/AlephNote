@@ -330,6 +330,11 @@ namespace AlephNote.Repository
 			Directory.Delete(pathLocalFolder, true);
 		}
 
+		public IEnumerable<string> EnumerateAllTags()
+		{
+			return Notes.SelectMany(n => n.Tags);
+		}
+
 		public void ReplaceSettings(AppSettings settings)
 		{
 			appconfig = settings;

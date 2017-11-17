@@ -84,6 +84,9 @@
     <Compile Include="Log\EventLogger.cs" />
     <Compile Include="Log\LogEvent.cs" />
     <Compile Include="Log\LogEventType.cs" />
+    <Compile Include="WPF\Controls\TagEditor.xaml.cs">
+      <DependentUpon>TagEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Converter\TagsToPlaceholder.cs" />
     <Compile Include="WPF\Converter\TagToBorderBrush.cs" />
     <Compile Include="WPF\Util\MarkdownHighlighter.cs" />
@@ -107,7 +110,6 @@
     <Compile Include="WPF\Controls\SearchBox.xaml.cs">
       <DependentUpon>SearchBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WPF\Controls\TagEditor.cs" />
     <Compile Include="WPF\Converter\BoolToFontWeight.cs" />
     <Compile Include="WPF\Converter\DateTimeToDisplay.cs" />
     <Compile Include="WPF\Converter\LogToFontStyle.cs" />
@@ -188,6 +190,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WPF\Controls\SearchBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Controls\TagEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
