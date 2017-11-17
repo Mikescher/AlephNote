@@ -88,6 +88,9 @@
 				<MenuItem Header="Show Log" Command="{Binding ShowLogCommand}" />
 				<MenuItem Header="About" Command="{Binding ShowAboutCommand}" />
 			</MenuItem>
+			<MenuItem Header="Debug" Visibility="{Binding DebugMode, Converter={conv:BoolToVisibility}, ConverterParameter=Visible;Collapsed}">
+				<MenuItem Header="Create 10 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" />
+			</MenuItem>
 		</Menu>
 
 		<Grid Margin="1" Grid.Column="0" Grid.Row="1">
@@ -114,6 +117,7 @@
 					  services:MultiDatatemplateService.MultiTemplateSelector="{Binding Settings.NotePreviewStyle}"
 					  HorizontalContentAlignment="Stretch"
 					  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+					  SelectionMode="Single"
 					  ItemsSource="{Binding NotesView}" 
 					  SelectedValue="{Binding SelectedNote}"
 					  FontSize="{Binding Settings.ListFontSize, Converter={conv:FontSizeToInt}}" 

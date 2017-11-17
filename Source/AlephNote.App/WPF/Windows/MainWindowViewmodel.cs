@@ -36,6 +36,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand CloseDocumentSearchCommand { get { return new RelayCommand(HideDocSearchBar); } }
 		public ICommand FullResyncCommand { get { return new RelayCommand(FullResync); } }
 		public ICommand ManuallyCheckForUpdatesCommand { get { return new RelayCommand(ManuallyCheckForUpdates); } }
+		public ICommand DebugCreateIpsumNotesCommand { get { return new RelayCommand(DebugCreateIpsumNotes); } }
 
 		public ICommand ClosingEvent { get { return new RelayCommand<CancelEventArgs>(OnClosing); } }
 		public ICommand CloseEvent { get { return new RelayCommand<EventArgs>(OnClose); } }
@@ -63,6 +64,8 @@ namespace AlephNote.WPF.Windows
 
 		private SynchronizationState _synchronizationState = SynchronizationState.UpToDate;
 		public SynchronizationState SynchronizationState { get { return _synchronizationState; } set { if (value != _synchronizationState) { _synchronizationState = value; OnPropertyChanged(); } } }
+
+		public bool DebugMode { get { return App.DebugMode; } }
 
 		public ListCollectionView NotesView
 		{
@@ -539,6 +542,37 @@ namespace AlephNote.WPF.Windows
 		private void HideDocSearchBar()
 		{
 			Owner.HideDocSearchBar();
+		}
+
+		private void DebugCreateIpsumNotes()
+		{
+			for (int i = 0; i < 10; i++)
+			{
+				string title = CreateLoremIpsum(4 + App.GlobalRandom.Next(5), 16);
+				string text = CreateLoremIpsum((16 + App.GlobalRandom.Next(16)) * (8 + App.GlobalRandom.Next(8)), App.GlobalRandom.Next(8)+8);
+
+				var n = Repository.CreateNewNote();
+
+				n.Title = title;
+				n.Text = text;
+
+				int tc = App.GlobalRandom.Next(5);
+				for (int j = 0; j < tc; j++) n.Tags.Add(CreateLoremIpsum(1,1));
+			}
+		}
+
+		private string CreateLoremIpsum(int len, int linelen)
+		{
+			var words = Regex.Split(Properties.Resources.LoremIpsum, @"\r?\n");
+			StringBuilder b = new StringBuilder();
+			for (int i = 0; i < len; i++)
+			{
+				if (i>0 && i % linelen == 0) b.Append("\r\n");
+				else if (i > 0) b.Append(" ");
+ 
+				b.Append(words[App.GlobalRandom.Next(words.Length)]);
+			}
+			return b.ToString(0,1).ToUpper() + b.ToString().Substring(1);
 		}
 	}
 }

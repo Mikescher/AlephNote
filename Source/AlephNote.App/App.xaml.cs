@@ -3,6 +3,7 @@ using AlephNote.WPF.Windows;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 using AlephNote.Plugins;
@@ -24,13 +25,24 @@ namespace AlephNote
 
 		public static string AppVersionProperty { get { return APP_VERSION.Revision == 0 ? APP_VERSION.ToString(3) : (APP_VERSION.ToString(4) + " BETA"); } }
 
+		public static Random GlobalRandom = new Random();
+
 		public static EventLogger Logger = new EventLogger();
+		public static bool DebugMode = false;
 
 		public App()
 		{
 			DispatcherUnhandledException += AppDispatcherUnhandledException;
 
 			PluginManagerSingleton.Register(new PluginManager());
+
+#if DEBUG
+			DebugMode = true;
+#else
+			if (Environment.GetCommandLineArgs().Any(a => a.TrimStart('-').ToLower() == "debug")) DebugMode = true;
+#endif
+			Logger.DebugEnabled = DebugMode;
+
 		}
 		
 		void AppDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

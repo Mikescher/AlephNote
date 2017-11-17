@@ -36,9 +36,9 @@ namespace AlephNote.Plugins.SimpleNote
 
 			while (!string.IsNullOrWhiteSpace(idx.mark))
 			{
-				var idx2 = web.Get<APIResultIndex>("note/index");
+				var idx2 = web.Get<APIResultIndex>("note/index", "mark="+ idx.mark);
 
-				idx.current = idx2.current;
+				//idx.current = idx2.current;
 				idx.mark = idx2.mark;
 				idx.index.AddRange(idx2.index);
 			}

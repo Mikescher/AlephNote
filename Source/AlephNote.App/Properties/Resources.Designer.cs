@@ -61,6 +61,78 @@ namespace AlephNote.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Aenean
+        ///Aliquam
+        ///Class
+        ///Cras
+        ///Curabitur
+        ///Curae
+        ///Donec
+        ///Duis
+        ///Etiam
+        ///In
+        ///Integer
+        ///Interdum
+        ///Lorem
+        ///Maecenas
+        ///Mauris
+        ///Morbi
+        ///Nam
+        ///Nullam
+        ///Nunc
+        ///Phasellus
+        ///Praesent
+        ///Proin
+        ///Quisque
+        ///Suspendisse
+        ///Ut
+        ///Vestibulum
+        ///Vivamus
+        ///a
+        ///ac
+        ///accumsan
+        ///ad
+        ///adipiscing
+        ///aliquam
+        ///aliquet
+        ///amet
+        ///ante
+        ///aptent
+        ///arcu
+        ///at
+        ///auctor
+        ///augue
+        ///bibendum
+        ///commodo
+        ///condimentum
+        ///congue
+        ///consectetur
+        ///conubia
+        ///convallis
+        ///cubilia
+        ///cursus
+        ///dapibus
+        ///diam
+        ///dictum
+        ///dignissim
+        ///dolor
+        ///dui
+        ///efficitur
+        ///egestas
+        ///eget
+        ///eleifend
+        ///elementum
+        ///elit
+        ///enim
+        ///erat [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string LoremIpsum {
+            get {
+                return ResourceManager.GetString("LoremIpsum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap ui_off {
