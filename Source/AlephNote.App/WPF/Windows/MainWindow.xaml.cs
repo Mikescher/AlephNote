@@ -29,7 +29,7 @@ namespace AlephNote.WPF.Windows
 		private readonly ScintillaHighlighter _highlighterDefault  = new DefaultHighlighter();
 		private readonly ScintillaHighlighter _highlighterMarkdown = new MarkdownHighlighter();
 
-		public AppSettings Settings => viewmodel.Settings;
+		public AppSettings Settings => viewmodel?.Settings;
 
 		public MainWindow()
 		{
@@ -167,11 +167,12 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.ViewWhitespace = s.SciShowWhitespace ? WhitespaceMode.VisibleAlways : WhitespaceMode.Invisible;
 			NoteEdit.SetWhitespaceForeColor(true, Color.Orange);
 
-			NoteEdit.Margins[0].Width = s.SciLineNumbers ? 32 : 0;
-			NoteEdit.Margins[1].Width = 0;
-			NoteEdit.Margins[2].Width = 0;
-			NoteEdit.Margins[3].Width = 0;
+			UpdateMargins(s);
 			NoteEdit.BorderStyle = BorderStyle.FixedSingle;
+
+			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_OFF].DefineRgbaImage(Properties.Resources.ui_off);
+
+			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_ON].DefineRgbaImage(Properties.Resources.ui_on);
 
 			NoteEdit.MultipleSelection = s.SciRectSelection;
 			NoteEdit.MouseSelectionRectangularSwitch = s.SciRectSelection;
@@ -202,10 +203,15 @@ namespace AlephNote.WPF.Windows
 
 		private void NoteEdit_StyleNeeded(object sender, StyleNeededEventArgs e)
 		{
+			bool listHighlight =
+				(Settings.ListMode == ListHighlightMode.Always) ||
+				(Settings.ListMode == ListHighlightMode.WithTag && viewmodel?.SelectedNote?.HasTagCasInsensitive(AppSettings.TAG_LIST) == true);
+
 			var startPos = NoteEdit.GetEndStyled();
 			var endPos = e.Position;
 
 			GetHighlighter(Settings).Highlight(NoteEdit, startPos, endPos, Settings);
+			if (listHighlight) GetHighlighter(Settings).UpdateListMargin(NoteEdit, startPos, endPos);
 		}
 
 		private void NoteEdit_HotspotClick(object sender, HotspotClickEventArgs e)
@@ -253,6 +259,8 @@ namespace AlephNote.WPF.Windows
 					}
 				}
 			}
+
+			UpdateMargins(Settings);
 		}
 
 		public void ResetScintillaScrollAndUndo()
@@ -260,6 +268,26 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.ScrollWidth = 1;
 			NoteEdit.ScrollWidthTracking = true;
 			NoteEdit.EmptyUndoBuffer();
+		}
+
+		public void UpdateMargins(AppSettings s)
+		{
+			if (s == null) return;
+
+			bool listHighlight = 
+				(s.ListMode == ListHighlightMode.Always) || 
+				(s.ListMode == ListHighlightMode.WithTag && viewmodel?.SelectedNote?.HasTagCasInsensitive(AppSettings.TAG_LIST) == true);
+
+			NoteEdit.Margins[0].Width = s.SciLineNumbers ? NoteEdit.TextWidth(ScintillaHighlighter.STYLE_DEFAULT, "5555") : 0;
+
+			NoteEdit.Margins[1].Width = listHighlight ? (NoteEdit.Lines.FirstOrDefault()?.Height ?? 32) : 0;
+			NoteEdit.Margins[1].Mask = Marker.MaskAll;
+
+			NoteEdit.Margins[2].Width = 0;
+
+			NoteEdit.Margins[3].Width = 0;
+
+			if (listHighlight && viewmodel?.SelectedNote != null) GetHighlighter(s).UpdateListMargin(NoteEdit, null, null);
 		}
 
 		public void FocusScintillaDelayed(int d = 50)
@@ -346,6 +374,7 @@ namespace AlephNote.WPF.Windows
 		private void TagEditor_OnChanged(TagEditor source)
 		{
 			ForceNewHighlighting(Settings);
+			UpdateMargins(Settings);
 		}
 	}
 }

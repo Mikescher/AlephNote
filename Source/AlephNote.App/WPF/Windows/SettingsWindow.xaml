@@ -12,7 +12,7 @@
 		d:DataContext="{d:DesignInstance windows:SettingsWindowViewmodel}"
 		WindowStartupLocation="CenterOwner"
 		Icon="/Resources/IconMain.png"
-		Title="Common Note - Configuration" MinHeight="300" MinWidth="300" Height="550" Width="535">
+		Title="Common Note - Configuration" MinHeight="300" MinWidth="300" Height="600" Width="535">
 	<Window.Resources>
 		<converter:CreatePluginSettingsGrid x:Key="CreateGridConv" />
 	</Window.Resources>
@@ -290,6 +290,7 @@
 								<Grid.RowDefinitions>
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 
 								<TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Hyperlinks" />
@@ -297,6 +298,9 @@
 
 								<TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Markdown" />
 								<ComboBox  Grid.Row="1" Grid.Column="1" Margin="3" ItemsSource="{mext:EnumSource settings:MarkdownHighlightMode}" SelectedValue="{Binding Settings.MarkdownMode}" />
+
+								<TextBlock Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Todo lists" />
+								<ComboBox  Grid.Row="2" Grid.Column="1" Margin="3" ItemsSource="{mext:EnumSource settings:ListHighlightMode}" SelectedValue="{Binding Settings.ListMode}" />
 							</Grid>
 						</GroupBox>
 					</StackPanel>

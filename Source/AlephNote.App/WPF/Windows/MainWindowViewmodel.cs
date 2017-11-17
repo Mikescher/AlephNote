@@ -200,6 +200,7 @@ namespace AlephNote.WPF.Windows
 		private void SelectedNoteChanged()
 		{
 			Owner.ResetScintillaScrollAndUndo();
+			Owner.UpdateMargins(Settings);
 			if (!_preventScintillaFocus) Owner.FocusScintillaDelayed();
 		}
 

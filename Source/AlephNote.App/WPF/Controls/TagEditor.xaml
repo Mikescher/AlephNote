@@ -10,7 +10,7 @@
 		<ResourceDictionary>
 			<DataTemplate x:Key="TagTemplate">
 				<Border VerticalAlignment="Center" Background="SeaShell" BorderThickness="1" BorderBrush="{Binding ., Converter={conv:TagToBorderBrush}}" Margin="-4,1,8,1" Padding="1">
-					<TextBlock Text="{Binding .}" />
+					<TextBlock Text="{Binding .}" Padding="2,0,2,0" />
 				</Border>
 			</DataTemplate>
 		</ResourceDictionary>

@@ -98,7 +98,7 @@ namespace AlephNote.Common.Operations
 				new Thread(() =>
 				{
 					CommitRepository(
-						repo.ConnectionName,
+						repo.ConnectionName + " (" + repo.ConnectionUUID + ")",
 						repo.ProviderID,
 						config.GitMirrorPath, 
 						config.GitMirrorFirstName, 

@@ -22,6 +22,12 @@ namespace AlephNote.WPF.Util
 		public const int STYLE_MD_URL     = 7;
 		public const int STYLE_MD_LIST    = 8;
 
+		public const int STYLE_MARGIN_LINENUMBERS = 0;
+		public const int STYLE_MARGIN_LISTSYMBOLS = 1;
+
+		public const int STYLE_MARKER_LIST_ON  = 2;
+		public const int STYLE_MARKER_LIST_OFF = 4;
+
 		public void SetUpStyles(Scintilla sci, AppSettings s)
 		{
 			sci.Styles[STYLE_DEFAULT].Bold = s.NoteFontModifier == FontModifier.Bold || s.NoteFontModifier == FontModifier.BoldItalic;
@@ -153,6 +159,52 @@ namespace AlephNote.WPF.Util
 			var matched = REX_URL.Matches(noteEdit.Text);
 
 			return matched.OfType<Match>().Select(m => Tuple.Create(m.Groups[0].Value, m.Index, m.Index + m.Length)).ToList();
+		}
+
+		public void UpdateListMargin(Scintilla sci, int? start, int? end)
+		{
+			int startLine = (start == null) ? 0                 : sci.LineFromPosition(start.Value);
+			int endLine   = (end   == null) ? sci.Lines.Count-1 : sci.LineFromPosition(end.Value);
+
+			startLine = Math.Max(0, startLine);
+			endLine   = Math.Min(sci.Lines.Count-1, endLine);
+
+			for (int idxline = startLine; idxline <= endLine; idxline++)
+			{
+				var line = sci.Lines[idxline];
+
+				line.MarkerDelete(STYLE_MARKER_LIST_ON);
+				line.MarkerDelete(STYLE_MARKER_LIST_OFF);
+
+				var hl = GetListHighlight(line.Text);
+
+				if (hl == true)  line.MarkerAdd(STYLE_MARKER_LIST_ON);
+				if (hl == false) line.MarkerAdd(STYLE_MARKER_LIST_OFF);
+			}
+		}
+
+		private bool? GetListHighlight(string text)
+		{
+			text = text.ToLower();
+			text = text.TrimStart(' ', '\t');
+			if (text.Length > 0 && (text[0] == '*' || text[0] == '-')) text = text.Substring(1);
+			text = text.TrimStart(' ', '\t');
+
+			if (text.Length < 4 || string.IsNullOrWhiteSpace(text.Substring(3))) return null;
+
+			if (text.StartsWith("[ ]")) return false;
+			if (text.StartsWith("{ }")) return false;
+			if (text.StartsWith("( )")) return false;
+
+			if (text.StartsWith("[x]")) return true;
+			if (text.StartsWith("{x}")) return true;
+			if (text.StartsWith("(x)")) return true;
+
+			if (text.StartsWith("[+]")) return true;
+			if (text.StartsWith("{+}")) return true;
+			if (text.StartsWith("(+)")) return true;
+
+			return null;
 		}
 	}
 }

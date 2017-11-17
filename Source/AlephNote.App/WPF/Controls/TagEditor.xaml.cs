@@ -104,7 +104,7 @@ namespace AlephNote.WPF.Controls
 			{
 				var hints = Repository
 					.EnumerateAllTags()
-					.Concat(new[] { AppSettings.TAG_MARKDOWN })
+					.Concat(new[] { AppSettings.TAG_MARKDOWN, AppSettings.TAG_LIST })
 					.OrderBy(p => p)
 					.Distinct()
 					.Except(TagSource)

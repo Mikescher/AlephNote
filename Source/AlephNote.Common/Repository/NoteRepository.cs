@@ -39,6 +39,7 @@ namespace AlephNote.Repository
 		public IRemoteStorageConnection Connection { get { return conn; } }
 
 		public string ConnectionName { get { return account.Plugin.DisplayTitleShort; } }
+		public string ConnectionUUID { get { return account.ID.ToString("B"); } }
 		public string ProviderID { get { return account.Plugin.GetUniqueID().ToString("B"); } }
 
 		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, RemoteStorageAccount acc, IAlephLogger log, IAlephDispatcher disp)

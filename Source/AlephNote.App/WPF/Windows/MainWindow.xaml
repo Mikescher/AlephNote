@@ -268,7 +268,7 @@
 			<StatusBarItem Content="{Binding SelectedNote.CreationDate, Converter={conv:DateOnlyToDisplay}, FallbackValue=''}" ToolTip="{Binding SelectedNote.CreationDate, Converter={conv:DTOToDisplay}, FallbackValue=''}"/>
 			<StatusBarItem Content="Synchronized: " />
 			<StatusBarItem Content="{Binding SelectedNote.IsRemoteSaved, FallbackValue='?'}"/>
-			<StatusBarItem Content="{Binding Repository.ConnectionName}" HorizontalAlignment="Right" Margin="0,0,15,0"/>
+			<StatusBarItem Content="{Binding Repository.ConnectionName}" ToolTip="{Binding ConnectionUUID}" HorizontalAlignment="Right" Margin="0,0,15,0"/>
 		</StatusBar>
 
 		<tb:TaskbarIcon Grid.Column="0" Grid.Row="0"

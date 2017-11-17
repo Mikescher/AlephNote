@@ -17,6 +17,7 @@ namespace AlephNote.Settings
 		public const string ENCRYPTION_KEY = @"jcgkZJvoykjpoGkDWHqiNoXoLZRJxpdb";
 
 		public const string TAG_MARKDOWN = "markdown";
+		public const string TAG_LIST     = "list";
 
 		[AlephXMLField]
 		public ConfigInterval SynchronizationFrequency { get { return _synchronizationFreq; } set { _synchronizationFreq = value; OnPropertyChanged(); } }
@@ -237,6 +238,10 @@ namespace AlephNote.Settings
 		[AlephXMLField]
 		public MarkdownHighlightMode MarkdownMode { get { return _markdownMode; } set { _markdownMode = value; OnPropertyChanged(); } }
 		private MarkdownHighlightMode _markdownMode = MarkdownHighlightMode.WithTag;
+
+		[AlephXMLField]
+		public ListHighlightMode ListMode { get { return _listMode; } set { _listMode = value; OnPropertyChanged(); } }
+		private ListHighlightMode _listMode = ListHighlightMode.WithTag;
 
 		[AlephXMLField]
 		public bool TagAutocomplete { get { return _tagAutocomplete; } set { _tagAutocomplete = value; OnPropertyChanged(); } }
