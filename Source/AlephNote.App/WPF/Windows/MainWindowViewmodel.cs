@@ -441,8 +441,7 @@ namespace AlephNote.WPF.Windows
 		{
 			if (string.IsNullOrWhiteSpace(SearchText)) return true;
 
-			Regex searchRegex;
-			if (IsRegex(SearchText, out searchRegex))
+			if (IsRegex(SearchText, out var searchRegex))
 			{
 				if (searchRegex.IsMatch(note.Title)) return true;
 				if (searchRegex.IsMatch(note.Text)) return true;
@@ -450,11 +449,19 @@ namespace AlephNote.WPF.Windows
 
 				return false;
 			}
+			else if (SearchText.Length > 2 && SearchText.StartsWith("[") && SearchText.EndsWith("]"))
+			{
+				var searchTag = SearchText.Substring(1, SearchText.Length - 2);
+
+				if (note.HasTagCasInsensitive(searchTag)) return true;
+
+				return false;
+			}
 			else
 			{
 				if (note.Title.ToLower().Contains(SearchText.ToLower())) return true;
 				if (note.Text.ToLower().Contains(SearchText.ToLower())) return true;
-				if (note.Tags.Any(t => t.ToLower() == SearchText.ToLower())) return true;
+				if (note.HasTagCasInsensitive(SearchText)) return true;
 
 				return false;
 			}
