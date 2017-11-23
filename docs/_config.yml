@@ -1,7 +1,7 @@
 # Setup
 title:        AlephNote
 tagline:      An extensible, lightweight desktop note client for multiple backends
-baseurl:      ""
+baseurl:      "/Mikescher/AlephNote"
 paginate:     1
 
 # About/contact
