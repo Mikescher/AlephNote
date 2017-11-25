@@ -70,9 +70,13 @@ namespace AlephNote.WPF.Windows
 			{
 				MessageBox.Show(
 					this, 
-					"It looks like you are starting AlephNote for the first time." + Environment.NewLine + 
-					"You should start by looking into the settings and configuring a remote where your notes are stored." + Environment.NewLine + 
-					"Or you can use this program in headless mode where the notes exist only local.", 
+					"It looks like you are starting AlephNote for the first time." + Environment.NewLine +
+					"You should start by looking into the settings and configuring a remote where your notes are stored." + Environment.NewLine +
+					"1. From the Edit menu, select Settings" + Environment.NewLine +
+					"2. Click the '+' symbol at top-right of screen" + Environment.NewLine +
+					"3. Choose the provider of your choice (eg SimpleNote)" + Environment.NewLine +
+					"4. Enter in login and password data" + Environment.NewLine +
+					"5. Press [OK]", 
 					"First launch", 
 					MessageBoxButton.OK, 
 					MessageBoxImage.Information);
