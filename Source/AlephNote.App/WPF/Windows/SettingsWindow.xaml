@@ -149,7 +149,7 @@
 									<CheckBox Margin="2" Content="Show tag autocompletion"  IsChecked="{Binding Settings.TagAutocomplete}" />
 								</StackPanel>
 								<StackPanel Grid.Row="0" Grid.Column="1">
-									<CheckBox Margin="2" Content="Close to Tray" IsChecked="{Binding Settings.CloseToTray}" />
+									<CheckBox Margin="2" Content="Close to tray" IsChecked="{Binding Settings.CloseToTray}" />
 								</StackPanel>
 
 								<TextBlock Grid.Row="1" Grid.Column="0" Margin="5"  Text="Note sorting:"/>
