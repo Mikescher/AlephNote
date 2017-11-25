@@ -37,16 +37,44 @@ Contributions are always welcome, either with additional plugins for other backe
 
 Also anyone with an ounce of design talent: Feel free to improve the [website](https://mikescher.github.io/AlephNote/)...
 
-## Planned/Possible features
+Also there are probably a ton of spelling errors, any native english-speaker can probably fix a lot of smaller errors.
 
+## System Requirements
+
+Windows Version:
+ - dotNet 4.6 or higher
+ - Windows 7 or higher
+
+Linux version
+ - TBA
+
+## Planned/Possible/Implemented features
+
+ - [X] Synchronization with [SimpleNote](https://simplenote.com/)
+ - [X] Synchronization with [Nextcloud Notes](https://github.com/nextcloud/notes)
+ - [X] Synchronization with [Standard Notes](https://standardnotes.org/)
+ - [ ] Synchronization with [Evernote](https://evernote.com)
+ - [X] Usage without remote provider (= headless plugin)
  - [ ] Client side encryption (for all plugins)
  - [ ] Get history from provider that support it (SimpleNote + Standard Notes)
  - [X] In-editor markdown rendering (similar to [qownnotes](http://www.qownnotes.org/))
- - [X] clickable links
- - [X] additionally backup all notes to local git repo (for backup/history)
- - [X] Ctrl+F search function
+ - [X] clickable + highlighted links (http/https/ftp/mailto)
+ - [X] (optionally) backup all notes to local git repo (for backup/history)
+ - [X] Highlight todo lists (markdown/github syntax)
+ - [X] Ctrl+F search function (content of single note)
+ - [X] Global search function (normal search | regex search | tag search)
+ - [X] Tag autocompletion
  - [ ] Installer (if there is demand)
- - [ ] Evernote as note provider
+ - [ ] Linux version (UI mit Eto.Forms, .Net core)
+ - [X] auto updater (get version from github API)
+ - [X] multiple conflict solving strategies (use local | use server | create conflict note)
+ - [ ] Remember last selected note
+ - [ ] readonly mode
+ - [ ] sort tags alphabetically
+ - [ ] edit tags without deleting (F2 ?)
+ - [ ] highlight search results when using global search
+ - [ ] Better first launch wizard (description, images, directly set provider), see [#6](https://github.com/Mikescher/AlephNote/issues/6)
+ - [ ] Sync with multiple provider (eg sync with SimpleNote but also with local plaintext version of notes), see [#7](https://github.com/Mikescher/AlephNote/issues/7)
 
 
 ## License
