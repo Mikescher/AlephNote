@@ -380,5 +380,10 @@ namespace AlephNote.WPF.Windows
 			ForceNewHighlighting(Settings);
 			UpdateMargins(Settings);
 		}
+
+		private void NotesList_Drop(object sender, System.Windows.DragEventArgs e)
+		{
+			viewmodel.OnNewNoteDrop(e.Data);
+		}
 	}
 }

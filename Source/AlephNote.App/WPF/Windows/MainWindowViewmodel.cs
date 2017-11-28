@@ -606,5 +606,40 @@ namespace AlephNote.WPF.Windows
 
 			ChangeSettings(Settings);
 		}
+
+		public void OnNewNoteDrop(IDataObject data)
+		{
+			try
+			{
+				if (data.GetDataPresent(DataFormats.FileDrop, true))
+				{
+					string[] paths = data.GetData(DataFormats.FileDrop, true) as string[];
+					foreach (var path in paths ?? new string[0])
+					{
+						var filename = Path.GetFileNameWithoutExtension(path) ?? "New note from unknown file";
+						var filecontent = File.ReadAllText(path);
+
+						SelectedNote = Repository.CreateNewNote();
+						SelectedNote.Title = filename;
+						SelectedNote.Text  = filecontent;
+					}
+				}
+				else if (data.GetDataPresent(DataFormats.Text, true))
+				{
+					var notetitle   = "New note from drag&drop";
+					var notecontent = data.GetData(DataFormats.Text, true) as string;
+					if (!string.IsNullOrWhiteSpace(notecontent))
+					{
+						SelectedNote = Repository.CreateNewNote();
+						SelectedNote.Title = notetitle;
+						SelectedNote.Text  = notecontent;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				ExceptionDialog.Show(Owner, "Drag&Drop failed", "Drag and Drop operation failed due to an internal error", ex);
+			}
+		}
 	}
 }

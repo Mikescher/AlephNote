@@ -120,6 +120,8 @@
 			</Button>
 
 			<ListView Grid.Column="0"  Grid.Row="1" Grid.ColumnSpan="2"
+					  AllowDrop="True"
+					  Drop="NotesList_Drop"
 					  services:MultiDatatemplateService.MultiTemplateSelector="{Binding Settings.NotePreviewStyle}"
 					  HorizontalContentAlignment="Stretch"
 					  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
