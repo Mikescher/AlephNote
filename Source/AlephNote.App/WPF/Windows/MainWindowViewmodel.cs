@@ -42,6 +42,10 @@ namespace AlephNote.WPF.Windows
 		public ICommand CloseEvent { get { return new RelayCommand<EventArgs>(OnClose); } }
 		public ICommand StateChangedEvent { get { return new RelayCommand<EventArgs>(OnStateChanged); } }
 
+		public ICommand SettingAlwaysOnTopCommand { get { return new RelayCommand(ChangeSettingAlwaysOnTop); } }
+		public ICommand SettingLineNumbersCommand { get { return new RelayCommand(ChangeSettingLineNumbers); } }
+		public ICommand SettingsWordWrapCommand   { get { return new RelayCommand(ChangeSettingWordWrap); } }
+
 		private AppSettings _settings;
 		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); } }
 
@@ -580,6 +584,27 @@ namespace AlephNote.WPF.Windows
 				b.Append(words[App.GlobalRandom.Next(words.Length)]);
 			}
 			return b.ToString(0,1).ToUpper() + b.ToString().Substring(1);
+		}
+
+		private void ChangeSettingAlwaysOnTop()
+		{
+			Settings.AlwaysOnTop = !Settings.AlwaysOnTop;
+
+			ChangeSettings(Settings);
+		}
+		
+		private void ChangeSettingLineNumbers()
+		{
+			Settings.SciLineNumbers = !Settings.SciLineNumbers;
+
+			ChangeSettings(Settings);
+		}
+
+		private void ChangeSettingWordWrap()
+		{
+			Settings.SciWordWrap = !Settings.SciWordWrap;
+
+			ChangeSettings(Settings);
 		}
 	}
 }

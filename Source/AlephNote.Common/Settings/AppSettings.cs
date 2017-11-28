@@ -247,6 +247,10 @@ namespace AlephNote.Settings
 		public bool TagAutocomplete { get { return _tagAutocomplete; } set { _tagAutocomplete = value; OnPropertyChanged(); } }
 		private bool _tagAutocomplete = true;
 
+		[AlephXMLField]
+		public bool AlwaysOnTop { get { return _alwaysOnTop; } set { _alwaysOnTop = value; OnPropertyChanged(); } }
+		private bool _alwaysOnTop = false;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

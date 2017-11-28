@@ -24,6 +24,7 @@
 		Closed="{mext:EventBinding CloseEvent, CommandParameter=$e}"
 		Loaded="MainWindow_OnLoaded"
 		KeyDown="MainWindow_OnKeyDown"
+		Topmost="{Binding Settings.AlwaysOnTop}"
 		Title="AlephNote" Height="350" Width="525">
 	
 	<Window.Resources>
@@ -82,6 +83,11 @@
 				<MenuItem Header="Settings" Command="{Binding SettingsCommand}" />
 				<MenuItem Header="Synchronize now" Command="{Binding ResyncCommand}" InputGestureText="Ctrl+S" />
 				<MenuItem Header="Delete local data and sync new" Command="{Binding FullResyncCommand}" />
+			</MenuItem>
+			<MenuItem Header="View">
+				<MenuItem Header="Always on Top" Command="{Binding SettingAlwaysOnTopCommand}" IsChecked="{Binding Settings.AlwaysOnTop}" />
+				<MenuItem Header="Display Line Numbers" Command="{Binding SettingLineNumbersCommand}" IsChecked="{Binding Settings.SciLineNumbers}" />
+				<MenuItem Header="Word Wrap" Command="{Binding SettingsWordWrapCommand}" IsChecked="{Binding Settings.SciWordWrap}" />
 			</MenuItem>
 			<MenuItem Header="Help">
 				<MenuItem Header="Check for Updates" Command="{Binding ManuallyCheckForUpdatesCommand}" />
