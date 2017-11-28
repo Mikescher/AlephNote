@@ -408,6 +408,8 @@ namespace AlephNote.WPF.Windows
 		{
 			try
 			{
+				if (MessageBox.Show(Owner, "Do you really want to delete all local data and download the server data?", "Full resync?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+
 				Repository.Shutdown(false);
 
 				Repository.DeleteLocalData();
