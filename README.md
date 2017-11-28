@@ -77,6 +77,7 @@ Linux version
  - [ ] Sync with multiple provider (eg sync with SimpleNote but also with local plaintext version of notes), see [#7](https://github.com/Mikescher/AlephNote/issues/7)
  - [X] Drop files/text directly into app
  - [ ] Customizable shortcuts
+ - [ ] performance improvements in scintilla control
 
 ## License
 

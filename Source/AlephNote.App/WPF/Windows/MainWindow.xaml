@@ -262,7 +262,13 @@
 				</Grid.RowDefinitions>
 				<WindowsFormsHost Grid.Row="0" x:Name="NoteEditHost">
 					<WindowsFormsHost.Child>
-						<scinet:Scintilla x:Name="NoteEdit" KeyPress="NoteEdit_OnKeyPress" KeyDown="NoteEdit_OnKeyDown" StyleNeeded="NoteEdit_StyleNeeded" HotspotClick="NoteEdit_HotspotClick" HotspotDoubleClick="NoteEdit_HotspotDoubleClick" />
+						<scinet:Scintilla x:Name="NoteEdit" AllowDrop="True"
+										  KeyPress="NoteEdit_OnKeyPress" 
+										  KeyDown="NoteEdit_OnKeyDown" 
+										  StyleNeeded="NoteEdit_StyleNeeded" 
+										  MarginClick="NoteEdit_MarginClick"
+										  HotspotClick="NoteEdit_HotspotClick" 
+										  HotspotDoubleClick="NoteEdit_HotspotDoubleClick" />
 					</WindowsFormsHost.Child>
 				</WindowsFormsHost>
 

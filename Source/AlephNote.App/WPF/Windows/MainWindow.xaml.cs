@@ -283,10 +283,11 @@ namespace AlephNote.WPF.Windows
 				(s.ListMode == ListHighlightMode.Always) || 
 				(s.ListMode == ListHighlightMode.WithTag && viewmodel?.SelectedNote?.HasTagCasInsensitive(AppSettings.TAG_LIST) == true);
 
-			NoteEdit.Margins[0].Width = s.SciLineNumbers ? NoteEdit.TextWidth(ScintillaHighlighter.STYLE_DEFAULT, "5555") : 0;
+			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].Width = s.SciLineNumbers ? NoteEdit.TextWidth(ScintillaHighlighter.STYLE_DEFAULT, "5555") : 0;
 
-			NoteEdit.Margins[1].Width = listHighlight ? (NoteEdit.Lines.FirstOrDefault()?.Height ?? 32) : 0;
-			NoteEdit.Margins[1].Mask = Marker.MaskAll;
+			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].Width = listHighlight ? (NoteEdit.Lines.FirstOrDefault()?.Height ?? 32) : 0;
+			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].Mask = Marker.MaskAll;
+			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].Sensitive = true;
 
 			NoteEdit.Margins[2].Width = 0;
 
@@ -410,7 +411,42 @@ namespace AlephNote.WPF.Windows
 						found = (note.GetUniqueName() == viewmodel.SelectedNote.GetUniqueName());
 					}
 				}
+			}
+		}
 
+		private void NoteEdit_MarginClick(object sender, MarginClickEventArgs e)
+		{
+			if (viewmodel?.SelectedNote == null) return;
+			
+			if (e.Margin == ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS)
+			{
+				bool listHighlight =
+					(Settings.ListMode == ListHighlightMode.Always) ||
+					(Settings.ListMode == ListHighlightMode.WithTag && viewmodel?.SelectedNote?.HasTagCasInsensitive(AppSettings.TAG_LIST) == true);
+
+				if (listHighlight)
+				{
+					var line = NoteEdit.Lines[NoteEdit.LineFromPosition(e.Position)];
+					var mark = line.MarkerGet();
+
+					if ((mark & (1 << ScintillaHighlighter.STYLE_MARKER_LIST_ON)) != 0)
+					{
+						var newText = _highlighterDefault.ChangeListLine(line.Text, ' ');
+
+						NoteEdit.TargetStart = line.Position;
+						NoteEdit.TargetEnd = line.EndPosition;
+						NoteEdit.ReplaceTarget(newText);
+					}
+					else if ((mark & (1 << ScintillaHighlighter.STYLE_MARKER_LIST_OFF)) != 0)
+					{
+						var mrk = _highlighterDefault.FindListerOnMarker(NoteEdit.Lines);
+						var newText = _highlighterDefault.ChangeListLine(line.Text, mrk ?? 'X');
+
+						NoteEdit.TargetStart = line.Position;
+						NoteEdit.TargetEnd = line.EndPosition;
+						NoteEdit.ReplaceTarget(newText);
+					}
+				}
 			}
 		}
 	}

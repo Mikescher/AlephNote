@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using AlephNote.Common.Settings.Types;
+using System.Text;
 
 namespace AlephNote.WPF.Util
 {
@@ -185,24 +186,71 @@ namespace AlephNote.WPF.Util
 
 		private bool? GetListHighlight(string text)
 		{
-			text = text.ToLower();
+			return GetListHighlight(text, out _);
+		}
+
+		private bool? GetListHighlight(string text, out char? mark)
+		{
 			text = text.TrimStart(' ', '\t');
 			if (text.Length > 0 && (text[0] == '*' || text[0] == '-')) text = text.Substring(1);
 			text = text.TrimStart(' ', '\t');
 
-			if (text.Length < 4 || string.IsNullOrWhiteSpace(text.Substring(3))) return null;
+			if (text.Length < 4 || string.IsNullOrWhiteSpace(text.Substring(3))) { mark = null; return null; }
 
-			if (text.StartsWith("[ ]")) return false;
-			if (text.StartsWith("{ }")) return false;
-			if (text.StartsWith("( )")) return false;
+			if (text.StartsWith("[ ]")) { mark=' '; return false; }
+			if (text.StartsWith("{ }")) { mark=' '; return false; }
+			if (text.StartsWith("( )")) { mark=' '; return false; }
 
-			if (text.StartsWith("[x]")) return true;
-			if (text.StartsWith("{x}")) return true;
-			if (text.StartsWith("(x)")) return true;
+			if (text.StartsWith("[x]")) { mark='x'; return true; }
+			if (text.StartsWith("{x}")) { mark='x'; return true; }
+			if (text.StartsWith("(x)")) { mark='x'; return true; }
 
-			if (text.StartsWith("[+]")) return true;
-			if (text.StartsWith("{+}")) return true;
-			if (text.StartsWith("(+)")) return true;
+			if (text.StartsWith("[X]")) { mark='X'; return true; }
+			if (text.StartsWith("{X}")) { mark='X'; return true; }
+			if (text.StartsWith("(X)")) { mark='X'; return true; }
+
+			if (text.StartsWith("[+]")) { mark='+'; return true; }
+			if (text.StartsWith("{+}")) { mark='+'; return true; }
+			if (text.StartsWith("(+)")) { mark='+'; return true; }
+
+			if (text.StartsWith("[#]")) { mark='#'; return true; }
+			if (text.StartsWith("{#}")) { mark='#'; return true; }
+			if (text.StartsWith("(#)")) { mark='#'; return true; }
+
+			{ mark = null; return null; }
+		}
+
+		public string ChangeListLine(string text, char chr)
+		{
+			if (GetListHighlight(text) == null) return text;
+
+			var enumeration = false;
+			for (int i = 0; i < text.Length - 3; i++)
+			{
+				if (text[i] == ' ' || text[i] == '\t') continue;
+				if (!enumeration && (text[i] == '*' || text[i] == '-')) { enumeration = true; continue; }
+
+				var found1 = (text[i + 0] == '[' && text[i + 2] == ']');
+				var found2 = (text[i + 0] == '{' && text[i + 2] == '}');
+				var found3 = (text[i + 0] == '(' && text[i + 2] == ')');
+
+				if (found1 || found2 || found3)
+				{
+					var result = new StringBuilder(text);
+					result[i + 1] = chr;
+					return result.ToString();
+				}
+			}
+
+			return text;
+		}
+
+		public char? FindListerOnMarker(LineCollection lines)
+		{
+			foreach (var line in lines)
+			{
+				if (GetListHighlight(line.Text, out char? c) == true) return c;
+			}
 
 			return null;
 		}
