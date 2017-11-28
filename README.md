@@ -76,6 +76,7 @@ Linux version
  - [ ] Better first launch wizard (description, images, directly set provider), see [#6](https://github.com/Mikescher/AlephNote/issues/6)
  - [ ] Sync with multiple provider (eg sync with SimpleNote but also with local plaintext version of notes), see [#7](https://github.com/Mikescher/AlephNote/issues/7)
  - [X] Drop files/text directly into app
+ - [ ] Customizable shortcuts
 
 ## License
 

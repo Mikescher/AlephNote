@@ -73,6 +73,7 @@
 		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" >
 			<MenuItem Header="File">
 				<MenuItem Header="New Note" Command="{Binding CreateNewNoteCommand}" InputGestureText="Ctrl+N" />
+				<MenuItem Header="New Note (from clipboard)" Command="{Binding CreateNewNoteCommandFromClipboard}" />
 				<Separator />
 				<MenuItem Header="Export Note" Command="{Binding ExportCommand}" />
 				<MenuItem Header="Delete Note" Command="{Binding DeleteCommand}" InputGestureText="Entf" />
@@ -294,6 +295,7 @@
 			<tb:TaskbarIcon.ContextMenu>
 				<ContextMenu>
 					<MenuItem Header="New Note" Command="{Binding CreateNewNoteCommand}" />
+					<MenuItem Header="New Note (from clipboard)" Command="{Binding CreateNewNoteFromClipboardCommand}" />
 					<Separator />
 					<MenuItem Header="Restore" Command="{Binding ShowMainWindowCommand}" />
 					<MenuItem Header="Synchronize Now" Command="{Binding ResyncCommand}" />

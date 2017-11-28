@@ -24,6 +24,7 @@ namespace AlephNote.WPF.Windows
 	{
 		public ICommand SettingsCommand { get { return new RelayCommand(ShowSettings); } }
 		public ICommand CreateNewNoteCommand { get { return new RelayCommand(CreateNote);} }
+		public ICommand CreateNewNoteFromClipboardCommand { get { return new RelayCommand(CreateNoteFromClipboard);} }
 		public ICommand ResyncCommand { get { return new RelayCommand(Resync); } }
 		public ICommand ShowMainWindowCommand { get { return new RelayCommand(ShowMainWindow); } }
 		public ICommand ExportCommand { get { return new RelayCommand(ExportNote); } }
@@ -639,6 +640,37 @@ namespace AlephNote.WPF.Windows
 			catch (Exception ex)
 			{
 				ExceptionDialog.Show(Owner, "Drag&Drop failed", "Drag and Drop operation failed due to an internal error", ex);
+			}
+		}
+
+		private void CreateNoteFromClipboard()
+		{
+			if (Clipboard.ContainsFileDropList())
+			{
+				if (Owner.Visibility == Visibility.Hidden) ShowMainWindow();
+
+				foreach (var path in Clipboard.GetFileDropList())
+				{
+					var filename = Path.GetFileNameWithoutExtension(path) ?? "New note from unknown file";
+					var filecontent = File.ReadAllText(path);
+
+					SelectedNote = Repository.CreateNewNote();
+					SelectedNote.Title = filename;
+					SelectedNote.Text = filecontent;
+				}
+			}
+			else if (Clipboard.ContainsText())
+			{
+				if (Owner.Visibility == Visibility.Hidden) ShowMainWindow();
+
+				var notetitle = "New note from clipboard";
+				var notecontent = Clipboard.GetText();
+				if (!string.IsNullOrWhiteSpace(notecontent))
+				{
+					SelectedNote = Repository.CreateNewNote();
+					SelectedNote.Title = notetitle;
+					SelectedNote.Text = notecontent;
+				}
 			}
 		}
 	}
