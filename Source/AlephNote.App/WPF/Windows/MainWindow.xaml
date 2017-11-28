@@ -82,8 +82,20 @@
 			</MenuItem>
 			<MenuItem Header="Edit">
 				<MenuItem Header="Settings" Command="{Binding SettingsCommand}" />
+				<Separator />
 				<MenuItem Header="Synchronize now" Command="{Binding ResyncCommand}" InputGestureText="Ctrl+S" />
 				<MenuItem Header="Delete local data and sync new" Command="{Binding FullResyncCommand}" />
+				<Separator />
+				<MenuItem Header="Insert Snippet" ItemsSource="{Binding Settings.Snippets, Converter={conv:SnippetsToSnippetSource}}" >
+					<MenuItem.ItemContainerStyle>
+						<Style TargetType="{x:Type MenuItem}">
+							<Setter Property="Header" Value="{Binding Header}"/>
+							<Setter Property="Command" Value="{Binding DataContext.InsertSnippetCommand, ElementName=LayoutRoot}"/>
+							<Setter Property="CommandParameter" Value="{Binding Value}"/>
+						</Style>
+					</MenuItem.ItemContainerStyle>
+				</MenuItem>
+
 			</MenuItem>
 			<MenuItem Header="View">
 				<MenuItem Header="Always on Top" Command="{Binding SettingAlwaysOnTopCommand}" IsChecked="{Binding Settings.AlwaysOnTop}" />

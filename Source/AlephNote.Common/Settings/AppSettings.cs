@@ -251,6 +251,10 @@ namespace AlephNote.Settings
 		public bool AlwaysOnTop { get { return _alwaysOnTop; } set { _alwaysOnTop = value; OnPropertyChanged(); } }
 		private bool _alwaysOnTop = false;
 
+		[AlephXMLField]
+		public KeyValueStringList Snippets { get { return _snippets; } set { _snippets = value; OnPropertyChanged(); } }
+		private KeyValueStringList _snippets = CreateDefaultSnippetList();
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;
@@ -384,6 +388,16 @@ namespace AlephNote.Settings
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+		}
+
+		private static KeyValueStringList CreateDefaultSnippetList()
+		{
+			return new KeyValueStringList(new[]
+			{
+				Tuple.Create("date", "{now:yyyy-MM-dd}"),
+				Tuple.Create("time", "{now:HH:mm:ss}"),
+				Tuple.Create("date&time", "{now:yyyy-MM-dd HH:mm:ss}"),
+			});
 		}
 	}
 }

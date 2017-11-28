@@ -1,4 +1,5 @@
-﻿using AlephNote.PluginInterface;
+﻿using AlephNote.Common.Settings.Types;
+using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Util;
 using AlephNote.Settings;
 using System;
@@ -50,6 +51,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 			if (prop.PropertyType.GetTypeInfo().IsEnum) return AXMLFieldInfo.SettingObjectTypeEnum.Enum;
 			if (prop.PropertyType == typeof(RemoteStorageAccount)) return AXMLFieldInfo.SettingObjectTypeEnum.RemoteStorageAccount;
 			if (typeof(IList<RemoteStorageAccount>).IsAssignableFrom(prop.PropertyType)) return AXMLFieldInfo.SettingObjectTypeEnum.List_RemoteStorageAccount;
+			if (typeof(IAlephCustomSerializableField).IsAssignableFrom(prop.PropertyType)) return AXMLFieldInfo.SettingObjectTypeEnum.CustomSerializable;
 
 			throw new NotSupportedException("Setting of type " + prop.PropertyType + " not supported");
 		}

@@ -25,6 +25,8 @@ namespace AlephNote.Settings
 
 			RemoteStorageAccount,
 			List_RemoteStorageAccount,
+
+			CustomSerializable,
 		}
 
 		public readonly SettingObjectTypeEnum ObjectType;
@@ -80,10 +82,17 @@ namespace AlephNote.Settings
 					break;
 
 				case SettingObjectTypeEnum.List_RemoteStorageAccount:
-					var x = new XElement(PropInfo.Name);
-					x.Add(new XAttribute("type", SettingObjectTypeEnum.List_RemoteStorageAccount));
-					x.Add(((IList<RemoteStorageAccount>)objdata).Select(SerializeRemoteStorageAccount));
-					return x;
+					var x1 = new XElement(PropInfo.Name);
+					x1.Add(new XAttribute("type", SettingObjectTypeEnum.List_RemoteStorageAccount));
+					x1.Add(((IList<RemoteStorageAccount>)objdata).Select(SerializeRemoteStorageAccount));
+					return x1;
+
+				case SettingObjectTypeEnum.CustomSerializable:
+					var x2 = new XElement(PropInfo.Name);
+					var d = ((IAlephCustomSerializableField)objdata);
+					x2.Add(new XAttribute("type", d.GetTypeStr()));
+					d.Serialize(x2);
+					return x2;
 
 				default:
 					throw new ArgumentOutOfRangeException("ObjectType", ObjectType, null);
@@ -146,6 +155,12 @@ namespace AlephNote.Settings
 							list.Add(DeserializeRemoteStorageAccount(elem));
 						}
 					}
+					break;
+
+				case SettingObjectTypeEnum.CustomSerializable:
+					var currCust = ((IAlephCustomSerializableField)current);
+					var cchild = XHelper.GetChildOrNull(root, PropInfo.Name);
+					if (cchild != null) PropInfo.SetValue(obj, currCust.DeserializeNew(cchild));
 					break;
 
 				default:

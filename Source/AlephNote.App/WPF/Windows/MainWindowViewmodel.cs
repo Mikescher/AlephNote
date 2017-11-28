@@ -1,4 +1,5 @@
 ﻿using AlephNote.Common.Settings.Types;
+using AlephNote.Common.SPSParser;
 using AlephNote.PluginInterface;
 using AlephNote.Plugins;
 using AlephNote.Repository;
@@ -38,6 +39,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand FullResyncCommand { get { return new RelayCommand(FullResync); } }
 		public ICommand ManuallyCheckForUpdatesCommand { get { return new RelayCommand(ManuallyCheckForUpdates); } }
 		public ICommand DebugCreateIpsumNotesCommand { get { return new RelayCommand(DebugCreateIpsumNotes); } }
+		public ICommand InsertSnippetCommand { get { return new RelayCommand<string>(InsertSnippet); } }
 
 		public ICommand ClosingEvent { get { return new RelayCommand<CancelEventArgs>(OnClosing); } }
 		public ICommand CloseEvent { get { return new RelayCommand<EventArgs>(OnClose); } }
@@ -46,7 +48,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand SettingAlwaysOnTopCommand { get { return new RelayCommand(ChangeSettingAlwaysOnTop); } }
 		public ICommand SettingLineNumbersCommand { get { return new RelayCommand(ChangeSettingLineNumbers); } }
 		public ICommand SettingsWordWrapCommand   { get { return new RelayCommand(ChangeSettingWordWrap); } }
-
+		
 		private AppSettings _settings;
 		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); } }
 
@@ -93,12 +95,13 @@ namespace AlephNote.WPF.Windows
 
 		private readonly SynchronizationDispatcher dispatcher = new SynchronizationDispatcher();
 		private readonly DelayedCombiningInvoker _invSaveSettings;
+		private readonly SimpleParamStringParser _spsParser = new SimpleParamStringParser();
 
 		private bool _preventScintillaFocus = false;
 		private bool _forceClose = false;
 
 		public readonly MainWindow Owner;
-
+		
 		public MainWindowViewmodel(AppSettings settings, MainWindow parent)
 		{
 			Owner = parent;
@@ -687,6 +690,22 @@ namespace AlephNote.WPF.Windows
 					SelectedNote.Text = notecontent;
 				}
 			}
+		}
+
+		private void InsertSnippet(string snip)
+		{
+			if (SelectedNote == null) return;
+			
+			snip = _spsParser.Parse(snip, out bool succ);
+
+			if (!succ)
+			{
+				App.Logger.Warn("Main", "Snippet has invalid format: '" + snip + "'");
+			}
+
+			Owner.NoteEdit.ReplaceSelection(snip);
+
+			Owner.FocusScintilla();
 		}
 	}
 }
