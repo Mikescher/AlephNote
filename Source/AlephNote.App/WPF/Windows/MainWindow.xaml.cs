@@ -16,6 +16,7 @@ using MessageBox = System.Windows.MessageBox;
 using System.Diagnostics;
 using AlephNote.Common.Settings.Types;
 using AlephNote.WPF.Controls;
+using AlephNote.PluginInterface;
 
 namespace AlephNote.WPF.Windows
 {
@@ -384,6 +385,33 @@ namespace AlephNote.WPF.Windows
 		private void NotesList_Drop(object sender, System.Windows.DragEventArgs e)
 		{
 			viewmodel.OnNewNoteDrop(e.Data);
+		}
+
+		private void NotesList_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key >= Key.A && e.Key <= Key.Z)
+			{
+				char chr = (char)('A' + (e.Key - Key.A));
+
+				bool found = false;
+				if (viewmodel.SelectedNote == null) found = true;
+				foreach (var note in Enumerable.Concat(viewmodel.NotesView.OfType<INote>(), viewmodel.NotesView.OfType<INote>()))
+				{
+					if (found)
+					{
+						if (note.Title.ToUpper().StartsWith(chr.ToString()))
+						{
+							viewmodel.SetSelectedNoteWithoutFocus(note);
+							return;
+						}
+					}
+					else
+					{
+						found = (note.GetUniqueName() == viewmodel.SelectedNote.GetUniqueName());
+					}
+				}
+
+			}
 		}
 	}
 }

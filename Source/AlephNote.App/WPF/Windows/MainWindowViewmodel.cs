@@ -442,6 +442,19 @@ namespace AlephNote.WPF.Windows
 			_preventScintillaFocus = false;
 		}
 
+		public void SetSelectedNoteWithoutFocus(INote n)
+		{
+			try
+			{
+				_preventScintillaFocus = true;
+				SelectedNote = n;
+			}
+			finally
+			{
+				_preventScintillaFocus = false;
+			}
+		}
+
 		private bool SearchFilter(INote note)
 		{
 			if (string.IsNullOrWhiteSpace(SearchText)) return true;
