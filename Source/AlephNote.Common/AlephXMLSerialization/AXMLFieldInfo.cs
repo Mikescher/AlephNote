@@ -19,6 +19,7 @@ namespace AlephNote.Settings
 			NullableInteger,
 			Boolean,
 			Guid,
+			NGuid,
 			EncryptedString,
 			String,
 			Enum,
@@ -59,6 +60,10 @@ namespace AlephNote.Settings
 
 				case SettingObjectTypeEnum.Guid:
 					resultdata = ((Guid)objdata).ToString("B");
+					break;
+
+				case SettingObjectTypeEnum.NGuid:
+					resultdata = ((Guid?)objdata)?.ToString("B") ?? "";
 					break;
 
 				case SettingObjectTypeEnum.EncryptedString:
@@ -125,6 +130,10 @@ namespace AlephNote.Settings
 
 				case SettingObjectTypeEnum.Guid:
 					PropInfo.SetValue(obj, XHelper.GetChildValue(root, PropInfo.Name, (Guid)current));
+					return;
+
+				case SettingObjectTypeEnum.NGuid:
+					PropInfo.SetValue(obj, XHelper.GetChildValue(root, PropInfo.Name, (Guid?)current));
 					return;
 
 				case SettingObjectTypeEnum.EncryptedString:

@@ -107,14 +107,16 @@ namespace AlephNote.WPF.Windows
 			Owner = parent;
 
 			_settings = settings;
-			_invSaveSettings = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SaveSettings)), 5 * 1000, 60 * 1000);
+			_invSaveSettings = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SaveSettings)), 8 * 1000, 60 * 1000);
 
 			_repository = new NoteRepository(App.PATH_LOCALDB, this, settings, settings.ActiveAccount, App.Logger, dispatcher);
 			Repository.Init();
 			
 			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
 
-			SelectedNote = NotesView.FirstOrDefault<INote>();
+			if (_settings.LastSelectedNote != null) SelectedNote = NotesView.OfType<INote>().FirstOrDefault(n => n.GetUniqueName() == _settings.LastSelectedNote);
+			if (SelectedNote == null ) SelectedNote = NotesView.FirstOrDefault<INote>();
+
 			OverviewListWidth = new GridLength(settings.OverviewListWidth);
 
 			if (settings.CheckForUpdates)
@@ -213,6 +215,9 @@ namespace AlephNote.WPF.Windows
 			Owner.ResetScintillaScrollAndUndo();
 			Owner.UpdateMargins(Settings);
 			if (!_preventScintillaFocus) Owner.FocusScintillaDelayed();
+
+			Settings.LastSelectedNote = SelectedNote?.GetUniqueName();
+			RequestSettingsSave();
 		}
 
 		public void OnNoteChanged(NoteChangedEventArgs e)

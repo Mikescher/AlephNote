@@ -48,6 +48,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 			if (prop.PropertyType == typeof(string)) return encrypt ? AXMLFieldInfo.SettingObjectTypeEnum.EncryptedString : AXMLFieldInfo.SettingObjectTypeEnum.String;
 			if (prop.PropertyType == typeof(bool)) return AXMLFieldInfo.SettingObjectTypeEnum.Boolean;
 			if (prop.PropertyType == typeof(Guid)) return AXMLFieldInfo.SettingObjectTypeEnum.Guid;
+			if (prop.PropertyType == typeof(Guid?)) return AXMLFieldInfo.SettingObjectTypeEnum.NGuid;
 			if (prop.PropertyType.GetTypeInfo().IsEnum) return AXMLFieldInfo.SettingObjectTypeEnum.Enum;
 			if (prop.PropertyType == typeof(RemoteStorageAccount)) return AXMLFieldInfo.SettingObjectTypeEnum.RemoteStorageAccount;
 			if (typeof(IList<RemoteStorageAccount>).IsAssignableFrom(prop.PropertyType)) return AXMLFieldInfo.SettingObjectTypeEnum.List_RemoteStorageAccount;

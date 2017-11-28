@@ -54,6 +54,15 @@ namespace AlephNote.PluginInterface.Util
 			return Guid.Parse(child.Value);
 		}
 
+		public static Guid? GetChildValue(XElement parent, string childName, Guid? defaultValue)
+		{
+			var child = parent.Elements(childName).FirstOrDefault();
+			if (child == null) return defaultValue;
+			if (string.IsNullOrWhiteSpace(child.Value)) return defaultValue;
+
+			return Guid.Parse(child.Value);
+		}
+
 		public static double GetChildValue(XElement parent, string childName, double defaultValue)
 		{
 			var child = parent.Elements(childName).FirstOrDefault();

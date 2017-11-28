@@ -255,6 +255,10 @@ namespace AlephNote.Settings
 		public KeyValueStringList Snippets { get { return _snippets; } set { _snippets = value; OnPropertyChanged(); } }
 		private KeyValueStringList _snippets = CreateDefaultSnippetList();
 
+		[AlephXMLField]
+		public string LastSelectedNote { get { return _lastSelectedNote; } set { _lastSelectedNote = value; OnPropertyChanged(); } }
+		private string _lastSelectedNote = null;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

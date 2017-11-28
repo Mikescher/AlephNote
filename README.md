@@ -68,7 +68,7 @@ Linux version
  - [ ] Linux version (UI mit Eto.Forms, .Net core)
  - [X] auto updater (get version from github API)
  - [X] multiple conflict solving strategies (use local | use server | create conflict note)
- - [ ] Remember last selected note
+ - [X] Remember last selected note
  - [ ] readonly mode
  - [ ] sort tags alphabetically
  - [ ] edit tags without deleting (F2 ?)
