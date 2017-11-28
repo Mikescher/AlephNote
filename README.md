@@ -78,6 +78,8 @@ Linux version
  - [X] Drop files/text directly into app
  - [ ] Customizable shortcuts
  - [ ] performance improvements in scintilla control
+ - [ ] unit tests (+ CI)
+ - [ ] github wiki
 
 ## License
 
