@@ -32,7 +32,10 @@ namespace AlephNote.WPF.Windows
 
 		public void OnBeforeApply()
 		{
-			var sdata = ShortcutList.Select(s => Tuple.Create(s.Identifier, new ShortcutDefinition(s.Scope, s.Modifiers, s.Key)));
+			var sdata = ShortcutList
+				.Where(s => s.Key != AlephKey.None)
+				.Select(s => Tuple.Create(s.Identifier, new ShortcutDefinition(s.Scope, s.Modifiers, s.Key)));
+
 			Settings.Shortcuts = new KeyValueFlatCustomList<ShortcutDefinition>(sdata, ShortcutDefinition.DEFAULT);
 		}
 

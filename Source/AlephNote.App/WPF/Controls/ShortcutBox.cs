@@ -55,6 +55,15 @@ namespace AlephNote.WPF.Controls
 
 		private void OnPreviewKeyDown(object me, KeyEventArgs e)
 		{
+			if (e.Key == Key.Back)
+			{
+				ShortcutKey = AlephKey.None;
+				ShortcutModifiers = AlephModifierKeys.None;
+
+				e.Handled = true;
+				return;
+			}
+
 			if (SPECIAL_KEYS.Contains(e.Key))
 			{
 				e.Handled = true;

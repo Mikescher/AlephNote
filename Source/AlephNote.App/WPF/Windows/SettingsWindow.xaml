@@ -377,7 +377,7 @@
 							<DataGridTemplateColumn Header="Scope" Width="SizeToCells" MinWidth="100">
 								<DataGridTemplateColumn.CellTemplate>
 									<DataTemplate>
-										<TextBlock Text="{Binding Scope}" Foreground="{Binding Key, Converter={converter:KeyToColor}}" />
+										<TextBlock Text="{Binding Scope, Converter={converter:EnumToDescription}}" Foreground="{Binding Key, Converter={converter:KeyToColor}}" />
 									</DataTemplate>
 								</DataGridTemplateColumn.CellTemplate>
 							</DataGridTemplateColumn>

@@ -91,6 +91,7 @@
     </Compile>
     <Compile Include="WPF\Converter\KeyToWeight.cs" />
     <Compile Include="WPF\Converter\KeyToColor.cs" />
+    <Compile Include="WPF\Converter\EnumToDescription.cs" />
     <Compile Include="WPF\Converter\SnippetsToSnippetSource.cs" />
     <Compile Include="WPF\Converter\TagsToPlaceholder.cs" />
     <Compile Include="WPF\Converter\TagToBorderBrush.cs" />

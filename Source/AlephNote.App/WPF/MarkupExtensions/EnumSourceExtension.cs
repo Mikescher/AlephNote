@@ -41,6 +41,7 @@ namespace AlephNote.WPF.MarkupExtensions
 			var enumValues = Enum.GetValues(_enumType);
 			return enumValues
 				.Cast<object>()
+				.Where(GetVisible)
 				.Select(enumValue => new EnumMember{ Value = enumValue, Display = GetDescription(enumValue) })
 				.ToArray();
 		}
@@ -51,9 +52,9 @@ namespace AlephNote.WPF.MarkupExtensions
 										.GetField(enumValue.ToString())
 										.GetCustomAttributes(typeof(DescriptionAttribute), false)
 										.FirstOrDefault() as DescriptionAttribute;
-		
+
 			if (descriptionAttribute1 != null) return descriptionAttribute1.Description;
-			
+
 			var descriptionAttribute2 = _enumType
 										.GetField(enumValue.ToString())
 										.GetCustomAttributes(typeof(EnumDescriptorAttribute), false)
@@ -62,6 +63,18 @@ namespace AlephNote.WPF.MarkupExtensions
 			if (descriptionAttribute2 != null) return descriptionAttribute2.Description;
 
 			return enumValue.ToString();
+		}
+
+		private bool GetVisible(object enumValue)
+		{
+			var descriptionAttribute2 = _enumType
+										.GetField(enumValue.ToString())
+										.GetCustomAttributes(typeof(EnumDescriptorAttribute), false)
+										.FirstOrDefault() as EnumDescriptorAttribute;
+
+			if (descriptionAttribute2 != null) return descriptionAttribute2.Visible;
+
+			return true;
 		}
 
 	}

@@ -5,13 +5,16 @@ using AlephNote.Common.Settings.Types;
 
 namespace AlephNote.WPF.Converter
 {
-	class KeyToColor : OneWayConverter<AlephKey, Color>
+	class KeyToColor : OneWayConverter<AlephKey, Brush>
 	{
+		public static readonly Brush B_ON  = Brushes.Black;
+		public static readonly Brush B_OFF = new SolidColorBrush(Color.FromRgb(96, 96, 96));
+
 		public KeyToColor() { }
 
-		protected override Color Convert(AlephKey value, object parameter)
+		protected override Brush Convert(AlephKey value, object parameter)
 		{
-			return (value == AlephKey.None) ? Colors.DarkGray : Colors.Black;
+			return (value == AlephKey.None) ? B_OFF : B_ON;
 		}
 	}
 }
