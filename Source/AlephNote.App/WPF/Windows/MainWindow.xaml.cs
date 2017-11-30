@@ -364,6 +364,7 @@ namespace AlephNote.WPF.Windows
 
 		public void ShowDocSearchBar()
 		{
+			viewmodel.SearchText = string.Empty;
 			DocumentSearchBar.Show();
 		}
 

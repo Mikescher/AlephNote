@@ -8,6 +8,7 @@ using System.Drawing;
 using AlephNote.Common.Settings;
 using AlephNote.Settings;
 using AlephNote.Common.Settings.Types;
+using AlephNote.WPF.Util;
 
 namespace AlephNote.WPF.Controls
 {
@@ -58,6 +59,8 @@ namespace AlephNote.WPF.Controls
 
 		public event EventHandler HideBox;
 
+		private const int NUM = ScintillaHighlighter.INDICATOR_INLINE_SEARCH;
+
 		public string      SearchText    { get { return (string)     GetValue(SearchTextProperty);    } set { SetValue(SearchTextProperty,    value); } }
 		public bool        CaseSensitive { get { return (bool)       GetValue(CaseSensitiveProperty); } set { SetValue(CaseSensitiveProperty, value); } }
 		public bool        WholeWord     { get { return (bool)       GetValue(WholeWordProperty);     } set { SetValue(WholeWordProperty,     value); } }
@@ -79,16 +82,8 @@ namespace AlephNote.WPF.Controls
 			if (scintilla == null) return;
 			if (text == "") { ClearSearch(); return; }
 
-			const int NUM = 8;
-
 			scintilla.IndicatorCurrent = NUM;
 			scintilla.IndicatorClearRange(0, scintilla.TextLength);
-
-			scintilla.Indicators[NUM].Style = IndicatorStyle.StraightBox;
-			scintilla.Indicators[NUM].Under = true;
-			scintilla.Indicators[NUM].ForeColor = Color.Red;
-			scintilla.Indicators[NUM].OutlineAlpha = 196;
-			scintilla.Indicators[NUM].Alpha = 64;
 
 			scintilla.TargetStart = 0;
 			scintilla.TargetEnd = scintilla.TextLength;
@@ -129,8 +124,7 @@ namespace AlephNote.WPF.Controls
 		{
 			var scintilla = Target;
 			if (scintilla == null) return;
-
-			const int NUM = 8;
+			
 			scintilla.IndicatorCurrent = NUM;
 			scintilla.IndicatorClearRange(0, scintilla.TextLength);
 		}

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using AlephNote.Common.Settings.Types;
 using System.Text;
+using System.Drawing;
 
 namespace AlephNote.WPF.Util
 {
@@ -28,6 +29,9 @@ namespace AlephNote.WPF.Util
 
 		public const int STYLE_MARKER_LIST_ON  = 2;
 		public const int STYLE_MARKER_LIST_OFF = 4;
+
+		public const int INDICATOR_INLINE_SEARCH = 8;
+		public const int INDICATOR_GLOBAL_SEARCH = 9;
 
 		public void SetUpStyles(Scintilla sci, AppSettings s)
 		{
@@ -88,6 +92,19 @@ namespace AlephNote.WPF.Util
 			sci.Styles[STYLE_MD_LIST].Size = (int)s.NoteFontSize;
 			sci.Styles[STYLE_MD_LIST].Font = s.NoteFontFamily;
 			//sci.Styles[STYLE_MD_LIST].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
+
+
+			sci.Indicators[INDICATOR_INLINE_SEARCH].Style = IndicatorStyle.StraightBox;
+			sci.Indicators[INDICATOR_INLINE_SEARCH].Under = true;
+			sci.Indicators[INDICATOR_INLINE_SEARCH].ForeColor = Color.Red;
+			sci.Indicators[INDICATOR_INLINE_SEARCH].OutlineAlpha = 196;
+			sci.Indicators[INDICATOR_INLINE_SEARCH].Alpha = 64;
+
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Style = IndicatorStyle.StraightBox;
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Under = true;
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].ForeColor = Color.DarkGreen;
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].OutlineAlpha = 196;
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Alpha = 96;
 		}
 
 		public abstract void Highlight(Scintilla sci, int start, int end, AppSettings s);

@@ -5,6 +5,7 @@ using AlephNote.Plugins;
 using AlephNote.Repository;
 using AlephNote.Settings;
 using AlephNote.WPF.MVVM;
+using AlephNote.WPF.Util;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Win32;
 using System;
@@ -220,6 +221,8 @@ namespace AlephNote.WPF.Windows
 			Owner.ResetScintillaScrollAndUndo();
 			Owner.UpdateMargins(Settings);
 			if (!_preventScintillaFocus) Owner.FocusScintillaDelayed();
+
+			if (SelectedNote != null) ScintillaSearcher.Highlight(Owner.NoteEdit, SelectedNote, SearchText);
 
 			Settings.LastSelectedNote = SelectedNote?.GetUniqueName();
 			RequestSettingsSave();
@@ -455,6 +458,8 @@ namespace AlephNote.WPF.Windows
 					SelectedNote = NotesView.FirstOrDefault<INote>();
 			}
 			_preventScintillaFocus = false;
+
+			if (SelectedNote != null) ScintillaSearcher.Highlight(Owner.NoteEdit, SelectedNote, SearchText);
 		}
 
 		public void SetSelectedNoteWithoutFocus(INote n)
@@ -472,55 +477,7 @@ namespace AlephNote.WPF.Windows
 
 		private bool SearchFilter(INote note)
 		{
-			if (string.IsNullOrWhiteSpace(SearchText)) return true;
-
-			if (IsRegex(SearchText, out var searchRegex))
-			{
-				if (searchRegex.IsMatch(note.Title)) return true;
-				if (searchRegex.IsMatch(note.Text)) return true;
-				if (note.Tags.Any(t => searchRegex.IsMatch(t))) return true;
-
-				return false;
-			}
-			else if (SearchText.Length > 2 && SearchText.StartsWith("[") && SearchText.EndsWith("]"))
-			{
-				var searchTag = SearchText.Substring(1, SearchText.Length - 2);
-
-				if (note.HasTagCasInsensitive(searchTag)) return true;
-
-				return false;
-			}
-			else
-			{
-				if (note.Title.ToLower().Contains(SearchText.ToLower())) return true;
-				if (note.Text.ToLower().Contains(SearchText.ToLower())) return true;
-				if (note.HasTagCasInsensitive(SearchText)) return true;
-
-				return false;
-			}
-		}
-
-		private bool IsRegex(string text, out Regex r)
-		{
-			try
-			{
-				if (text.Length >= 3 && text.StartsWith("/") && text.EndsWith("/"))
-				{
-					r = new Regex(text.Substring(1, text.Length - 2));
-					return true;
-				}
-				else
-				{
-					r = null;
-					return false;
-				}
-
-			}
-			catch (ArgumentException)
-			{
-				r = null;
-				return false;
-			}
+			return ScintillaSearcher.IsInFilter(note, SearchText);
 		}
 
 		private void SaveSettings()
