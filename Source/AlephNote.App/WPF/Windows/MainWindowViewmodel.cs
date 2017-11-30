@@ -5,6 +5,7 @@ using AlephNote.Plugins;
 using AlephNote.Repository;
 using AlephNote.Settings;
 using AlephNote.WPF.MVVM;
+using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.Util;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Win32;
@@ -51,7 +52,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand SettingsWordWrapCommand   { get { return new RelayCommand(ChangeSettingWordWrap); } }
 		
 		private AppSettings _settings;
-		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); } }
+		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); SettingsChanged(); } }
 
 		private NoteRepository _repository;
 		public NoteRepository Repository { get { return _repository; } private set { _repository = value; OnPropertyChanged(); OnExplicitPropertyChanged("NotesView"); } }
@@ -125,6 +126,8 @@ namespace AlephNote.WPF.Windows
 				var t = new Thread(CheckForUpdatesAsync) { Name = "UPDATE_CHECK" };
 				t.Start();
 			}
+
+			SettingsChanged();
 		}
 
 		private void ShowSettings()
@@ -201,6 +204,7 @@ namespace AlephNote.WPF.Windows
 				}
 
 				Owner.SetupScintilla(Settings);
+				Owner.UpdateShortcuts(Settings);
 
 				SearchText = string.Empty;
 			}
@@ -226,6 +230,20 @@ namespace AlephNote.WPF.Windows
 
 			Settings.LastSelectedNote = SelectedNote?.GetUniqueName();
 			RequestSettingsSave();
+		}
+
+		private void SettingsChanged()
+		{
+			if (Settings == null) return;
+
+			foreach (var snip in Settings.Snippets.Data)
+			{
+				var snipactionkey = "Snippet::" + snip.Key;
+				if (!ShortcutManager.Contains(snipactionkey))
+				{
+					ShortcutManager.AddSnippetCommand(snipactionkey, snip.Value.Value, snip.Value.DisplayName);
+				}
+			}
 		}
 
 		public void OnNoteChanged(NoteChangedEventArgs e)

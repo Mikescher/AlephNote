@@ -17,6 +17,8 @@ using System.Diagnostics;
 using AlephNote.Common.Settings.Types;
 using AlephNote.WPF.Controls;
 using AlephNote.PluginInterface;
+using AlephNote.WPF.Shortcuts;
+using AlephNote.WPF.MVVM;
 
 namespace AlephNote.WPF.Windows
 {
@@ -31,6 +33,8 @@ namespace AlephNote.WPF.Windows
 		private readonly ScintillaHighlighter _highlighterMarkdown = new MarkdownHighlighter();
 
 		public AppSettings Settings => viewmodel?.Settings;
+
+		public MainWindowViewmodel VM => viewmodel;
 
 		public MainWindow()
 		{
@@ -63,6 +67,7 @@ namespace AlephNote.WPF.Windows
 			StartupConfigWindow(settings);
 
 			SetupScintilla(settings);
+			UpdateShortcuts(settings);
 
 			viewmodel = new MainWindowViewmodel(settings, this);
 			DataContext = viewmodel;
@@ -310,7 +315,23 @@ namespace AlephNote.WPF.Windows
 
 		private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.Key == Key.System && ReferenceEquals(e.OriginalSource, NoteEditHost))
+			if (Settings != null && ReferenceEquals(e.OriginalSource, NoteEditHost))
+			{
+				foreach (var sc in Settings.Shortcuts)
+				{
+					if (sc.Value.Scope == AlephShortcutScope.NoteEdit)
+					{
+						var kk = (Key)sc.Value.Key;
+						var mm = (ModifierKeys)sc.Value.Modifiers;
+						if (kk == e.Key && mm == (e.KeyboardDevice.Modifiers & mm))
+						{
+							ShortcutManager.Execute(this, sc.Key);
+							e.Handled = true;
+						}
+					}
+				}
+			}
+			else if (e.Key == Key.System && ReferenceEquals(e.OriginalSource, NoteEditHost))
 			{
 				// Prevent ALT key removing focus of control
 				e.Handled = true;
@@ -329,31 +350,27 @@ namespace AlephNote.WPF.Windows
 
 		private void NoteEdit_OnKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
-			// Manually call our Shortcuts
-			// Cause the WindowsFormsHost fucks everything up
-
-			if (e.Control && e.KeyCode == Keys.S)
+			if (Settings != null)
 			{
-				viewmodel.SaveAndSyncCommand.Execute(sender);
-				e.Handled = true;
-			}
+				var ekey = KeyInterop.KeyFromVirtualKey((int)e.KeyCode);
+				var emod = ModifierKeys.None;
+				if (e.Control) emod |= ModifierKeys.Control;
+				if (e.Alt) emod |= ModifierKeys.Alt;
+				if (e.Shift) emod |= ModifierKeys.Shift;
 
-			if (e.Control && e.KeyCode == Keys.N)
-			{
-				viewmodel.CreateNewNoteCommand.Execute(sender);
-				e.Handled = true;
-			}
-
-			if (e.Control && e.KeyCode == Keys.F)
-			{
-				viewmodel.DocumentSearchCommand.Execute(sender);
-				e.Handled = true;
-			}
-
-			if (e.KeyCode == Keys.Escape)
-			{
-				viewmodel.CloseDocumentSearchCommand.Execute(sender);
-				e.Handled = true;
+				foreach (var sc in Settings.Shortcuts)
+				{
+					if (sc.Value.Scope == AlephShortcutScope.NoteEdit || sc.Value.Scope == AlephShortcutScope.Window)
+					{
+						var kk = (Key)sc.Value.Key;
+						var mm = (ModifierKeys)sc.Value.Modifiers;
+						if (kk == ekey && mm == (emod & mm))
+						{
+							ShortcutManager.Execute(this, sc.Key);
+							e.Handled = true;
+						}
+					}
+				}
 			}
 		}
 
@@ -447,6 +464,30 @@ namespace AlephNote.WPF.Windows
 						NoteEdit.TargetEnd = line.EndPosition;
 						NoteEdit.ReplaceTarget(newText);
 					}
+				}
+			}
+		}
+
+		public void UpdateShortcuts(AppSettings settings)
+		{
+			InputBindings.Clear();
+			NotesList.InputBindings.Clear();
+
+			foreach (var sc in settings.Shortcuts)
+			{
+				if (sc.Value.Scope == AlephShortcutScope.Window)
+				{
+					var sckey = sc.Key;
+					var cmd = new RelayCommand(() => ShortcutManager.Execute(this, sckey));
+					var ges = new KeyGesture((Key)sc.Value.Key, (ModifierKeys)sc.Value.Modifiers);
+					InputBindings.Add(new InputBinding(cmd, ges));
+				}
+				else if (sc.Value.Scope == AlephShortcutScope.NoteList)
+				{
+					var sckey = sc.Key;
+					var cmd = new RelayCommand(() => ShortcutManager.Execute(this, sckey));
+					var ges = new KeyGesture((Key)sc.Value.Key, (ModifierKeys)sc.Value.Modifiers);
+					NotesList.InputBindings.Add(new InputBinding(cmd, ges));
 				}
 			}
 		}

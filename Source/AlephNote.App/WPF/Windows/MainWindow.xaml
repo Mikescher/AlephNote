@@ -14,6 +14,7 @@
 		xmlns:settings="clr-namespace:AlephNote.Common.Settings.Types;assembly=AlephNote.Common"
 		xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
 		xmlns:mext="clr-namespace:AlephNote.WPF.MarkupExtensions"
+		xmlns:util="clr-namespace:AlephNote.WPF.Util"
 		mc:Ignorable="d" 
 		Icon="/Resources/IconMain.png"
 		WindowState="{Binding WindowState}"
@@ -51,13 +52,6 @@
 		</Style>
 	</Window.Resources>
 	
-	<Window.InputBindings>
-		<KeyBinding Command="{Binding CreateNewNoteCommand}" Modifiers="Control" Key="N"/>
-		<KeyBinding Command="{Binding SaveAndSyncCommand}" Modifiers="Control" Key="S"/>
-		<KeyBinding Command="{Binding DocumentSearchCommand}" Modifiers="Control" Key="F"/>
-		<KeyBinding Command="{Binding CloseDocumentSearchCommand}" Key="Escape"/>
-	</Window.InputBindings>
-	
 	<Grid x:Name="LayoutRoot">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="{Binding OverviewListWidth, Mode=TwoWay}"/>
@@ -72,40 +66,55 @@
 
 		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" >
 			<MenuItem Header="File">
-				<MenuItem Header="New Note" Command="{Binding CreateNewNoteCommand}" InputGestureText="Ctrl+N" />
-				<MenuItem Header="New Note (from clipboard)" Command="{Binding CreateNewNoteCommandFromClipboard}" />
+				<ctrl:AutoActionMenuItem Header="New Note" AlephAction="NewNote" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Header="New Note (from clipboard)" AlephAction="NewNoteFromClipboard" Settings="{Binding Settings}"  />
 				<Separator />
-				<MenuItem Header="Export Note" Command="{Binding ExportCommand}" />
-				<MenuItem Header="Delete Note" Command="{Binding DeleteCommand}" InputGestureText="Entf" />
+				<ctrl:AutoActionMenuItem Header="Export Note" AlephAction="ExportNote" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Header="Delete Note" AlephAction="DeleteNote"  Settings="{Binding Settings}" />
 				<Separator />
-				<MenuItem Header="Exit" Command="{Binding ExitCommand}" InputGestureText="Alt+F4" />
+				<ctrl:AutoActionMenuItem Header="Exit" AlephAction="AppExit" Settings="{Binding Settings}"  />
 			</MenuItem>
 			<MenuItem Header="Edit">
-				<MenuItem Header="Settings" Command="{Binding SettingsCommand}" />
+				<ctrl:AutoActionMenuItem Header="Settings" AlephAction="ShowSettings" Settings="{Binding Settings}"  />
 				<Separator />
-				<MenuItem Header="Synchronize now" Command="{Binding ResyncCommand}" InputGestureText="Ctrl+S" />
-				<MenuItem Header="Delete local data and sync new" Command="{Binding FullResyncCommand}" />
+				<ctrl:AutoActionMenuItem Header="Synchronize now" AlephAction="Resync" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Header="Delete local data and sync new" AlephAction="FullResync" Settings="{Binding Settings}" />
 				<Separator />
-				<MenuItem Header="Insert Snippet" ItemsSource="{Binding Settings.Snippets, Converter={conv:SnippetsToSnippetSource}}" >
+				<MenuItem Header="Insert Snippet" UsesItemContainerTemplate="True" ItemsSource="{Binding Settings.Snippets, Converter={conv:SnippetsToSnippetSource}}" >
+					<MenuItem.Resources>
+						<ItemContainerTemplate DataType="{x:Type conv:SnippetElem}">
+							<ctrl:AutoActionMenuItem />
+						</ItemContainerTemplate>
+					</MenuItem.Resources>
+					
 					<MenuItem.ItemContainerStyle>
-						<Style TargetType="{x:Type MenuItem}">
+						<Style TargetType="{x:Type ctrl:AutoActionMenuItem}">
 							<Setter Property="Header" Value="{Binding Header}"/>
-							<Setter Property="Command" Value="{Binding DataContext.InsertSnippetCommand, ElementName=LayoutRoot}"/>
-							<Setter Property="CommandParameter" Value="{Binding Value}"/>
+							<Setter Property="AlephAction" Value="{Binding AlephAction}"/>
+							<Setter Property="Settings" Value="{Binding DataContext.Settings, ElementName=LayoutRoot}"/>
+							<Setter Property="ParentAnchor" Value="{Binding ., ElementName=LayoutRoot}"/>
 						</Style>
 					</MenuItem.ItemContainerStyle>
+					
+					<MenuItem.ItemContainerTemplateSelector>
+						<util:MenuItemContainerTemplateSelector>
+							<DataTemplate>
+								<ctrl:AutoActionMenuItem />
+							</DataTemplate>
+						</util:MenuItemContainerTemplateSelector>
+					</MenuItem.ItemContainerTemplateSelector>
 				</MenuItem>
 
 			</MenuItem>
 			<MenuItem Header="View">
-				<MenuItem Header="Always on Top" Command="{Binding SettingAlwaysOnTopCommand}" IsChecked="{Binding Settings.AlwaysOnTop}" />
-				<MenuItem Header="Display Line Numbers" Command="{Binding SettingLineNumbersCommand}" IsChecked="{Binding Settings.SciLineNumbers}" />
-				<MenuItem Header="Word Wrap" Command="{Binding SettingsWordWrapCommand}" IsChecked="{Binding Settings.SciWordWrap}" />
+				<ctrl:AutoActionMenuItem Header="Always on Top" AlephAction="ToggleAlwaysOnTop" IsChecked="{Binding Settings.AlwaysOnTop}" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Header="Display Line Numbers" AlephAction="ToggleLineNumbers" IsChecked="{Binding Settings.SciLineNumbers}" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Header="Word Wrap" AlephAction="ToggleWordWrap" IsChecked="{Binding Settings.SciWordWrap}" Settings="{Binding Settings}"  />
 			</MenuItem>
 			<MenuItem Header="Help">
-				<MenuItem Header="Check for Updates" Command="{Binding ManuallyCheckForUpdatesCommand}" />
-				<MenuItem Header="Show Log" Command="{Binding ShowLogCommand}" />
-				<MenuItem Header="About" Command="{Binding ShowAboutCommand}" />
+				<ctrl:AutoActionMenuItem Header="Check for Updates" AlephAction="CheckForUpdates" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Header="Show Log" AlephAction="ShowLog" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Header="About" AlephAction="ShowAbout" Settings="{Binding Settings}"  />
 			</MenuItem>
 			<MenuItem Header="Debug" Visibility="{Binding DebugMode, Converter={conv:BoolToVisibility}, ConverterParameter=Visible;Collapsed}">
 				<MenuItem Header="Create 10 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" />
@@ -147,14 +156,10 @@
 					  FontWeight="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontWeight}}" 
 					  FontStyle="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontStyle}}">
 				
-				<ListView.InputBindings>
-					<KeyBinding Command="{Binding DeleteCommand}" Key="Delete"/>
-				</ListView.InputBindings>
-				
 				<ListView.ContextMenu>
 					<ContextMenu>
-						<MenuItem Header="Export" Command="{Binding ExportCommand}" />
-						<MenuItem Header="Delete" Command="{Binding DeleteCommand}" />
+						<ctrl:AutoActionMenuItem Header="Export" AlephAction="ExportNote" />
+						<ctrl:AutoActionMenuItem Header="Delete" AlephAction="DeleteNote" />
 					</ContextMenu>
 				</ListView.ContextMenu>
 				
@@ -313,13 +318,13 @@
 			
 			<tb:TaskbarIcon.ContextMenu>
 				<ContextMenu>
-					<MenuItem Header="New Note" Command="{Binding CreateNewNoteCommand}" />
-					<MenuItem Header="New Note (from clipboard)" Command="{Binding CreateNewNoteFromClipboardCommand}" />
+					<ctrl:AutoActionMenuItem Header="New Note" AlephAction="NewNote" />
+					<ctrl:AutoActionMenuItem Header="New Note (from clipboard)" AlephAction="NewNoteFromClipboard" />
 					<Separator />
-					<MenuItem Header="Restore" Command="{Binding ShowMainWindowCommand}" />
-					<MenuItem Header="Synchronize Now" Command="{Binding ResyncCommand}" />
+					<ctrl:AutoActionMenuItem Header="Restore" AlephAction="ShowMainWindow" />
+					<ctrl:AutoActionMenuItem Header="Synchronize Now" AlephAction="Resync" />
 					<Separator />
-					<MenuItem Header="Exit" Command="{Binding ExitCommand}" />
+					<ctrl:AutoActionMenuItem Header="Exit" AlephAction="AppExit" />
 				</ContextMenu>
 			</tb:TaskbarIcon.ContextMenu>
 			

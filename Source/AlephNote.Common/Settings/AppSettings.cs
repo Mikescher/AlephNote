@@ -7,6 +7,7 @@ using AlephNote.Common.Plugins;
 using AlephNote.Common.AlephXMLSerialization;
 using System.Linq;
 using AlephNote.Common.Settings.Types;
+using System.Collections.Generic;
 
 namespace AlephNote.Settings
 {
@@ -252,8 +253,8 @@ namespace AlephNote.Settings
 		private bool _alwaysOnTop = false;
 
 		[AlephXMLField]
-		public KeyValueStringList Snippets { get { return _snippets; } set { _snippets = value; OnPropertyChanged(); } }
-		private KeyValueStringList _snippets = CreateDefaultSnippetList();
+		public KeyValueCustomList<SnippetDefinition> Snippets { get { return _snippets; } set { _snippets = value; OnPropertyChanged(); } }
+		private KeyValueCustomList<SnippetDefinition> _snippets = CreateDefaultSnippetList();
 
 		[AlephXMLField]
 		public string LastSelectedNote { get { return _lastSelectedNote; } set { _lastSelectedNote = value; OnPropertyChanged(); } }
@@ -262,6 +263,10 @@ namespace AlephNote.Settings
 		[AlephXMLField]
 		public bool AutoSortTags { get { return _autoSortTags; } set { _autoSortTags = value; OnPropertyChanged(); } }
 		private bool _autoSortTags = true;
+
+		[AlephXMLField]
+		public KeyValueFlatCustomList<ShortcutDefinition> Shortcuts { get { return __shortcuts; } set { __shortcuts = value; OnPropertyChanged(); } }
+		private KeyValueFlatCustomList<ShortcutDefinition> __shortcuts = CreateDefaultShortcutList();
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
@@ -398,14 +403,29 @@ namespace AlephNote.Settings
 			}
 		}
 
-		private static KeyValueStringList CreateDefaultSnippetList()
+		private static KeyValueCustomList<SnippetDefinition> CreateDefaultSnippetList()
 		{
-			return new KeyValueStringList(new[]
+			return new KeyValueCustomList<SnippetDefinition>(new[]
 			{
-				Tuple.Create("date", "{now:yyyy-MM-dd}"),
-				Tuple.Create("time", "{now:HH:mm:ss}"),
-				Tuple.Create("date&time", "{now:yyyy-MM-dd HH:mm:ss}"),
-			});
+				Tuple.Create("date", new SnippetDefinition("Current Date", "{now:yyyy-MM-dd}")),
+				Tuple.Create("time", new SnippetDefinition("Current Time", "{now:HH:mm:ss}")),
+				Tuple.Create("date+time", new SnippetDefinition("Current Date & Time", "{now:yyyy-MM-dd HH:mm:ss}")),
+			},
+			SnippetDefinition.DEFAULT);
+		}
+
+		private static KeyValueFlatCustomList<ShortcutDefinition> CreateDefaultShortcutList()
+		{
+			return new KeyValueFlatCustomList<ShortcutDefinition>(new[]
+			{
+				Tuple.Create("NewNote",             new ShortcutDefinition(AlephShortcutScope.Window,   AlephModifierKeys.Control, AlephKey.N)),
+				Tuple.Create("SaveAndSync",         new ShortcutDefinition(AlephShortcutScope.Window,   AlephModifierKeys.Control, AlephKey.S)),
+				Tuple.Create("DocumentSearch",      new ShortcutDefinition(AlephShortcutScope.NoteEdit, AlephModifierKeys.Control, AlephKey.F)),
+				Tuple.Create("CloseDocumentSearch", new ShortcutDefinition(AlephShortcutScope.Window,   AlephModifierKeys.None,    AlephKey.Escape)),
+				Tuple.Create("DeleteNote",          new ShortcutDefinition(AlephShortcutScope.NoteList, AlephModifierKeys.None,    AlephKey.Delete)),
+				Tuple.Create("AppExit",             new ShortcutDefinition(AlephShortcutScope.Window,   AlephModifierKeys.Alt,     AlephKey.F4)),
+			}, 
+			ShortcutDefinition.DEFAULT);
 		}
 	}
 }

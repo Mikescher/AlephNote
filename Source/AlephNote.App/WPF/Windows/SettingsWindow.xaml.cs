@@ -24,6 +24,7 @@ namespace AlephNote.WPF.Windows
 
 		private void OnOKClicked(object sender, RoutedEventArgs e)
 		{
+			viewmodel.OnBeforeApply();
 			if (!viewmodel.Settings.IsEqual(ownerVM.Settings)) ownerVM.ChangeSettings(viewmodel.Settings);
 			Close();
 		}

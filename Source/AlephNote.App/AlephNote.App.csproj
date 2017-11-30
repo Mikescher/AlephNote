@@ -84,12 +84,18 @@
     <Compile Include="Log\EventLogger.cs" />
     <Compile Include="Log\LogEvent.cs" />
     <Compile Include="Log\LogEventType.cs" />
+    <Compile Include="WPF\Controls\AutoActionMenuItem.cs" />
+    <Compile Include="WPF\Controls\ShortcutBox.cs" />
     <Compile Include="WPF\Controls\TagEditor.xaml.cs">
       <DependentUpon>TagEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Converter\KeyToWeight.cs" />
+    <Compile Include="WPF\Converter\KeyToColor.cs" />
     <Compile Include="WPF\Converter\SnippetsToSnippetSource.cs" />
     <Compile Include="WPF\Converter\TagsToPlaceholder.cs" />
     <Compile Include="WPF\Converter\TagToBorderBrush.cs" />
+    <Compile Include="WPF\Shortcuts\ObservableShortcutConfig.cs" />
+    <Compile Include="WPF\Shortcuts\ShortcutManager.cs" />
     <Compile Include="WPF\Util\MarkdownHighlighter.cs" />
     <Compile Include="WPF\Util\DefaultHighlighter.cs" />
     <Compile Include="WPF\BindingProxies\AbstractLegacyBinding.cs" />
@@ -147,6 +153,7 @@
     <Compile Include="WPF\Services\MultiDatatemplateService.cs" />
     <Compile Include="WPF\Services\WatermarkAdorner.cs" />
     <Compile Include="WPF\Services\WatermarkService.cs" />
+    <Compile Include="WPF\Util\MenuItemContainerTemplateSelector.cs" />
     <Compile Include="WPF\Util\ScintillaHighlighter.cs" />
     <Compile Include="WPF\Util\ScintillaSearcher.cs" />
     <Compile Include="WPF\Windows\AboutWindowViewmodel.cs">

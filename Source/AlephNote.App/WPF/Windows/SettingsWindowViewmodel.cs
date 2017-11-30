@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System;
 using System.Linq;
 using AlephNote.Common.Settings.Types;
+using AlephNote.WPF.Shortcuts;
 
 namespace AlephNote.WPF.Windows
 {
@@ -19,10 +20,20 @@ namespace AlephNote.WPF.Windows
 		
 		public ICommand InsertCurrentWindowStateCommand { get { return new RelayCommand(InsertCurrentWindowState); } }
 
+		public ObservableCollectionNoReset<ObservableShortcutConfig> ShortcutList { get; set; }
+
 		public SettingsWindowViewmodel(MainWindow main, AppSettings data)
 		{
 			mainWindow = main;
 			Settings = data;
+
+			ShortcutList = ShortcutManager.ListObservableShortcuts(data);
+		}
+
+		public void OnBeforeApply()
+		{
+			var sdata = ShortcutList.Select(s => Tuple.Create(s.Identifier, new ShortcutDefinition(s.Scope, s.Modifiers, s.Key)));
+			Settings.Shortcuts = new KeyValueFlatCustomList<ShortcutDefinition>(sdata, ShortcutDefinition.DEFAULT);
 		}
 
 		private void InsertCurrentWindowState()
@@ -62,8 +73,6 @@ namespace AlephNote.WPF.Windows
 			var acc = new RemoteStorageAccount(Guid.NewGuid(), p, p.CreateEmptyRemoteStorageConfiguration());
 
 			Settings.AddAccountAndSetActive(acc);
-
-
 		}
 
 		public void RemoveAccount()

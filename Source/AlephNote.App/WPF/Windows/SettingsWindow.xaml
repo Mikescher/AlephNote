@@ -8,6 +8,7 @@
 		xmlns:windows="clr-namespace:AlephNote.WPF.Windows"
 		xmlns:ctrl="clr-namespace:AlephNote.WPF.Controls"
 		xmlns:mext="clr-namespace:AlephNote.WPF.MarkupExtensions"
+		xmlns:shortcuts="clr-namespace:AlephNote.WPF.Shortcuts"
 		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance windows:SettingsWindowViewmodel}"
 		WindowStartupLocation="CenterOwner"
@@ -350,6 +351,61 @@
 						</GroupBox>
 					</StackPanel>
 				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="Shortcuts">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="1*" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<DataGrid Grid.Row="0" ItemsSource="{Binding ShortcutList}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" x:Name="ShortcutDataGrid">
+						<DataGrid.Columns>
+							<DataGridTemplateColumn Header="Name" Width="SizeToCells" MinWidth="100">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding Identifier}" Foreground="{Binding Key, Converter={converter:KeyToColor}}" />
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+							<DataGridTemplateColumn Header="Shortcut" Width="SizeToCells" MinWidth="100">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding Gesture}" Foreground="{Binding Key, Converter={converter:KeyToColor}}" />
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+							<DataGridTemplateColumn Header="Scope" Width="SizeToCells" MinWidth="100">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding Scope}" Foreground="{Binding Key, Converter={converter:KeyToColor}}" />
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+						</DataGrid.Columns>
+					</DataGrid>
+					<Grid Grid.Row="1">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="2*" />
+						</Grid.ColumnDefinitions>
+
+						<Label Grid.Row="0" Grid.Column="0" Content="{Binding SelectedItem.Identifier, ElementName=ShortcutDataGrid, FallbackValue=' '}" FontWeight="Bold" />
+
+						<Label Grid.Row="1" Grid.Column="0" Content="Scope:" />
+						<Label Grid.Row="2" Grid.Column="0" Content="Shortcut:" />
+						<Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Content="{Binding SelectedItem.Description, ElementName=ShortcutDataGrid, FallbackValue=' '}" FontStyle="Italic" />
+
+						<ComboBox Grid.Row="1" Grid.Column="1" Margin="4" ItemsSource="{mext:EnumSource {x:Type settings:AlephShortcutScope}}" SelectedValue="{Binding SelectedItem.Scope, ElementName=ShortcutDataGrid}" />
+						<ctrl:ShortcutBox  Grid.Row="2" Grid.Column="1" Margin="4" ShortcutKey="{Binding SelectedItem.Key, ElementName=ShortcutDataGrid}" ShortcutModifiers="{Binding SelectedItem.Modifiers, ElementName=ShortcutDataGrid}" />
+
+					</Grid>
+				</Grid>
 			</TabItem>
 		</TabControl>
 

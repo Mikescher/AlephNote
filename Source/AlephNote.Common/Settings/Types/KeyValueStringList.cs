@@ -8,11 +8,11 @@ namespace AlephNote.Common.Settings.Types
 {
 	public class KeyValueStringList : ObservableObject, IAlephCustomSerializableField
 	{
-		public readonly IReadOnlyCollection<Tuple<string, string>> Data;
+		public readonly IReadOnlyDictionary<string, string> Data;
 
 		public KeyValueStringList(Tuple<string, string>[] data)
 		{
-			Data = data.ToList();
+			Data = data.ToDictionary(d => d.Item1, d => d.Item2);
 		}
 
 		public object DeserializeNew(XElement source)
@@ -31,9 +31,9 @@ namespace AlephNote.Common.Settings.Types
 			foreach (var d in Data)
 			{
 				var x = new XElement("Value");
-				x.Add(new XAttribute("Key", d.Item1));
+				x.Add(new XAttribute("Key", d.Key));
 				x.Add(new XAttribute("type", "String"));
-				x.Value = d.Item2;
+				x.Value = d.Value;
 				target.Add(x);
 			}
 		}
