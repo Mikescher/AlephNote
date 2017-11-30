@@ -5,7 +5,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Xml.Linq;
 using System.Runtime.CompilerServices;
-using System.Globalization;
 
 namespace AlephNote.PluginInterface.Impl
 {

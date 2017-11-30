@@ -259,6 +259,10 @@ namespace AlephNote.Settings
 		public string LastSelectedNote { get { return _lastSelectedNote; } set { _lastSelectedNote = value; OnPropertyChanged(); } }
 		private string _lastSelectedNote = null;
 
+		[AlephXMLField]
+		public bool AutoSortTags { get { return _autoSortTags; } set { _autoSortTags = value; OnPropertyChanged(); } }
+		private bool _autoSortTags = true;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

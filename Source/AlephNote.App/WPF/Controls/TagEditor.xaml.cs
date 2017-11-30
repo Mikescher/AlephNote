@@ -92,7 +92,7 @@ namespace AlephNote.WPF.Controls
 
 				if (!TagSource.SequenceEqual(doctags))
 				{
-					TagSource.SynchronizeSequence(doctags);
+					TagSource.SynchronizeCollection(doctags);
 
 					Changed?.Invoke(this);
 				}
@@ -113,7 +113,7 @@ namespace AlephNote.WPF.Controls
 
 				if (hints.Any())
 				{
-					AutocompleteContent.Items.SynchronizeCollection(hints);
+					AutocompleteContent.Items.SynchronizeGenericCollection(hints);
 					AutocompleteContent.SelectedIndex = -1;
 
 					AutocompletePopup.Width = MainGrid.ActualWidth;

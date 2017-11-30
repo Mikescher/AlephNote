@@ -434,3 +434,4 @@ Bin/
 
 *.zip
 *.diff
+*.patch

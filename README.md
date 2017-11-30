@@ -70,7 +70,7 @@ Linux version
  - [X] multiple conflict solving strategies (use local | use server | create conflict note)
  - [X] Remember last selected note
  - [ ] readonly mode
- - [ ] sort tags alphabetically
+ - [X] sort tags alphabetically
  - [ ] edit tags without deleting (F2 ?)
  - [ ] highlight search results when using global search
  - [ ] Better first launch wizard (description, images, directly set provider), see [#6](https://github.com/Mikescher/AlephNote/issues/6)

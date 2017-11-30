@@ -212,6 +212,11 @@ namespace AlephNote.WPF.Windows
 
 		private void SelectedNoteChanged()
 		{
+			if (SelectedNote != null && Settings != null && Settings.AutoSortTags)
+			{
+				SelectedNote.Tags.SynchronizeCollection(SelectedNote.Tags.OrderBy(p => p));
+			}
+
 			Owner.ResetScintillaScrollAndUndo();
 			Owner.UpdateMargins(Settings);
 			if (!_preventScintillaFocus) Owner.FocusScintillaDelayed();
