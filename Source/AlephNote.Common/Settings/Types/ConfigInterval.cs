@@ -22,5 +22,7 @@
 		Sync06Hour,
 		[EnumDescriptor("12 hours")]
 		Sync12Hour,
+		[EnumDescriptor("Manual")]
+		SyncManual,
 	}
 }

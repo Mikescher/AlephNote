@@ -381,6 +381,7 @@ namespace AlephNote.Settings
 				case ConfigInterval.Sync02Hour: return  1 * 60 * 60 * 1000;
 				case ConfigInterval.Sync06Hour: return  6 * 60 * 60 * 1000;
 				case ConfigInterval.Sync12Hour: return 12 * 60 * 60 * 1000;
+				case ConfigInterval.SyncManual: return int.MaxValue - 1000;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
