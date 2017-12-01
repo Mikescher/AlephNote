@@ -22,36 +22,76 @@ namespace AlephNote.Plugins.SimpleNote
 		public class APISendNoteData { public List<string> tags = new List<string>(); public string content; public double modificationDate; }
 		public class APIDeleteNoteData { public bool deleted; }
 		public class APISendAuth { public string username, password; }
-// ReSharper restore All
+		public class APIBadRequest { public string field, message; }
+		// ReSharper restore All
 #pragma warning restore 0649
 
 		public static APIResultAuthorize Authenticate(ISimpleJsonRest web, string userName, string password)
 		{
-			return web.PostTwoWay<APIResultAuthorize>(new APISendAuth {username = userName, password = password}, "authorize/");
+			try
+			{
+				return web.PostTwoWay<APIResultAuthorize>(new APISendAuth { username = userName, password = password }, "authorize/");
+			}
+			catch (RestStatuscodeException e1)
+			{
+				if (e1.StatusCode == 400 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
+				{
+					var req = web.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
+					if (req != null) throw new SimpleNoteAPIException($"Server returned status 400.\nField: '{req.field}'.\nMessage: '{req.message}'", e1);
+				}
+
+				throw;
+			}
 		}
 
 		public static APIResultIndex ListBuckets(ISimpleJsonRest web)
 		{
-			var idx = web.Get<APIResultIndex>("note/index");
-
-			while (!string.IsNullOrWhiteSpace(idx.mark))
+			try
 			{
-				var idx2 = web.Get<APIResultIndex>("note/index", "mark="+ idx.mark);
+				var idx = web.Get<APIResultIndex>("note/index");
 
-				//idx.current = idx2.current;
-				idx.mark = idx2.mark;
-				idx.index.AddRange(idx2.index);
+				while (!string.IsNullOrWhiteSpace(idx.mark))
+				{
+					var idx2 = web.Get<APIResultIndex>("note/index", "mark=" + idx.mark);
+
+					//idx.current = idx2.current;
+					idx.mark = idx2.mark;
+					idx.index.AddRange(idx2.index);
+				}
+
+				return idx;
 			}
+			catch (RestStatuscodeException e1)
+			{
+				if (e1.StatusCode == 400 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
+				{
+					var req = web.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
+					if (req != null) throw new SimpleNoteAPIException($"Server returned status 400.\nField: '{req.field}'.\nMessage: '{req.message}'", e1);
+				}
 
-			return idx;
+				throw;
+			}
 		}
 
 		public static SimpleNote GetNoteData(ISimpleJsonRest web, string noteID, SimpleNoteConfig cfg, int? version = null)
 		{
-			if (version != null)
-				return GetNoteFromQuery(web.Get<APIResultNoteData>(string.Format("note/i/{0}/v/{1}", noteID, version)), web, noteID, cfg);
-			else
-				return GetNoteFromQuery(web.Get<APIResultNoteData>("note/i/" + noteID), web, noteID, cfg);
+			try
+			{
+				if (version != null)
+					return GetNoteFromQuery(web.Get<APIResultNoteData>(string.Format("note/i/{0}/v/{1}", noteID, version)), web, noteID, cfg);
+				else
+					return GetNoteFromQuery(web.Get<APIResultNoteData>("note/i/" + noteID), web, noteID, cfg);
+			}
+			catch (RestStatuscodeException e1)
+			{
+				if (e1.StatusCode == 400 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
+				{
+					var req = web.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
+					if (req != null) throw new SimpleNoteAPIException($"Server returned status 400.\nField: '{req.field}'.\nMessage: '{req.message}'", e1);
+				}
+
+				throw;
+			}
 		}
 
 		public static SimpleNote UploadNewNote(ISimpleJsonRest web, SimpleNote note, SimpleNoteConfig cfg)
@@ -71,16 +111,29 @@ namespace AlephNote.Plugins.SimpleNote
 				creationDate = ConvertToEpochDate(note.CreationDate),
 				modificationDate = ConvertToEpochDate(note.ModificationDate),
 			};
-			
-			var r = web.PostTwoWay<APIResultNoteData>(data, "note/i/" +note.ID, "response=1");
 
-			return GetNoteFromQuery(r, web, note.ID, cfg);
+			try
+			{
+				var r = web.PostTwoWay<APIResultNoteData>(data, "note/i/" + note.ID, "response=1");
+
+				return GetNoteFromQuery(r, web, note.ID, cfg);
+			}
+			catch (RestStatuscodeException e1)
+			{
+				if (e1.StatusCode == 400 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
+				{
+					var req = web.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
+					if (req != null) throw new SimpleNoteAPIException($"Server returned status 400.\nField: '{req.field}'.\nMessage: '{req.message}'", e1);
+				}
+
+				throw;
+			}
 		}
 
 		public static SimpleNote ChangeExistingNote(ISimpleJsonRest web, SimpleNote note, SimpleNoteConfig cfg, out bool updated)
 		{
-			if (note.Deleted) throw new Exception("Cannot update an already deleted note");
-			if (note.ID == "") throw new Exception("Cannot change a not uploaded note");
+			if (note.Deleted) throw new SimpleNoteAPIException("Cannot update an already deleted note");
+			if (note.ID == "") throw new SimpleNoteAPIException("Cannot change a not uploaded note");
 			note.ModificationDate = DateTimeOffset.Now;
 			
 			APISendNoteData data = new APISendNoteData
@@ -89,40 +142,79 @@ namespace AlephNote.Plugins.SimpleNote
 				content = note.Content,
 				modificationDate = ConvertToEpochDate(note.ModificationDate),
 			};
-			
-			var r = web.PostTwoWay<APIResultNoteData>(data, "note/i/" + note.ID, new[] {412}, "response=1");
 
-			if (r == null)
+			try
 			{
-				// Statuscode 412 - Empty change
+				var r = web.PostTwoWay<APIResultNoteData>(data, "note/i/" + note.ID, new[] { 412 }, "response=1");
 
-				updated = false;
-				return (SimpleNote)note.Clone();
+				if (r == null)
+				{
+					// Statuscode 412 - Empty change
+
+					updated = false;
+					return (SimpleNote)note.Clone();
+				}
+
+				updated = true;
+				return GetNoteFromQuery(r, web, note.ID, cfg);
 			}
+			catch (RestStatuscodeException e1)
+			{
+				if (e1.StatusCode == 400 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
+				{
+					var req = web.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
+					if (req != null) throw new SimpleNoteAPIException($"Server returned status 400.\nField: '{req.field}'.\nMessage: '{req.message}'", e1);
+				}
 
-			updated = true;
-			return GetNoteFromQuery(r, web, note.ID, cfg);
+				throw;
+			}
 		}
 
 		public static void DeleteNotePermanently(ISimpleJsonRest web, SimpleNote note)
 		{
 			if (note.ID == "") throw new SimpleNoteAPIException("Cannot delete a not uploaded note");
 
-			note.ModificationDate = DateTimeOffset.Now;
-			web.DeleteEmpty("note/i/" + note.ID);
+			try
+			{
+				note.ModificationDate = DateTimeOffset.Now;
+				web.DeleteEmpty("note/i/" + note.ID);
+			}
+			catch (RestStatuscodeException e1)
+			{
+				if (e1.StatusCode == 400 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
+				{
+					var req = web.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
+					if (req != null) throw new SimpleNoteAPIException($"Server returned status 400.\nField: '{req.field}'.\nMessage: '{req.message}'", e1);
+				}
+
+				throw;
+			}
 		}
 
 		public static void DeleteNote(ISimpleJsonRest web, SimpleNote note)
 		{
-			if (note.ID == "") throw new Exception("Cannot delete a not uploaded note");
+			if (note.ID == "") throw new SimpleNoteAPIException("Cannot delete a not uploaded note");
 			note.ModificationDate = DateTimeOffset.Now;
 			
 			APIDeleteNoteData data = new APIDeleteNoteData
 			{
 				deleted = true
 			};
-			
-			web.PostUpload(data, "note/i/" + note.ID, new[] { 412 });
+
+			try
+			{
+				web.PostUpload(data, "note/i/" + note.ID, new[] { 412 });
+			}
+			catch (RestStatuscodeException e1)
+			{
+				if (e1.StatusCode == 400 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
+				{
+					var req = web.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
+					if (req != null) throw new SimpleNoteAPIException($"Server returned status 400.\nField: '{req.field}'.\nMessage: '{req.message}'", e1);
+				}
+
+				throw;
+			}
 		}
 
 		private static SimpleNote GetNoteFromQuery(APIResultNoteData r, ISimpleJsonRest c, string id, SimpleNoteConfig cfg)

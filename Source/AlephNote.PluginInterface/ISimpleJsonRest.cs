@@ -41,5 +41,7 @@ namespace AlephNote.PluginInterface
 		TResult Get<TResult>(string path, params string[] parameter);
 		TResult Get<TResult>(string path, int[] allowedStatusCodes, params string[] parameter);
 
+		TResult ParseJson<TResult>(string content);
+		TResult ParseJsonOrNull<TResult>(string content);
 	}
 }

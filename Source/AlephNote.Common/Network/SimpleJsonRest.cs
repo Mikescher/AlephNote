@@ -113,6 +113,23 @@ namespace AlephNote.Repository
 			};
 		}
 
+		public TResult ParseJson<TResult>(string content)
+		{
+			return JsonConvert.DeserializeObject<TResult>(content, _converter);
+		}
+
+		public TResult ParseJsonOrNull<TResult>(string content)
+		{
+			try
+			{
+				return JsonConvert.DeserializeObject<TResult>(content, _converter);
+			}
+			catch (Exception e)
+			{
+				return default(TResult);
+			}
+		}
+
 		#region POST
 
 		public TResult PostTwoWay<TResult>(object body, string path, params string[] parameter)
@@ -291,7 +308,17 @@ namespace AlephNote.Repository
 						return default(TResult);
 					}
 
-					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.ReasonPhrase);
+					string content = string.Empty;
+					try
+					{
+						content = resp.Content.ReadAsStringAsync().Result;
+					}
+					catch (Exception)
+					{
+						// ignore
+					}
+
+					throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, content);
 				}
 
 				download = resp.Content.ReadAsStringAsync().Result;
@@ -302,6 +329,10 @@ namespace AlephNote.Repository
 					throw new RestException("Could not communicate with server " + uri.Host, e.InnerExceptions.First());
 				else
 					throw new RestException("Could not communicate with server " + uri.Host, e);
+			}
+			catch (RestException)
+			{
+				throw;
 			}
 			catch (Exception e)
 			{
@@ -356,8 +387,8 @@ namespace AlephNote.Repository
 
 						return;
 					}
-
-					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.ReasonPhrase);
+					
+					throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, string.Empty);
 				}
 			}
 			catch (AggregateException e)
@@ -408,7 +439,17 @@ namespace AlephNote.Repository
 						return default(TResult);
 					}
 
-					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.ReasonPhrase);
+					string content = string.Empty;
+					try
+					{
+						content = resp.Content.ReadAsStringAsync().Result;
+					}
+					catch (Exception)
+					{
+						// ignore
+					}
+
+					throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, content);
 				}
 
 				download = resp.Content.ReadAsStringAsync().Result;
@@ -470,8 +511,8 @@ namespace AlephNote.Repository
 
 						return;
 					}
-
-					throw new RestException("Server " + uri.Host + " returned status code: " + resp.StatusCode + " : " + resp.ReasonPhrase);
+					
+					throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, string.Empty);
 				}
 			}
 			catch (AggregateException e)
