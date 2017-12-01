@@ -89,15 +89,18 @@
     <Compile Include="WPF\Controls\TagEditor.xaml.cs">
       <DependentUpon>TagEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Converter\NegateBool.cs" />
     <Compile Include="WPF\Converter\KeyToWeight.cs" />
     <Compile Include="WPF\Converter\KeyToColor.cs" />
     <Compile Include="WPF\Converter\EnumToDescription.cs" />
+    <Compile Include="WPF\Converter\ProgressIndicatorConverter.cs" />
     <Compile Include="WPF\Converter\SnippetsToSnippetSource.cs" />
     <Compile Include="WPF\Converter\TagsToPlaceholder.cs" />
     <Compile Include="WPF\Converter\TagToBorderBrush.cs" />
     <Compile Include="WPF\Shortcuts\GlobalShortcutManager.cs" />
     <Compile Include="WPF\Shortcuts\ObservableShortcutConfig.cs" />
     <Compile Include="WPF\Shortcuts\ShortcutManager.cs" />
+    <Compile Include="WPF\Util\IChangeListener.cs" />
     <Compile Include="WPF\Util\MarkdownHighlighter.cs" />
     <Compile Include="WPF\Util\DefaultHighlighter.cs" />
     <Compile Include="WPF\BindingProxies\AbstractLegacyBinding.cs" />
@@ -164,6 +167,12 @@
     <Compile Include="WPF\Windows\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Windows\FirstStartupWindow.xaml.cs">
+      <DependentUpon>FirstStartupWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\FirstStartupViewmodel.cs">
+      <DependentUpon>FirstStartupWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Windows\LogWindow.xaml.cs">
       <DependentUpon>LogWindow.xaml</DependentUpon>
     </Compile>
@@ -209,6 +218,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WPF\Windows\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Windows\FirstStartupWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

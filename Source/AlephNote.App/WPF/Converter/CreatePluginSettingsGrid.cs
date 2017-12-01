@@ -1,6 +1,6 @@
 ﻿using AlephNote.PluginInterface;
-using AlephNote.Settings;
 using AlephNote.WPF.Controls;
+using AlephNote.WPF.Util;
 using Ookii.Dialogs.Wpf;
 using System;
 using System.Diagnostics;
@@ -19,13 +19,13 @@ namespace AlephNote.WPF.Converter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (values.Length != 2 || values.Any(p => p == DependencyProperty.UnsetValue)) return DependencyProperty.UnsetValue;
+			if (values.Length < 1 || values.Any(p => p == DependencyProperty.UnsetValue)) return DependencyProperty.UnsetValue;
 
 			var provider = values[0] as RemoteStorageAccount;
-			var settings = values[1] as AppSettings;
+			//var settings = values[1] as AppSettings;
+			var listener = values.Length >= 3 ? (values[2] as IChangeListener) : null;
 
 			if (provider == null) return DependencyProperty.UnsetValue;
-			if (settings == null) return DependencyProperty.UnsetValue;
 
 			var cfg = provider.Config;
 
@@ -44,19 +44,19 @@ namespace AlephNote.WPF.Converter
 				{
 					case DynamicSettingValue.SettingType.Text:
 						var tb = new TextBox {Text = prop.CurrentValue};
-						tb.TextChanged += (s, a) => cfg.SetProperty(xprop.ID, tb.Text);
+						tb.TextChanged += (s, a) => { cfg.SetProperty(xprop.ID, tb.Text); listener.OnChanged("pluginconfig", xprop.ID, tb.Text); };
 						AddComponent(prop, ref row, grid, tb);
 						break;
 
 					case DynamicSettingValue.SettingType.Password:
 						var pb = new BindablePasswordBox {Password = prop.CurrentValue};
-						pb.PasswordChanged += (s, a) => cfg.SetProperty(xprop.ID, pb.Password);
+						pb.PasswordChanged += (s, a) => { cfg.SetProperty(xprop.ID, pb.Password); listener.OnChanged("pluginconfig", xprop.ID, pb.Password); };
 						AddComponent(prop, ref row, grid, pb);
 						break;
 
 					case DynamicSettingValue.SettingType.Checkbox:
 						var cb = new CheckBox { IsChecked = (bool)prop.Arguments[0] };
-						cb.Checked += (s, a) => cfg.SetProperty(xprop.ID, cb.IsChecked ?? false);
+						cb.Checked += (s, a) => { cfg.SetProperty(xprop.ID, cb.IsChecked ?? false); };
 						AddComponent(prop, ref row, grid, cb);
 						break;
 
@@ -64,13 +64,13 @@ namespace AlephNote.WPF.Converter
 						var ob = new ComboBox();
 						foreach (var arg in xprop.Arguments.Cast<string>()) ob.Items.Add(arg);
 						ob.SelectedItem = xprop.CurrentValue;
-						ob.SelectionChanged += (s, a) => cfg.SetProperty(xprop.ID, (string)ob.SelectedValue);
+						ob.SelectionChanged += (s, a) => { cfg.SetProperty(xprop.ID, (string)ob.SelectedValue); listener.OnChanged("pluginconfig", xprop.ID, ob.SelectedValue); };
 						AddComponent(prop, ref row, grid, ob);
 						break;
 
 					case DynamicSettingValue.SettingType.Folder:
 						var fb = new TextBox { Text = prop.CurrentValue };
-						fb.TextChanged += (s, a) => cfg.SetProperty(xprop.ID, fb.Text);
+						fb.TextChanged += (s, a) => { cfg.SetProperty(xprop.ID, fb.Text); listener.OnChanged("pluginconfig", xprop.ID, fb.Text); };
 						fb.IsReadOnly = true;
 						fb.IsReadOnlyCaretVisible = true;
 						var btn = new Button();

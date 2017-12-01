@@ -17,6 +17,8 @@ namespace AlephNote.Repository
 	{
 		private readonly string pathLocalFolder;
 		private readonly string pathLocalData;
+		private readonly string pathLocalBase;
+
 		private readonly IRemoteStorageConnection conn;
 		private readonly RemoteStorageAccount account;
 		private          AppSettings appconfig;
@@ -44,6 +46,7 @@ namespace AlephNote.Repository
 
 		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, RemoteStorageAccount acc, IAlephLogger log, IAlephDispatcher disp)
 		{
+			pathLocalBase = path;
 			pathLocalFolder = Path.Combine(path, acc.ID.ToString("B"));
 			pathLocalData = Path.Combine(path, acc.ID.ToString("B") + ".xml");
 			conn = acc.Plugin.CreateRemoteStorageConnection(cfg.CreateProxy(), acc.Config);
@@ -158,9 +161,14 @@ namespace AlephNote.Repository
 
 		public void SaveNote(INote note)
 		{
+			SaveNote(note, pathLocalFolder, true);
+		}
+
+		private void SaveNote(INote note, string localFolder, bool doRoundtrip)
+		{
 			lock (_lockSaveNote)
 			{
-				var path = Path.Combine(pathLocalFolder, note.GetUniqueName() + ".xml");
+				var path = Path.Combine(localFolder, note.GetUniqueName() + ".xml");
 				var tempPath = Path.GetTempFileName();
 
 				var root = new XElement("note");
@@ -178,10 +186,13 @@ namespace AlephNote.Repository
 
 				try
 				{
-					var roundtrip = LoadNoteFromFile(tempPath);
+					if (doRoundtrip)
+					{
+						var roundtrip = LoadNoteFromFile(tempPath);
 
-					if (roundtrip.Text != note.Text) throw new Exception("a.Text != b.Text");
-					if (roundtrip.Title != note.Title) throw new Exception("a.Title != b.Title");
+						if (roundtrip.Text != note.Text) throw new Exception("a.Text != b.Text");
+						if (roundtrip.Title != note.Title) throw new Exception("a.Title != b.Title");
+					}
 
 					File.Copy(tempPath, path, true);
 					note.ResetLocalDirty();
@@ -307,9 +318,14 @@ namespace AlephNote.Repository
 
 		public void WriteSyncData(IRemoteStorageSyncPersistance data)
 		{
+			WriteSyncData(data, pathLocalData);
+		}
+
+		private void WriteSyncData(IRemoteStorageSyncPersistance data, string pathData)
+		{
 			var x = new XDocument(data.Serialize());
 
-			using (var file = File.OpenWrite(pathLocalData)) x.Save(file);
+			using (var file = File.OpenWrite(pathData)) x.Save(file);
 		}
 
 		public void DeleteLocalData()
@@ -339,6 +355,25 @@ namespace AlephNote.Repository
 		public void ReplaceSettings(AppSettings settings)
 		{
 			appconfig = settings;
+		}
+
+		public void ApplyNewAccountData(RemoteStorageAccount acc, IRemoteStorageSyncPersistance data, List<INote> notes)
+		{
+			var localFolder = Path.Combine(pathLocalBase, acc.ID.ToString("B"));
+			var localData   = Path.Combine(pathLocalBase, acc.ID.ToString("B") + ".xml");
+
+			if (!Directory.Exists(localFolder))
+			{
+				logger.Info("Repository", "Create local note folder: " + localFolder);
+				Directory.CreateDirectory(localFolder);
+			}
+
+			WriteSyncData(data, localData);
+
+			foreach (var n in notes)
+			{
+				SaveNote(n, localFolder, false);
+			}
 		}
 
 		public void StartSync()

@@ -23,9 +23,6 @@ using Hardcodet.Wpf.TaskbarNotification;
 
 namespace AlephNote.WPF.Windows
 {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
 	public partial class MainWindow : Window
 	{
 		public static MainWindow Instance { get; private set; }
@@ -36,6 +33,7 @@ namespace AlephNote.WPF.Windows
 		private readonly ScintillaHighlighter _highlighterMarkdown = new MarkdownHighlighter();
 
 		private readonly GlobalShortcutManager _scManager;
+		private bool _firstLaunch;
 
 		public AppSettings Settings => viewmodel?.Settings;
 
@@ -48,7 +46,7 @@ namespace AlephNote.WPF.Windows
 
 			PluginManager.Inst.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory, App.Logger);
 
-			bool firstLaunch = false;
+			_firstLaunch = false;
 			AppSettings settings;
 			try
 			{
@@ -61,7 +59,7 @@ namespace AlephNote.WPF.Windows
 					settings = AppSettings.CreateEmpty(App.PATH_SETTINGS);
 					settings.Save();
 
-					firstLaunch = true;
+					_firstLaunch = true;
 				}
 			}
 			catch (Exception e)
@@ -79,22 +77,6 @@ namespace AlephNote.WPF.Windows
 
 			viewmodel = new MainWindowViewmodel(settings, this);
 			DataContext = viewmodel;
-			
-			if (firstLaunch)
-			{
-				MessageBox.Show(
-					this, 
-					"It looks like you are starting AlephNote for the first time." + Environment.NewLine +
-					"You should start by looking into the settings and configuring a remote where your notes are stored." + Environment.NewLine +
-					"1. From the Edit menu, select Settings" + Environment.NewLine +
-					"2. Click the '+' symbol at top-right of screen" + Environment.NewLine +
-					"3. Choose the provider of your choice (eg SimpleNote)" + Environment.NewLine +
-					"4. Enter in login and password data" + Environment.NewLine +
-					"5. Press [OK]", 
-					"First launch", 
-					MessageBoxButton.OK, 
-					MessageBoxImage.Information);
-			}
 
 			FocusScintillaDelayed(250);
 		}
@@ -392,6 +374,12 @@ namespace AlephNote.WPF.Windows
 		private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
 		{
 			ResetScintillaScrollAndUndo();
+
+			if (_firstLaunch)
+			{
+				var fsw = new FirstStartupWindow(this);
+				fsw.ShowDialog();
+			}
 		}
 
 		public void ShowDocSearchBar()
