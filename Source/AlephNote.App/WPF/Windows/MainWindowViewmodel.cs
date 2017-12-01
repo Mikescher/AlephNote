@@ -134,7 +134,7 @@ namespace AlephNote.WPF.Windows
 		{
 			var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
 
-			Settings.LaunchOnBoot = registryKey != null && registryKey.GetValue(App.APPNAME_REG) != null;
+			Settings.LaunchOnBoot = registryKey != null && (registryKey.GetValue(App.APPNAME_REG) as string) == App.PATH_EXECUTABLE;
 
 			new SettingsWindow(this, Settings) {Owner = Owner}.ShowDialog();
 		}
