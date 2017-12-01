@@ -13,6 +13,8 @@
 
 		[EnumDescriptor("Notes edit area")]
 		NoteEdit,
-		//Global, //TODO OS-global shortcuts
+
+		[EnumDescriptor("System global")]
+		Global,
 	}
 }

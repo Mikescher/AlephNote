@@ -72,7 +72,11 @@ namespace AlephNote.WPF.Controls
 
 			ShortcutKey = (AlephKey)e.Key;
 
-			ShortcutModifiers = (AlephModifierKeys)e.KeyboardDevice.Modifiers;
+			var smod = (AlephModifierKeys)e.KeyboardDevice.Modifiers;
+			if (e.KeyboardDevice.GetKeyStates(Key.LWin).HasFlag(KeyStates.Down)) smod |= AlephModifierKeys.Windows;
+			if (e.KeyboardDevice.GetKeyStates(Key.RWin).HasFlag(KeyStates.Down)) smod |= AlephModifierKeys.Windows;
+
+			ShortcutModifiers = smod;
 
 			e.Handled = true;
 		}

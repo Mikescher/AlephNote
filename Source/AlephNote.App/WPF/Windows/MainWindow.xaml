@@ -313,6 +313,7 @@
 			Visibility="Visible"
 			ToolTipText="{Binding FullVersion}"
 			IconSource="{Binding SynchronizationState, Converter={conv:StateToAppIcon}}"
+			TrayRightMouseDown="TrayIcon_TrayRightMouseDown"
 			LeftClickCommand="{Binding ShowMainWindowCommand}"
 			DoubleClickCommand="{Binding ShowMainWindowCommand}">
 			

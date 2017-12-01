@@ -73,7 +73,8 @@ namespace AlephNote.WPF.Controls
 
 		private void Refresh()
 		{
-			var p = GetParent(ParentAnchor) ?? GetParent(this);
+			var p = GetParent(ParentAnchor) ?? GetParent(this) ?? MainWindow.Instance;
+
 			if (p != null)
 				InputGestureText = ShortcutManager.GetGestureStr(p, AlephAction);
 			else
@@ -97,8 +98,19 @@ namespace AlephNote.WPF.Controls
 
 		private void OnMenuClick(object sender, RoutedEventArgs e)
 		{
-			var p = GetParent(this);
+			var p = GetParent(ParentAnchor) ?? GetParent(this) ?? MainWindow.Instance;
+
 			if (p != null) ShortcutManager.Execute(p, AlephAction);
+		}
+
+		public void RecursiveRefresh()
+		{
+			Refresh();
+
+			foreach (var aami in Items.OfType<AutoActionMenuItem>())
+			{
+				aami.RecursiveRefresh();
+			}
 		}
 	}
 }

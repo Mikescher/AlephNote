@@ -339,8 +339,7 @@ namespace AlephNote.WPF.Windows
 				ExceptionDialog.Show(Owner, "Shutting down connection failed.\r\nConnection will be forcefully aborted.", e);
 				_repository.KillThread();
 			}
-
-
+			
 			Repository.Shutdown();
 
 			if (_invSaveSettings.HasPendingRequests())
@@ -348,6 +347,8 @@ namespace AlephNote.WPF.Windows
 				_invSaveSettings.CancelPendingRequests();
 				SaveSettings();
 			}
+
+			Owner.MainWindow_OnClosed(args);
 		}
 
 		private void OnStateChanged(EventArgs e)

@@ -95,6 +95,7 @@
     <Compile Include="WPF\Converter\SnippetsToSnippetSource.cs" />
     <Compile Include="WPF\Converter\TagsToPlaceholder.cs" />
     <Compile Include="WPF\Converter\TagToBorderBrush.cs" />
+    <Compile Include="WPF\Shortcuts\GlobalShortcutManager.cs" />
     <Compile Include="WPF\Shortcuts\ObservableShortcutConfig.cs" />
     <Compile Include="WPF\Shortcuts\ShortcutManager.cs" />
     <Compile Include="WPF\Util\MarkdownHighlighter.cs" />

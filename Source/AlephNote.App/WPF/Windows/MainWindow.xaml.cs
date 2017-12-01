@@ -19,6 +19,7 @@ using AlephNote.WPF.Controls;
 using AlephNote.PluginInterface;
 using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.MVVM;
+using Hardcodet.Wpf.TaskbarNotification;
 
 namespace AlephNote.WPF.Windows
 {
@@ -27,10 +28,14 @@ namespace AlephNote.WPF.Windows
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		public static MainWindow Instance { get; private set; }
+
 		private readonly MainWindowViewmodel viewmodel;
 
 		private readonly ScintillaHighlighter _highlighterDefault  = new DefaultHighlighter();
 		private readonly ScintillaHighlighter _highlighterMarkdown = new MarkdownHighlighter();
+
+		private readonly GlobalShortcutManager _scManager;
 
 		public AppSettings Settings => viewmodel?.Settings;
 
@@ -39,6 +44,7 @@ namespace AlephNote.WPF.Windows
 		public MainWindow()
 		{
 			InitializeComponent();
+			Instance = this;
 
 			PluginManager.Inst.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory, App.Logger);
 
@@ -64,6 +70,8 @@ namespace AlephNote.WPF.Windows
 				settings = AppSettings.CreateEmpty(App.PATH_SETTINGS);
 			}
 
+			_scManager = new GlobalShortcutManager(this);
+
 			StartupConfigWindow(settings);
 
 			SetupScintilla(settings);
@@ -71,7 +79,7 @@ namespace AlephNote.WPF.Windows
 
 			viewmodel = new MainWindowViewmodel(settings, this);
 			DataContext = viewmodel;
-
+			
 			if (firstLaunch)
 			{
 				MessageBox.Show(
@@ -89,6 +97,13 @@ namespace AlephNote.WPF.Windows
 			}
 
 			FocusScintillaDelayed(250);
+		}
+
+		protected override void OnSourceInitialized(EventArgs e)
+		{
+			base.OnSourceInitialized(e);
+
+			_scManager.OnSourceInitialized();
 		}
 
 		private void StartupConfigWindow(AppSettings settings)
@@ -390,6 +405,11 @@ namespace AlephNote.WPF.Windows
 			DocumentSearchBar.Hide();
 		}
 
+		public void MainWindow_OnClosed(EventArgs args)
+		{
+			_scManager.Close();
+		}
+
 		private void OnHideDoumentSearchBox(object sender, EventArgs e)
 		{
 			FocusScintilla();
@@ -470,25 +490,45 @@ namespace AlephNote.WPF.Windows
 
 		public void UpdateShortcuts(AppSettings settings)
 		{
+			// ================ WINDOW ================
 			InputBindings.Clear();
-			NotesList.InputBindings.Clear();
-
-			foreach (var sc in settings.Shortcuts)
+			foreach (var sc in settings.Shortcuts.Where(s => s.Value.Scope == AlephShortcutScope.Window))
 			{
-				if (sc.Value.Scope == AlephShortcutScope.Window)
-				{
-					var sckey = sc.Key;
-					var cmd = new RelayCommand(() => ShortcutManager.Execute(this, sckey));
-					var ges = new KeyGesture((Key)sc.Value.Key, (ModifierKeys)sc.Value.Modifiers);
-					InputBindings.Add(new InputBinding(cmd, ges));
-				}
-				else if (sc.Value.Scope == AlephShortcutScope.NoteList)
-				{
-					var sckey = sc.Key;
-					var cmd = new RelayCommand(() => ShortcutManager.Execute(this, sckey));
-					var ges = new KeyGesture((Key)sc.Value.Key, (ModifierKeys)sc.Value.Modifiers);
-					NotesList.InputBindings.Add(new InputBinding(cmd, ges));
-				}
+				var sckey = sc.Key;
+				var cmd = new RelayCommand(() => ShortcutManager.Execute(this, sckey));
+				var ges = new KeyGesture((Key)sc.Value.Key, (ModifierKeys)sc.Value.Modifiers);
+				InputBindings.Add(new InputBinding(cmd, ges));
+			}
+
+			// ================ NOTESLIST ================
+			NotesList.InputBindings.Clear();
+			foreach (var sc in settings.Shortcuts.Where(s => s.Value.Scope == AlephShortcutScope.NoteList))
+			{
+				var sckey = sc.Key;
+				var cmd = new RelayCommand(() => ShortcutManager.Execute(this, sckey));
+				var ges = new KeyGesture((Key)sc.Value.Key, (ModifierKeys)sc.Value.Modifiers);
+				NotesList.InputBindings.Add(new InputBinding(cmd, ges));
+			}
+
+			// ================ GLOBAL ================
+			_scManager.Clear();
+			foreach (var sc in settings.Shortcuts.Where(s => s.Value.Scope == AlephShortcutScope.Global))
+			{
+				_scManager.Register(sc.Value.Modifiers, sc.Value.Key, sc.Key);
+			}
+		}
+		
+		private void TrayIcon_TrayRightMouseDown(object sender, RoutedEventArgs e)
+		{
+			var ti = sender as TaskbarIcon;
+			if (ti == null) return;
+
+			var cm = ti.ContextMenu;
+			if (cm == null) return;
+
+			foreach (var aami in cm.Items.OfType<AutoActionMenuItem>())
+			{
+				aami.RecursiveRefresh();
 			}
 		}
 	}
