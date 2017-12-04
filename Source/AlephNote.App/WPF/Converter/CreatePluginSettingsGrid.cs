@@ -44,13 +44,13 @@ namespace AlephNote.WPF.Converter
 				{
 					case DynamicSettingValue.SettingType.Text:
 						var tb = new TextBox {Text = prop.CurrentValue};
-						tb.TextChanged += (s, a) => { cfg.SetProperty(xprop.ID, tb.Text); listener.OnChanged("pluginconfig", xprop.ID, tb.Text); };
+						tb.TextChanged += (s, a) => { cfg.SetProperty(xprop.ID, tb.Text); listener?.OnChanged("pluginconfig", xprop.ID, tb.Text); };
 						AddComponent(prop, ref row, grid, tb);
 						break;
 
 					case DynamicSettingValue.SettingType.Password:
 						var pb = new BindablePasswordBox {Password = prop.CurrentValue};
-						pb.PasswordChanged += (s, a) => { cfg.SetProperty(xprop.ID, pb.Password); listener.OnChanged("pluginconfig", xprop.ID, pb.Password); };
+						pb.PasswordChanged += (s, a) => { cfg.SetProperty(xprop.ID, pb.Password); listener?.OnChanged("pluginconfig", xprop.ID, pb.Password); };
 						AddComponent(prop, ref row, grid, pb);
 						break;
 
@@ -64,13 +64,13 @@ namespace AlephNote.WPF.Converter
 						var ob = new ComboBox();
 						foreach (var arg in xprop.Arguments.Cast<string>()) ob.Items.Add(arg);
 						ob.SelectedItem = xprop.CurrentValue;
-						ob.SelectionChanged += (s, a) => { cfg.SetProperty(xprop.ID, (string)ob.SelectedValue); listener.OnChanged("pluginconfig", xprop.ID, ob.SelectedValue); };
+						ob.SelectionChanged += (s, a) => { cfg.SetProperty(xprop.ID, (string)ob.SelectedValue); listener?.OnChanged("pluginconfig", xprop.ID, ob.SelectedValue); };
 						AddComponent(prop, ref row, grid, ob);
 						break;
 
 					case DynamicSettingValue.SettingType.Folder:
 						var fb = new TextBox { Text = prop.CurrentValue };
-						fb.TextChanged += (s, a) => { cfg.SetProperty(xprop.ID, fb.Text); listener.OnChanged("pluginconfig", xprop.ID, fb.Text); };
+						fb.TextChanged += (s, a) => { cfg.SetProperty(xprop.ID, fb.Text); listener?.OnChanged("pluginconfig", xprop.ID, fb.Text); };
 						fb.IsReadOnly = true;
 						fb.IsReadOnlyCaretVisible = true;
 						var btn = new Button();

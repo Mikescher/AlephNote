@@ -11,7 +11,6 @@
 		xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
 		xmlns:ctrl="clr-namespace:AlephNote.WPF.Controls"
 		xmlns:tb="http://www.hardcodet.net/taskbar"
-		xmlns:settings="clr-namespace:AlephNote.Common.Settings.Types;assembly=AlephNote.Common"
 		xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
 		xmlns:mext="clr-namespace:AlephNote.WPF.MarkupExtensions"
 		xmlns:util="clr-namespace:AlephNote.WPF.Util"
@@ -27,30 +26,6 @@
 		KeyDown="MainWindow_OnKeyDown"
 		Topmost="{Binding Settings.AlwaysOnTop}"
 		Title="AlephNote" Height="350" Width="525">
-	
-	<Window.Resources>
-		<Style TargetType="{x:Type ListViewItem}">
-			<Setter Property="Background" Value="Transparent"/>
-			<Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-			<Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-			<Setter Property="Padding" Value="2,0,0,0"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type ListViewItem}">
-						<Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
-							<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-						</Border>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsSelected" Value="true">
-								<Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}"/>
-								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-	</Window.Resources>
 	
 	<Grid x:Name="LayoutRoot">
 		<Grid.ColumnDefinitions>
@@ -141,86 +116,15 @@
 				<Image Source="/Resources/plus.png" />
 			</Button>
 
-			<ListView x:Name="NotesList" Grid.Column="0"  Grid.Row="1" Grid.ColumnSpan="2"
-					  AllowDrop="True"
-					  Drop="NotesList_Drop"
-					  KeyDown="NotesList_KeyDown"
-					  services:MultiDatatemplateService.MultiTemplateSelector="{Binding Settings.NotePreviewStyle}"
-					  HorizontalContentAlignment="Stretch"
-					  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-					  SelectionMode="Single"
-					  ItemsSource="{Binding NotesView}" 
-					  SelectedValue="{Binding SelectedNote}"
-					  FontSize="{Binding Settings.ListFontSize, Converter={conv:FontSizeToInt}}" 
-					  FontFamily="{Binding Settings.ListFontFamily, Converter={conv:FontNameToFontFamily}}" 
-					  FontWeight="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontWeight}}" 
-					  FontStyle="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontStyle}}">
-				
-				<ListView.ContextMenu>
-					<ContextMenu>
-						<ctrl:AutoActionMenuItem Header="Export" AlephAction="ExportNote" />
-						<ctrl:AutoActionMenuItem Header="Delete" AlephAction="DeleteNote" />
-					</ContextMenu>
-				</ListView.ContextMenu>
-				
-				<!-- ReSharper disable Xaml.RedundantResource -->
-				<services:MultiDatatemplateService.MultiTemplate>
-
-					<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.Simple}">
-						<DataTemplate >
-							<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}"  d:DataContext="{d:DesignInstance pi:INote}">
-								<TextBlock Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" TextTrimming="CharacterEllipsis" />
-							</Grid>
-						</DataTemplate>
-					</services:ConditionalDataTemplate>
-
-					<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.Extended}">
-						<DataTemplate>
-							<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}"  d:DataContext="{d:DesignInstance pi:INote}">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-								<TextBlock Grid.Column="0" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" TextTrimming="CharacterEllipsis" />
-								<TextBlock Grid.Column="1" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}}" VerticalAlignment="Center" Foreground="DimGray" >
-									<TextBlock.LayoutTransform>
-										<ScaleTransform ScaleX="0.9" ScaleY="0.9" />
-									</TextBlock.LayoutTransform>
-								</TextBlock>
-							</Grid>
-						</DataTemplate>
-					</services:ConditionalDataTemplate>
-
-					<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.FullPreview}">
-						<DataTemplate>
-							<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}" d:DataContext="{d:DesignInstance pi:INote}">
-								<Grid.RowDefinitions>
-									<RowDefinition Height="Auto" />
-									<RowDefinition Height="Auto" />
-									<RowDefinition Height="Auto" />
-									<RowDefinition Height="Auto" />
-									<RowDefinition Height="Auto" />
-								</Grid.RowDefinitions>
-								<TextBlock Grid.Row="0" FontWeight="Bold" FontStyle="Normal" Foreground="Black" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" TextTrimming="CharacterEllipsis" />
-								<TextBlock Grid.Row="1" TextWrapping="NoWrap">
-									<Run Foreground="Brown" FontWeight="Normal" FontStyle="Normal" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}}" />
-									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0}" />
-								</TextBlock>
-								<TextBlock Grid.Row="2" TextWrapping="NoWrap">
-									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=1}" />
-								</TextBlock>
-								<TextBlock Grid.Row="3" TextWrapping="NoWrap">
-									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=2}" />
-								</TextBlock>
-								<Separator Grid.Row="4" Background="Snow" Margin="6,7,6,7" />
-							</Grid>
-						</DataTemplate>
-					</services:ConditionalDataTemplate>
-
-				</services:MultiDatatemplateService.MultiTemplate>
-				<!-- ReSharper restore Xaml.RedundantResource -->
-
-			</ListView>
+			<controls:NotesListView x:Name="NotesListView"
+									Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" 
+									NotesListDrop="NotesList_Drop"
+									NotesListKeyDown="NotesList_KeyDown"
+									ParentAnchor="{Binding ., ElementName=LayoutRoot}"
+									Settings="{Binding Settings}"
+									SelectedNote="{Binding SelectedNote}"
+									AllNotes="{Binding Repository.Notes}" 
+									SearchText="{Binding SearchText}" />
 
 		</Grid>
 

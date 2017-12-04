@@ -421,10 +421,10 @@ namespace AlephNote.WPF.Windows
 			if (e.Key >= Key.A && e.Key <= Key.Z)
 			{
 				char chr = (char)('A' + (e.Key - Key.A));
-
+			
 				bool found = false;
 				if (viewmodel.SelectedNote == null) found = true;
-				foreach (var note in Enumerable.Concat(viewmodel.NotesView.OfType<INote>(), viewmodel.NotesView.OfType<INote>()))
+				foreach (var note in Enumerable.Concat(NotesListView.NotesView.OfType<INote>(), NotesListView.NotesView.OfType<INote>()))
 				{
 					if (found)
 					{
@@ -491,13 +491,13 @@ namespace AlephNote.WPF.Windows
 			}
 
 			// ================ NOTESLIST ================
-			NotesList.InputBindings.Clear();
+			NotesListView.NotesList.InputBindings.Clear();
 			foreach (var sc in settings.Shortcuts.Where(s => s.Value.Scope == AlephShortcutScope.NoteList))
 			{
 				var sckey = sc.Key;
 				var cmd = new RelayCommand(() => ShortcutManager.Execute(this, sckey));
 				var ges = new KeyGesture((Key)sc.Value.Key, (ModifierKeys)sc.Value.Modifiers);
-				NotesList.InputBindings.Add(new InputBinding(cmd, ges));
+				NotesListView.NotesList.InputBindings.Add(new InputBinding(cmd, ges));
 			}
 
 			// ================ GLOBAL ================

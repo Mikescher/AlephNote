@@ -55,7 +55,7 @@ namespace AlephNote.WPF.Windows
 		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); SettingsChanged(); } }
 
 		private NoteRepository _repository;
-		public NoteRepository Repository { get { return _repository; } private set { _repository = value; OnPropertyChanged(); OnExplicitPropertyChanged("NotesView"); } }
+		public NoteRepository Repository { get { return _repository; } private set { _repository = value; OnPropertyChanged(); } }
 
 		private INote _selectedNote;
 		public INote SelectedNote { get { return _selectedNote; } set { if (_selectedNote != value) { _selectedNote = value; OnPropertyChanged(); SelectedNoteChanged();} } }
@@ -75,20 +75,6 @@ namespace AlephNote.WPF.Windows
 		public SynchronizationState SynchronizationState { get { return _synchronizationState; } set { if (value != _synchronizationState) { _synchronizationState = value; OnPropertyChanged(); } } }
 
 		public bool DebugMode { get { return App.DebugMode; } }
-
-		public ListCollectionView NotesView
-		{
-			get
-			{
-
-				if (Repository == null) return (ListCollectionView)CollectionViewSource.GetDefaultView(new List<INote>());
-
-				var source = (ListCollectionView)CollectionViewSource.GetDefaultView(Repository.Notes);
-				source.Filter = p => SearchFilter((INote)p);
-				if (Settings.NoteSorting != SortingMode.None) source.CustomSort = Settings.GetNoteComparator();
-				return source;
-			}
-		}
 
 		private GridLength _overviewGridLength = new GridLength(0);
 		public GridLength OverviewListWidth { get { return _overviewGridLength; } set { if (value != _overviewGridLength) { _overviewGridLength = value; OnPropertyChanged(); GridSplitterChanged(); } } }
@@ -116,8 +102,8 @@ namespace AlephNote.WPF.Windows
 			
 			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
 
-			if (_settings.LastSelectedNote != null) SelectedNote = NotesView.OfType<INote>().FirstOrDefault(n => n.GetUniqueName() == _settings.LastSelectedNote);
-			if (SelectedNote == null ) SelectedNote = NotesView.FirstOrDefault<INote>();
+			if (_settings.LastSelectedNote != null) SelectedNote = Repository.Notes.FirstOrDefault(n => n.GetUniqueName() == _settings.LastSelectedNote);
+			if (SelectedNote == null ) SelectedNote = Repository.Notes.FirstOrDefault<INote>();
 
 			OverviewListWidth = new GridLength(settings.OverviewListWidth);
 
@@ -188,7 +174,7 @@ namespace AlephNote.WPF.Windows
 
 					OnExplicitPropertyChanged("Repository");
 
-					SelectedNote = NotesView.FirstOrDefault<INote>();
+					SelectedNote = Repository.Notes.FirstOrDefault<INote>();
 					OnExplicitPropertyChanged("NotesView");
 				}
 				else
@@ -254,7 +240,7 @@ namespace AlephNote.WPF.Windows
 
 		public void OnNoteChanged(NoteChangedEventArgs e)
 		{
-			if (NotesView.FirstOrDefault<INote>() != e.Note) NotesView.Refresh();
+			if (Owner.NotesListView.GetTopNote() != e.Note) Owner.NotesListView.RefreshView();
 		}
 
 		private void GridSplitterChanged()
@@ -406,7 +392,7 @@ namespace AlephNote.WPF.Windows
 
 				Repository.DeleteNote(SelectedNote, true);
 
-				SelectedNote = NotesView.FirstOrDefault<INote>();
+				SelectedNote = Repository.Notes.FirstOrDefault();
 			}
 			catch (Exception e)
 			{
@@ -461,7 +447,6 @@ namespace AlephNote.WPF.Windows
 				OnExplicitPropertyChanged("Repository");
 
 				SelectedNote = null;
-				OnExplicitPropertyChanged("NotesView");
 			}
 			catch (Exception e)
 			{
@@ -476,11 +461,11 @@ namespace AlephNote.WPF.Windows
 
 			_preventScintillaFocus = true;
 			{
-				NotesView.Refresh();
-				if (NotesView.Contains(sn)) 
+				Owner.NotesListView.RefreshView();
+				if (Owner.NotesListView.Contains(sn)) 
 					SelectedNote = sn;
 				else
-					SelectedNote = NotesView.FirstOrDefault<INote>();
+					SelectedNote = Owner.NotesListView.NotesView.FirstOrDefault<INote>();
 			}
 			_preventScintillaFocus = false;
 
@@ -498,11 +483,6 @@ namespace AlephNote.WPF.Windows
 			{
 				_preventScintillaFocus = false;
 			}
-		}
-
-		private bool SearchFilter(INote note)
-		{
-			return ScintillaSearcher.IsInFilter(note, SearchText);
 		}
 
 		private void SaveSettings()

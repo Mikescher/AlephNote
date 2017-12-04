@@ -85,6 +85,9 @@
     <Compile Include="Log\LogEvent.cs" />
     <Compile Include="Log\LogEventType.cs" />
     <Compile Include="WPF\Controls\AutoActionMenuItem.cs" />
+    <Compile Include="WPF\Controls\NotesListView.xaml.cs">
+      <DependentUpon>NotesListView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Controls\ShortcutBox.cs" />
     <Compile Include="WPF\Controls\TagEditor.xaml.cs">
       <DependentUpon>TagEditor.xaml</DependentUpon>
@@ -205,6 +208,10 @@
     <Page Include="WPF\Controls\FontBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WPF\Controls\NotesListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WPF\Controls\PathBox.xaml">
       <SubType>Designer</SubType>
