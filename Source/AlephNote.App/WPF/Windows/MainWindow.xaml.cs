@@ -300,6 +300,13 @@ namespace AlephNote.WPF.Windows
 			if (listHighlight && viewmodel?.SelectedNote != null) GetHighlighter(s).UpdateListMargin(NoteEdit, null, null);
 		}
 
+		public void ScrollScintilla(int? v)
+		{
+			if (v == null) return;
+
+			NoteEdit.FirstVisibleLine = v.Value;
+		}
+
 		public void FocusScintillaDelayed(int d = 50)
 		{
 			new Thread(() => { Thread.Sleep(d); System.Windows.Application.Current.Dispatcher.Invoke(FocusScintilla); }).Start();
@@ -382,6 +389,8 @@ namespace AlephNote.WPF.Windows
 				var fsw = new FirstStartupWindow(this);
 				fsw.ShowDialog();
 			}
+
+			if (Settings.RememberScroll) VM.ForceUpdateUIScroll();
 		}
 
 		public void ShowDocSearchBar()
@@ -519,6 +528,14 @@ namespace AlephNote.WPF.Windows
 			foreach (var aami in cm.Items.OfType<AutoActionMenuItem>())
 			{
 				aami.RecursiveRefresh();
+			}
+		}
+
+		private void NoteEdit_UpdateUI(object sender, UpdateUIEventArgs e)
+		{
+			if (e.Change == UpdateChange.VScroll)
+			{
+				VM.OnScroll(NoteEdit.FirstVisibleLine);
 			}
 		}
 	}

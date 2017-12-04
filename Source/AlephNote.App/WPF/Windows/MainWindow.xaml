@@ -11,7 +11,6 @@
 		xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
 		xmlns:ctrl="clr-namespace:AlephNote.WPF.Controls"
 		xmlns:tb="http://www.hardcodet.net/taskbar"
-		xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
 		xmlns:mext="clr-namespace:AlephNote.WPF.MarkupExtensions"
 		xmlns:util="clr-namespace:AlephNote.WPF.Util"
 		mc:Ignorable="d" 
@@ -172,6 +171,7 @@
 				<WindowsFormsHost Grid.Row="0" x:Name="NoteEditHost">
 					<WindowsFormsHost.Child>
 						<scinet:Scintilla x:Name="NoteEdit" AllowDrop="True"
+										  UpdateUI="NoteEdit_UpdateUI"
 										  KeyPress="NoteEdit_OnKeyPress" 
 										  KeyDown="NoteEdit_OnKeyDown" 
 										  StyleNeeded="NoteEdit_StyleNeeded" 

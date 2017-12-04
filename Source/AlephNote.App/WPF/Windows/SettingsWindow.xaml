@@ -149,6 +149,7 @@
 								<StackPanel Grid.Row="0" Grid.Column="0">
 									<CheckBox Margin="2" Content="Minimize to tray" IsChecked="{Binding Settings.MinimizeToTray}" />
 									<CheckBox Margin="2" Content="Show tag autocompletion"  IsChecked="{Binding Settings.TagAutocomplete}" />
+									<CheckBox Margin="2" Content="Remember scroll position per note"  IsChecked="{Binding Settings.RememberScroll}" />
 								</StackPanel>
 								<StackPanel Grid.Row="0" Grid.Column="1">
 									<CheckBox Margin="2" Content="Close to tray" IsChecked="{Binding Settings.CloseToTray}" />

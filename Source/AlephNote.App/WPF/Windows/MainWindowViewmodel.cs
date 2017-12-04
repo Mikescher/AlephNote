@@ -1,4 +1,5 @@
-﻿using AlephNote.Common.Settings.Types;
+﻿using AlephNote.Common.Repository;
+using AlephNote.Common.Settings.Types;
 using AlephNote.Common.SPSParser;
 using AlephNote.PluginInterface;
 using AlephNote.Plugins;
@@ -20,6 +21,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using ScintillaNET;
 
 namespace AlephNote.WPF.Windows
 {
@@ -84,6 +86,7 @@ namespace AlephNote.WPF.Windows
 		private readonly SynchronizationDispatcher dispatcher = new SynchronizationDispatcher();
 		private readonly DelayedCombiningInvoker _invSaveSettings;
 		private readonly SimpleParamStringParser _spsParser = new SimpleParamStringParser();
+		private readonly ScrollCache _scrollCache;
 
 		private bool _preventScintillaFocus = false;
 		private bool _forceClose = false;
@@ -99,9 +102,11 @@ namespace AlephNote.WPF.Windows
 
 			_repository = new NoteRepository(App.PATH_LOCALDB, this, settings, settings.ActiveAccount, App.Logger, dispatcher);
 			Repository.Init();
-			
-			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
 
+			_scrollCache = Settings.RememberScroll ? ScrollCache.LoadFromFile(App.PATH_SCROLLCACHE, App.Logger) : ScrollCache.CreateEmpty(App.PATH_SCROLLCACHE, App.Logger);
+
+			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
+			
 			if (_settings.LastSelectedNote != null) SelectedNote = Repository.Notes.FirstOrDefault(n => n.GetUniqueName() == _settings.LastSelectedNote);
 			if (SelectedNote == null ) SelectedNote = Repository.Notes.FirstOrDefault<INote>();
 
@@ -220,6 +225,8 @@ namespace AlephNote.WPF.Windows
 
 			if (SelectedNote != null) ScintillaSearcher.Highlight(Owner.NoteEdit, SelectedNote, SearchText);
 
+			if (Settings.RememberScroll) Owner.ScrollScintilla(_scrollCache.Get(SelectedNote));
+
 			Settings.LastSelectedNote = SelectedNote?.GetUniqueName();
 			RequestSettingsSave();
 		}
@@ -331,8 +338,8 @@ namespace AlephNote.WPF.Windows
 				ExceptionDialog.Show(Owner, "Shutting down connection failed.\r\nConnection will be forcefully aborted.", e);
 				_repository.KillThread();
 			}
-			
-			Repository.Shutdown();
+
+			if (Settings.RememberScroll) _scrollCache.ForceSaveNow();
 
 			if (_invSaveSettings.HasPendingRequests())
 			{
@@ -516,6 +523,16 @@ namespace AlephNote.WPF.Windows
 				App.Logger.Error("Main", "Can't get latest version from github", e);
 				MessageBox.Show("Cannot get latest version from github API");
 			}
+		}
+
+		public void OnScroll(int yoffset)
+		{
+			if (Settings.RememberScroll) _scrollCache.Set(SelectedNote, yoffset);
+		}
+
+		public void ForceUpdateUIScroll()
+		{
+			if (Settings.RememberScroll) Owner.ScrollScintilla(_scrollCache.Get(SelectedNote));
 		}
 
 		private void CheckForUpdatesAsync()

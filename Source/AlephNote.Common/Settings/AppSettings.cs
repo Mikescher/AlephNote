@@ -276,6 +276,10 @@ namespace AlephNote.Settings
 		public bool SendAnonStatistics { get { return _sendAnonStatistics; } set { _sendAnonStatistics = value; OnPropertyChanged(); } }
 		private bool _sendAnonStatistics = true;
 
+		[AlephXMLField]
+		public bool RememberScroll { get { return _rememberScroll; } set { _rememberScroll = value; OnPropertyChanged(); } }
+		private bool _rememberScroll = false;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

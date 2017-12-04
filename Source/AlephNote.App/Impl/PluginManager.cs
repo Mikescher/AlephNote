@@ -74,13 +74,14 @@ namespace AlephNote.Plugins
 
 					instance.Init(App.Logger);
 
-#if !DEBUG
-					if (instance.GetVersion().Revision != 0)
+					if (!App.DebugMode)
 					{
-						App.Logger.Warn("PluginManager", string.Format("Ignore plugin {0}, debug version {1} ({2})", instance.DisplayTitleShort, instance.GetVersion(), instance.GetUniqueID()));
-						continue;
+						if (instance.GetVersion().Revision != 0)
+						{
+							App.Logger.Warn("PluginManager", string.Format("Ignore plugin {0}, debug version {1} ({2})", instance.DisplayTitleShort, instance.GetVersion(), instance.GetUniqueID()));
+							continue;
+						}
 					}
-#endif
 
 					if (_pluginIDs.Add(instance.GetUniqueID()))
 					{
