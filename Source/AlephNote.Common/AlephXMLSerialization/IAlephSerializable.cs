@@ -2,6 +2,7 @@
 {
 	public interface IAlephSerializable
 	{
+		void OnBeforeSerialize();
 		void OnAfterDeserialize();
 	}
 }

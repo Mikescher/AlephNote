@@ -26,7 +26,7 @@ namespace AlephNote.Common.Settings.Types
 
 		public object GetTypeStr()
 		{
-			return $"KeyValueCustomList<{DefaultDictValue.GetTypeStr()}>";
+			return $"KeyValueCustomList[{DefaultDictValue.GetTypeStr()}]";
 		}
 
 		public void Serialize(XElement target)

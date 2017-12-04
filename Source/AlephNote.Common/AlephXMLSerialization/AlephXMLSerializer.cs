@@ -59,6 +59,8 @@ namespace AlephNote.Common.AlephXMLSerialization
 
 		public string Serialize(T obj)
 		{
+			obj.OnBeforeSerialize();
+
 			var root = new XElement(_rootNode);
 
 			foreach (var prop in _fields)

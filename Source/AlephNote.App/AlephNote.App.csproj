@@ -89,6 +89,7 @@
     <Compile Include="WPF\Controls\TagEditor.xaml.cs">
       <DependentUpon>TagEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Converter\FontNameToFontFamily.cs" />
     <Compile Include="WPF\Converter\NegateBool.cs" />
     <Compile Include="WPF\Converter\KeyToWeight.cs" />
     <Compile Include="WPF\Converter\KeyToColor.cs" />

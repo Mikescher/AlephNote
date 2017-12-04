@@ -1,5 +1,6 @@
 ﻿using AlephNote.Plugins;
 using AlephNote.Settings;
+using AlephNote.WPF.Converter;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -15,6 +16,10 @@ namespace AlephNote.WPF.Windows
 
 		public SettingsWindow(MainWindowViewmodel owner, AppSettings data)
 		{
+			if (string.IsNullOrWhiteSpace(data.ListFontFamily))  data.ListFontFamily  = FontNameToFontFamily.StrDefaultValue;
+			if (string.IsNullOrWhiteSpace(data.NoteFontFamily))  data.NoteFontFamily  = FontNameToFontFamily.StrDefaultValue;
+			if (string.IsNullOrWhiteSpace(data.TitleFontFamily)) data.TitleFontFamily = FontNameToFontFamily.StrDefaultValue;
+
 			InitializeComponent();
 
 			ownerVM = owner;

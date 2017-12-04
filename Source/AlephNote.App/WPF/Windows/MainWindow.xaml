@@ -152,7 +152,7 @@
 					  ItemsSource="{Binding NotesView}" 
 					  SelectedValue="{Binding SelectedNote}"
 					  FontSize="{Binding Settings.ListFontSize, Converter={conv:FontSizeToInt}}" 
-					  FontFamily="{Binding Settings.ListFontFamily}" 
+					  FontFamily="{Binding Settings.ListFontFamily, Converter={conv:FontNameToFontFamily}}" 
 					  FontWeight="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontWeight}}" 
 					  FontStyle="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontStyle}}">
 				
@@ -240,14 +240,14 @@
 			<TextBox Grid.Row="0" BorderBrush="Transparent" BorderThickness="0"  
 					 Foreground="CornflowerBlue" 
 					 FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
-					 FontFamily="{Binding Settings.TitleFontFamily}" 
+					 FontFamily="{Binding Settings.TitleFontFamily, Converter={conv:FontNameToFontFamily}}" 
 					 FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
 					 FontStyle="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontStyle}}" 
 					 Text="{Binding SelectedNote.Title, UpdateSourceTrigger=PropertyChanged}" >
 				<services:WatermarkService.Watermark>
 					<TextBlock Text="Empty Title..." VerticalAlignment="Center" Padding="6,0"
 					 FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
-					 FontFamily="{Binding Settings.TitleFontFamily}" 
+					 FontFamily="{Binding Settings.TitleFontFamily, Converter={conv:FontNameToFontFamily}}" 
 					 FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
 					 FontStyle="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontStyle}}" />
 				</services:WatermarkService.Watermark>
@@ -305,7 +305,7 @@
 			<StatusBarItem Content="{Binding SelectedNote.CreationDate, Converter={conv:DateOnlyToDisplay}, FallbackValue=''}" ToolTip="{Binding SelectedNote.CreationDate, Converter={conv:DTOToDisplay}, FallbackValue=''}"/>
 			<StatusBarItem Content="Synchronized: " />
 			<StatusBarItem Content="{Binding SelectedNote.IsRemoteSaved, FallbackValue='?'}"/>
-			<StatusBarItem Content="{Binding Repository.ConnectionName}" ToolTip="{Binding ConnectionUUID}" HorizontalAlignment="Right" Margin="0,0,15,0"/>
+			<StatusBarItem Content="{Binding Repository.ConnectionName}" ToolTip="{Binding Repository.ConnectionUUID}" HorizontalAlignment="Right" Margin="0,0,15,0"/>
 		</StatusBar>
 
 		<tb:TaskbarIcon Grid.Column="0" Grid.Row="0"

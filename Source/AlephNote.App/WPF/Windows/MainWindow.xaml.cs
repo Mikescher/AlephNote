@@ -20,6 +20,7 @@ using AlephNote.PluginInterface;
 using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.MVVM;
 using Hardcodet.Wpf.TaskbarNotification;
+using AlephNote.WPF.Converter;
 
 namespace AlephNote.WPF.Windows
 {
@@ -186,6 +187,7 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.AdditionalSelectionTyping = s.SciRectSelection;
 			NoteEdit.VirtualSpaceOptions = s.SciRectSelection ? VirtualSpace.RectangularSelection : VirtualSpace.None;
 
+			var fnt = string.IsNullOrWhiteSpace(s.NoteFontFamily) ? FontNameToFontFamily.StrDefaultValue : s.NoteFontFamily;
 			NoteEdit.Font = new Font(s.NoteFontFamily, (int)s.NoteFontSize);
 
 			_highlighterDefault.SetUpStyles(NoteEdit, s);

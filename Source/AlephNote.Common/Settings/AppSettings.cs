@@ -319,6 +319,11 @@ namespace AlephNote.Settings
 			return r;
 		}
 
+		public void OnBeforeSerialize()
+		{
+			//
+		}
+
 		public void OnAfterDeserialize()
 		{
 			_activeAccount = _accounts.FirstOrDefault(a => a.ID == _activeAccount.ID);
