@@ -127,6 +127,12 @@ namespace AlephNote.WPF.Windows
 				t.Start();
 			}
 
+			if (settings.SendAnonStatistics)
+			{
+				var t = new Thread(UploadUsageStatsAsync) { Name = "STATISTICS_UPLOAD" };
+				t.Start();
+			}
+
 			SettingsChanged();
 		}
 
@@ -536,6 +542,7 @@ namespace AlephNote.WPF.Windows
 		{
 			try
 			{
+				Thread.Sleep(1000);
 				var ghc = new GithubConnection(App.Logger);
 				var r = ghc.GetLatestRelease();
 
@@ -546,7 +553,21 @@ namespace AlephNote.WPF.Windows
 			}
 			catch (Exception e)
 			{
-				App.Logger.Error("Main", "Can't get latest version from github", e);
+				App.Logger.Error("Main", "Updatecheck failed: Can't get latest version from github", e);
+			}
+		}
+
+		private void UploadUsageStatsAsync()
+		{
+			try
+			{
+				Thread.Sleep(3000);
+				var asc = new StatsConnection(Settings, Repository, App.Logger);
+				asc.UploadStatistics(App.APP_VERSION);
+			}
+			catch (Exception e)
+			{
+				App.Logger.Error("Main", "Fatal error in UploadUsageStatsAsync", e);
 			}
 		}
 

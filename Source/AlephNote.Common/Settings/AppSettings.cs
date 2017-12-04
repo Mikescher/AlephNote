@@ -268,6 +268,14 @@ namespace AlephNote.Settings
 		public KeyValueFlatCustomList<ShortcutDefinition> Shortcuts { get { return __shortcuts; } set { __shortcuts = value; OnPropertyChanged(); } }
 		private KeyValueFlatCustomList<ShortcutDefinition> __shortcuts = CreateDefaultShortcutList();
 
+		[AlephXMLField]
+		public Guid ClientID { get { return _clientID; } set { _clientID = value; OnPropertyChanged(); } }
+		private Guid _clientID = Guid.NewGuid();
+
+		[AlephXMLField]
+		public bool SendAnonStatistics { get { return _sendAnonStatistics; } set { _sendAnonStatistics = value; OnPropertyChanged(); } }
+		private bool _sendAnonStatistics = true;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

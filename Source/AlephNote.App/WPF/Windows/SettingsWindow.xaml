@@ -125,6 +125,7 @@
 							<StackPanel>
 								<CheckBox Margin="3" VerticalAlignment="Center" Content="Start with Windows" IsChecked="{Binding Settings.LaunchOnBoot}" />
 								<CheckBox Margin="3" VerticalAlignment="Center" Content="Automatically check for updates" IsChecked="{Binding Settings.CheckForUpdates}" />
+								<CheckBox Margin="3" VerticalAlignment="Center" Content="Send anonymous statistics" IsChecked="{Binding Settings.SendAnonStatistics}" />
 							</StackPanel>
 						</GroupBox>
 

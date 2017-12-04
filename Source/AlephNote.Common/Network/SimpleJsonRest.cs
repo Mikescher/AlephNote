@@ -124,7 +124,7 @@ namespace AlephNote.Repository
 			{
 				return JsonConvert.DeserializeObject<TResult>(content, _converter);
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				return default(TResult);
 			}
