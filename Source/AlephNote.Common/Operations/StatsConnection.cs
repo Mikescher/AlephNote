@@ -33,15 +33,14 @@ namespace AlephNote.Plugins
 			{
 				var rest = new SimpleJsonRest(_settings.CreateProxy(), @"https://mikescher.com", _log);
 
-				var response = rest.Get<JsonResponse>("api/statsping", new[]
-				{
-					$"Name={"AlephNote"}",
-					$"Version={version.ToString()}",
-					$"ClientID={_settings.ClientID.ToString("D")}",
-					$"ProviderStr={_settings.ActiveAccount.Plugin.DisplayTitleShort}",
+				var response = rest.Get<JsonResponse>(
+					"api/statsping", 
+					$"Name={"AlephNote"}", 
+					$"Version={version}", 
+					$"ClientID={_settings.ClientID:D}", 
+					$"ProviderStr={_settings.ActiveAccount.Plugin.DisplayTitleShort.Replace(' ', '_')}", 
 					$"ProviderID={_settings.ActiveAccount.Plugin.GetUniqueID()}",
-					$"NoteCount={_repository.Notes.Count}",
-				});
+					$"NoteCount={_repository.Notes.Count}");
 
 				return response.success;
 

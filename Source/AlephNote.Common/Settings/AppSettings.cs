@@ -121,6 +121,10 @@ namespace AlephNote.Settings
 		private int _sciTabWidth = 4;
 
 		[AlephXMLField]
+		public bool SciScrollAfterLastLine { get { return _sciScrollAfterLastLine; } set { _sciScrollAfterLastLine = value; OnPropertyChanged(); } }
+		private bool _sciScrollAfterLastLine = false;
+
+		[AlephXMLField]
 		public int StartupPositionX { get { return _startupPositionX; } set { _startupPositionX = value; OnPropertyChanged(); } }
 		private int _startupPositionX = 64;
 

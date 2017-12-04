@@ -255,6 +255,7 @@
 									<CheckBox Margin="2" Content="Word wrap" IsChecked="{Binding Settings.SciWordWrap}" />
 									<CheckBox Margin="2" Content="Show Whitespaces" IsChecked="{Binding Settings.SciShowWhitespace}" />
 									<CheckBox Margin="2" Content="Show EOL" IsChecked="{Binding Settings.SciShowEOL}" />
+									<CheckBox Margin="2" Content="Scroll after last line" IsChecked="{Binding Settings.SciScrollAfterLastLine}" />
 								</StackPanel>
 
 								<TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Tab Width" />

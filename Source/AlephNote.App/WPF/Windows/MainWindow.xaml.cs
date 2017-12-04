@@ -186,6 +186,7 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.MouseSelectionRectangularSwitch = s.SciRectSelection;
 			NoteEdit.AdditionalSelectionTyping = s.SciRectSelection;
 			NoteEdit.VirtualSpaceOptions = s.SciRectSelection ? VirtualSpace.RectangularSelection : VirtualSpace.None;
+			NoteEdit.EndAtLastLine = !s.SciScrollAfterLastLine;
 
 			var fnt = string.IsNullOrWhiteSpace(s.NoteFontFamily) ? FontNameToFontFamily.StrDefaultValue : s.NoteFontFamily;
 			NoteEdit.Font = new Font(s.NoteFontFamily, (int)s.NoteFontSize);
