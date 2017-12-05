@@ -57,6 +57,7 @@ namespace AlephNote.WPF.Converter
 					case DynamicSettingValue.SettingType.Checkbox:
 						var cb = new CheckBox { IsChecked = (bool)prop.Arguments[0] };
 						cb.Checked += (s, a) => { cfg.SetProperty(xprop.ID, cb.IsChecked ?? false); };
+						cb.Unchecked += (s, a) => { cfg.SetProperty(xprop.ID, cb.IsChecked ?? false); };
 						AddComponent(prop, ref row, grid, cb);
 						break;
 
