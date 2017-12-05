@@ -26,11 +26,18 @@ namespace AlephNote.Repository
 		{
 			if (proxy != null)
 			{
-				_client = new HttpClient(new HttpClientHandler {Proxy = proxy});
+				_client = new HttpClient(new HttpClientHandler
+				{
+					Proxy = proxy,
+					AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+				});
 			}
 			else
 			{
-				_client = new HttpClient();
+				_client = new HttpClient(new HttpClientHandler
+				{
+					AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+				});
 			}
 
 			_headers["User-Agent"] = "AlephNote/Common";
