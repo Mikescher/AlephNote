@@ -134,11 +134,11 @@ namespace AlephNote.Settings
 
 		[AlephXMLField]
 		public int StartupPositionWidth { get { return _startupPositionWidth; } set { _startupPositionWidth = value; OnPropertyChanged(); } }
-		private int _startupPositionWidth = 525;
+		private int _startupPositionWidth = 580;
 
 		[AlephXMLField]
 		public int StartupPositionHeight { get { return _startupPositionHeight; } set { _startupPositionHeight = value; OnPropertyChanged(); } }
-		private int _startupPositionHeight = 350;
+		private int _startupPositionHeight = 565;
 
 		[AlephXMLField]
 		public ExtendedWindowStartupLocation StartupLocation { get { return _startupLocation; } set { _startupLocation = value; OnPropertyChanged(); } }
