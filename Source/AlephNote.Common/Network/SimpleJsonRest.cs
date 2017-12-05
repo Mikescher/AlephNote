@@ -53,9 +53,9 @@ namespace AlephNote.Repository
 			_client?.Dispose();
 		}
 
-		public void AddConverter(object ic)
+		public void AddDTOConverter(Func<string, DateTimeOffset> c1, Func<DateTimeOffset, string> c2)
 		{
-			var c = (JsonConverter) ic;
+			var c = new GenericDTOConverter(c1, c2);
 
 			_converter = _converter.Concat(new[] {c}).ToArray();
 		}
@@ -125,6 +125,11 @@ namespace AlephNote.Repository
 			return JsonConvert.DeserializeObject<TResult>(content, _converter);
 		}
 
+		public TResult ParseJsonWithoutConverter<TResult>(string content)
+		{
+			return JsonConvert.DeserializeObject<TResult>(content);
+		}
+
 		public TResult ParseJsonOrNull<TResult>(string content)
 		{
 			try
@@ -135,6 +140,11 @@ namespace AlephNote.Repository
 			{
 				return default(TResult);
 			}
+		}
+
+		public string SerializeJson<TResult>(TResult obj)
+		{
+			return JsonConvert.SerializeObject(obj);
 		}
 
 		#region POST

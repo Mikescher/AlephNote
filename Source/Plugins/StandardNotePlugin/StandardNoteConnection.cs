@@ -56,9 +56,21 @@ namespace AlephNote.Plugins.StandardNote
 
 			var client = CreateJsonRestClient(_proxy, _config.Server);
 			client.AddHeader("Authorization", "Bearer " + _token.token);
-			client.AddConverter(new DTOConverter());
+			client.AddDTOConverter(ConvertToDTO, ConvertFromDTO);
 
 			return client;
+		}
+
+		private string ConvertFromDTO(DateTimeOffset value)
+		{
+			return value.UtcDateTime.ToString("O");
+		}
+
+		private DateTimeOffset ConvertToDTO(string value)
+		{
+			DateTimeOffset o;
+			if (DateTimeOffset.TryParse(value, out o)) return o;
+			return DateTimeOffset.MinValue;
 		}
 
 		public override void StartSync(IRemoteStorageSyncPersistance idata, List<INote> ilocalnotes, List<INote> localdeletednotes)

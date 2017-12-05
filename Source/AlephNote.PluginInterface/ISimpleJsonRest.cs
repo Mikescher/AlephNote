@@ -7,7 +7,7 @@ namespace AlephNote.PluginInterface
 		void AddHeader(string name, string value);
 		string GetResponseHeader(string name);
 
-		void AddConverter(object c);  // we keep the type of ic object so not all plugins need to reference Json.Net, but typof(c) should be JsonConverter
+		void AddDTOConverter(Func<string, DateTimeOffset> c1, Func<DateTimeOffset, string> c2);
 		void SetEscapeAllNonASCIICharacters(bool escape);
 		void SetURLAuthentication(string username, string password);
 
@@ -42,6 +42,9 @@ namespace AlephNote.PluginInterface
 		TResult Get<TResult>(string path, int[] allowedStatusCodes, params string[] parameter);
 
 		TResult ParseJson<TResult>(string content);
+		TResult ParseJsonWithoutConverter<TResult>(string content);
 		TResult ParseJsonOrNull<TResult>(string content);
+
+		string SerializeJson<TResult>(TResult obj);
 	}
 }

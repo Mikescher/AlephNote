@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using AlephNote.PluginInterface;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,19 +94,19 @@ namespace AlephNote.Plugins.StandardNote
 			// Upload new notes
 			foreach (var mvNote in notesUpload)
 			{
-				PrepareForUpload(d, mvNote, allTags, authToken, cfg, false);
+				PrepareForUpload(web, d, mvNote, allTags, authToken, cfg, false);
 			}
 
 			// Delete deleted notes
 			foreach (var rmNote in notesDelete)
 			{
-				PrepareForUpload(d, rmNote, allTags, authToken, cfg, true);
+				PrepareForUpload(web, d, rmNote, allTags, authToken, cfg, true);
 			}
 
 			// Update references on tags (from changed notes)
 			foreach (var upTag in notesUpload.SelectMany(n => n.InternalTags).Concat(notesDelete.SelectMany(n => n.InternalTags)).Except(tagsDelete))
 			{
-				PrepareForUpload(d, upTag, allNotes, authToken, cfg, false);
+				PrepareForUpload(web, d, upTag, allNotes, authToken, cfg, false);
 			}
 
 			// Remove unused tags
@@ -115,7 +114,7 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				foreach (var rmTag in tagsDelete)
 				{
-					PrepareForUpload(d, rmTag, allNotes, authToken, cfg, true);
+					PrepareForUpload(web, d, rmTag, allNotes, authToken, cfg, true);
 				}
 			}
 			
@@ -129,26 +128,26 @@ namespace AlephNote.Plugins.StandardNote
 				.retrieved_items
 				.Where(p => p.content_type.ToLower() == "tag")
 				.Where(p => !p.deleted)
-				.Select(n => CreateTag(n, authToken))
+				.Select(n => CreateTag(web, n, authToken))
 				.ToList();
 
 			syncresult.deleted_tags = result
 				.retrieved_items
 				.Where(p => p.content_type.ToLower() == "tag")
 				.Where(p => p.deleted)
-				.Select(n => CreateTag(n, authToken))
+				.Select(n => CreateTag(web, n, authToken))
 				.ToList();
 
 			syncresult.saved_tags = result
 				.saved_items
 				.Where(p => p.content_type.ToLower() == "tag")
-				.Select(n => CreateTag(n, authToken))
+				.Select(n => CreateTag(web, n, authToken))
 				.ToList();
 
 			syncresult.unsaved_tags = result
 				.unsaved
 				.Where(p => p.content_type.ToLower() == "tag")
-				.Select(n => CreateTag(n, authToken))
+				.Select(n => CreateTag(web, n, authToken))
 				.ToList();
 
 			dat.UpdateTags(syncresult.retrieved_tags, syncresult.saved_tags, syncresult.unsaved_tags, syncresult.deleted_tags);
@@ -157,32 +156,32 @@ namespace AlephNote.Plugins.StandardNote
 				.retrieved_items
 				.Where(p => p.content_type.ToLower() == "note")
 				.Where(p => !p.deleted)
-				.Select(n => CreateNote(n, authToken, cfg, dat))
+				.Select(n => CreateNote(web, n, authToken, cfg, dat))
 				.ToList();
 
 			syncresult.deleted_notes = result
 				.retrieved_items
 				.Where(p => p.content_type.ToLower() == "note")
 				.Where(p => p.deleted)
-				.Select(n => CreateNote(n, authToken, cfg, dat))
+				.Select(n => CreateNote(web, n, authToken, cfg, dat))
 				.ToList();
 
 			syncresult.saved_notes = result
 				.saved_items
 				.Where(p => p.content_type.ToLower() == "note")
-				.Select(n => CreateNote(n, authToken, cfg, dat))
+				.Select(n => CreateNote(web, n, authToken, cfg, dat))
 				.ToList();
 
 			syncresult.unsaved_notes = result
 				.unsaved
 				.Where(p => p.content_type.ToLower() == "note")
-				.Select(n => CreateNote(n, authToken, cfg, dat))
+				.Select(n => CreateNote(web, n, authToken, cfg, dat))
 				.ToList();
 
 			return syncresult;
 		}
 
-		private static void PrepareForUpload(APIBodySync body, StandardFileNote note, List<StandardFileTag> tags, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
+		private static void PrepareForUpload(ISimpleJsonRest web, APIBodySync body, StandardFileNote note, List<StandardFileTag> tags, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
 		{
 			var jsnContent = new ContentNote
 			{
@@ -212,7 +211,7 @@ namespace AlephNote.Plugins.StandardNote
 				jsnContent.references.Add(new APIResultContentRef { content_type = "Tag", uuid = itag.UUID.Value });
 			}
 
-			var cdNote = StandardNoteCrypt.EncryptContent(JsonConvert.SerializeObject(jsnContent), token.masterkey, cfg.SendEncrypted);
+			var cdNote = StandardNoteCrypt.EncryptContent(web.SerializeJson(jsnContent), token.masterkey, cfg.SendEncrypted);
 
 			body.items.Add(new APIBodyItem
 			{
@@ -226,7 +225,7 @@ namespace AlephNote.Plugins.StandardNote
 			});
 		}
 
-		private static void PrepareForUpload(APIBodySync body, StandardFileTag tag, List<StandardFileNote> allNotes, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
+		private static void PrepareForUpload(ISimpleJsonRest web, APIBodySync body, StandardFileTag tag, List<StandardFileNote> allNotes, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
 		{
 			var jsnContent = new ContentTag
 			{
@@ -237,7 +236,7 @@ namespace AlephNote.Plugins.StandardNote
 					.ToList(),
 			};
 			
-			var cdNote = StandardNoteCrypt.EncryptContent(JsonConvert.SerializeObject(jsnContent), token.masterkey, cfg.SendEncrypted);
+			var cdNote = StandardNoteCrypt.EncryptContent(web.SerializeJson(jsnContent), token.masterkey, cfg.SendEncrypted);
 
 			Debug.Assert(tag.UUID != null, "tag.UUID != null");
 
@@ -252,7 +251,7 @@ namespace AlephNote.Plugins.StandardNote
 			});
 		}
 
-		private static StandardFileNote CreateNote(APIResultItem encNote, APIResultAuthorize authToken, StandardNoteConfig cfg, StandardNoteData dat)
+		private static StandardFileNote CreateNote(ISimpleJsonRest web, APIResultItem encNote, APIResultAuthorize authToken, StandardNoteConfig cfg, StandardNoteData dat)
 		{
 			if (encNote.deleted)
 			{
@@ -270,7 +269,7 @@ namespace AlephNote.Plugins.StandardNote
 			try
 			{
 				var contentJson = StandardNoteCrypt.DecryptContent(encNote.content, encNote.enc_item_key, encNote.auth_hash, authToken.masterkey);
-				content = JsonConvert.DeserializeObject<ContentNote>(contentJson);
+				content = web.ParseJsonWithoutConverter<ContentNote>(contentJson);
 			}
 			catch (Exception e)
 			{
@@ -307,7 +306,7 @@ namespace AlephNote.Plugins.StandardNote
 			return n;
 		}
 
-		private static SyncResultTag CreateTag(APIResultItem encTag, APIResultAuthorize authToken)
+		private static SyncResultTag CreateTag(ISimpleJsonRest web, APIResultItem encTag, APIResultAuthorize authToken)
 		{
 			if (encTag.deleted)
 			{
@@ -325,7 +324,7 @@ namespace AlephNote.Plugins.StandardNote
 			try
 			{
 				var contentJson = StandardNoteCrypt.DecryptContent(encTag.content, encTag.enc_item_key, encTag.auth_hash, authToken.masterkey);
-				content = JsonConvert.DeserializeObject<ContentTag>(contentJson);
+				content = web.ParseJsonWithoutConverter<ContentTag>(contentJson);
 			}
 			catch (Exception e)
 			{
