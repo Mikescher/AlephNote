@@ -1,6 +1,7 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
 
@@ -41,6 +42,11 @@ namespace AlephNote.Plugins.SimpleNote
 		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()
 		{
 			return new SimpleNoteData();
+		}
+
+		public override IEnumerable<Tuple<string, string>> CreateHelpTexts()
+		{
+			yield return Tuple.Create("PermanentlyDeleteNotes", "SimpleNote can either 'really' delete notes on the server or only mark them as 'deleted'.\nIf this option is checked locally deleted notes are permanently deleted on the server.");
 		}
 	}
 }

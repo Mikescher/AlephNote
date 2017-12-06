@@ -1,0 +1,189 @@
+﻿[Accounts]
+AlephNote is based around remotes that come from various plugins.
+Here you can specify where your notes are synchronized from/to (normally this is a specific server/service).
+
+Press the (+) Button to add a new remote configuration and select it from the dropdown box.
+Then enter your remote-specific configurations.
+
+The following remotes are provided by default:
+
+ - SimpleNote: Synchronization with the SimpleNote server
+ - StandardNote: Synchronization with a StandardFile server
+ - Nextcloud: Synchronization with a Nextcloud server that has the Notes plugin.
+ - Filesystem: Synchronization with raw text files anywhere on your local file system
+ - Headless: No synchronization, all notes exist only in your local repository
+
+You can have multiple configurations saved, but only one is ever active.
+
+[ConfigInterval]
+AlephNote uses a background thread to synchronize the local data with the configured remote.
+This settings specifies how often the synchronization is triggered.
+You can also manually do a sync from a button in the MainWindow.
+
+This does not effect the time it takes to upload a modified note.
+AlephNote tries to upload all modified/new notes in a short timespan.
+
+[ConflictResolutionStrategyConfig]
+If there are local changes and remote changes an conflict will occur while syncing. These conflicts can resolved in different ways:
+
+1. "Use client version, override server"
+   We use our (the local) version. 
+   The server version will be overridden after the synchronization.
+
+2. "Use server version, override client"
+   We use the server version. 
+   The local version will be overridden after the synchronization.
+
+3. "Use client version, create conflict note"
+   We use our (the local) version. 
+   The server version will be overridden after the synchronization.
+   But the (old) server version will be preserved in a new conflict note.
+
+4. "Use server version, create conflict note"
+   We use the server version. 
+   The local version will be overridden after the synchronization.
+   But the (old) local version will be preserved in a new conflict note.
+
+[LaunchOnBoot]
+If checked AlephNote automatically starts with Windows.
+You can change the "Startup state" to start AlephNote minimized or in the tray area
+
+[CheckForUpdates]
+If checked we search for updates of the core app or the plugins.
+The test is performed once at startup and uses the github API.
+
+[SendAnonStatistics]
+If checked AlephNote does a single ping to my server on startup.
+The following data are send:
+ - Unique ID
+ - Used plugin
+ - Note count
+
+I only use this data to motivate me and estimate how many people are actually using AlephNote.
+
+[RememberScroll]
+If checked we remember the current scroll position per note.
+When switching between notes, or when restarting the application the scroll position is kept persistent.
+
+[CloseToTray]
+Minimize to tray bar instead of closing the main window.
+You can still close the app via the menu.
+
+[AutoSortTags]
+Tags are automatically sorted alphabetically.
+(Attention !) Even without this option the tag order can sometimes get shuffled.
+Not all remotes properly implement an ordered list of tags and so the order can get lost in the synchronization.
+
+[NoteSorting]
+The ordering of the note sin the list on the left side.
+
+[NotePreviewStyle]
+The style how the notes are displayed on the left side.
+
+[Startup]
+The startup position, size and state of the application.
+You can press (Use current) to insert the current window position and size.
+
+[NoteFontFamily]
+The font used for displaying notes.
+
+[ListFontFamily]
+The font used in the list on the left side.
+
+[TitleFontFamily]
+The font used for the note titles
+
+[SciRectSelection]
+Enable rectangular selection (by holding down the Alt key) in the main edit control
+
+[SciZoomable]
+Enable zooming in the main edit control (by Control+Scrollwheel)
+
+[SciTabWidth]
+The width (aka how many spaces) of a single tab character
+
+[SciUseTabs]
+If enabled the (tab) key inserts a tab character, otherwise it inserts multiple spaces.
+
+[SciShowWhitespace]
+Display tab and space characters
+
+[DocSearchRegexEngine]
+The used RegEx engine for the inline (Control+F) search mode
+
+[LinkMode]
+AlephNote can highlight hyperlinks.
+
+### Disabled ###
+Hyperlinks are not highlighted and not clickable.
+
+### Highlight only ###
+Hyperlinks are highlighted but not interactive.
+
+### Clickable (single click) ###
+Hyperlinks are highlighted and are opened when clicked.
+
+### Clickable (double click) ###
+Hyperlinks are highlighted and are opened when double-clicked.
+
+### Clickable (ctrl + click) ###
+Hyperlinks are highlighted and are opened when clicked while holding (Control).
+
+[MarkdownMode]
+AlephNote can syntax-highlight markdown formatted files.
+You can either 
+ - disable highlighting for all notes
+ - enable highlighting for all notes
+ - enable highlighting only for notes that have the tag [markdown]
+
+[ListMode]
+AlephNote can syntax-highlight todo lists.
+You can either 
+ - disable highlighting for all notes
+ - enable highlighting for all notes
+ - enable highlighting only for notes that have the tag [list]
+
+Entries in todo lists have normal markdown/github formatting, e.g.:
+
+    [ ] Do something
+    [ ] Do something different
+    [X] This is already finished
+    [ ] Add more stuff to list
+
+Also allowed are round brackets, square brackets or curly brackets.
+You can set an item to checked with an 'x', 'X', '+' or '#'
+
+[GitMirror]
+"Local Git Backup" is an additional feature to backup the full history locally.
+AlephNote creates in a local folder a git repository and commits all changes of all notes into it.
+You can use this to have a full history of all your changes.
+
+(Attention !)
+AlephNote uses the locally installed git version.
+This means you need to have a working `git` command in your environment.
+
+You can manually edit/configure the git repository, but a normal `git commit` (and eventually  `git push`)
+should always be possible.
+
+[GitMirrorDoPush]
+After committing the changes execute a `git push` in the repository to push the changed to the default remote.
+
+[GitMirrorSubfolders]
+Create a sub-folder for every Remote.
+This is useful if you plan to occasionally change your active remote,
+otherwise every change will look in the git history as an deletion of all notes and inserting of a whole bunch of new notes.
+
+[ShortcutList.Scope]
+Every shortcut has an assigned scope in which he his available:
+
+### Whole Window ###
+The shortcut is available in the main window
+
+### Notes list ###
+The shortcut is only available while the focus is in the list on the left side
+
+### Notes edit area ###
+The shortcut is only available while the focus is in edit area
+
+### System global ###
+The shortcut is always available, even when the application is minimized or in the tray area

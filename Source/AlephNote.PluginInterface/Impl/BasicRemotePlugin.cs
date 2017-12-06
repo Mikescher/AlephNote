@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 
@@ -51,11 +53,21 @@ namespace AlephNote.PluginInterface.Impl
 			}
 		}
 
+		public IDictionary<string, string> GetHelpTexts()
+		{
+			return CreateHelpTexts().ToDictionary(t => t.Item1, t => t.Item2);
+		}
+
 		public abstract void Init(IAlephLogger logger);
 
 		public abstract IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
 		public abstract IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config);
 		public abstract IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData();
 		public abstract INote CreateEmptyNote(IRemoteStorageConfiguration cfg);
+
+		public virtual IEnumerable<Tuple<string, string>> CreateHelpTexts()
+		{
+			return Enumerable.Empty<Tuple<string, string>>();
+		}
 	}
 }

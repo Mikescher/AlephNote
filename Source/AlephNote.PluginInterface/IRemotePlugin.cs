@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace AlephNote.PluginInterface
@@ -18,5 +19,7 @@ namespace AlephNote.PluginInterface
 		IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config);
 		IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData();
 		INote CreateEmptyNote(IRemoteStorageConfiguration cfg);
+
+		IDictionary<string, string> GetHelpTexts();
 	}
 }

@@ -56,8 +56,8 @@ namespace AlephNote.Plugins.StandardNote
 			yield return DynamicSettingValue.CreateText(ID_EMAIL, "Email", Email);
 			yield return DynamicSettingValue.CreatePassword(ID_PASSWORD, "Password", Password);
 			yield return DynamicSettingValue.CreateText(ID_SERVER, "Host", Server);
-			yield return DynamicSettingValue.CreateCheckbox(ID_ENCRYPT, "Encrypt Notes", SendEncrypted);
-			yield return DynamicSettingValue.CreateCheckbox(ID_REMTAGS, "Delete unused tags", RemEmptyTags);
+			yield return DynamicSettingValue.CreateCheckbox(ID_ENCRYPT, "Encrypt Notes", SendEncrypted, "SendEncrypted");
+			yield return DynamicSettingValue.CreateCheckbox(ID_REMTAGS, "Delete unused tags", RemEmptyTags, "RemEmptyTags");
 			yield return DynamicSettingValue.CreateHyperlink("Create Standard Notes account", "https://standardnotes.org/");
 		}
 

@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AlephNote.PluginInterface
@@ -13,44 +12,46 @@ namespace AlephNote.PluginInterface
 		public readonly SettingType Type;
 		public readonly string CurrentValue;
 		public readonly object[] Arguments;
+		public readonly string HelpID;
 
-		private DynamicSettingValue(int id, SettingType type, string description, string value, params object[] args)
+		private DynamicSettingValue(int id, SettingType type, string description, string value, string helpID, object[] args)
 		{
 			ID = id;
 			Type = type;
 			Description = description;
 			CurrentValue = value;
 			Arguments = args;
+			HelpID = helpID;
 		}
 
-		public static DynamicSettingValue CreateText(int id, string description, string value)
+		public static DynamicSettingValue CreateText(int id, string description, string value, string helpID = null)
 		{
-			return new DynamicSettingValue(id, SettingType.Text, description, value);
+			return new DynamicSettingValue(id, SettingType.Text, description, value, helpID, new object[0]);
 		}
 
-		public static DynamicSettingValue CreatePassword(int id, string description, string value)
+		public static DynamicSettingValue CreatePassword(int id, string description, string value, string helpID = null)
 		{
-			return new DynamicSettingValue(id, SettingType.Password, description, value);
+			return new DynamicSettingValue(id, SettingType.Password, description, value, helpID, new object[0]);
 		}
 
-		public static DynamicSettingValue CreateCheckbox(int id, string description, bool value)
+		public static DynamicSettingValue CreateCheckbox(int id, string description, bool value, string helpID = null)
 		{
-			return new DynamicSettingValue(id, SettingType.Checkbox, description, "", value);
+			return new DynamicSettingValue(id, SettingType.Checkbox, description, "", helpID, new object[] { value });
 		}
 
-		public static DynamicSettingValue CreateHyperlink(string text, string link)
+		public static DynamicSettingValue CreateHyperlink(string text, string link, string helpID = null)
 		{
-			return new DynamicSettingValue(-1, SettingType.Hyperlink, text, string.Empty, link);
+			return new DynamicSettingValue(-1, SettingType.Hyperlink, text, string.Empty, helpID, new object[] { link });
 		}
 
-		public static DynamicSettingValue CreateCombobox(int id, string description, string value, IEnumerable<string> options)
+		public static DynamicSettingValue CreateCombobox(int id, string description, string value, IEnumerable<string> options, string helpID = null)
 		{
-			return new DynamicSettingValue(id, SettingType.ComboBox, description, value, options.Cast<object>().ToArray());
+			return new DynamicSettingValue(id, SettingType.ComboBox, description, value, helpID, options.Cast<object>().ToArray());
 		}
 
-		public static DynamicSettingValue CreateFolderChooser(int id, string description, string value)
+		public static DynamicSettingValue CreateFolderChooser(int id, string description, string value, string helpID = null)
 		{
-			return new DynamicSettingValue(id, SettingType.Folder, description, value);
+			return new DynamicSettingValue(id, SettingType.Folder, description, value, helpID, new object[0]);
 		}
 	}
 }

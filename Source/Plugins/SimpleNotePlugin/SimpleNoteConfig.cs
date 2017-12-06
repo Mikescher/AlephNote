@@ -51,7 +51,7 @@ namespace AlephNote.Plugins.SimpleNote
 		{
 			yield return DynamicSettingValue.CreateText(ID_USERNAME, "Username", Username);
 			yield return DynamicSettingValue.CreatePassword(ID_PASSWORD, "Password", Password);
-			yield return DynamicSettingValue.CreateCheckbox(ID_PERMADEL, "Delete notes permanently on server", PermanentlyDeleteNotes);
+			yield return DynamicSettingValue.CreateCheckbox(ID_PERMADEL, "Delete notes permanently on server", PermanentlyDeleteNotes, "PermanentlyDeleteNotes");
 			yield return DynamicSettingValue.CreateCheckbox(ID_BLANKFMT, "Empty line between title and content", BlankLineBelowTitle);
 			yield return DynamicSettingValue.CreateHyperlink("Create Simplenote account", "https://simplenote.com/");
 		}

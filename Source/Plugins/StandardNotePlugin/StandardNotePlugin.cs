@@ -1,6 +1,7 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
 
@@ -41,6 +42,13 @@ namespace AlephNote.Plugins.StandardNote
 		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()
 		{
 			return new StandardNoteData();
+		}
+
+		public override IEnumerable<Tuple<string, string>> CreateHelpTexts()
+		{
+			yield return Tuple.Create("SendEncrypted", "If checked the note content is encrypted locally before being send to the server."+"\n"+
+				                                       "No one can read your notes without your password, not even the server administrator.");
+			yield return Tuple.Create("RemEmptyTags", "If checked tags that are not linked with any note are deleted on the server.");
 		}
 	}
 }

@@ -61,38 +61,32 @@ namespace AlephNote.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Aenean
-        ///Aliquam
-        ///Class
-        ///Cras
-        ///Curabitur
-        ///Curae
-        ///Donec
-        ///Duis
-        ///Etiam
-        ///In
-        ///Integer
-        ///Interdum
-        ///Lorem
-        ///Maecenas
-        ///Mauris
-        ///Morbi
-        ///Nam
-        ///Nullam
-        ///Nunc
-        ///Phasellus
-        ///Praesent
-        ///Proin
-        ///Quisque
-        ///Suspendisse
-        ///Ut
-        ///Vestibulum
-        ///Vivamus
-        ///a
+        ///   Looks up a localized string similar to [Accounts]
+        ///AlephNote is based around remotes that come from various plugins.
+        ///Here you can specify where your notes are synchronized from/to (normally this is a specific server/service).
+        ///
+        ///Press the (+) Button to add a new remote configuration and select it from the dropdown box.
+        ///Then enter your remote-specific configurations.
+        ///
+        ///The following remotes are provided by default:
+        ///
+        /// - SimpleNote: Synchronization with the SimpleNote server
+        /// - StandardNote: Synchronization with a StandardFile server
+        /// - Next [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HelpTexts {
+            get {
+                return ResourceManager.GetString("HelpTexts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to a
         ///ac
         ///accumsan
         ///ad
         ///adipiscing
+        ///aenean
         ///aliquam
         ///aliquet
         ///amet
@@ -103,20 +97,26 @@ namespace AlephNote.Properties {
         ///auctor
         ///augue
         ///bibendum
+        ///class
         ///commodo
         ///condimentum
         ///congue
         ///consectetur
         ///conubia
         ///convallis
+        ///cras
         ///cubilia
+        ///curabitur
+        ///curae
         ///cursus
         ///dapibus
         ///diam
         ///dictum
         ///dignissim
         ///dolor
+        ///donec
         ///dui
+        ///duis
         ///efficitur
         ///egestas
         ///eget
@@ -124,7 +124,29 @@ namespace AlephNote.Properties {
         ///elementum
         ///elit
         ///enim
-        ///erat [rest of string was truncated]&quot;;.
+        ///erat
+        ///eros
+        ///est
+        ///et
+        ///etiam
+        ///eu
+        ///euismod
+        ///ex
+        ///fames
+        ///faucibus
+        ///felis
+        ///fermentum
+        ///feugiat
+        ///finibus
+        ///fringilla
+        ///gravida
+        ///hendrerit
+        ///himenaeos
+        ///iaculis
+        ///id
+        ///in
+        ///inceptos
+        ///in [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LoremIpsum {
             get {

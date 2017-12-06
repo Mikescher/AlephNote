@@ -88,10 +88,14 @@
     <Compile Include="WPF\Controls\NotesListView.xaml.cs">
       <DependentUpon>NotesListView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Controls\PHelpBtn.xaml.cs">
+      <DependentUpon>PHelpBtn.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Controls\ShortcutBox.cs" />
     <Compile Include="WPF\Controls\TagEditor.xaml.cs">
       <DependentUpon>TagEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Converter\PropertyToHelpText.cs" />
     <Compile Include="WPF\Converter\FontNameToFontFamily.cs" />
     <Compile Include="WPF\Converter\NegateBool.cs" />
     <Compile Include="WPF\Converter\KeyToWeight.cs" />
@@ -104,6 +108,7 @@
     <Compile Include="WPF\Shortcuts\GlobalShortcutManager.cs" />
     <Compile Include="WPF\Shortcuts\ObservableShortcutConfig.cs" />
     <Compile Include="WPF\Shortcuts\ShortcutManager.cs" />
+    <Compile Include="WPF\Util\HelpTextsLoader.cs" />
     <Compile Include="WPF\Util\IChangeListener.cs" />
     <Compile Include="WPF\Util\MarkdownHighlighter.cs" />
     <Compile Include="WPF\Util\DefaultHighlighter.cs" />
@@ -214,6 +219,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WPF\Controls\PathBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Controls\PHelpBtn.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -330,6 +339,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\LoremIpsum.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\HelpTexts.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

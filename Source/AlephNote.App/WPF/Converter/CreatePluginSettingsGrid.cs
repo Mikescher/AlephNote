@@ -28,12 +28,14 @@ namespace AlephNote.WPF.Converter
 			if (provider == null) return DependencyProperty.UnsetValue;
 
 			var cfg = provider.Config;
+			var plugin = provider.Plugin;
 
 			var grid = new Grid();
 
-			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto)   });
-			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star)   });
-			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(35, GridUnitType.Pixel) });
+			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto)   }); // label
+			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star)   }); // component
+			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(35, GridUnitType.Pixel) }); // additionalComponent
+			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto)   }); // Help
 
 			int row = 0;
 			foreach (var prop in cfg.ListProperties())
@@ -45,20 +47,20 @@ namespace AlephNote.WPF.Converter
 					case DynamicSettingValue.SettingType.Text:
 						var tb = new TextBox {Text = prop.CurrentValue};
 						tb.TextChanged += (s, a) => { cfg.SetProperty(xprop.ID, tb.Text); listener?.OnChanged("pluginconfig", xprop.ID, tb.Text); };
-						AddComponent(prop, ref row, grid, tb);
+						AddComponent(prop, plugin, ref row, grid, tb);
 						break;
 
 					case DynamicSettingValue.SettingType.Password:
 						var pb = new BindablePasswordBox {Password = prop.CurrentValue};
 						pb.PasswordChanged += (s, a) => { cfg.SetProperty(xprop.ID, pb.Password); listener?.OnChanged("pluginconfig", xprop.ID, pb.Password); };
-						AddComponent(prop, ref row, grid, pb);
+						AddComponent(prop, plugin, ref row, grid, pb);
 						break;
 
 					case DynamicSettingValue.SettingType.Checkbox:
 						var cb = new CheckBox { IsChecked = (bool)prop.Arguments[0] };
 						cb.Checked += (s, a) => { cfg.SetProperty(xprop.ID, cb.IsChecked ?? false); };
 						cb.Unchecked += (s, a) => { cfg.SetProperty(xprop.ID, cb.IsChecked ?? false); };
-						AddComponent(prop, ref row, grid, cb);
+						AddComponent(prop, plugin, ref row, grid, cb);
 						break;
 
 					case DynamicSettingValue.SettingType.ComboBox:
@@ -66,7 +68,7 @@ namespace AlephNote.WPF.Converter
 						foreach (var arg in xprop.Arguments.Cast<string>()) ob.Items.Add(arg);
 						ob.SelectedItem = xprop.CurrentValue;
 						ob.SelectionChanged += (s, a) => { cfg.SetProperty(xprop.ID, (string)ob.SelectedValue); listener?.OnChanged("pluginconfig", xprop.ID, ob.SelectedValue); };
-						AddComponent(prop, ref row, grid, ob);
+						AddComponent(prop, plugin, ref row, grid, ob);
 						break;
 
 					case DynamicSettingValue.SettingType.Folder:
@@ -82,7 +84,7 @@ namespace AlephNote.WPF.Converter
 							if (Directory.Exists(fb.Text)) dialog.SelectedPath = fb.Text;
 							if (dialog.ShowDialog() ?? false) fb.Text = dialog.SelectedPath;
 						};
-						AddComponent(prop, ref row, grid, fb, true, btn);
+						AddComponent(prop, plugin, ref row, grid, fb, true, btn);
 						break;
 
 					case DynamicSettingValue.SettingType.Hyperlink:
@@ -95,7 +97,7 @@ namespace AlephNote.WPF.Converter
 							ToolTip = prop.Arguments[0],
 						};
 						hl.MouseDown += (o, e) => Process.Start((string)xprop.Arguments[0]);
-						AddComponent(prop, ref row, grid, hl, false);
+						AddComponent(prop, plugin, ref row, grid, hl, false);
 						break;
 
 					default:
@@ -106,7 +108,7 @@ namespace AlephNote.WPF.Converter
 			return grid;
 		}
 
-		private void AddComponent(DynamicSettingValue prop, ref int row, Grid grid, FrameworkElement comp, bool addLabel = true, FrameworkElement leftElem = null)
+		private void AddComponent(DynamicSettingValue prop, IRemotePlugin plug, ref int row, Grid grid, FrameworkElement comp, bool addLabel = true, FrameworkElement secondElem = null)
 		{
 			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
 
@@ -126,19 +128,29 @@ namespace AlephNote.WPF.Converter
 			Grid.SetRow(comp, row);
 			Grid.SetColumn(comp, 1);
 
-			if (leftElem == null)
+			if (secondElem == null)
 			{
 				Grid.SetColumnSpan(comp, 2);
 			}
 			else
 			{
-				leftElem.Margin = new Thickness(2);
-				Grid.SetRow(leftElem, row);
-				Grid.SetColumn(leftElem, 2);
-				grid.Children.Add(leftElem);
+				secondElem.Margin = new Thickness(2);
+				Grid.SetRow(secondElem, row);
+				Grid.SetColumn(secondElem, 2);
+				grid.Children.Add(secondElem);
 			}
-			
 			grid.Children.Add(comp);
+
+			if (prop.HelpID != null)
+			{
+				var hlp = new PHelpBtn();
+				hlp.Margin = new Thickness(2, 0, 2, 0);
+				hlp.VerticalAlignment = VerticalAlignment.Center;
+				hlp.HelpProperty = plug.GetUniqueID().ToString("B") + "::" + prop.HelpID;
+				Grid.SetRow(hlp, row);
+				Grid.SetColumn(hlp, 3);
+				grid.Children.Add(hlp);
+			}
 
 			row++;
 		}
