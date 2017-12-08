@@ -17,13 +17,13 @@
 		</Grid.RowDefinitions>
 
 		<StackPanel Grid.Row="0" Orientation="Vertical">
-			<TextBlock Text="Neue Version gefunden" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="10" />
+			<TextBlock Text="New Version found" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="10" />
 			<TextBlock HorizontalAlignment="Center" FontSize="16" Margin="10" >
-				<Run Text="Lokale Version: " />
+				<Run Text="Local version: " />
 				<Run Text="{Binding VersionLocal}" />
 			</TextBlock>
 			<TextBlock HorizontalAlignment="Center" FontSize="16" Margin="10" >
-				<Run Text="Online Version: " />
+				<Run Text="Online version: " />
 				<Run Text="{Binding VersionOnline}" />
 				<Run Text="(" />
 				<Run Text="{Binding DateOnline, Converter={converter:DateTimeToDisplay}}" />
