@@ -67,7 +67,7 @@ namespace AlephNote.Plugins.Filesystem
 			var other = iother as FilesystemConfig;
 			if (other == null) return false;
 
-			if (this.Folder != other.Folder) return false;
+			if (this.Folder    != other.Folder)    return false;
 			if (this.Extension != other.Extension) return false;
 
 			return true;

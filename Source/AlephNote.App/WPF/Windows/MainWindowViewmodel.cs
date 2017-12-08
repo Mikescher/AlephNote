@@ -2,9 +2,6 @@
 using AlephNote.Common.Settings.Types;
 using AlephNote.Common.SPSParser;
 using AlephNote.PluginInterface;
-using AlephNote.Plugins;
-using AlephNote.Repository;
-using AlephNote.Settings;
 using AlephNote.WPF.MVVM;
 using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.Util;
@@ -19,9 +16,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
-using ScintillaNET;
+using AlephNote.Common.Extensions;
+using AlephNote.Common.MVVM;
+using AlephNote.Common.Operations;
+using AlephNote.Common.Settings;
+using AlephNote.Common.Threading;
+using AlephNote.Impl;
+using AlephNote.WPF.Extensions;
 
 namespace AlephNote.WPF.Windows
 {
@@ -108,7 +110,7 @@ namespace AlephNote.WPF.Windows
 			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
 			
 			if (_settings.LastSelectedNote != null) SelectedNote = Repository.Notes.FirstOrDefault(n => n.GetUniqueName() == _settings.LastSelectedNote);
-			if (SelectedNote == null ) SelectedNote = Repository.Notes.FirstOrDefault<INote>();
+			if (SelectedNote == null ) SelectedNote = Repository.Notes.FirstOrDefault();
 
 			OverviewListWidth = new GridLength(settings.OverviewListWidth);
 
@@ -118,11 +120,13 @@ namespace AlephNote.WPF.Windows
 				t.Start();
 			}
 
+#if !DEBUG
 			if (settings.SendAnonStatistics)
 			{
 				var t = new Thread(UploadUsageStatsAsync) { Name = "STATISTICS_UPLOAD" };
 				t.Start();
 			}
+#endif
 
 			SettingsChanged();
 		}
@@ -179,7 +183,7 @@ namespace AlephNote.WPF.Windows
 
 					OnExplicitPropertyChanged("Repository");
 
-					SelectedNote = Repository.Notes.FirstOrDefault<INote>();
+					SelectedNote = Repository.Notes.FirstOrDefault();
 					OnExplicitPropertyChanged("NotesView");
 				}
 				else
@@ -192,12 +196,12 @@ namespace AlephNote.WPF.Windows
 				if (Settings.LaunchOnBoot)
 				{
 					var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-					if (registryKey != null) registryKey.SetValue(App.APPNAME_REG, App.PATH_EXECUTABLE);
+					registryKey?.SetValue(App.APPNAME_REG, App.PATH_EXECUTABLE);
 				}
 				else
 				{
 					var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-					if (registryKey != null && registryKey.GetValue(App.APPNAME_REG) != null) registryKey.DeleteValue(App.APPNAME_REG);
+					if (registryKey?.GetValue(App.APPNAME_REG) != null) registryKey.DeleteValue(App.APPNAME_REG);
 				}
 
 				Owner.SetupScintilla(Settings);
@@ -220,14 +224,14 @@ namespace AlephNote.WPF.Windows
 			}
 
 			Owner.ResetScintillaScrollAndUndo();
-			Owner.UpdateMargins(Settings);
+			if (Settings != null) Owner.UpdateMargins(Settings);
 			if (!_preventScintillaFocus) Owner.FocusScintillaDelayed();
 
 			if (SelectedNote != null) ScintillaSearcher.Highlight(Owner.NoteEdit, SelectedNote, SearchText);
 
-			if (Settings.RememberScroll) Owner.ScrollScintilla(_scrollCache.Get(SelectedNote));
+			if (Settings != null && Settings.RememberScroll) Owner.ScrollScintilla(_scrollCache.Get(SelectedNote));
 
-			Settings.LastSelectedNote = SelectedNote?.GetUniqueName();
+			if (Settings != null) Settings.LastSelectedNote = SelectedNote?.GetUniqueName();
 			RequestSettingsSave();
 		}
 
@@ -494,7 +498,7 @@ namespace AlephNote.WPF.Windows
 
 		private void SaveSettings()
 		{
-			Settings.Save();
+			Settings?.Save();
 		}
 
 		public void RequestSettingsSave()

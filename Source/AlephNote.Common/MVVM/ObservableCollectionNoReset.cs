@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
-namespace AlephNote
+namespace AlephNote.Common.MVVM
 {
 	public class ObservableCollectionNoReset<T> : ObservableCollection<T>
 	{
@@ -20,8 +20,7 @@ namespace AlephNote
 			}
 			else
 			{
-				while (Count > 0)
-					base.RemoveAt(Count - 1);
+				while (Count > 0) RemoveAt(Count - 1);
 			}
 		}
 
@@ -35,7 +34,5 @@ namespace AlephNote
 		{
 			RangeActionsSupported = rangeActionsSupported;
 		}
-
-		// Additional constructors omitted.
 	}
 }

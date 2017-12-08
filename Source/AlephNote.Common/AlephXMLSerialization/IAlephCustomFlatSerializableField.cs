@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace AlephNote.Common.AlephXMLSerialization
+﻿namespace AlephNote.Common.AlephXMLSerialization
 {
 	public interface IAlephCustomFlatSerializableField
 	{

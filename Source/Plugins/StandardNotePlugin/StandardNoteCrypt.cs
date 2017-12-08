@@ -10,7 +10,9 @@ namespace AlephNote.Plugins.StandardNote
 	{
 		private static readonly RandomNumberGenerator RNG = RandomNumberGenerator.Create();
 
+		// ReSharper disable InconsistentNaming
 		public class EncryptResult { public string item_key, enc_item_key, auth_hash, enc_content; }
+		// ReSharper restore InconsistentNaming
 
 		public static string DecryptContent(string encContent, string encItemKey, string authHash, byte[] masterkey)
 		{

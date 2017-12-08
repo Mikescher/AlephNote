@@ -20,11 +20,13 @@ namespace AlephNote.WPF.Windows
 
 		public static void Show(Window owner, string title, Exception e)
 		{
-			var dlg = new ExceptionDialog();
+			var dlg = new ExceptionDialog
+			{
+				ErrorMessage = { Text = e.Message },
+				ErrorTrace   = { Text = FormatExecption(e) },
+				Title        = title,
+			};
 
-			dlg.ErrorMessage.Text = e.Message;
-			dlg.ErrorTrace.Text = FormatExecption(e);
-			dlg.Title = title;
 
 			if (owner != null && owner.IsLoaded)
 				dlg.Owner = owner;
@@ -36,14 +38,15 @@ namespace AlephNote.WPF.Windows
 
 		public static void Show(Window owner, string title, string message, Exception e, params Exception[] additionalExceptions)
 		{
-			string SPLIT = Environment.NewLine + "--------------------" + Environment.NewLine;
+			string split = Environment.NewLine + "--------------------" + Environment.NewLine;
 
-			var dlg = new ExceptionDialog();
-
-			dlg.ErrorMessage.Text = message;
-			dlg.ErrorTrace.Text = string.Join(SPLIT, new List<Exception> {e}.Concat(additionalExceptions).Select(FormatExecption));
-			dlg.Title = title;
-
+			var dlg = new ExceptionDialog
+			{
+				ErrorMessage = { Text = message },
+				ErrorTrace   = { Text = string.Join(split, new List<Exception> {e}.Concat(additionalExceptions).Select(FormatExecption)) },
+				Title        = title,
+			};
+			
 			if (owner != null && owner.IsLoaded)
 				dlg.Owner = owner;
 			else

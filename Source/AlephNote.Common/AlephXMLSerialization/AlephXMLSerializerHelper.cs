@@ -1,6 +1,7 @@
-﻿using AlephNote.Settings;
-using System;
+﻿using System;
 using System.Text;
+using AlephNote.Common.Encryption;
+using AlephNote.Common.Settings;
 
 namespace AlephNote.Common.AlephXMLSerialization
 {

@@ -1,11 +1,10 @@
-﻿using AlephNote.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using AlephNote.Common.Network;
+using AlephNote.Common.Repository;
+using AlephNote.Common.Settings;
 using AlephNote.PluginInterface;
-using AlephNote.Settings;
 
-namespace AlephNote.Plugins
+namespace AlephNote.Common.Operations
 {
 	public class StatsConnection
 	{

@@ -1,10 +1,10 @@
-﻿using AlephNote.Repository;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AlephNote.Common.Network;
 using AlephNote.PluginInterface;
 
-namespace AlephNote.Plugins
+namespace AlephNote.Common.Operations
 {
 	public class GithubConnection
 	{

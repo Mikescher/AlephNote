@@ -7,7 +7,7 @@ namespace AlephNote.WPF.Controls
 	/// <summary>
 	/// @original: https://gist.github.com/taylorleese/468331
 	/// </summary>
-	public class BindablePasswordBox : Decorator
+	public sealed class BindablePasswordBox : Decorator
 	{
 		/// <summary>
 		/// The password dependency property.
@@ -77,7 +77,7 @@ namespace AlephNote.WPF.Controls
 			Password = passwordBox.Password;
 			isPreventCallback = false;
 
-			if (PasswordChanged != null) PasswordChanged(passwordBox, new EventArgs());
+			PasswordChanged?.Invoke(passwordBox, new EventArgs());
 		}
 	}
 }

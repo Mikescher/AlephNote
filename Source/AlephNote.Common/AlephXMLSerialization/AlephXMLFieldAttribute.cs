@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AlephNote.Settings
+namespace AlephNote.Common.AlephXMLSerialization
 {
 	class AlephXMLFieldAttribute : Attribute
 	{

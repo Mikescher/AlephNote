@@ -5,8 +5,6 @@ namespace AlephNote.WPF.Converter
 {
 	class SmartDateTimeToDisplay : OneWayConverter<DateTimeOffset, string>
 	{
-		public SmartDateTimeToDisplay() { }
-
 		protected override string Convert(DateTimeOffset value, object parameter)
 		{
 			var local = value.ToLocalTime();

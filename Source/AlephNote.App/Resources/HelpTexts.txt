@@ -7,11 +7,11 @@ Then enter your remote-specific configurations.
 
 The following remotes are provided by default:
 
- - SimpleNote: Synchronization with the SimpleNote server
+ - SimpleNote:   Synchronization with the SimpleNote server
  - StandardNote: Synchronization with a StandardFile server
- - Nextcloud: Synchronization with a Nextcloud server that has the Notes plugin.
- - Filesystem: Synchronization with raw text files anywhere on your local file system
- - Headless: No synchronization, all notes exist only in your local repository
+ - Nextcloud:    Synchronization with a Nextcloud server that has the Notes plugin.
+ - Filesystem:   Synchronization with raw text files anywhere on your local file system
+ - Headless:     No synchronization, all notes exist only in your local repository
 
 You can have multiple configurations saved, but only one is ever active.
 

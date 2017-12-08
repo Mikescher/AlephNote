@@ -8,8 +8,6 @@ namespace AlephNote.WPF.Converter
 {
 	class StateToAppIcon : OneWayConverter<SynchronizationState, ImageSource>
 	{
-		public StateToAppIcon() { }
-
 		protected override ImageSource Convert(SynchronizationState value, object parameter)
 		{
 			switch (value)
@@ -23,7 +21,7 @@ namespace AlephNote.WPF.Converter
 				case SynchronizationState.Error:
 					return new BitmapImage(new Uri("pack://application:,,,/AlephNote;component/Resources/IconRed.ico"));
 				default:
-					throw new ArgumentOutOfRangeException("value", value, null);
+					throw new ArgumentOutOfRangeException(nameof(value), value, null);
 			}
 		}
 	}

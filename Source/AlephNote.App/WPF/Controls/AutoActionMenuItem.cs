@@ -1,14 +1,9 @@
-﻿using AlephNote.Settings;
-using AlephNote.WPF.Shortcuts;
+﻿using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.Windows;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
+using AlephNote.Common.Settings;
 
 namespace AlephNote.WPF.Controls
 {
@@ -19,7 +14,7 @@ namespace AlephNote.WPF.Controls
 			"AlephAction",
 			typeof(string),
 			typeof(AutoActionMenuItem),
-			new FrameworkPropertyMetadata(string.Empty, (o,a) => ((AutoActionMenuItem)o).OnActionChanged(a) ));
+			new FrameworkPropertyMetadata(string.Empty, (o,a) => ((AutoActionMenuItem)o).OnActionChanged()));
 
 		public string AlephAction
 		{
@@ -32,7 +27,7 @@ namespace AlephNote.WPF.Controls
 			"Settings",
 			typeof(AppSettings),
 			typeof(AutoActionMenuItem),
-			new FrameworkPropertyMetadata(null, (o, a) => ((AutoActionMenuItem)o).OnSettingsChanged(a)));
+			new FrameworkPropertyMetadata(null, (o, a) => ((AutoActionMenuItem)o).OnSettingsChanged()));
 
 		public AppSettings Settings
 		{
@@ -45,7 +40,7 @@ namespace AlephNote.WPF.Controls
 			"ParentAnchor",
 			typeof(FrameworkElement),
 			typeof(AutoActionMenuItem),
-			new FrameworkPropertyMetadata(null, (o, a) => ((AutoActionMenuItem)o).OnAnchorChanged(a)));
+			new FrameworkPropertyMetadata(null, (o, a) => ((AutoActionMenuItem)o).OnAnchorChanged()));
 
 		public FrameworkElement ParentAnchor
 		{
@@ -62,13 +57,11 @@ namespace AlephNote.WPF.Controls
 		{
 			if (o == null) return null;
 
-			var mw = o as MainWindow;
-			if (mw != null) return mw;
+			if (o is MainWindow mw) return mw;
 
-			var fe = o.Parent as FrameworkElement;
-			if (fe == null) return null;
+			if (o.Parent is FrameworkElement fe) return GetParent(fe);
 
-			return GetParent(fe);
+			return null;
 		}
 
 		private void Refresh()
@@ -81,17 +74,17 @@ namespace AlephNote.WPF.Controls
 				InputGestureText = "?";
 		}
 
-		private void OnActionChanged(object a)
+		private void OnActionChanged()
 		{
 			Refresh();
 		}
 
-		private void OnSettingsChanged(object a)
+		private void OnSettingsChanged()
 		{
 			Refresh();
 		}
 
-		private void OnAnchorChanged(object a)
+		private void OnAnchorChanged()
 		{
 			Refresh();
 		}

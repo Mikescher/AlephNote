@@ -73,10 +73,10 @@ namespace AlephNote.Plugins.SimpleNote
 			var other = iother as SimpleNoteConfig;
 			if (other == null) return false;
 
-			if (this.Username != other.Username) return false;
-			if (this.Password != other.Password) return false;
+			if (this.Username               != other.Username)               return false;
+			if (this.Password               != other.Password)               return false;
 			if (this.PermanentlyDeleteNotes != other.PermanentlyDeleteNotes) return false;
-			if (this.BlankLineBelowTitle != other.BlankLineBelowTitle) return false;
+			if (this.BlankLineBelowTitle    != other.BlankLineBelowTitle)    return false;
 
 			return true;
 		}
@@ -85,10 +85,10 @@ namespace AlephNote.Plugins.SimpleNote
 		{
 			return new SimpleNoteConfig
 			{
-				Username = this.Username,
-				Password = this.Password,
+				Username               = this.Username,
+				Password               = this.Password,
 				PermanentlyDeleteNotes = this.PermanentlyDeleteNotes,
-				BlankLineBelowTitle = this.BlankLineBelowTitle,
+				BlankLineBelowTitle    = this.BlankLineBelowTitle,
 			};
 		}
 

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace AlephNote.PluginInterface
+﻿namespace AlephNote.PluginInterface
 {
 	public enum ConflictResolutionStrategy
 	{

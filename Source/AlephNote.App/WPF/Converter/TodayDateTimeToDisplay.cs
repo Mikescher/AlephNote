@@ -5,8 +5,6 @@ namespace AlephNote.WPF.Converter
 {
 	class TodayDateTimeToDisplay : OneWayConverter<DateTime, string>
 	{
-		public TodayDateTimeToDisplay() { }
-
 		protected override string Convert(DateTime value, object parameter)
 		{
 			var local = value.ToLocalTime();

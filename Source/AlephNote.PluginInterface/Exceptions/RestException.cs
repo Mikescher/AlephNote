@@ -1,7 +1,6 @@
-﻿using AlephNote.PluginInterface;
-using System;
+﻿using System;
 
-namespace AlephNote.PluginInterface
+namespace AlephNote.PluginInterface.Exceptions
 {
 	public class RestException : RemoteException
 	{

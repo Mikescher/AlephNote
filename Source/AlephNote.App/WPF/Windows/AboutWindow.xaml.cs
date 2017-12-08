@@ -13,7 +13,7 @@ namespace AlephNote.WPF.Windows
 		{
 			InitializeComponent();
 
-			this.DataContext = new AboutWindowViewmodel();
+			DataContext = new AboutWindowViewmodel();
 		}
 
 		private void Hyperlink_Clicked(object sender, MouseButtonEventArgs e)

@@ -1,14 +1,13 @@
-﻿using AlephNote.Common.AlephXMLSerialization;
-using AlephNote.Common.Plugins;
-using AlephNote.PluginInterface;
-using AlephNote.PluginInterface.Util;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using AlephNote.Common.Plugins;
+using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.Util;
 
-namespace AlephNote.Settings
+namespace AlephNote.Common.AlephXMLSerialization
 {
 	public class AXMLFieldInfo
 	{
@@ -25,17 +24,17 @@ namespace AlephNote.Settings
 			Enum,
 
 			RemoteStorageAccount,
-			List_RemoteStorageAccount,
+			ListRemoteStorageAccount,
 
 			CustomSerializable,
 		}
 
-		public readonly SettingObjectTypeEnum ObjectType;
+		private readonly SettingObjectTypeEnum _objectType;
 		public readonly PropertyInfo PropInfo;
 		
 		public AXMLFieldInfo(SettingObjectTypeEnum t, PropertyInfo i)
 		{
-			ObjectType = t;
+			_objectType = t;
 			PropInfo = i;
 		}
 
@@ -43,7 +42,7 @@ namespace AlephNote.Settings
 		{
 			string resultdata;
 
-			switch (ObjectType)
+			switch (_objectType)
 			{
 				case SettingObjectTypeEnum.Integer:
 					resultdata = Convert.ToString((int)objdata);
@@ -86,9 +85,9 @@ namespace AlephNote.Settings
 					resultdata = ((RemoteStorageAccount)objdata).ID.ToString("B");
 					break;
 
-				case SettingObjectTypeEnum.List_RemoteStorageAccount:
+				case SettingObjectTypeEnum.ListRemoteStorageAccount:
 					var x1 = new XElement(PropInfo.Name);
-					x1.Add(new XAttribute("type", SettingObjectTypeEnum.List_RemoteStorageAccount));
+					x1.Add(new XAttribute("type", SettingObjectTypeEnum.ListRemoteStorageAccount));
 					x1.Add(((IList<RemoteStorageAccount>)objdata).Select(SerializeRemoteStorageAccount));
 					return x1;
 
@@ -100,17 +99,17 @@ namespace AlephNote.Settings
 					return x2;
 
 				default:
-					throw new ArgumentOutOfRangeException("ObjectType", ObjectType, null);
+					throw new ArgumentOutOfRangeException(nameof(objdata), _objectType, null);
 			}
 
-			return new XElement(PropInfo.Name, resultdata, new XAttribute("type", ObjectType));
+			return new XElement(PropInfo.Name, resultdata, new XAttribute("type", _objectType));
 		}
 
 		public void Deserialize(object obj, XElement root)
 		{
 			var current = PropInfo.GetValue(obj);
 
-			switch (ObjectType)
+			switch (_objectType)
 			{
 				case SettingObjectTypeEnum.Integer:
 					PropInfo.SetValue(obj, XHelper.GetChildValue(root, PropInfo.Name, (int)current));
@@ -153,7 +152,7 @@ namespace AlephNote.Settings
 					PropInfo.SetValue(obj, new RemoteStorageAccount(XHelper.GetChildValue(root, PropInfo.Name, currUUID), null, null));
 					break;
 
-				case SettingObjectTypeEnum.List_RemoteStorageAccount:
+				case SettingObjectTypeEnum.ListRemoteStorageAccount:
 					var list = (IList<RemoteStorageAccount>)current;
 					var child = XHelper.GetChildOrNull(root, PropInfo.Name);
 					if (child != null)
@@ -173,7 +172,7 @@ namespace AlephNote.Settings
 					break;
 
 				default:
-					throw new ArgumentOutOfRangeException("ObjectType", ObjectType, null);
+					throw new ArgumentOutOfRangeException(nameof(obj), _objectType, null);
 			}
 		}
 

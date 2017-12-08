@@ -42,9 +42,7 @@ namespace AlephNote.PluginInterface.Impl
 		{
 			try
 			{
-				var loc = assembly.Location;
-				if (loc == null) return new Version(0, 0, 0, 0);
-				var vi = FileVersionInfo.GetVersionInfo(loc);
+				var vi = FileVersionInfo.GetVersionInfo(assembly.Location);
 				return new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
 			}
 			catch (Exception)

@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace AlephNote
+namespace AlephNote.Common.Encryption
 {
 	/// <summary>
 	/// http://stackoverflow.com/a/10366194/1761622
@@ -51,7 +51,7 @@ namespace AlephNote
 										   byte[] nonSecretPayload = null)
 		{
 			if (string.IsNullOrEmpty(secretMessage))
-				throw new ArgumentException("Secret Message Required!", "secretMessage");
+				throw new ArgumentException("Secret Message Required!", nameof(secretMessage));
 
 			var plainText = Encoding.UTF8.GetBytes(secretMessage);
 			var cipherText = SimpleEncrypt(plainText, cryptKey, authKey, nonSecretPayload);
@@ -73,7 +73,7 @@ namespace AlephNote
 										   int nonSecretPayloadLength = 0)
 		{
 			if (string.IsNullOrWhiteSpace(encryptedMessage))
-				throw new ArgumentException("Encrypted Message Required!", "encryptedMessage");
+				throw new ArgumentException("Encrypted Message Required!", nameof(encryptedMessage));
 
 			var cipherText = Convert.FromBase64String(encryptedMessage);
 			var plainText = SimpleDecrypt(cipherText, cryptKey, authKey, nonSecretPayloadLength);
@@ -99,7 +99,7 @@ namespace AlephNote
 													   byte[] nonSecretPayload = null)
 		{
 			if (string.IsNullOrEmpty(secretMessage))
-				throw new ArgumentException("Secret Message Required!", "secretMessage");
+				throw new ArgumentException("Secret Message Required!", nameof(secretMessage));
 
 			var plainText = Encoding.UTF8.GetBytes(secretMessage);
 			var cipherText = SimpleEncryptWithPassword(plainText, password, nonSecretPayload);
@@ -124,7 +124,7 @@ namespace AlephNote
 													   int nonSecretPayloadLength = 0)
 		{
 			if (string.IsNullOrWhiteSpace(encryptedMessage))
-				throw new ArgumentException("Encrypted Message Required!", "encryptedMessage");
+				throw new ArgumentException("Encrypted Message Required!", nameof(encryptedMessage));
 
 			var cipherText = Convert.FromBase64String(encryptedMessage);
 			var plainText = SimpleDecryptWithPassword(cipherText, password, nonSecretPayloadLength);
@@ -148,13 +148,13 @@ namespace AlephNote
 		{
 			//User Error Checks
 			if (cryptKey == null || cryptKey.Length != KeyBitSize / 8)
-				throw new ArgumentException(String.Format("Key needs to be {0} bit!", KeyBitSize), "cryptKey");
+				throw new ArgumentException(String.Format("Key needs to be {0} bit!", KeyBitSize), nameof(cryptKey));
 
 			if (authKey == null || authKey.Length != KeyBitSize / 8)
-				throw new ArgumentException(String.Format("Key needs to be {0} bit!", KeyBitSize), "authKey");
+				throw new ArgumentException(String.Format("Key needs to be {0} bit!", KeyBitSize), nameof(authKey));
 
 			if (secretMessage == null || secretMessage.Length < 1)
-				throw new ArgumentException("Secret Message Required!", "secretMessage");
+				throw new ArgumentException("Secret Message Required!", nameof(secretMessage));
 
 			//non-secret payload optional
 			nonSecretPayload = nonSecretPayload ?? new byte[] { };
@@ -164,6 +164,7 @@ namespace AlephNote
 
 			using (var aes = Aes.Create())
 			{
+				if (aes == null) throw new Exception("AES instantiation failed");
 				aes.KeySize = KeyBitSize;
 				aes.BlockSize = BlockBitSize;
 				aes.Mode = CipherMode.CBC;
@@ -225,13 +226,13 @@ namespace AlephNote
 
 			//Basic Usage Error Checks
 			if (cryptKey == null || cryptKey.Length != KeyBitSize / 8)
-				throw new ArgumentException(String.Format("CryptKey needs to be {0} bit!", KeyBitSize), "cryptKey");
+				throw new ArgumentException(String.Format("CryptKey needs to be {0} bit!", KeyBitSize), nameof(cryptKey));
 
 			if (authKey == null || authKey.Length != KeyBitSize / 8)
-				throw new ArgumentException(String.Format("AuthKey needs to be {0} bit!", KeyBitSize), "authKey");
+				throw new ArgumentException(String.Format("AuthKey needs to be {0} bit!", KeyBitSize), nameof(authKey));
 
 			if (encryptedMessage == null || encryptedMessage.Length == 0)
-				throw new ArgumentException("Encrypted Message Required!", "encryptedMessage");
+				throw new ArgumentException("Encrypted Message Required!", nameof(encryptedMessage));
 
 			using (var hmac = new HMACSHA256(authKey))
 			{
@@ -258,6 +259,8 @@ namespace AlephNote
 
 				using (var aes = Aes.Create())
 				{
+					if (aes == null) throw new Exception("AES instantiation failed");
+
 					aes.KeySize = KeyBitSize;
 					aes.BlockSize = BlockBitSize;
 					aes.Mode = CipherMode.CBC;
@@ -308,10 +311,10 @@ namespace AlephNote
 
 			//User Error Checks
 			if (string.IsNullOrWhiteSpace(password) || password.Length < MinPasswordLength)
-				throw new ArgumentException(String.Format("Must have a password of at least {0} characters!", MinPasswordLength), "password");
+				throw new ArgumentException(String.Format("Must have a password of at least {0} characters!", MinPasswordLength), nameof(password));
 
 			if (secretMessage == null || secretMessage.Length == 0)
-				throw new ArgumentException("Secret Message Required!", "secretMessage");
+				throw new ArgumentException("Secret Message Required!", nameof(secretMessage));
 
 			var payload = new byte[((SaltBitSize / 8) * 2) + nonSecretPayload.Length];
 
@@ -367,10 +370,10 @@ namespace AlephNote
 		{
 			//User Error Checks
 			if (string.IsNullOrWhiteSpace(password) || password.Length < MinPasswordLength)
-				throw new ArgumentException(String.Format("Must have a password of at least {0} characters!", MinPasswordLength), "password");
+				throw new ArgumentException(String.Format("Must have a password of at least {0} characters!", MinPasswordLength), nameof(password));
 
 			if (encryptedMessage == null || encryptedMessage.Length == 0)
-				throw new ArgumentException("Encrypted Message Required!", "encryptedMessage");
+				throw new ArgumentException("Encrypted Message Required!", nameof(encryptedMessage));
 
 			var cryptSalt = new byte[SaltBitSize / 8];
 			var authSalt = new byte[SaltBitSize / 8];

@@ -5,7 +5,7 @@ namespace AlephNote.WPF.Windows
 	/// <summary>
 	/// Interaction logic for LogWindow.xaml
 	/// </summary>
-	public partial class LogWindow : Window
+	public partial class LogWindow
 	{
 		public LogWindow()
 		{
@@ -13,7 +13,7 @@ namespace AlephNote.WPF.Windows
 
 			CheckBoxDebug.IsChecked = App.Logger.DebugEnabled;
 
-			this.DataContext = new LogWindowViewmodel();
+			DataContext = new LogWindowViewmodel();
 		}
 
 		private void OnChangedDebugLog(object sender, RoutedEventArgs e)

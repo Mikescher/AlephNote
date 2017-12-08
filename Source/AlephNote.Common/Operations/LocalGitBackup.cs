@@ -1,12 +1,12 @@
 ﻿using AlephNote.Common.Extensions;
 using AlephNote.PluginInterface;
-using AlephNote.Repository;
-using AlephNote.Settings;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using AlephNote.Common.Repository;
+using AlephNote.Common.Settings;
 
 namespace AlephNote.Common.Operations
 {

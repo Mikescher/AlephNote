@@ -1,12 +1,12 @@
 ﻿using AlephNote.Common.Plugins;
 using AlephNote.PluginInterface;
-using AlephNote.Plugins;
-using AlephNote.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using AlephNote.Common.MVVM;
+using AlephNote.Impl;
 
 namespace AlephNote.WPF.Windows
 {
@@ -69,11 +69,11 @@ namespace AlephNote.WPF.Windows
 
 		public FirstStartupViewmodel(FirstStartupWindow o)
 		{
-			var guid_Local      = Guid.Parse("37de6de1-26b0-41f5-b252-5e625d9ecfa3");
-			var guid_SimpleNote = Guid.Parse("4c73e687-3803-4078-9bf0-554aaafc0873");
+			var guidLocal      = Guid.Parse("37de6de1-26b0-41f5-b252-5e625d9ecfa3");
+			var guidSimpleNote = Guid.Parse("4c73e687-3803-4078-9bf0-554aaafc0873");
 
-			SelectedProvider = AvailableProvider.FirstOrDefault(p => p.GetUniqueID() == guid_SimpleNote) ??
-							   AvailableProvider.FirstOrDefault(p => p.GetUniqueID() == guid_Local) ??
+			SelectedProvider = AvailableProvider.FirstOrDefault(p => p.GetUniqueID() == guidSimpleNote) ??
+							   AvailableProvider.FirstOrDefault(p => p.GetUniqueID() == guidLocal) ??
 							   AvailableProvider.FirstOrDefault();
 
 			_owner = o;

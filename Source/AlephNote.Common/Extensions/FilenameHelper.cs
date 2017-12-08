@@ -1,14 +1,14 @@
 ﻿using System.Linq;
 using System.Text;
 
-namespace AlephNote
+namespace AlephNote.Common.Extensions
 {
 	public static class FilenameHelper
 	{
 		private const char CONVERT_ESCAPE_CHARACTER = '%';
 		private const string ALLOWED_CHARACTER = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~#+-_.,;%& {}()=ÄÖÜäöüµ@";
 
-		private static readonly string[] RESERVED_FILENAMES = new[] { "CON", "PRN", "AUX", "CLOCK$", "NUL", "COM0", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT0", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9" };
+		private static readonly string[] RESERVED_FILENAMES = { "CON", "PRN", "AUX", "CLOCK$", "NUL", "COM0", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT0", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9" };
 
 		public static string ConvertStringForFilename(string input)
 		{

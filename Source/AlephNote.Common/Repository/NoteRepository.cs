@@ -1,17 +1,18 @@
-﻿using AlephNote.PluginInterface;
-using AlephNote.Settings;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using AlephNote.Common.Repository;
+using AlephNote.Common.MVVM;
 using AlephNote.Common.Operations;
+using AlephNote.Common.Settings;
+using AlephNote.Common.Threading;
+using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Util;
 
-namespace AlephNote.Repository
+namespace AlephNote.Common.Repository
 {
 	public class NoteRepository : ObservableObject, ISynchronizationFeedback
 	{
@@ -32,7 +33,7 @@ namespace AlephNote.Repository
 		private readonly ObservableCollection<INote> _notes = new ObservableCollectionNoReset<INote>();
 		public ObservableCollection<INote> Notes { get { return _notes; } }
 
-		private object _lockSaveNote = new object();
+		private readonly object _lockSaveNote = new object();
 
 		private readonly DelayedCombiningInvoker invSaveNotesLocal;
 		private readonly DelayedCombiningInvoker invSaveNotesRemote;

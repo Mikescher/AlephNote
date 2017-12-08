@@ -2,6 +2,7 @@
 using AlephNote.WPF.MVVM;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using AlephNote.Common.MVVM;
 
 namespace AlephNote.WPF.Windows
 {

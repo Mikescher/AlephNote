@@ -2,8 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
+using AlephNote.Common.MVVM;
+using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
-using AlephNote.Settings;
 
 namespace AlephNote.WPF.Shortcuts
 {
@@ -59,7 +60,7 @@ namespace AlephNote.WPF.Shortcuts
 
 		public static string GetGestureStr(MainWindow mw, string key)
 		{
-			if (_actions.TryGetValue(key, out var action))
+			if (_actions.ContainsKey(key))
 			{
 				if (mw.Settings != null && mw.Settings.Shortcuts.TryGetValue(key, out var shortcut))
 				{

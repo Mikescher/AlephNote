@@ -26,7 +26,7 @@ namespace AlephNote.WPF.Shortcuts
 		private bool init = false;
 
 		// <modifiers, key, hotkey_id, action_ident>
-		private List<Tuple<uint, uint, int, string>> _hotkeys = new List<Tuple<uint, uint, int, string>>();
+		private readonly List<Tuple<uint, uint, int, string>> _hotkeys = new List<Tuple<uint, uint, int, string>>();
 		private int _nextID = HOTKEY_BASE_ID;
 
 		public GlobalShortcutManager(MainWindow win)
@@ -54,7 +54,7 @@ namespace AlephNote.WPF.Shortcuts
 
 			for (;;)
 			{
-				var old = _hotkeys.FirstOrDefault(hk => hk.Item1 == imod && hk.Item2 == ikey);
+				var old = _hotkeys.FirstOrDefault(hk => hk.Item1 == imod && hk.Item2 == ikey && hk.Item4 == action);
 				if (old == null) return;
 				_hotkeys.Remove(old);
 
@@ -66,7 +66,7 @@ namespace AlephNote.WPF.Shortcuts
 		{
 			_windowHandle = new WindowInteropHelper(_window).Handle;
 			_source = HwndSource.FromHwnd(_windowHandle);
-			_source.AddHook(HwndHook);
+			_source?.AddHook(HwndHook);
 
 			foreach (var hk in _hotkeys)
 			{
@@ -79,19 +79,16 @@ namespace AlephNote.WPF.Shortcuts
 		private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{
 			const int WM_HOTKEY = 0x0312;
-			switch (msg)
+			if (msg == WM_HOTKEY)
 			{
-				case WM_HOTKEY:
+				var hkid = wParam.ToInt32();
 
-					var hkid = wParam.ToInt32();
-
-					var hk = _hotkeys.FirstOrDefault(p => p.Item3 == hkid && p.Item2 == (((int)lParam >> 16) & 0xFFFF));
-					if (hk != null)
-					{
-						ShortcutManager.Execute(_window, hk.Item4);
-						handled = true;
-					}
-					break;
+				var hk = _hotkeys.FirstOrDefault(p => p.Item3 == hkid && p.Item2 == (((int) lParam >> 16) & 0xFFFF));
+				if (hk != null)
+				{
+					ShortcutManager.Execute(_window, hk.Item4);
+					handled = true;
+				}
 			}
 			return IntPtr.Zero;
 		}

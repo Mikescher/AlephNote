@@ -1,20 +1,18 @@
-﻿using AlephNote.Plugins;
-using AlephNote.Settings;
-using AlephNote.WPF.Util;
+﻿using AlephNote.WPF.Util;
 using ScintillaNET;
 using System;
 using System.Linq;
 using System.Drawing;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-using MessageBox = System.Windows.MessageBox;
 using System.Diagnostics;
+using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
+using AlephNote.Impl;
 using AlephNote.WPF.Controls;
 using AlephNote.PluginInterface;
 using AlephNote.WPF.Shortcuts;
@@ -24,7 +22,7 @@ using AlephNote.WPF.Converter;
 
 namespace AlephNote.WPF.Windows
 {
-	public partial class MainWindow : Window
+	public partial class MainWindow
 	{
 		public static MainWindow Instance { get; private set; }
 
@@ -34,7 +32,7 @@ namespace AlephNote.WPF.Windows
 		private readonly ScintillaHighlighter _highlighterMarkdown = new MarkdownHighlighter();
 
 		private readonly GlobalShortcutManager _scManager;
-		private bool _firstLaunch;
+		private readonly bool _firstLaunch;
 
 		public AppSettings Settings => viewmodel?.Settings;
 
@@ -189,7 +187,7 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.EndAtLastLine = !s.SciScrollAfterLastLine;
 
 			var fnt = string.IsNullOrWhiteSpace(s.NoteFontFamily) ? FontNameToFontFamily.StrDefaultValue : s.NoteFontFamily;
-			NoteEdit.Font = new Font(s.NoteFontFamily, (int)s.NoteFontSize);
+			NoteEdit.Font = new Font(fnt, (int)s.NoteFontSize);
 
 			_highlighterDefault.SetUpStyles(NoteEdit, s);
 

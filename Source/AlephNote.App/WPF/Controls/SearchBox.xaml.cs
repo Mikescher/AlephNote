@@ -4,9 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System;
 using System.Threading;
-using System.Drawing;
 using AlephNote.Common.Settings;
-using AlephNote.Settings;
 using AlephNote.Common.Settings.Types;
 using AlephNote.WPF.Util;
 

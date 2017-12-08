@@ -1,5 +1,5 @@
-﻿using AlephNote.PluginInterface;
-using System;
+﻿using System;
+using AlephNote.PluginInterface.Exceptions;
 
 namespace AlephNote.Plugins.SimpleNote
 {

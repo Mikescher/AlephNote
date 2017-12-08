@@ -11,7 +11,7 @@ namespace AlephNote.WPF.BindingProxies
 	{
 		#region Properties
 
-		public static readonly DependencyProperty ElementProperty = DependencyProperty.Register("Element", typeof(object), typeof(AbstractLegacyBinding<TType>), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, (o, a) => ((AbstractLegacyBinding<TType>)o).ElementChanged(a)));
+		public static readonly DependencyProperty ElementProperty = DependencyProperty.Register("Element", typeof(object), typeof(AbstractLegacyBinding<TType>), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, (o, a) => ((AbstractLegacyBinding<TType>)o).ElementChanged()));
 		public object Element
 		{
 			get { return GetValue(ElementProperty); }
@@ -113,10 +113,10 @@ namespace AlephNote.WPF.BindingProxies
 
 		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
-			if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		private void ElementChanged(DependencyPropertyChangedEventArgs args)
+		private void ElementChanged()
 		{
 			Init();
 		}

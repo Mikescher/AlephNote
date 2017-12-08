@@ -1,8 +1,8 @@
-﻿using AlephNote.Plugins;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using AlephNote.Impl;
 
 namespace AlephNote.WPF.Util
 {
@@ -56,6 +56,7 @@ namespace AlephNote.WPF.Util
 		public static string Get(string id)
 		{
 			if (_texts == null) Load();
+			if (_texts == null) return "%ERROR%";
 
 			if (_texts.TryGetValue(id, out var v)) return v.Replace("\r\n", "\n").Replace("\n", Environment.NewLine);
 

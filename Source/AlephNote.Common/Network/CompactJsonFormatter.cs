@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace AlephNote
+namespace AlephNote.Common.Network
 {
 	public static class CompactJsonFormatter
 	{

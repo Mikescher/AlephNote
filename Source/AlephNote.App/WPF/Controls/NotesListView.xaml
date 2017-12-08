@@ -36,7 +36,7 @@
 	</UserControl.Resources>
 	
 	<Grid x:Name="RootGrid" d:DataContext="{d:DesignInstance self:NotesListView}" >
-		<ListView x:Name="NotesList" Grid.Column="0"  Grid.Row="1" Grid.ColumnSpan="2"
+		<ListView x:Name="NotesList"
 					  AllowDrop="True"
 					  Drop="NotesList_Drop"
 					  KeyDown="NotesList_KeyDown"

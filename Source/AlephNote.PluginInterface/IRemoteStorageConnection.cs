@@ -1,7 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Collections.Generic;
 
 namespace AlephNote.PluginInterface
 {

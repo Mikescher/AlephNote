@@ -1,8 +1,8 @@
-﻿using AlephNote.PluginInterface;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using AlephNote.PluginInterface;
 
-namespace AlephNote.Repository
+namespace AlephNote.Common.Repository
 {
 	public interface ISynchronizationFeedback
 	{

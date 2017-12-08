@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using AlephNote.Common.MVVM;
 
 namespace AlephNote.Common.Settings.Types
 {

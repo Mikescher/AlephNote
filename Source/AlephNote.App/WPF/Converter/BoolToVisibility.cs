@@ -6,8 +6,6 @@ namespace AlephNote.WPF.Converter
 {
 	class BoolToVisibility : OneWayConverter<bool, Visibility>
 	{
-		public BoolToVisibility() { }
-
 		protected override Visibility Convert(bool value, object parameter)
 		{
 			if (value)

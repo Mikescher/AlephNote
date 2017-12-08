@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AlephNote
+namespace AlephNote.Common.Extensions
 {
 	public static class CollectionExtension
 	{
@@ -61,7 +61,7 @@ namespace AlephNote
 		/// </summary>
 		public static void SynchronizeCollection<T>(this IList<T> target, IEnumerable<T> esource)
 		{
-			var source = esource.OfType<T>().ToList();
+			var source = esource.ToList();
 
 			for (int i = 0; i < Math.Max(target.Count, source.Count);)
 			{

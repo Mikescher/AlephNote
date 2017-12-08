@@ -1,12 +1,13 @@
-﻿using AlephNote.PluginInterface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using AlephNote.Common.Repository;
+using AlephNote.Common.Extensions;
 using AlephNote.Common.Settings.Types;
+using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.Exceptions;
 
-namespace AlephNote.Repository
+namespace AlephNote.Common.Repository
 {
 	class SynchronizationThread
 	{

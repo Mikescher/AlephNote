@@ -27,7 +27,7 @@ namespace AlephNote.WPF.Controls
 				"ShortcutKey",
 				typeof(AlephKey),
 				typeof(ShortcutBox),
-				new FrameworkPropertyMetadata(AlephKey.None, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (o, a) => ((ShortcutBox)o).OnChanged(a)));
+				new FrameworkPropertyMetadata(AlephKey.None, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (o, a) => ((ShortcutBox)o).OnChanged()));
 
 		public AlephKey ShortcutKey
 		{
@@ -40,7 +40,7 @@ namespace AlephNote.WPF.Controls
 				"ShortcutModifiers",
 				typeof(AlephModifierKeys),
 				typeof(ShortcutBox),
-				new FrameworkPropertyMetadata(AlephModifierKeys.None, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (o, a) => ((ShortcutBox)o).OnChanged(a)));
+				new FrameworkPropertyMetadata(AlephModifierKeys.None, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (o, a) => ((ShortcutBox)o).OnChanged()));
 
 		public AlephModifierKeys ShortcutModifiers
 		{
@@ -81,7 +81,7 @@ namespace AlephNote.WPF.Controls
 			e.Handled = true;
 		}
 
-		private void OnChanged(DependencyPropertyChangedEventArgs args)
+		private void OnChanged()
 		{
 			Text = GetGestureString();
 		}

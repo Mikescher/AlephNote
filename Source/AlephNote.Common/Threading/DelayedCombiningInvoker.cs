@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace AlephNote
+namespace AlephNote.Common.Threading
 {
 	public class DelayedCombiningInvoker
 	{

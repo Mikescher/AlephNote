@@ -70,7 +70,7 @@ namespace AlephNote.WPF.Util
 				int lastIdx = 0;
 				while (lastIdx>=0)
 				{
-					lastIdx = txt.IndexOf(searchText, lastIdx);
+					lastIdx = txt.IndexOf(searchText, lastIdx, StringComparison.Ordinal);
 					if (lastIdx == -1) continue;
 
 					sci.IndicatorFillRange(lastIdx, searchText.Length);

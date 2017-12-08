@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System;
 
-namespace AlephNote
+namespace AlephNote.Common.Network
 {
 	class GenericDTOConverter : DateTimeConverterBase
 	{

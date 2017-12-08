@@ -43,12 +43,12 @@ namespace AlephNote.PluginInterface.Impl
 
 		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
-			if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		private void OnExplicitPropertyChanged(string propertyName)
 		{
-			if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		protected BasicNote()
@@ -69,7 +69,7 @@ namespace AlephNote.PluginInterface.Impl
 
 				if (IsConflictNote) IsConflictNote = false;
 
-				if (OnChanged != null) OnChanged(this, new NoteChangedEventArgs(this, e.PropertyName));
+				OnChanged?.Invoke(this, new NoteChangedEventArgs(this, e.PropertyName));
 			}
 		}
 
@@ -79,7 +79,7 @@ namespace AlephNote.PluginInterface.Impl
 
 			if (IsConflictNote) IsConflictNote = false;
 
-			if (OnChanged != null) OnChanged(this, new NoteChangedEventArgs(this, "Tags"));
+			OnChanged?.Invoke(this, new NoteChangedEventArgs(this, "Tags"));
 		}
 
 		public bool EqualID(INote other)

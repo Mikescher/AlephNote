@@ -40,7 +40,7 @@ namespace AlephNote.WPF.Services
 		/// <returns>The value of the Watermark property</returns>
 		public static object GetWatermark(DependencyObject d)
 		{
-			return (object)d.GetValue(WatermarkProperty);
+			return d.GetValue(WatermarkProperty);
 		}
 
 		/// <summary>
@@ -75,10 +75,8 @@ namespace AlephNote.WPF.Services
 				((TextBox)control).TextChanged += Control_GotKeyboardFocus;
 			}
 
-			if (d is ItemsControl && !(d is ComboBox))
+			if (d is ItemsControl i && !(i is ComboBox))
 			{
-				ItemsControl i = (ItemsControl)d;
-
 				// for Items property  
 				i.ItemContainerGenerator.ItemsChanged += ItemsChanged;
 				itemsControls.Add(i.ItemContainerGenerator, i);
@@ -149,8 +147,7 @@ namespace AlephNote.WPF.Services
 		/// <param name="e">A <see cref="ItemsChangedEventArgs"/> that contains the event data.</param>
 		private static void ItemsChanged(object sender, ItemsChangedEventArgs e)
 		{
-			ItemsControl control;
-			if (itemsControls.TryGetValue(sender, out control))
+			if (itemsControls.TryGetValue(sender, out var control))
 			{
 				if (ShouldShowWatermark(control))
 				{
@@ -217,22 +214,13 @@ namespace AlephNote.WPF.Services
 		/// <returns>true if the watermark should be shown; false otherwise</returns>
 		private static bool ShouldShowWatermark(Control c)
 		{
-			if (c is ComboBox)
-			{
-				return (c as ComboBox).Text == string.Empty;
-			}
-			else if (c is TextBoxBase)
-			{
-				return (c as TextBox).Text == string.Empty;
-			}
-			else if (c is ItemsControl)
-			{
-				return (c as ItemsControl).Items.Count == 0;
-			}
-			else
-			{
-				return false;
-			}
+			if (c is ComboBox cb) return cb.Text == string.Empty;
+
+			if (c is TextBox tb) return tb.Text == string.Empty;
+
+			if (c is ItemsControl ic) return ic.Items.Count == 0;
+
+			return false;
 		}
 
 		#endregion

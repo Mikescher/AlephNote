@@ -1,5 +1,4 @@
-﻿using AlephNote.Settings;
-using ScintillaNET;
+﻿using ScintillaNET;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.Text.RegularExpressions;
 using AlephNote.Common.Settings.Types;
 using System.Text;
 using System.Drawing;
+using AlephNote.Common.Settings;
 
 namespace AlephNote.WPF.Util
 {
@@ -44,7 +44,7 @@ namespace AlephNote.WPF.Util
 			sci.Styles[STYLE_URL].Italic = s.NoteFontModifier == FontModifier.Italic || s.NoteFontModifier == FontModifier.BoldItalic;
 			sci.Styles[STYLE_URL].Size = (int)s.NoteFontSize;
 			sci.Styles[STYLE_URL].Font = s.NoteFontFamily;
-			sci.Styles[STYLE_URL].ForeColor = System.Drawing.Color.Blue;
+			sci.Styles[STYLE_URL].ForeColor = Color.Blue;
 			sci.Styles[STYLE_URL].Hotspot = (s.LinkMode != LinkHighlightMode.OnlyHighlight);
 			sci.Styles[STYLE_URL].Underline = true;
 
@@ -67,28 +67,28 @@ namespace AlephNote.WPF.Util
 
 			sci.Styles[STYLE_MD_HEADER].Bold = false;
 			sci.Styles[STYLE_MD_HEADER].Italic = false;
-			sci.Styles[STYLE_MD_HEADER].ForeColor = System.Drawing.Color.FromArgb(178, 34, 34);
+			sci.Styles[STYLE_MD_HEADER].ForeColor = Color.FromArgb(178, 34, 34);
 			sci.Styles[STYLE_MD_HEADER].Size = (int)s.NoteFontSize;
 			sci.Styles[STYLE_MD_HEADER].Font = s.NoteFontFamily;
 			//sci.Styles[STYLE_MD_HEADER].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
 
 			sci.Styles[STYLE_MD_CODE].Bold = false;
 			sci.Styles[STYLE_MD_CODE].Italic = false;
-			sci.Styles[STYLE_MD_CODE].ForeColor = System.Drawing.Color.FromArgb(0, 128, 0);
+			sci.Styles[STYLE_MD_CODE].ForeColor = Color.FromArgb(0, 128, 0);
 			sci.Styles[STYLE_MD_CODE].Size = (int)s.NoteFontSize;
 			sci.Styles[STYLE_MD_CODE].Font = s.NoteFontFamily;
 			//sci.Styles[STYLE_MD_CODE].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
 
 			sci.Styles[STYLE_MD_URL].Bold = false;
 			sci.Styles[STYLE_MD_URL].Italic = false;
-			sci.Styles[STYLE_MD_URL].ForeColor = System.Drawing.Color.FromArgb(0, 0, 255);
+			sci.Styles[STYLE_MD_URL].ForeColor = Color.FromArgb(0, 0, 255);
 			sci.Styles[STYLE_MD_URL].Size = (int)s.NoteFontSize;
 			sci.Styles[STYLE_MD_URL].Font = s.NoteFontFamily;
 			//sci.Styles[STYLE_MD_URL].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
 
 			sci.Styles[STYLE_MD_LIST].Bold = false;
 			sci.Styles[STYLE_MD_LIST].Italic = false;
-			sci.Styles[STYLE_MD_LIST].ForeColor = System.Drawing.Color.FromArgb(128, 128, 128);
+			sci.Styles[STYLE_MD_LIST].ForeColor = Color.FromArgb(128, 128, 128);
 			sci.Styles[STYLE_MD_LIST].Size = (int)s.NoteFontSize;
 			sci.Styles[STYLE_MD_LIST].Font = s.NoteFontFamily;
 			//sci.Styles[STYLE_MD_LIST].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
@@ -138,7 +138,6 @@ namespace AlephNote.WPF.Util
 			if (relEnd > relPos)
 			{
 				sci.SetStyling(relEnd - relPos, STYLE_DEFAULT);
-				relPos += (relEnd - relPos);
 			}
 		}
 

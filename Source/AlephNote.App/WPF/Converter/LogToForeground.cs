@@ -7,8 +7,6 @@ namespace AlephNote.WPF.Converter
 {
 	class LogToForeground : OneWayConverter<LogEventType, Brush>
 	{
-		public LogToForeground() { }
-
 		protected override Brush Convert(LogEventType value, object parameter)
 		{
 			switch (value)
@@ -19,7 +17,7 @@ namespace AlephNote.WPF.Converter
 				case LogEventType.Error: return Brushes.Black;
 
 				default:
-					throw new ArgumentOutOfRangeException("value");
+					throw new ArgumentOutOfRangeException(nameof(value));
 			}
 		}
 	}

@@ -16,7 +16,7 @@ namespace AlephNote.WPF.Windows
 		private UpdateWindow()
 		{
 			InitializeComponent();
-			this.DataContext = viewmodel = new UpdateWindowViewmodel(this);
+			DataContext = viewmodel = new UpdateWindowViewmodel(this);
 		}
 
 		public static void Show(MainWindow owner, MainWindowViewmodel vm, Version onlineVersion, DateTime onlinePublishDate, string onlineDownloadUrl)

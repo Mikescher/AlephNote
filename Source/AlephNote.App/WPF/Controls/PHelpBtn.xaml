@@ -4,9 +4,10 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:conv="clr-namespace:AlephNote.WPF.Converter"
+			 xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
 			 mc:Ignorable="d" 
 			 Height="16" Width="16">
-	<Grid x:Name="LayoutRoot" d:DataContext="{d:DesignInstance PHelpBtn}"
+	<Grid x:Name="LayoutRoot" d:DataContext="{d:DesignInstance controls:PHelpBtn}"
 		  MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave" MouseLeftButtonUp="Grid_MouseLeftButtonUp">
 		
 		<Ellipse Fill="LightBlue" x:Name="Circle" Stroke="Black" StrokeThickness="0" />

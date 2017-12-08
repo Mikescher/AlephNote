@@ -1,35 +1,34 @@
 ﻿using AlephNote.Common.Settings.Types;
 using AlephNote.PluginInterface;
-using AlephNote.Settings;
 using AlephNote.WPF.Util;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using AlephNote.Common.Settings;
+using AlephNote.WPF.Extensions;
 
 namespace AlephNote.WPF.Controls
 {
 	/// <summary>
 	/// Interaction logic for NotesListView.xaml
 	/// </summary>
-	public partial class NotesListView : UserControl, INotifyPropertyChanged
+	public partial class NotesListView : INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		private void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
-			if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		protected virtual void OnExplicitPropertyChanged(string propertyName)
+		private void OnExplicitPropertyChanged(string propertyName)
 		{
-			if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		#endregion
@@ -41,7 +40,7 @@ namespace AlephNote.WPF.Controls
 			"Settings",
 			typeof(AppSettings),
 			typeof(NotesListView),
-			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, (obj, args) => { ((NotesListView)obj).OnSettingsChanged(args); }));
+			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, (obj, args) => { ((NotesListView)obj).OnSettingsChanged(); }));
 		
 		public AppSettings Settings
 		{
@@ -54,7 +53,7 @@ namespace AlephNote.WPF.Controls
 			"SelectedNote",
 			typeof(INote),
 			typeof(NotesListView),
-			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (obj, args) => { ((NotesListView)obj).OnSelectedNoteChanged(args); }));
+			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (obj, args) => { ((NotesListView)obj).OnSelectedNoteChanged(); }));
 
 		public INote SelectedNote
 		{
@@ -67,7 +66,7 @@ namespace AlephNote.WPF.Controls
 			"AllNotes",
 			typeof(IList<INote>),
 			typeof(NotesListView),
-			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, (obj,args) => { ((NotesListView)obj).OnAllNotesChanged(args); }));
+			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, (obj,args) => { ((NotesListView)obj).OnAllNotesChanged(); }));
 
 		public IList<INote> AllNotes
 		{
@@ -80,7 +79,7 @@ namespace AlephNote.WPF.Controls
 			"SearchText",
 			typeof(string),
 			typeof(NotesListView),
-			new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.None, (obj, args) => { ((NotesListView)obj).OnSearchTextChanged(args); }));
+			new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.None, (obj, args) => { ((NotesListView)obj).OnSearchTextChanged(); }));
 
 		public string SearchText
 		{
@@ -130,22 +129,22 @@ namespace AlephNote.WPF.Controls
 			RootGrid.DataContext = this;
 		}
 
-		private void OnSettingsChanged(DependencyPropertyChangedEventArgs args)
+		private void OnSettingsChanged()
 		{
 			//
 		}
 
-		private void OnSelectedNoteChanged(DependencyPropertyChangedEventArgs args)
+		private void OnSelectedNoteChanged()
 		{
 			//
 		}
 
-		private void OnAllNotesChanged(DependencyPropertyChangedEventArgs args)
+		private void OnAllNotesChanged()
 		{
 			OnExplicitPropertyChanged("NotesView");
 		}
 
-		private void OnSearchTextChanged(DependencyPropertyChangedEventArgs args)
+		private void OnSearchTextChanged()
 		{
 			//
 		}

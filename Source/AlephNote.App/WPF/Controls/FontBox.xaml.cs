@@ -7,7 +7,7 @@ namespace AlephNote.WPF.Controls
 	/// <summary>
 	/// Interaction logic for FontBox.xaml
 	/// </summary>
-	public partial class FontBox : UserControl
+	public partial class FontBox
 	{
 		private static readonly FontFamily defaultValue = new TextBlock().FontFamily;
 

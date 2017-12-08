@@ -9,8 +9,6 @@ namespace AlephNote.WPF.Converter
 
 	class SnippetsToSnippetSource : OneWayConverter<KeyValueCustomList<SnippetDefinition>, List<SnippetElem>>
 	{
-		public SnippetsToSnippetSource() { }
-
 		protected override List<SnippetElem> Convert(KeyValueCustomList<SnippetDefinition> value, object parameter)
 		{
 			return value.Data.Select(d => new SnippetElem

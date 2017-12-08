@@ -5,7 +5,7 @@ namespace AlephNote
 	class Program
 	{
 		[STAThread]
-		static void Main(string[] args)
+		static void Main()
 		{
 			new Eto.Forms.Application().Run(new MainForm());
 		}

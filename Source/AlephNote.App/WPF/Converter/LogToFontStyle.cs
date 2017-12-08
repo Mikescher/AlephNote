@@ -7,8 +7,6 @@ namespace AlephNote.WPF.Converter
 {
 	class LogToFontStyle : OneWayConverter<LogEventType, FontStyle>
 	{
-		public LogToFontStyle() { }
-
 		protected override FontStyle Convert(LogEventType value, object parameter)
 		{
 			switch (value)
@@ -19,7 +17,7 @@ namespace AlephNote.WPF.Converter
 				case LogEventType.Error: return FontStyles.Normal;
 
 				default:
-					throw new ArgumentOutOfRangeException("value");
+					throw new ArgumentOutOfRangeException(nameof(value));
 			}
 		}
 	}

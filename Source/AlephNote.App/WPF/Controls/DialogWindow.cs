@@ -17,9 +17,9 @@ namespace AlephNote.WPF.Controls
 		private const int WS_MAXIMIZEBOX = 0x10000;
 		private const int WS_MINIMIZEBOX = 0x20000;
 
-		public DialogWindow()
+		protected DialogWindow()
 		{
-			this.SourceInitialized += OnSourceInitialized;
+			SourceInitialized += OnSourceInitialized;
 		}
 
 		private void OnSourceInitialized(object sender, EventArgs e)

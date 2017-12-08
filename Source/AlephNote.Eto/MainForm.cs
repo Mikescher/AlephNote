@@ -7,8 +7,8 @@ namespace AlephNote
 	{
 		public MainForm()
 		{
-			this.ClientSize = new Size(600, 400);
-			this.Title = "Hello, Eto.Forms";
+			ClientSize = new Size(600, 400);
+			Title = "Hello, Eto.Forms";
 		}
 	}
 }

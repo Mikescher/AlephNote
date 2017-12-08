@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace AlephNote
+namespace AlephNote.WPF.Extensions
 {
 	public static class CollectionViewExtension
 	{

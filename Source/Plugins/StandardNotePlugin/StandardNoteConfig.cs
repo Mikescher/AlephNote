@@ -79,11 +79,11 @@ namespace AlephNote.Plugins.StandardNote
 			var other = iother as StandardNoteConfig;
 			if (other == null) return false;
 
-			if (this.Email         != other.Email) return false;
-			if (this.Password      != other.Password) return false;
-			if (this.Server        != other.Server) return false;
+			if (this.Email         != other.Email)         return false;
+			if (this.Password      != other.Password)      return false;
+			if (this.Server        != other.Server)        return false;
 			if (this.SendEncrypted != other.SendEncrypted) return false;
-			if (this.RemEmptyTags  != other.RemEmptyTags) return false;
+			if (this.RemEmptyTags  != other.RemEmptyTags)  return false;
 
 			return true;
 		}

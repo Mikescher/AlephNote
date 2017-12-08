@@ -1,6 +1,6 @@
 ﻿using AlephNote.WPF.MVVM;
 using System.Windows.Media;
-using AlephNote.Settings;
+using AlephNote.Common.Settings;
 
 namespace AlephNote.WPF.Converter
 {

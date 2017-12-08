@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace AlephNote
+namespace AlephNote.Common.MVVM
 {
 	/// <summary>
 	/// Non-generic class to produce instances of the generic class,
@@ -44,9 +44,9 @@ namespace AlephNote
 	/// <typeparam name="TKey">Type of the key projected from the element</typeparam>
 	public class ProjectionComparer<TSource, TKey> : IComparer<TSource>, IComparer
 	{
-		readonly Func<TSource, TKey> projection;
-		readonly IComparer<TKey> comparer;
-		readonly int inverted;
+		private readonly Func<TSource, TKey> _projection;
+		private readonly IComparer<TKey> _comparer;
+		private readonly int _inverted;
 
 		public ProjectionComparer(Func<TSource, TKey> projection, bool invert = false)
 			: this(projection, null, invert)
@@ -55,9 +55,9 @@ namespace AlephNote
 
 		public ProjectionComparer(Func<TSource, TKey> projection, IComparer<TKey> comparer, bool invert = false)
 		{
-			this.comparer = comparer ?? Comparer<TKey>.Default;
-			this.projection = projection;
-			this.inverted = invert ? -1 : 1;
+			_comparer = comparer ?? Comparer<TKey>.Default;
+			_projection = projection;
+			_inverted = invert ? -1 : 1;
 		}
 
 		public int Compare(TSource x, TSource y)
@@ -69,13 +69,13 @@ namespace AlephNote
 			}
 			if (x == null)
 			{
-				return -1 * inverted;
+				return -1 * _inverted;
 			}
 			if (y == null)
 			{
-				return 1 * inverted;
+				return 1 * _inverted;
 			}
-			return comparer.Compare(projection(x), projection(y)) * inverted;
+			return _comparer.Compare(_projection(x), _projection(y)) * _inverted;
 		}
 
 		public int Compare(object x, object y)

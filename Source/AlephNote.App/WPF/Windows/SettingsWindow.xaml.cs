@@ -1,8 +1,8 @@
-﻿using AlephNote.Plugins;
-using AlephNote.Settings;
-using AlephNote.WPF.Converter;
+﻿using AlephNote.WPF.Converter;
 using System.Windows;
 using System.Windows.Controls;
+using AlephNote.Common.Settings;
+using AlephNote.Impl;
 
 namespace AlephNote.WPF.Windows
 {

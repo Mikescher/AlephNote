@@ -3,14 +3,14 @@ using AlephNote.WPF.Windows;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Windows;
+using System.Linq;
 using System.Windows.Threading;
-using AlephNote.Plugins;
 using AlephNote.Common.Plugins;
+using AlephNote.Impl;
 
 namespace AlephNote
 {
-	public partial class App : Application
+	public partial class App
 	{
 		public static readonly string PATH_SETTINGS    = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.config");
 		public static readonly string PATH_SCROLLCACHE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.scrollcache.config");
@@ -22,9 +22,9 @@ namespace AlephNote
 
 		public static string AppVersionProperty { get { return APP_VERSION.Revision == 0 ? APP_VERSION.ToString(3) : (APP_VERSION.ToString(4) + " BETA"); } }
 
-		public static Random GlobalRandom = new Random();
+		public static readonly Random GlobalRandom = new Random();
 
-		public static EventLogger Logger = new EventLogger();
+		public static readonly EventLogger Logger = new EventLogger();
 		public static bool DebugMode = false;
 
 		public App()
@@ -33,10 +33,9 @@ namespace AlephNote
 
 			PluginManagerSingleton.Register(new PluginManager());
 
+			if (Environment.GetCommandLineArgs().Any(a => a.TrimStart('-').ToLower() == "debug")) DebugMode = true;
 #if DEBUG
 			DebugMode = true;
-#else
-			if (Environment.GetCommandLineArgs().Any(a => a.TrimStart('-').ToLower() == "debug")) DebugMode = true;
 #endif
 			Logger.DebugEnabled = DebugMode;
 
@@ -56,7 +55,7 @@ namespace AlephNote
 #else
 			e.Handled = true;
 			
-			Application.Current.Shutdown();
+			Current.Shutdown();
 #endif
 		}
 
@@ -67,7 +66,6 @@ namespace AlephNote
 				var assembly = ResourceAssembly;
 
 				var loc = assembly.Location;
-				if (loc == null) return new Version(0, 0, 0, 0);
 				var vi = FileVersionInfo.GetVersionInfo(loc);
 				return new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
 			}

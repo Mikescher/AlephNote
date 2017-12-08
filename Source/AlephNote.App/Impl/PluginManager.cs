@@ -1,23 +1,19 @@
-﻿using AlephNote.Common;
-using AlephNote.Common.Plugins;
-using AlephNote.PluginInterface;
-using AlephNote.Repository;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using AlephNote.Common.Network;
-using AlephNote.Impl;
+using AlephNote.Common.Plugins;
+using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
 
-namespace AlephNote.Plugins
+namespace AlephNote.Impl
 {
 	public class PluginManager : IPluginManager
 	{
-		private HashSet<Guid> _pluginIDs = new HashSet<Guid>(); 
+		private readonly HashSet<Guid> _pluginIDs = new HashSet<Guid>(); 
 		private List<IRemotePlugin> _provider = new List<IRemotePlugin>();
-		private IAlephLogger _logger;
 		public IEnumerable<IRemotePlugin> LoadedPlugins { get { return _provider; } }
 
 		public static IPluginManager Inst => PluginManagerSingleton.Inst;
@@ -25,7 +21,6 @@ namespace AlephNote.Plugins
 		public void LoadPlugins(string baseDirectory, IAlephLogger logger)
 		{
 			_provider = new List<IRemotePlugin>();
-			_logger = logger;
 
 			var pluginPath = Path.Combine(baseDirectory, @"plugins\");
 			var pluginfiles = Directory.GetFiles(pluginPath, "*.dll");
@@ -69,8 +64,6 @@ namespace AlephNote.Plugins
 				if (type.GetInterface(typeof(IRemotePlugin).FullName) != null)
 				{
 					IRemotePlugin instance = (IRemotePlugin)Activator.CreateInstance(type);
-
-					if (instance == null) throw new Exception("Could not instantiate IAlephNotePlugin '" + type.FullName + "'");
 
 					instance.Init(App.Logger);
 

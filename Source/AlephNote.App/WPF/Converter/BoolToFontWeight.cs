@@ -5,8 +5,6 @@ namespace AlephNote.WPF.Converter
 {
 	class BoolToFontWeight : OneWayConverter<bool, FontWeight>
 	{
-		public BoolToFontWeight() { }
-
 		protected override FontWeight Convert(bool value, object parameter)
 		{
 			if (value)

@@ -5,8 +5,6 @@ namespace AlephNote.WPF.Converter
 {
 	class DateOnlyToDisplay : OneWayConverter<DateTimeOffset, string>
 	{
-		public DateOnlyToDisplay() { }
-
 		protected override string Convert(DateTimeOffset value, object parameter)
 		{
 			var local = value.ToLocalTime();

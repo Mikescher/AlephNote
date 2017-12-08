@@ -1,7 +1,5 @@
-﻿using AlephNote.Common.Settings.Types;
-using AlephNote.PluginInterface;
+﻿using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Util;
-using AlephNote.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,21 +12,19 @@ namespace AlephNote.Common.AlephXMLSerialization
 	{
 		private class AttrObj { public PropertyInfo Info; public List<object> Attributes; }
 
-		private readonly Type _rootType;
 		private readonly string _rootNode;
+		private readonly List<AXMLFieldInfo> _fields;
 
-		private List<AXMLFieldInfo> _fields;
-
+		// ReSharper disable once RedundantEnumerableCastCall
 		public AlephXMLSerializer(string rootName)
 		{
-			_rootType = typeof(T);
 			_rootNode = rootName;
 
-			_fields = _rootType
+			_fields = typeof(T)
 				.GetProperties()
 				.Select(p => new AttrObj { Info = p, Attributes = p.GetCustomAttributes(typeof(AlephXMLFieldAttribute), false).Cast<object>().ToList() })
 				.Where(p => p.Attributes.Count == 1)
-				.Select(p => CreateFieldInfo(p))
+				.Select(CreateFieldInfo)
 				.ToList();
 		}
 
@@ -40,7 +36,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 			return new AXMLFieldInfo(type, p.Info);
 		}
 
-		public AXMLFieldInfo.SettingObjectTypeEnum GetSettingType(PropertyInfo prop, bool encrypt)
+		private AXMLFieldInfo.SettingObjectTypeEnum GetSettingType(PropertyInfo prop, bool encrypt)
 		{
 			if (prop.PropertyType == typeof(int)) return AXMLFieldInfo.SettingObjectTypeEnum.Integer;
 			if (prop.PropertyType == typeof(double)) return AXMLFieldInfo.SettingObjectTypeEnum.Double;
@@ -51,7 +47,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 			if (prop.PropertyType == typeof(Guid?)) return AXMLFieldInfo.SettingObjectTypeEnum.NGuid;
 			if (prop.PropertyType.GetTypeInfo().IsEnum) return AXMLFieldInfo.SettingObjectTypeEnum.Enum;
 			if (prop.PropertyType == typeof(RemoteStorageAccount)) return AXMLFieldInfo.SettingObjectTypeEnum.RemoteStorageAccount;
-			if (typeof(IList<RemoteStorageAccount>).IsAssignableFrom(prop.PropertyType)) return AXMLFieldInfo.SettingObjectTypeEnum.List_RemoteStorageAccount;
+			if (typeof(IList<RemoteStorageAccount>).IsAssignableFrom(prop.PropertyType)) return AXMLFieldInfo.SettingObjectTypeEnum.ListRemoteStorageAccount;
 			if (typeof(IAlephCustomSerializableField).IsAssignableFrom(prop.PropertyType)) return AXMLFieldInfo.SettingObjectTypeEnum.CustomSerializable;
 
 			throw new NotSupportedException("Setting of type " + prop.PropertyType + " not supported");

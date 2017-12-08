@@ -1,15 +1,15 @@
-﻿using AlephNote.PluginInterface;
-using System;
+﻿using System;
 using System.Collections;
 using System.IO;
-using System.Net;
-using AlephNote.Common.Plugins;
-using AlephNote.Common.AlephXMLSerialization;
 using System.Linq;
+using System.Net;
+using AlephNote.Common.AlephXMLSerialization;
+using AlephNote.Common.MVVM;
+using AlephNote.Common.Plugins;
 using AlephNote.Common.Settings.Types;
-using System.Collections.Generic;
+using AlephNote.PluginInterface;
 
-namespace AlephNote.Settings
+namespace AlephNote.Common.Settings
 {
 	// ReSharper disable RedundantThisQualifier
 	// ReSharper disable CompareOfFloatsByEqualityOperator
@@ -234,7 +234,7 @@ namespace AlephNote.Settings
 
 		[AlephXMLField]
 		public ObservableCollectionNoReset<RemoteStorageAccount> Accounts { get { return _accounts; } set { _accounts = value; OnPropertyChanged(); } }
-		public ObservableCollectionNoReset<RemoteStorageAccount> _accounts = new ObservableCollectionNoReset<RemoteStorageAccount>();
+		private ObservableCollectionNoReset<RemoteStorageAccount> _accounts = new ObservableCollectionNoReset<RemoteStorageAccount>();
 
 		[AlephXMLField]
 		public LinkHighlightMode LinkMode { get { return _linkMode; } set { _linkMode = value; OnPropertyChanged(); } }
@@ -269,8 +269,8 @@ namespace AlephNote.Settings
 		private bool _autoSortTags = true;
 
 		[AlephXMLField]
-		public KeyValueFlatCustomList<ShortcutDefinition> Shortcuts { get { return __shortcuts; } set { __shortcuts = value; OnPropertyChanged(); } }
-		private KeyValueFlatCustomList<ShortcutDefinition> __shortcuts = CreateDefaultShortcutList();
+		public KeyValueFlatCustomList<ShortcutDefinition> Shortcuts { get { return _shortcuts; } set { _shortcuts = value; OnPropertyChanged(); } }
+		private KeyValueFlatCustomList<ShortcutDefinition> _shortcuts = CreateDefaultShortcutList();
 
 		[AlephXMLField]
 		public Guid ClientID { get { return _clientID; } set { _clientID = value; OnPropertyChanged(); } }

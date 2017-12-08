@@ -7,8 +7,6 @@ namespace AlephNote.WPF.Converter
 	{
 		private static readonly string[] MONTH_LIST = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-		public SmallDateTimeToDisplay() { }
-
 		protected override string Convert(DateTimeOffset value, object parameter)
 		{
 			var local = value.ToLocalTime();

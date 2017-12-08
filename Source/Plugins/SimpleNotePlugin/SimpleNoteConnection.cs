@@ -186,9 +186,8 @@ namespace AlephNote.Plugins.SimpleNote
 					{
 						if (strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.UseClientCreateConflictFile)
 						{
-							bool tmp;
 							conflict = SimpleNoteAPI.GetNoteData(web, note.ID, _config);
-							inote = SimpleNoteAPI.ChangeExistingNote(web, note, _config, out tmp);
+							inote = SimpleNoteAPI.ChangeExistingNote(web, note, _config, out _);
 							return RemoteUploadResult.Conflict;
 						}
 						else if (strategy == ConflictResolutionStrategy.UseServerVersion || strategy == ConflictResolutionStrategy.UseServerCreateConflictFile)

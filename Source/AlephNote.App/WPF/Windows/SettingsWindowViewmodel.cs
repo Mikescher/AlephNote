@@ -1,12 +1,11 @@
 ﻿using AlephNote.PluginInterface;
-using AlephNote.Plugins;
-using AlephNote.Settings;
 using AlephNote.WPF.MVVM;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using System;
 using System.Linq;
+using AlephNote.Common.MVVM;
+using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
 using AlephNote.WPF.Shortcuts;
 
@@ -21,6 +20,9 @@ namespace AlephNote.WPF.Windows
 		public ICommand InsertCurrentWindowStateCommand { get { return new RelayCommand(InsertCurrentWindowState); } }
 
 		public ObservableCollectionNoReset<ObservableShortcutConfig> ShortcutList { get; set; }
+
+		private ObservableShortcutConfig _selectedShortcut;
+		public ObservableShortcutConfig SelectedShortcut { get { return _selectedShortcut; } set { _selectedShortcut = value; OnPropertyChanged(); } }
 
 		public SettingsWindowViewmodel(MainWindow main, AppSettings data)
 		{

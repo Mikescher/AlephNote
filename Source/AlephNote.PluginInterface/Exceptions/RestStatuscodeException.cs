@@ -1,7 +1,4 @@
-﻿using AlephNote.PluginInterface;
-using System;
-
-namespace AlephNote.PluginInterface
+﻿namespace AlephNote.PluginInterface.Exceptions
 {
 	public class RestStatuscodeException : RestException
 	{

@@ -1,10 +1,10 @@
-﻿using AlephNote.Common.Repository;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Windows;
+using AlephNote.Common.Repository;
 
-namespace AlephNote.Repository
+namespace AlephNote.Impl
 {
 	class SynchronizationDispatcher : IAlephDispatcher
 	{
@@ -77,8 +77,7 @@ namespace AlephNote.Repository
 		{
 			if (mode == DispatcherMode.CustomDispatcher)
 			{
-				DispatchItem item;
-				while (queue.TryDequeue(out item))
+				while (queue.TryDequeue(out var item))
 				{
 					try
 					{

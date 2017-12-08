@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace AlephNote.WPF.Windows
 {
-	public partial class FirstStartupWindow : Window, IChangeListener
+	public partial class FirstStartupWindow : IChangeListener
 	{
 		private readonly FirstStartupViewmodel _vm;
 		private readonly MainWindow _owner;

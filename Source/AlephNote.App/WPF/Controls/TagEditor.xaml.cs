@@ -1,6 +1,4 @@
-﻿using AlephNote.Repository;
-using AlephNote.Settings;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -8,13 +6,16 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using AlephNote.Common.Extensions;
+using AlephNote.Common.Repository;
+using AlephNote.Common.Settings;
 
 namespace AlephNote.WPF.Controls
 {
 	/// <summary>
 	/// Interaction logic for TagEditor.xaml
 	/// </summary>
-	public partial class TagEditor : UserControl, INotifyPropertyChanged
+	public partial class TagEditor : INotifyPropertyChanged
 	{
 		public delegate void TagsSourceChanged(TagEditor source);
 
@@ -222,7 +223,7 @@ namespace AlephNote.WPF.Controls
 
 		protected virtual void OnExplicitPropertyChanged(string propertyName)
 		{
-			if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		private void AutocompleteContent_Selected(object sender, RoutedEventArgs e)

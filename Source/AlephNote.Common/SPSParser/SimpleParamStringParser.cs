@@ -8,18 +8,20 @@ namespace AlephNote.Common.SPSParser
 	{
 		private enum ParseMode { Plain, Keyword, Parameter }
 
-		public abstract class SPSException : Exception { }
-		public class SyntaxException : SPSException { }
+		private abstract class SPSException : Exception { }
+		private class SyntaxException : SPSException { }
 
-		private Dictionary<string, Func<string, string, string>> _keywords = new Dictionary<string, Func<string, string, string>>();
+		private readonly Dictionary<string, Func<string, string, string>> _keywords = new Dictionary<string, Func<string, string, string>>();
 
+		// ReSharper disable FormatStringProblem
 		public SimpleParamStringParser()
 		{
-			_keywords.Add("now",    (k, p) => String.Format("{0:" + (p ?? "yyyy-MM-dd HH:mm:ss") + "}", DateTime.Now));
-			_keywords.Add("utcnow", (k, p) => String.Format("{0:" + (p ?? "yyyy-MM-dd HH:mm:ss") + "}", DateTime.UtcNow));
-			_keywords.Add("time",   (k, p) => String.Format("{0:" + (p ?? "HH:mm") + "}", DateTime.Now));
-			_keywords.Add("date",   (k, p) => String.Format("{0:" + (p ?? "yyyy-MM-dd") + "}", DateTime.Now));
+			_keywords.Add("now",    (k, p) => string.Format("{0:" + (p ?? "yyyy-MM-dd HH:mm:ss") + "}", DateTime.Now));
+			_keywords.Add("utcnow", (k, p) => string.Format("{0:" + (p ?? "yyyy-MM-dd HH:mm:ss") + "}", DateTime.UtcNow));
+			_keywords.Add("time",   (k, p) => string.Format("{0:" + (p ?? "HH:mm") + "}", DateTime.Now));
+			_keywords.Add("date",   (k, p) => string.Format("{0:" + (p ?? "yyyy-MM-dd") + "}", DateTime.Now));
 		}
+		// ReSharper restore FormatStringProblem
 
 		public string Parse(string input, out bool success)
 		{
@@ -64,7 +66,7 @@ namespace AlephNote.Common.SPSParser
 					}
 					else
 					{
-						builderOut.Append(builderMain.ToString());
+						builderOut.Append(builderMain);
 						mode = ParseMode.Keyword;
 						builderMain.Clear();
 					}
@@ -124,22 +126,15 @@ namespace AlephNote.Common.SPSParser
 
 			if (mode != ParseMode.Plain) throw new SyntaxException();
 
-			builderOut.Append(builderMain.ToString());
+			builderOut.Append(builderMain);
 			return builderOut.ToString();
 		}
 
 		private string Evaluate(string keyword, string param)
 		{
-			Func<string, string, string> func;
+			if (_keywords.TryGetValue(keyword.ToLower(), out var func)) return func(keyword, param);
 
-			if (_keywords.TryGetValue(keyword.ToLower(), out func))
-			{
-				return func(keyword, param);
-			}
-			else
-			{
-				throw new SyntaxException();
-			}
+			throw new SyntaxException();
 		}
 	}
 }

@@ -8,6 +8,7 @@ using System.IO.Compression;
 using System.Net;
 using System.Windows;
 using System.Windows.Input;
+using AlephNote.Common.MVVM;
 
 namespace AlephNote.WPF.Windows
 {
@@ -47,9 +48,11 @@ namespace AlephNote.WPF.Windows
 
 		private void UpdateManual()
 		{
-			var sfd = new SaveFileDialog();
-			sfd.FileName = Path.GetFileName(URL);
-			sfd.Filter = "Zip files (*.zip)|*.zip";
+			var sfd = new SaveFileDialog
+			{
+				FileName = Path.GetFileName(URL) ?? "AlephNoteUpdate.zip",
+				Filter = "Zip files (*.zip)|*.zip"
+			};
 
 			if (sfd.ShowDialog(_owner) != true) return;
 

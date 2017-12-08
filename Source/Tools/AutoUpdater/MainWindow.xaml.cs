@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using WPFCustomMessageBox;
@@ -13,7 +9,7 @@ namespace AlephNote.AutoUpdater
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class MainWindow
 	{
 		private readonly string targetPath;
 		private readonly string sourcePath;
@@ -93,7 +89,7 @@ namespace AlephNote.AutoUpdater
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show("AutoUpdater threw internal error:" + Environment.NewLine + e.ToString(), "INTERNAL ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+				MessageBox.Show("AutoUpdater threw internal error:" + Environment.NewLine + e, "INTERNAL ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
 				Environment.Exit(-1);
 			}
 

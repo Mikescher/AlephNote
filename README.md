@@ -2,7 +2,8 @@
 
 An extensible, lightweight desktop note client for multiple backends
 
-![](https://raw.githubusercontent.com/Mikescher/AlephNote/master/docs/preview.png)
+![](https://raw.githubusercontent.com/Mikescher/AlephNote/master/docs/preview.png)  
+([Download](https://github.com/Mikescher/AlephNote/releases/latest))
 
 AlephNote is a lightweight note taking desktop app usable with multiple backends:
 

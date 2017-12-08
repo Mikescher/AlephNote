@@ -1,4 +1,4 @@
-﻿using AlephNote.Settings;
+﻿using AlephNote.Common.Settings;
 using ScintillaNET;
 using AlephNote.Common.Settings.Types;
 

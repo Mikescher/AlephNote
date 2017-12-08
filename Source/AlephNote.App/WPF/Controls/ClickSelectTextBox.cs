@@ -42,9 +42,7 @@ namespace AlephNote.WPF.Controls
 
 		private static void SelectAllText(object sender, RoutedEventArgs e)
 		{
-			var textBox = e.OriginalSource as TextBox;
-			if (textBox != null)
-				textBox.SelectAll();
+			if (e.OriginalSource is TextBox tb) tb.SelectAll();
 		}
 
 		private void KeyDownHandler(object sender, RoutedEventArgs e)
@@ -52,11 +50,11 @@ namespace AlephNote.WPF.Controls
 			var args = (KeyEventArgs)e;
 
 			var valueBinding = GetBindingExpression(TextProperty);
-			if (valueBinding != null) valueBinding.UpdateSource();
+			valueBinding?.UpdateSource();
 
 			if (args.Key == Key.Enter && args.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control))
 			{
-				CtrlExecute(sender, e);
+				CtrlExecute?.Invoke(sender, e);
 			}
 
 		}

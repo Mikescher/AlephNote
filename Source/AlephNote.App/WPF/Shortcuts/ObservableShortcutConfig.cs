@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AlephNote.Common.MVVM;
 using AlephNote.Common.Settings.Types;
 
 namespace AlephNote.WPF.Shortcuts
@@ -14,10 +15,10 @@ namespace AlephNote.WPF.Shortcuts
 		public string Description { get { return _description; } }
 
 		private AlephKey _key;
-		public AlephKey Key { get { return _key; } set { _key = value; OnPropertyChanged(); } }
+		public AlephKey Key { get { return _key; } set { _key = value; OnPropertyChanged(); OnPropertyChanged("Gesture"); } }
 
 		private AlephModifierKeys _modifiers;
-		public AlephModifierKeys Modifiers { get { return _modifiers; } set { _modifiers = value; OnPropertyChanged(); } }
+		public AlephModifierKeys Modifiers { get { return _modifiers; } set { _modifiers = value; OnPropertyChanged(); OnPropertyChanged("Gesture"); } }
 
 		private AlephShortcutScope _scope;
 		public AlephShortcutScope Scope { get { return _scope; } set { _scope = value; OnPropertyChanged(); } }

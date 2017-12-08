@@ -7,8 +7,6 @@ namespace AlephNote.WPF.Converter
 {
 	class LogToFontWeight : OneWayConverter<LogEventType, FontWeight>
 	{
-		public LogToFontWeight() { }
-
 		protected override FontWeight Convert(LogEventType value, object parameter)
 		{
 			switch (value)
@@ -19,7 +17,7 @@ namespace AlephNote.WPF.Converter
 				case LogEventType.Error: return FontWeights.Bold;
 
 				default:
-					throw new ArgumentOutOfRangeException("value");
+					throw new ArgumentOutOfRangeException(nameof(value));
 			}
 		}
 	}

@@ -164,6 +164,8 @@ namespace AlephNote.PluginInterface.Util
 
 			using (var aes = Aes.Create())
 			{
+				if (aes == null) throw new Exception("AES instantiation failed");
+
 				aes.KeySize = KeyBitSize;
 				aes.BlockSize = BlockBitSize;
 				aes.Mode = CipherMode.CBC;
@@ -258,6 +260,8 @@ namespace AlephNote.PluginInterface.Util
 
 				using (var aes = Aes.Create())
 				{
+					if (aes == null) throw new Exception("AES instantiation failed");
+
 					aes.KeySize = KeyBitSize;
 					aes.BlockSize = BlockBitSize;
 					aes.Mode = CipherMode.CBC;

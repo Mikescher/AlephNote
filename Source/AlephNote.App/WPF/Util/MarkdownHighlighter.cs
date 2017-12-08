@@ -1,5 +1,5 @@
 ﻿using System;
-using AlephNote.Settings;
+using AlephNote.Common.Settings;
 using ScintillaNET;
 
 namespace AlephNote.WPF.Util
@@ -194,7 +194,6 @@ namespace AlephNote.WPF.Util
 			}
 
 			sci.SetStyling(text.Length - position, STYLE_MD_DEFAULT);
-			position += (text.Length - position);
 		}
 
 		private bool ParseMarkdownEnumNumber(string v, out int numlen)
