@@ -444,6 +444,8 @@ namespace AlephNote.WPF.Windows
 
 		private void FullResync()
 		{
+			if (Repository.ProviderUID == Guid.Parse("37de6de1-26b0-41f5-b252-5e625d9ecfa3")) return; // no full resync in headless
+
 			try
 			{
 				if (MessageBox.Show(Owner, "Do you really want to delete all local data and download the server data?", "Full resync?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
