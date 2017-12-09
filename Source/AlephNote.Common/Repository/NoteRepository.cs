@@ -34,6 +34,7 @@ namespace AlephNote.Common.Repository
 		public ObservableCollection<INote> Notes { get { return _notes; } }
 
 		private readonly object _lockSaveNote = new object();
+		private readonly object _lockSaveSyncData = new object();
 
 		private readonly DelayedCombiningInvoker invSaveNotesLocal;
 		private readonly DelayedCombiningInvoker invSaveNotesRemote;
@@ -44,6 +45,7 @@ namespace AlephNote.Common.Repository
 		public string ConnectionName { get { return account.Plugin.DisplayTitleShort; } }
 		public string ConnectionUUID { get { return account.ID.ToString("B"); } }
 		public string ProviderID { get { return account.Plugin.GetUniqueID().ToString("B"); } }
+		public Guid ProviderUID { get { return account.Plugin.GetUniqueID(); } }
 
 		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, RemoteStorageAccount acc, IAlephLogger log, IAlephDispatcher disp)
 		{
@@ -291,35 +293,41 @@ namespace AlephNote.Common.Repository
 
 		public IRemoteStorageSyncPersistance GetSyncData()
 		{
-			var d = account.Plugin.CreateEmptyRemoteSyncData();
-			if (File.Exists(pathLocalData))
+			lock (_lockSaveSyncData)
 			{
-				try
+				var d = account.Plugin.CreateEmptyRemoteSyncData();
+				if (File.Exists(pathLocalData))
 				{
-					var doc = XDocument.Load(pathLocalData);
+					try
+					{
+						var doc = XDocument.Load(pathLocalData);
 
-					var root = doc.Root;
-					if (root == null) throw new Exception("Root == null");
+						var root = doc.Root;
+						if (root == null) throw new Exception("Root == null");
 
-					d.Deserialize(root);
+						d.Deserialize(root);
 
+						return d;
+					}
+					catch (Exception e)
+					{
+						throw new Exception("Could not load synchronization state from '" + pathLocalData + "'", e);
+					}
+				}
+				else
+				{
+					WriteSyncData(d, pathLocalData);
 					return d;
 				}
-				catch (Exception e)
-				{
-					throw new Exception("Could not load synchronization state from '" + pathLocalData + "'", e);
-				}
-			}
-			else
-			{
-				WriteSyncData(d);
-				return d;
 			}
 		}
 
 		public void WriteSyncData(IRemoteStorageSyncPersistance data)
 		{
-			WriteSyncData(data, pathLocalData);
+			lock (_lockSaveSyncData)
+			{
+				WriteSyncData(data, pathLocalData);
+			}
 		}
 
 		private void WriteSyncData(IRemoteStorageSyncPersistance data, string pathData)
@@ -331,12 +339,15 @@ namespace AlephNote.Common.Repository
 
 		public void DeleteLocalData()
 		{
-			if (File.Exists(pathLocalData))
+			lock (_lockSaveSyncData)
 			{
-				logger.Info("Repository", "Delete file from local repository: " + Path.GetFileName(pathLocalData), pathLocalData);
-				File.Delete(pathLocalData);
+				if (File.Exists(pathLocalData))
+				{
+					logger.Info("Repository", "Delete file from local repository: " + Path.GetFileName(pathLocalData), pathLocalData);
+					File.Delete(pathLocalData);
+				}
 			}
-			
+
 			var noteFiles = Directory.GetFiles(pathLocalFolder, "*.xml");
 			foreach (var path in noteFiles)
 			{
