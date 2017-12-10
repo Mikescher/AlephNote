@@ -23,15 +23,17 @@ namespace AlephNote.Plugins.StandardNote
 		public class APIAuthParams { public string version, pw_salt; public PasswordAlg pw_alg; public PasswordFunc pw_func; public int pw_cost, pw_key_size; }
 		public class APIResultUser { public Guid uuid; public string email; }
 		public class APIRequestUser { public string email, password; }
-		public class APIResultAuthorize { public APIResultUser user; public string token; public byte[] masterkey; }
+		public class APIResultAuthorize { public APIResultUser user; public string token; public byte[] masterkey, masterauthkey; }
 		public class APIBodyItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at; public bool deleted; }
 		public class APIResultItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at, updated_at; public bool deleted; }
 		public class APIBodySync { public int limit; public List<APIBodyItem> items; public string sync_token, cursor_token; }
-		public class APIResultSync { public List<APIResultItem> retrieved_items, saved_items, unsaved; public string sync_token, cursor_token; }
+		public class APIResultErrorItem { public APIResultItem item; public APISyncResultError error; }
+		public class APISyncResultError { public string tag; }
+		public class APIResultSync { public List<APIResultItem> retrieved_items, saved_items; public List<APIResultErrorItem> unsaved; public string sync_token, cursor_token; }
 		public class APIBadRequest { public APIError error; }
 		public class APIError { public string message; public int status; }
 		public class SyncResultTag { public Guid uuid; public string title; public bool deleted; public string enc_item_key, item_key; }
-		public class SyncResult { public List<StandardFileNote> retrieved_notes, saved_notes, unsaved_notes, deleted_notes; public List<SyncResultTag> retrieved_tags, saved_tags, unsaved_tags, deleted_tags; }
+		public class SyncResult { public List<StandardFileNote> retrieved_notes, saved_notes, conflict_notes, error_notes, deleted_notes; public List<SyncResultTag> retrieved_tags, saved_tags, unsaved_tags, deleted_tags; }
 		public class APIResultContentRef { public Guid uuid; public string content_type; }
 		public class ContentNote { public string title, text; public List<APIResultContentRef> references; }
 		public class ContentTag { public string title; public List<APIResultContentRef> references; }
@@ -139,6 +141,7 @@ namespace AlephNote.Plugins.StandardNote
 				}
 
 				tok.masterkey = mk;
+				tok.masterauthkey = ak;
 				return tok;
 			}
 			catch (StandardNoteAPIException)
@@ -191,7 +194,7 @@ namespace AlephNote.Plugins.StandardNote
 			var result = web.PostTwoWay<APIResultSync>(d, "items/sync");
 
 			dat.SyncToken = result.sync_token.Trim();
-
+			
 			var syncresult = new SyncResult();
 
 			syncresult.retrieved_tags = result
@@ -216,8 +219,8 @@ namespace AlephNote.Plugins.StandardNote
 
 			syncresult.unsaved_tags = result
 				.unsaved
-				.Where(p => p.content_type.ToLower() == "tag")
-				.Select(n => CreateTag(web, n, authToken))
+				.Where(p => p.item.content_type.ToLower() == "tag")
+				.Select(n => CreateTag(web, n.item, authToken))
 				.ToList();
 
 			dat.UpdateTags(syncresult.retrieved_tags, syncresult.saved_tags, syncresult.unsaved_tags, syncresult.deleted_tags);
@@ -242,10 +245,18 @@ namespace AlephNote.Plugins.StandardNote
 				.Select(n => CreateNote(web, n, authToken, cfg, dat))
 				.ToList();
 
-			syncresult.unsaved_notes = result
+			syncresult.conflict_notes = result
 				.unsaved
-				.Where(p => p.content_type.ToLower() == "note")
-				.Select(n => CreateNote(web, n, authToken, cfg, dat))
+				.Where(p => p.item.content_type.ToLower() == "note")
+				.Where(p => p.error.tag == "sync_conflict")
+				.Select(n => CreateNote(web, n.item, authToken, cfg, dat))
+				.ToList();
+
+			syncresult.error_notes = result
+				.unsaved
+				.Where(p => p.item.content_type.ToLower() == "note")
+				.Where(p => p.error.tag != "sync_conflict")
+				.Select(n => CreateNote(web, n.item, authToken, cfg, dat))
 				.ToList();
 
 			return syncresult;
@@ -281,7 +292,7 @@ namespace AlephNote.Plugins.StandardNote
 				jsnContent.references.Add(new APIResultContentRef { content_type = "Tag", uuid = itag.UUID.Value });
 			}
 
-			var cdNote = StandardNoteCrypt.EncryptContent(web.SerializeJson(jsnContent), token.masterkey, cfg.SendEncrypted);
+			var cdNote = StandardNoteCrypt.EncryptContent("002", web.SerializeJson(jsnContent), note.ID, token.masterkey, token.masterauthkey);
 
 			body.items.Add(new APIBodyItem
 			{
@@ -305,10 +316,10 @@ namespace AlephNote.Plugins.StandardNote
 					.Select(n => new APIResultContentRef{content_type = "Note", uuid = n.ID})
 					.ToList(),
 			};
-			
-			var cdNote = StandardNoteCrypt.EncryptContent(web.SerializeJson(jsnContent), token.masterkey, cfg.SendEncrypted);
 
 			Debug.Assert(tag.UUID != null, "tag.UUID != null");
+
+			var cdNote = StandardNoteCrypt.EncryptContent("002", web.SerializeJson(jsnContent), tag.UUID.Value, token.masterkey, token.masterauthkey);
 
 			body.items.Add(new APIBodyItem
 			{
@@ -338,7 +349,7 @@ namespace AlephNote.Plugins.StandardNote
 			ContentNote content;
 			try
 			{
-				var contentJson = StandardNoteCrypt.DecryptContent(encNote.content, encNote.enc_item_key, encNote.auth_hash, authToken.masterkey);
+				var contentJson = StandardNoteCrypt.DecryptContent(encNote.content, encNote.enc_item_key, encNote.auth_hash, authToken.masterkey, authToken.masterauthkey);
 				content = web.ParseJsonWithoutConverter<ContentNote>(contentJson);
 			}
 			catch (Exception e)
@@ -393,7 +404,7 @@ namespace AlephNote.Plugins.StandardNote
 			ContentTag content;
 			try
 			{
-				var contentJson = StandardNoteCrypt.DecryptContent(encTag.content, encTag.enc_item_key, encTag.auth_hash, authToken.masterkey);
+				var contentJson = StandardNoteCrypt.DecryptContent(encTag.content, encTag.enc_item_key, encTag.auth_hash, authToken.masterkey, authToken.masterauthkey);
 				content = web.ParseJsonWithoutConverter<ContentTag>(contentJson);
 			}
 			catch (Exception e)

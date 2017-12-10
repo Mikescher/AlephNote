@@ -94,11 +94,12 @@ namespace AlephNote.Plugins.StandardNote
 				_syncResult = StandardNoteAPI.Sync(web, _token, _config, data, localnotes, upNotes, delNotes, delTags);
 
 				_logger.Debug(StandardNotePlugin.Name, "StandardFile sync finished.",
-					string.Format("upload:[notes={7} deleted={8}]" + "\r\n" + "download:[note:[retrieved={0} deleted={1} saved={2} unsaved={3}] tags:[retrieved={4} saved={5} unsaved={6}]]",
+					string.Format("upload:[notes={8} deleted={9}]" + "\r\n" + "download:[note:[retrieved={0} deleted={1} saved={2} conflicts={3} errors={4}] tags:[retrieved={5} saved={6} unsaved={7}]]",
 					_syncResult.retrieved_notes.Count,
 					_syncResult.deleted_notes.Count,
 					_syncResult.saved_notes.Count,
-					_syncResult.unsaved_notes.Count,
+					_syncResult.conflict_notes.Count,
+					_syncResult.error_notes.Count,
 					_syncResult.retrieved_tags.Count,
 					_syncResult.saved_tags.Count,
 					_syncResult.unsaved_tags.Count,
@@ -131,9 +132,15 @@ namespace AlephNote.Plugins.StandardNote
 				return RemoteUploadResult.Merged;
 			}
 
-			if (_syncResult.unsaved_notes.Any(n => n.ID == note.ID))
+			if (_syncResult.error_notes.Any(n => n.ID == note.ID))
 			{
 				throw new Exception("Could not upload note - server returned note in {unsaved_notes}");
+			}
+
+			if (_syncResult.conflict_notes.Any(n => n.ID == note.ID))
+			{
+				conflict = _syncResult.conflict_notes.First(n => n.ID == note.ID);
+				return RemoteUploadResult.Conflict;
 			}
 
 			conflict = null;
