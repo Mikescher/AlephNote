@@ -41,7 +41,7 @@ namespace AlephNote.Log
 
 		public void Debug(string src, string text, string longtext = null)
 		{
-			if (DebugEnabled) Log(new LogEvent(LogEventType.Debug, src, text, longtext));
+			Log(new LogEvent(LogEventType.Debug, src, text, longtext));
 		}
 
 		public void Info(string src, string text, string longtext = null)
