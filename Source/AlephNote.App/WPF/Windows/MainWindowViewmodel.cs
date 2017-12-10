@@ -135,7 +135,7 @@ namespace AlephNote.WPF.Windows
 		{
 			var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
 
-			Settings.LaunchOnBoot = registryKey != null && (registryKey.GetValue(App.APPNAME_REG) as string) == App.PATH_EXECUTABLE;
+			Settings.LaunchOnBoot = registryKey?.GetValue(string.Format(App.APPNAME_REG, Settings.ClientID)) != null;
 
 			new SettingsWindow(this, Settings) {Owner = Owner}.ShowDialog();
 		}
@@ -196,12 +196,12 @@ namespace AlephNote.WPF.Windows
 				if (Settings.LaunchOnBoot)
 				{
 					var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-					registryKey?.SetValue(App.APPNAME_REG, App.PATH_EXECUTABLE);
+					registryKey?.SetValue(string.Format(App.APPNAME_REG, Settings.ClientID), App.PATH_EXECUTABLE);
 				}
 				else
 				{
 					var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-					if (registryKey?.GetValue(App.APPNAME_REG) != null) registryKey.DeleteValue(App.APPNAME_REG);
+					if (registryKey?.GetValue(string.Format(App.APPNAME_REG, Settings.ClientID)) != null) registryKey.DeleteValue(string.Format(App.APPNAME_REG, Settings.ClientID));
 				}
 
 				Owner.SetupScintilla(Settings);

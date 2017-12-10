@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Text.RegularExpressions;
+using Microsoft.Win32;
 
 namespace AlephNote.AutoUpdater
 {
@@ -114,6 +115,26 @@ namespace AlephNote.AutoUpdater
 					true);
 
 				_deleteNotesFolder = true;
+			}
+
+			if (version <= new Version("1.6.2.0"))
+			{
+				try
+				{
+					// from 1.6.2.0 the key contains the userID
+					// delete the old key
+					var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+					if (registryKey?.GetValue("AlephNoteApp") != null) registryKey.DeleteValue("AlephNoteApp");
+
+					_showMessage(
+						"You are upgrading from an version <= 1.6.2.0\n" +
+						"The autostart settings have changed, if you want to start AlephNote on system boot please set the option in the settings again.\n",
+						false);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e);
+				}
 			}
 
 			Thread.Sleep(300);

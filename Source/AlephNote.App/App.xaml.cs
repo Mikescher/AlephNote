@@ -15,7 +15,7 @@ namespace AlephNote
 		public static readonly string PATH_SETTINGS    = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.config");
 		public static readonly string PATH_SCROLLCACHE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.scrollcache.config");
 		public static readonly string PATH_LOCALDB     = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".notes");
-		public static readonly string APPNAME_REG      = "AlephNoteApp";
+		public static readonly string APPNAME_REG      = "AlephNoteApp_{0:N}";
 		public static readonly string PATH_EXECUTABLE  = System.Reflection.Assembly.GetExecutingAssembly().Location;
 
 		public static readonly Version APP_VERSION = GetInformationalVersion();
