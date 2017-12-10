@@ -19,7 +19,7 @@ namespace AlephNote.Plugins.StandardNote
 		public enum PasswordAlg { sha512, sha256 }
 		public enum PasswordFunc { pbkdf2 }
 
-		public class APIAuthParams { public string pw_salt; public PasswordAlg pw_alg; public PasswordFunc pw_func; public int pw_cost, pw_key_size; }
+		public class APIAuthParams { public string version, pw_salt; public PasswordAlg pw_alg; public PasswordFunc pw_func; public int pw_cost, pw_key_size; }
 		public class APIResultUser { public Guid uuid; public string email; }
 		public class APIResultAuthorize { public APIResultUser user; public string token; public byte[] masterkey; }
 		public class APIBodyItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at; public bool deleted; }
@@ -40,18 +40,21 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			var apiparams = web.Get<APIAuthParams>("auth/params", "email=" + mail);
 
+			if (apiparams.version == "001") return Authenticate001(web, apiparams, mail, password, logger);
+			if (apiparams.version == "002") return Authenticate002(web, apiparams, mail, password, logger);
+
+			throw new Exception("Unsupported auth API version: " + apiparams.version);
+		}
+
+		private static APIResultAuthorize Authenticate001(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string password, IAlephLogger logger)
+		{
 			try
 			{
-				logger.Debug(StandardNotePlugin.Name, 
-					string.Format("AutParams[pw_func:{0}, pw_alg:{1}, pw_cost:{2}, pw_key_size:{3}]", 
-					apiparams.pw_func, 
-					apiparams.pw_alg, 
-					apiparams.pw_cost, 
-					apiparams.pw_key_size));
+				logger.Debug(StandardNotePlugin.Name, $"AutParams[version:1, pw_func:{apiparams.pw_func}, pw_alg:{apiparams.pw_alg}, pw_cost:{apiparams.pw_cost}, pw_key_size:{apiparams.pw_key_size}]");
 
-				if (apiparams.pw_func != PasswordFunc.pbkdf2) throw new Exception("Unknown pw_func: " + apiparams.pw_func);
+				if (apiparams.pw_func != PasswordFunc.pbkdf2) throw new Exception("Unsupported pw_func: " + apiparams.pw_func);
 
-				byte[] bytes; 
+				byte[] bytes;
 
 				if (apiparams.pw_alg == PasswordAlg.sha512)
 				{
@@ -68,6 +71,32 @@ namespace AlephNote.Plugins.StandardNote
 
 				var pw = bytes.Take(bytes.Length / 2).ToArray();
 				var mk = bytes.Skip(bytes.Length / 2).ToArray();
+
+				var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
+				var tok = web.PostDownload<APIResultAuthorize>("auth/sign_in", "email=" + mail, "password=" + reqpw);
+
+				tok.masterkey = mk;
+				return tok;
+			}
+			catch (Exception e)
+			{
+				throw new StandardNoteAPIException("Authentification with StandardNoteAPI failed.", e);
+			}
+		}
+
+		private static APIResultAuthorize Authenticate002(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string password, IAlephLogger logger)
+		{
+			try
+			{
+				logger.Debug(StandardNotePlugin.Name, $"AutParams[version:2, pw_cost:{apiparams.pw_cost}]");
+
+				if (apiparams.pw_func != PasswordFunc.pbkdf2) throw new Exception("Unknown pw_func: " + apiparams.pw_func);
+
+				byte[] bytes = PBKDF2.GenerateDerivedKey(768/8, Encoding.UTF8.GetBytes(password), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+				
+				var pw = bytes.Skip(0 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+				var mk = bytes.Skip(1 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+				var ak = bytes.Skip(2 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
 
 				var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
 				var tok = web.PostDownload<APIResultAuthorize>("auth/sign_in", "email=" + mail, "password=" + reqpw);
