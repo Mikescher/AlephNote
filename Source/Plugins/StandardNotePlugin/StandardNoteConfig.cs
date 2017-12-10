@@ -19,7 +19,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public string Email       = string.Empty;
 		public string Password    = string.Empty;
-		public string Server      = @"https://n3.standardnotes.org";
+		public string Server      = @"https://sync.standardnotes.org";
 		public bool SendEncrypted = true;
 		public bool RemEmptyTags  = true;
 

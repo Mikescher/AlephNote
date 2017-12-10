@@ -120,7 +120,7 @@ namespace AlephNote.Plugins.StandardNote
 			
 			var result = web.PostTwoWay<APIResultSync>(d, "items/sync");
 
-			dat.SyncToken = result.sync_token;
+			dat.SyncToken = result.sync_token.Trim();
 
 			var syncresult = new SyncResult();
 
