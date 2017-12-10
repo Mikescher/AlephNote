@@ -191,10 +191,8 @@ namespace AlephNote.Plugins.StandardNote
 				}
 			}
 			
-			var result = web.PostTwoWay<APIResultSync>(d, "items/sync");
+			var result = GetCursorResult(web, dat, d);
 
-			dat.SyncToken = result.sync_token.Trim();
-			
 			var syncresult = new SyncResult();
 
 			syncresult.retrieved_tags = result
@@ -260,6 +258,33 @@ namespace AlephNote.Plugins.StandardNote
 				.ToList();
 
 			return syncresult;
+		}
+
+		private static APIResultSync GetCursorResult(ISimpleJsonRest web, StandardNoteData dat, APIBodySync d)
+		{
+			var masterResult = new APIResultSync
+			{
+				retrieved_items = new List<APIResultItem>(),
+				unsaved = new List<APIResultErrorItem>(),
+				saved_items = new List<APIResultItem>()
+			};
+
+			for (;;)
+			{
+				var result = web.PostTwoWay<APIResultSync>(d, "items/sync");
+				dat.SyncToken = result.sync_token.Trim();
+
+				masterResult.sync_token = result.sync_token;
+				masterResult.unsaved.AddRange(result.unsaved);
+				masterResult.cursor_token = result.cursor_token;
+				masterResult.retrieved_items.AddRange(result.retrieved_items);
+				masterResult.saved_items.AddRange(result.saved_items);
+
+				if (result.cursor_token == null) return masterResult;
+
+				d.cursor_token = result.cursor_token;
+				d.items.Clear();
+			}
 		}
 
 		private static void PrepareForUpload(ISimpleJsonRest web, APIBodySync body, StandardFileNote note, List<StandardFileTag> tags, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
