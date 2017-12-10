@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AlephNote.PluginInterface.Exceptions;
 using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.StandardNote
@@ -26,6 +27,8 @@ namespace AlephNote.Plugins.StandardNote
 		public class APIResultItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at, updated_at; public bool deleted; }
 		public class APIBodySync { public int limit; public List<APIBodyItem> items; public string sync_token, cursor_token; }
 		public class APIResultSync { public List<APIResultItem> retrieved_items, saved_items, unsaved; public string sync_token, cursor_token; }
+		public class APIBadRequest { public APIError error; }
+		public class APIError { public string message; public int status; }
 		public class SyncResultTag { public Guid uuid; public string title; public bool deleted; public string enc_item_key, item_key; }
 		public class SyncResult { public List<StandardFileNote> retrieved_notes, saved_notes, unsaved_notes, deleted_notes; public List<SyncResultTag> retrieved_tags, saved_tags, unsaved_tags, deleted_tags; }
 		public class APIResultContentRef { public Guid uuid; public string content_type; }
@@ -73,10 +76,29 @@ namespace AlephNote.Plugins.StandardNote
 				var mk = bytes.Skip(bytes.Length / 2).ToArray();
 
 				var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
-				var tok = web.PostDownload<APIResultAuthorize>("auth/sign_in", "email=" + mail, "password=" + reqpw);
+
+				APIResultAuthorize tok;
+				try
+				{
+					tok = web.PostDownload<APIResultAuthorize>("auth/sign_in", "email=" + mail, "password=" + reqpw);
+				}
+				catch (RestStatuscodeException e1)
+				{
+					if (e1.StatusCode/100 == 4 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
+					{
+						var req = web.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
+						if (req != null) throw new StandardNoteAPIException($"Server returned status {e1.StatusCode}.\nMessage: '{req.error.message}'", e1);
+					}
+
+					throw;
+				}
 
 				tok.masterkey = mk;
 				return tok;
+			}
+			catch (StandardNoteAPIException)
+			{
+				throw;
 			}
 			catch (Exception e)
 			{
@@ -99,10 +121,28 @@ namespace AlephNote.Plugins.StandardNote
 				var ak = bytes.Skip(2 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
 
 				var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
-				var tok = web.PostDownload<APIResultAuthorize>("auth/sign_in", "email=" + mail, "password=" + reqpw);
+				APIResultAuthorize tok;
+				try
+				{
+					tok = web.PostDownload<APIResultAuthorize>("auth/sign_in", "email=" + mail, "password=" + reqpw);
+				}
+				catch (RestStatuscodeException e1)
+				{
+					if (e1.StatusCode / 100 == 4 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
+					{
+						var req = web.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
+						if (req != null) throw new StandardNoteAPIException($"Server returned status {e1.StatusCode}.\nMessage: '{req.error.message}'", e1);
+					}
+
+					throw;
+				}
 
 				tok.masterkey = mk;
 				return tok;
+			}
+			catch (StandardNoteAPIException)
+			{
+				throw;
 			}
 			catch (Exception e)
 			{

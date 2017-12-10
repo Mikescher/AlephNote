@@ -416,6 +416,10 @@ namespace AlephNote.Common.Network
 				else
 					throw new RestException("Could not communicate with server " + uri.Host, e);
 			}
+			catch (RestException)
+			{
+				throw;
+			}
 			catch (Exception e)
 			{
 				throw new RestException("Could not communicate with server " + uri.Host, e);
@@ -479,6 +483,10 @@ namespace AlephNote.Common.Network
 				else
 					throw new RestException("Could not communicate with server " + uri.Host, e);
 			}
+			catch (RestException)
+			{
+				throw;
+			}
 			catch (Exception e)
 			{
 				throw new RestException("Could not communicate with server " + uri.Host, e);
@@ -539,6 +547,10 @@ namespace AlephNote.Common.Network
 					throw new RestException("Could not communicate with server " + uri.Host, e.InnerExceptions.First());
 				else
 					throw new RestException("Could not communicate with server " + uri.Host, e);
+			}
+			catch (RestException)
+			{
+				throw;
 			}
 			catch (Exception e)
 			{

@@ -44,9 +44,13 @@ namespace AlephNote.Plugins.StandardNote
 					}
 				}
 			}
+			catch (StandardNoteAPIException)
+			{
+				throw;
+			}
 			catch (Exception e)
 			{
-				throw new Exception("Could not authenticate with SimpleNote server : " + e.Message, e);
+				throw new StandardNoteAPIException("Could not authenticate with SimpleNote server : " + e.Message, e);
 			}
 		}
 
