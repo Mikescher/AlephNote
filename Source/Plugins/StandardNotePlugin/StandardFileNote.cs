@@ -27,6 +27,12 @@ namespace AlephNote.Plugins.StandardNote
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
 		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
 
+		private string _contentVersion = "";
+		public string ContentVersion { get { return _contentVersion; } set { _contentVersion = value; OnPropertyChanged(); } }
+
+		private string _authHash = "";
+		public string AuthHash { get { return _authHash; } set { _authHash = value; OnPropertyChanged(); } }
+
 		private List<StandardFileTag> _internalTags = new List<StandardFileTag>();
 		public List<StandardFileTag> InternalTags { get { return _internalTags; } }
 
@@ -55,6 +61,8 @@ namespace AlephNote.Plugins.StandardNote
 				new XElement("Title", _title),
 				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
+				new XElement("ContentVersion", _contentVersion),
+				new XElement("AuthHash", _contentVersion),
 			};
 
 			var r = new XElement("standardnote", data);
@@ -76,6 +84,8 @@ namespace AlephNote.Plugins.StandardNote
 				_title = XHelper.GetChildValueString(input, "Title");
 				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
+				_contentVersion = XHelper.GetChildValueStringOrDefault(input, "ContentVersion", "?");
+				_authHash = XHelper.GetChildValueStringOrDefault(input, "AuthHash", "?");
 			}
 		}
 
@@ -152,6 +162,8 @@ namespace AlephNote.Plugins.StandardNote
 				ResyncTags();
 				_text = other.Text;
 				_title = other.Title;
+				_contentVersion = other.ContentVersion;
+				_authHash = other.AuthHash;
 			}
 		}
 
@@ -168,13 +180,15 @@ namespace AlephNote.Plugins.StandardNote
 
 		protected override BasicNote CreateClone()
 		{
-			var n = new StandardFileNote(_id, _config);
-			n._internalTags = _internalTags.ToList();
+			var n               = new StandardFileNote(_id, _config);
+			n._internalTags     = _internalTags.ToList();
 			n.ResyncTags();
-			n._text = _text;
-			n._title = _title;
-			n._creationDate = _creationDate;
+			n._text             = _text;
+			n._title            = _title;
+			n._creationDate     = _creationDate;
 			n._modificationDate = _modificationDate;
+			n._contentVersion   = _contentVersion;
+			n._authHash         = _authHash;
 			return n;
 		}
 	}

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace AlephNote.Plugins.StandardNote
 {
@@ -11,6 +12,8 @@ namespace AlephNote.Plugins.StandardNote
 	{
 		public static readonly Version Version = GetInformationalVersion(typeof(StandardNotePlugin).GetTypeInfo().Assembly);
 		public const string Name = "StandardNotePlugin";
+
+		public const string CURRENT_SCHEMA = "002";
 
 		private IAlephLogger _logger;
 
@@ -36,7 +39,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
 		{
-			return new StandardFileNote(Guid.NewGuid(), (StandardNoteConfig)cfg);
+			return new StandardFileNote(Guid.NewGuid(), (StandardNoteConfig) cfg) {ContentVersion = CURRENT_SCHEMA};
 		}
 
 		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()

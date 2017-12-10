@@ -121,6 +121,11 @@ namespace AlephNote.PluginInterface.Util
 			return GetChildOrThrow(parent, childName).Value;
 		}
 
+		public static string GetChildValueStringOrDefault(XElement parent, string childName, string def)
+		{
+			return GetChildOrNull(parent, childName)?.Value ?? def;
+		}
+
 		public static string GetChildBase64String(XElement parent, string childName)
 		{
 			return ConvertFromC80Base64(GetChildOrThrow(parent, childName).Value);

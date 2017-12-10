@@ -148,5 +148,21 @@ namespace AlephNote.Plugins.StandardNote
 				auth_hash = null,
 			};
 		}
+
+		public static string GetSchemaVersion(string strdata)
+		{
+			if (strdata.StartsWith("001")) return "001";
+			if (strdata.StartsWith("002")) return "002";
+			if (strdata.StartsWith("003")) return "003";
+			if (strdata.StartsWith("004")) return "004";
+			if (strdata.StartsWith("005")) return "005";
+			if (strdata.StartsWith("006")) return "006";
+			if (strdata.StartsWith("007")) return "007";
+			if (strdata.StartsWith("008")) return "008";
+			if (strdata.StartsWith("009")) return "009";
+			if (strdata.StartsWith("010")) return "010";
+
+			return "000";
+		}
 	}
 }

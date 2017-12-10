@@ -317,7 +317,7 @@ namespace AlephNote.Plugins.StandardNote
 				jsnContent.references.Add(new APIResultContentRef { content_type = "Tag", uuid = itag.UUID.Value });
 			}
 
-			var cdNote = StandardNoteCrypt.EncryptContent("002", web.SerializeJson(jsnContent), note.ID, token.masterkey, token.masterauthkey);
+			var cdNote = StandardNoteCrypt.EncryptContent(StandardNotePlugin.CURRENT_SCHEMA, web.SerializeJson(jsnContent), note.ID, token.masterkey, token.masterauthkey);
 
 			body.items.Add(new APIBodyItem
 			{
@@ -344,7 +344,7 @@ namespace AlephNote.Plugins.StandardNote
 
 			Debug.Assert(tag.UUID != null, "tag.UUID != null");
 
-			var cdNote = StandardNoteCrypt.EncryptContent("002", web.SerializeJson(jsnContent), tag.UUID.Value, token.masterkey, token.masterauthkey);
+			var cdNote = StandardNoteCrypt.EncryptContent(StandardNotePlugin.CURRENT_SCHEMA, web.SerializeJson(jsnContent), tag.UUID.Value, token.masterkey, token.masterauthkey);
 
 			body.items.Add(new APIBodyItem
 			{
@@ -366,6 +366,8 @@ namespace AlephNote.Plugins.StandardNote
 					CreationDate = encNote.created_at,
 					Text = "",
 					Title = "",
+					AuthHash = encNote.auth_hash,
+					ContentVersion = StandardNoteCrypt.GetSchemaVersion(encNote.content),
 				};
 				nd.ModificationDate = encNote.updated_at;
 				return nd;
@@ -386,6 +388,7 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				Text = content.text,
 				Title = content.title,
+				ContentVersion = StandardNotePlugin.CURRENT_SCHEMA,
 			};
 
 			var refTags = new List<StandardFileTag>();
