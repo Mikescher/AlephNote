@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Exceptions;
 using Newtonsoft.Json;
@@ -307,7 +308,7 @@ namespace AlephNote.Common.Network
 			{
 				var request = new HttpRequestMessage
 				{
-					Content = new StringContent(upload),
+					Content = new StringContent(upload, Encoding.UTF8, "application/json"),
 					RequestUri = uri,
 					Method = method,
 					
@@ -388,7 +389,7 @@ namespace AlephNote.Common.Network
 			{
 				var request = new HttpRequestMessage
 				{
-					Content = new StringContent(upload),
+					Content = new StringContent(upload, Encoding.UTF8, "application/json"),
 					RequestUri = uri,
 					Method = method,
 				};

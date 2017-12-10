@@ -22,6 +22,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public class APIAuthParams { public string version, pw_salt; public PasswordAlg pw_alg; public PasswordFunc pw_func; public int pw_cost, pw_key_size; }
 		public class APIResultUser { public Guid uuid; public string email; }
+		public class APIRequestUser { public string email, password; }
 		public class APIResultAuthorize { public APIResultUser user; public string token; public byte[] masterkey; }
 		public class APIBodyItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at; public bool deleted; }
 		public class APIResultItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at, updated_at; public bool deleted; }
@@ -124,7 +125,7 @@ namespace AlephNote.Plugins.StandardNote
 				APIResultAuthorize tok;
 				try
 				{
-					tok = web.PostDownload<APIResultAuthorize>("auth/sign_in", "email=" + mail, "password=" + reqpw);
+					tok = web.PostTwoWay<APIResultAuthorize>(new APIRequestUser { email = mail, password = reqpw }, "auth/sign_in");
 				}
 				catch (RestStatuscodeException e1)
 				{
@@ -155,7 +156,7 @@ namespace AlephNote.Plugins.StandardNote
 			APIBodySync d = new APIBodySync();
 			d.cursor_token = null;
 			d.sync_token = string.IsNullOrWhiteSpace(dat.SyncToken) ? null : dat.SyncToken;
-			d.limit = 9999;
+			d.limit = 150;
 			d.items = new List<APIBodyItem>();
 
 			var allTags = dat.Tags.ToList();
