@@ -11,12 +11,11 @@ namespace AlephNote.Plugins.StandardNote
 	{
 		private static readonly RandomNumberGenerator RNG = RandomNumberGenerator.Create();
 
-		// ReSharper disable InconsistentNaming
 		public class EncryptResult { public string enc_item_key, auth_hash, enc_content; }
-		// ReSharper restore InconsistentNaming
 
 		public static string DecryptContent(string encContent, string encItemKey, string authHash, byte[] masterMK, byte[] masterAK)
 		{
+			if (encContent.StartsWith("000")) return DecryptContent000(encContent);
 			if (encContent.StartsWith("001")) return DecryptContent001(encContent, encItemKey, authHash, masterMK);
 			if (encContent.StartsWith("002")) return DecryptContent002(encContent, encItemKey, masterMK, masterAK);
 			if (encContent.StartsWith("003")) throw new StandardNoteAPIException("Unsupported encryption scheme 003 in note content");
@@ -28,6 +27,11 @@ namespace AlephNote.Plugins.StandardNote
 			if (encContent.StartsWith("009")) throw new StandardNoteAPIException("Unsupported encryption scheme 009 in note content");
 			if (encContent.StartsWith("010")) throw new StandardNoteAPIException("Unsupported encryption scheme 010 in note content");
 
+			throw new StandardNoteAPIException("Unsupported encryption scheme ? in note content");
+		}
+
+		private static string DecryptContent000(string encContent)
+		{
 			return Encoding.UTF8.GetString(Convert.FromBase64String(encContent));
 		}
 
@@ -80,10 +84,12 @@ namespace AlephNote.Plugins.StandardNote
 			var IV = components[3];
 			var ciphertext = components[4];
 
-			var string_to_auth = $"{version}:{uuid}:{IV}:{ciphertext}";
-			var local_auth_hash = EncodingConverter.ByteToHexBitFiddleLowercase(AuthSHA256(Encoding.UTF8.GetBytes(string_to_auth), auth_key));
-
-			if (local_auth_hash.ToUpper() != auth_hash.ToUpper()) throw new Exception("Item auth-hash mismatch");
+			if (auth_key != null && auth_key.Length > 0)
+			{
+				var string_to_auth = $"{version}:{uuid}:{IV}:{ciphertext}";
+				var local_auth_hash = EncodingConverter.ByteToHexBitFiddleLowercase(AuthSHA256(Encoding.UTF8.GetBytes(string_to_auth), auth_key));
+				if (local_auth_hash.ToUpper() != auth_hash.ToUpper()) throw new Exception("Item auth-hash mismatch");
+			}
 
 			var result = AESEncryption.DecryptCBC256(Convert.FromBase64String(ciphertext), encryption_key, EncodingConverter.StringToByteArrayCaseInsensitive(IV));
 
@@ -151,6 +157,9 @@ namespace AlephNote.Plugins.StandardNote
 
 		public static string GetSchemaVersion(string strdata)
 		{
+			if (strdata == null) return "?";
+
+			if (strdata.StartsWith("000")) return "000";
 			if (strdata.StartsWith("001")) return "001";
 			if (strdata.StartsWith("002")) return "002";
 			if (strdata.StartsWith("003")) return "003";
@@ -162,7 +171,7 @@ namespace AlephNote.Plugins.StandardNote
 			if (strdata.StartsWith("009")) return "009";
 			if (strdata.StartsWith("010")) return "010";
 
-			return "000";
+			return "?";
 		}
 	}
 }

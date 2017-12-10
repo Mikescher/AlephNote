@@ -23,7 +23,7 @@ namespace AlephNote.Plugins.StandardNote
 		public class APIAuthParams { public string version, pw_salt; public PasswordAlg pw_alg; public PasswordFunc pw_func; public int pw_cost, pw_key_size; }
 		public class APIResultUser { public Guid uuid; public string email; }
 		public class APIRequestUser { public string email, password; }
-		public class APIResultAuthorize { public APIResultUser user; public string token; public byte[] masterkey, masterauthkey; }
+		public class APIResultAuthorize { public APIResultUser user; public string token; public byte[] masterkey, masterauthkey; public string version; }
 		public class APIBodyItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at; public bool deleted; }
 		public class APIResultItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at, updated_at; public bool deleted; }
 		public class APIBodySync { public int limit; public List<APIBodyItem> items; public string sync_token, cursor_token; }
@@ -56,7 +56,7 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			try
 			{
-				logger.Debug(StandardNotePlugin.Name, $"AutParams[version:1, pw_func:{apiparams.pw_func}, pw_alg:{apiparams.pw_alg}, pw_cost:{apiparams.pw_cost}, pw_key_size:{apiparams.pw_key_size}]");
+				logger.Debug(StandardNotePlugin.Name, $"AuthParams[version:1, pw_func:{apiparams.pw_func}, pw_alg:{apiparams.pw_alg}, pw_cost:{apiparams.pw_cost}, pw_key_size:{apiparams.pw_key_size}]");
 
 				if (apiparams.pw_func != PasswordFunc.pbkdf2) throw new Exception("Unsupported pw_func: " + apiparams.pw_func);
 
@@ -97,6 +97,7 @@ namespace AlephNote.Plugins.StandardNote
 				}
 
 				tok.masterkey = mk;
+				tok.version = "001";
 				return tok;
 			}
 			catch (StandardNoteAPIException)
@@ -142,6 +143,7 @@ namespace AlephNote.Plugins.StandardNote
 
 				tok.masterkey = mk;
 				tok.masterauthkey = ak;
+				tok.version = "002";
 				return tok;
 			}
 			catch (StandardNoteAPIException)
@@ -317,7 +319,7 @@ namespace AlephNote.Plugins.StandardNote
 				jsnContent.references.Add(new APIResultContentRef { content_type = "Tag", uuid = itag.UUID.Value });
 			}
 
-			var cdNote = StandardNoteCrypt.EncryptContent(StandardNotePlugin.CURRENT_SCHEMA, web.SerializeJson(jsnContent), note.ID, token.masterkey, token.masterauthkey);
+			var cdNote = StandardNoteCrypt.EncryptContent(token.version, web.SerializeJson(jsnContent), note.ID, token.masterkey, token.masterauthkey);
 
 			body.items.Add(new APIBodyItem
 			{
@@ -344,7 +346,7 @@ namespace AlephNote.Plugins.StandardNote
 
 			Debug.Assert(tag.UUID != null, "tag.UUID != null");
 
-			var cdNote = StandardNoteCrypt.EncryptContent(StandardNotePlugin.CURRENT_SCHEMA, web.SerializeJson(jsnContent), tag.UUID.Value, token.masterkey, token.masterauthkey);
+			var cdNote = StandardNoteCrypt.EncryptContent(token.version, web.SerializeJson(jsnContent), tag.UUID.Value, token.masterkey, token.masterauthkey);
 
 			body.items.Add(new APIBodyItem
 			{
