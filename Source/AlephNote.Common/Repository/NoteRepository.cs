@@ -332,9 +332,13 @@ namespace AlephNote.Common.Repository
 
 		private void WriteSyncData(IRemoteStorageSyncPersistance data, string pathData)
 		{
-			var x = new XDocument(data.Serialize());
+			var tempPath = Path.GetTempFileName();
 
-			using (var file = File.OpenWrite(pathData)) x.Save(file);
+			var x = new XDocument(data.Serialize());
+			using (var file = File.OpenWrite(tempPath)) x.Save(file);
+
+			File.Copy(tempPath, pathData, true);
+			File.Delete(tempPath);
 		}
 
 		public void DeleteLocalData()
