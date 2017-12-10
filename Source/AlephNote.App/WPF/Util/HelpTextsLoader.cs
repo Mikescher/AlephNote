@@ -44,6 +44,7 @@ namespace AlephNote.WPF.Util
 
 		private static void LoadFromPlugins()
 		{
+			if (PluginManager.Inst == null) return;
 			foreach (var plugin in PluginManager.Inst.LoadedPlugins)
 			{
 				foreach (var htxt in plugin.GetHelpTexts())

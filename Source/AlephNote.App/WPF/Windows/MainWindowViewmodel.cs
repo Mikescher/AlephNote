@@ -109,7 +109,7 @@ namespace AlephNote.WPF.Windows
 
 			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
 			
-			if (_settings.LastSelectedNote != null) SelectedNote = Repository.Notes.FirstOrDefault(n => n.GetUniqueName() == _settings.LastSelectedNote);
+			if (_settings.LastSelectedNote != null && _settings.RememberLastSelectedNote) SelectedNote = Repository.Notes.FirstOrDefault(n => n.GetUniqueName() == _settings.LastSelectedNote);
 			if (SelectedNote == null ) SelectedNote = Repository.Notes.FirstOrDefault();
 
 			OverviewListWidth = new GridLength(settings.OverviewListWidth);
@@ -231,7 +231,7 @@ namespace AlephNote.WPF.Windows
 
 			if (Settings != null && Settings.RememberScroll) Owner.ScrollScintilla(_scrollCache.Get(SelectedNote));
 
-			if (Settings != null) Settings.LastSelectedNote = SelectedNote?.GetUniqueName();
+			if (Settings != null && Settings.RememberLastSelectedNote) Settings.LastSelectedNote = SelectedNote?.GetUniqueName();
 			RequestSettingsSave();
 		}
 

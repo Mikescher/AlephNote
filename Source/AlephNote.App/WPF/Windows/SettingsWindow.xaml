@@ -187,8 +187,8 @@
 
 									<CheckBox      Grid.Row="2" Grid.Column="0" Margin="2" Content="Show tag autocompletion"  IsChecked="{Binding Settings.TagAutocomplete}" />
 
-									<CheckBox      Grid.Row="3" Grid.Column="0" Margin="2" Content="Remember scroll position per note"  IsChecked="{Binding Settings.RememberScroll}" />
-									<ctrl:PHelpBtn Grid.Row="3" Grid.Column="1" HelpProperty="RememberScroll" Margin="2,0" VerticalAlignment="Center" />
+									<CheckBox      Grid.Row="3" Grid.Column="0" Margin="2" Content="Remember last selected note"  IsChecked="{Binding Settings.RememberLastSelectedNote}" />
+									<ctrl:PHelpBtn Grid.Row="3" Grid.Column="1" HelpProperty="RememberLastSelectedNote" Margin="2,0" VerticalAlignment="Center" />
 
 								</Grid>
 								
@@ -210,6 +210,8 @@
 									<CheckBox      Grid.Row="2" Grid.Column="0" Margin="2" Content="Automatically sort tags"  IsChecked="{Binding Settings.AutoSortTags}" />
 									<ctrl:PHelpBtn Grid.Row="2" Grid.Column="1" HelpProperty="AutoSortTags" Margin="2,0" VerticalAlignment="Center" />
 
+									<CheckBox      Grid.Row="3" Grid.Column="0" Margin="2" Content="Remember scroll position per note"  IsChecked="{Binding Settings.RememberScroll}" />
+									<ctrl:PHelpBtn Grid.Row="3" Grid.Column="1" HelpProperty="RememberScroll" Margin="2,0" VerticalAlignment="Center" />
 								</Grid>
 
 								<TextBlock     Grid.Row="1" Grid.Column="0" Margin="5"  Text="Note sorting:"/>

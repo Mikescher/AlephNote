@@ -265,6 +265,10 @@ namespace AlephNote.Common.Settings
 		private string _lastSelectedNote = null;
 
 		[AlephXMLField]
+		public bool RememberLastSelectedNote { get { return _rememberLastSelectedNote; } set { _rememberLastSelectedNote = value; OnPropertyChanged(); } }
+		private bool _rememberLastSelectedNote = true;
+
+		[AlephXMLField]
 		public bool AutoSortTags { get { return _autoSortTags; } set { _autoSortTags = value; OnPropertyChanged(); } }
 		private bool _autoSortTags = true;
 

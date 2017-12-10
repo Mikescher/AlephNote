@@ -187,3 +187,6 @@ The shortcut is only available while the focus is in edit area
 
 ### System global ###
 The shortcut is always available, even when the application is minimized or in the tray area
+
+[RememberLastSelectedNote]
+On startup remember and show the note that was selected last time
