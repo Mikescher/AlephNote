@@ -38,6 +38,8 @@ namespace AlephNote.WPF.Windows
 
 		public MainWindowViewmodel VM => viewmodel;
 
+		public INotesViewControl NotesViewControl => new NotesViewFlat(); //(INotesViewControl)NotesViewControlWrapper.Content;
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -72,7 +74,6 @@ namespace AlephNote.WPF.Windows
 			StartupConfigWindow(settings);
 
 			SetupScintilla(settings);
-			UpdateShortcuts(settings);
 
 			viewmodel = new MainWindowViewmodel(settings, this);
 			DataContext = viewmodel;
@@ -390,6 +391,8 @@ namespace AlephNote.WPF.Windows
 			}
 
 			if (Settings.RememberScroll) VM.ForceUpdateUIScroll();
+
+			UpdateShortcuts(Settings);
 		}
 
 		public void ShowDocSearchBar()
@@ -432,7 +435,7 @@ namespace AlephNote.WPF.Windows
 			
 				bool found = false;
 				if (viewmodel.SelectedNote == null) found = true;
-				foreach (var note in Enumerable.Concat(NotesListView.NotesView.OfType<INote>(), NotesListView.NotesView.OfType<INote>()))
+				foreach (var note in Enumerable.Concat(NotesViewControl.EnumerateVisibleNotes(), NotesViewControl.EnumerateVisibleNotes()))
 				{
 					if (found)
 					{
@@ -499,14 +502,7 @@ namespace AlephNote.WPF.Windows
 			}
 
 			// ================ NOTESLIST ================
-			NotesListView.NotesList.InputBindings.Clear();
-			foreach (var sc in settings.Shortcuts.Where(s => s.Value.Scope == AlephShortcutScope.NoteList))
-			{
-				var sckey = sc.Key;
-				var cmd = new RelayCommand(() => ShortcutManager.Execute(this, sckey));
-				var ges = new KeyGesture((Key)sc.Value.Key, (ModifierKeys)sc.Value.Modifiers);
-				NotesListView.NotesList.InputBindings.Add(new InputBinding(cmd, ges));
-			}
+			NotesViewControl.SetShortcuts(this, settings.Shortcuts.Where(s => s.Value.Scope == AlephShortcutScope.NoteList).ToList());
 
 			// ================ GLOBAL ================
 			_scManager.Clear();

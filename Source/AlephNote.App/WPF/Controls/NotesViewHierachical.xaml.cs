@@ -1,21 +1,30 @@
-﻿using AlephNote.Common.Settings.Types;
+﻿using AlephNote.Common.Settings;
 using AlephNote.PluginInterface;
-using AlephNote.WPF.Util;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
-using AlephNote.Common.Settings;
-using AlephNote.WPF.Extensions;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using AlephNote.Common.Settings.Types;
+using AlephNote.WPF.Windows;
 
 namespace AlephNote.WPF.Controls
 {
 	/// <summary>
-	/// Interaction logic for NotesListView.xaml
+	/// Interaction logic for NotesViewHierachical.xaml
 	/// </summary>
-	public partial class NotesListView : INotifyPropertyChanged
+	public partial class NotesViewHierachical : INotifyPropertyChanged, INotesViewControl
 	{
 		#region INotifyPropertyChanged
 
@@ -39,9 +48,9 @@ namespace AlephNote.WPF.Controls
 			DependencyProperty.Register(
 			"Settings",
 			typeof(AppSettings),
-			typeof(NotesListView),
-			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, (obj, args) => { ((NotesListView)obj).OnSettingsChanged(); }));
-		
+			typeof(NotesViewHierachical),
+			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, (obj, args) => { ((NotesViewHierachical)obj).OnSettingsChanged(); }));
+
 		public AppSettings Settings
 		{
 			get { return (AppSettings)GetValue(SettingsProperty); }
@@ -52,8 +61,8 @@ namespace AlephNote.WPF.Controls
 			DependencyProperty.Register(
 			"SelectedNote",
 			typeof(INote),
-			typeof(NotesListView),
-			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (obj, args) => { ((NotesListView)obj).OnSelectedNoteChanged(); }));
+			typeof(NotesViewHierachical),
+			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (obj, args) => { ((NotesViewHierachical)obj).OnSelectedNoteChanged(); }));
 
 		public INote SelectedNote
 		{
@@ -65,8 +74,8 @@ namespace AlephNote.WPF.Controls
 			DependencyProperty.Register(
 			"AllNotes",
 			typeof(IList<INote>),
-			typeof(NotesListView),
-			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, (obj,args) => { ((NotesListView)obj).OnAllNotesChanged(); }));
+			typeof(NotesViewHierachical),
+			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, (obj, args) => { ((NotesViewHierachical)obj).OnAllNotesChanged(); }));
 
 		public IList<INote> AllNotes
 		{
@@ -78,8 +87,8 @@ namespace AlephNote.WPF.Controls
 			DependencyProperty.Register(
 			"SearchText",
 			typeof(string),
-			typeof(NotesListView),
-			new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.None, (obj, args) => { ((NotesListView)obj).OnSearchTextChanged(); }));
+			typeof(NotesViewHierachical),
+			new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.None, (obj, args) => { ((NotesViewHierachical)obj).OnSearchTextChanged(); }));
 
 		public string SearchText
 		{
@@ -91,7 +100,7 @@ namespace AlephNote.WPF.Controls
 			DependencyProperty.Register(
 			"ParentAnchor",
 			typeof(FrameworkElement),
-			typeof(NotesListView),
+			typeof(NotesViewHierachical),
 			new FrameworkPropertyMetadata(null));
 
 		public FrameworkElement ParentAnchor
@@ -109,21 +118,7 @@ namespace AlephNote.WPF.Controls
 
 		#endregion
 
-		public ListCollectionView NotesView
-		{
-			get
-			{
-				if (AllNotes == null) return (ListCollectionView)CollectionViewSource.GetDefaultView(new List<INote>());
-
-				var source = (ListCollectionView)CollectionViewSource.GetDefaultView(AllNotes);
-				source.Filter = p => SearchFilter((INote)p);
-				if (Settings.NoteSorting != SortingMode.None) source.CustomSort = Settings.GetNoteComparator();
-
-				return source;
-			}
-		}
-
-		public NotesListView()
+		public NotesViewHierachical()
 		{
 			InitializeComponent();
 			RootGrid.DataContext = this;
@@ -141,7 +136,7 @@ namespace AlephNote.WPF.Controls
 
 		private void OnAllNotesChanged()
 		{
-			OnExplicitPropertyChanged("NotesView");
+			//
 		}
 
 		private void OnSearchTextChanged()
@@ -149,34 +144,29 @@ namespace AlephNote.WPF.Controls
 			//
 		}
 
-		private bool SearchFilter(INote note)
-		{
-			return ScintillaSearcher.IsInFilter(note, SearchText);
-		}
-
-		private void NotesList_Drop(object sender, DragEventArgs e)
-		{
-			NotesListDrop?.Invoke(sender, e);
-		}
-
-		private void NotesList_KeyDown(object sender, KeyEventArgs e)
-		{
-			NotesListKeyDown?.Invoke(sender, e);
-		}
-
 		public INote GetTopNote()
 		{
-			return NotesList.Items.FirstOrDefault<INote>();
+			throw new NotImplementedException();
 		}
 
 		public void RefreshView()
 		{
-			NotesView.Refresh();
+			throw new NotImplementedException();
 		}
 
 		public bool Contains(INote n)
 		{
-			return NotesView.Contains(n);
+			throw new NotImplementedException();
+		}
+
+		public IEnumerable<INote> EnumerateVisibleNotes()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void SetShortcuts(MainWindow mw, List<KeyValuePair<string, ShortcutDefinition>> list)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

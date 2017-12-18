@@ -25,6 +25,10 @@
 		KeyDown="MainWindow_OnKeyDown"
 		Topmost="{Binding Settings.AlwaysOnTop}"
 		Title="AlephNote" Height="350" Width="525">
+
+	<Window.Resources>
+		<util:NotesListViewTemplateSelector x:Key="NLVTemplateSelector" />
+	</Window.Resources>
 	
 	<Grid x:Name="LayoutRoot">
 		<Grid.ColumnDefinitions>
@@ -115,8 +119,11 @@
 				<Image Source="/Resources/plus.png" />
 			</Button>
 
-			<controls:NotesListView x:Name="NotesListView"
-									Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" 
+			<ContentControl Content="{Binding .}" ContentTemplateSelector="{StaticResource NLVTemplateSelector}" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"  x:Name="NotesViewControlWrapper">
+				<ContentControl.Resources>
+					
+					<DataTemplate x:Key="TemplateFlat" DataType="{x:Type windows:MainWindowViewmodel}">
+						<controls:NotesViewFlat
 									NotesListDrop="NotesList_Drop"
 									NotesListKeyDown="NotesList_KeyDown"
 									ParentAnchor="{Binding ., ElementName=LayoutRoot}"
@@ -124,6 +131,22 @@
 									SelectedNote="{Binding SelectedNote}"
 									AllNotes="{Binding Repository.Notes}" 
 									SearchText="{Binding SearchText}" />
+					</DataTemplate>
+
+					<DataTemplate x:Key="TemplateHierachical" DataType="{x:Type windows:MainWindowViewmodel}">
+						<controls:NotesViewHierachical
+									NotesListDrop="NotesList_Drop"
+									NotesListKeyDown="NotesList_KeyDown"
+									ParentAnchor="{Binding ., ElementName=LayoutRoot}"
+									Settings="{Binding Settings}"
+									SelectedNote="{Binding SelectedNote}"
+									AllNotes="{Binding Repository.Notes}" 
+									SearchText="{Binding SearchText}" />
+					</DataTemplate>
+					
+				</ContentControl.Resources>
+			</ContentControl>
+
 
 		</Grid>
 

@@ -190,3 +190,9 @@ The shortcut is always available, even when the application is minimized or in t
 
 [RememberLastSelectedNote]
 On startup remember and show the note that was selected last time
+
+[UseHierachicalNoteStructure]
+If selected you can put notes in folders and subfolders.
+Only works if the remote plugin and the remote server support directory information.
+
+This replaces the notes view control in the main window to display subfolders in a treeview.

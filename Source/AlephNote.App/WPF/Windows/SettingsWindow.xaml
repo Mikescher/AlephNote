@@ -473,6 +473,24 @@
 
 							</Grid>
 						</GroupBox>
+						<GroupBox Header="Folder structure for notes" Padding="4">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition/>
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+
+								<TextBlock     Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Enable hierachical note structure" />
+								<CheckBox      Grid.Row="0" Grid.Column="1" IsChecked="{Binding Settings.UseHierachicalNoteStructure}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+								<ctrl:PHelpBtn Grid.Row="0" Grid.Column="2" HelpProperty="UseHierachicalNoteStructure" Margin="2,0" VerticalAlignment="Center" />
+
+							</Grid>
+						</GroupBox>
 					</StackPanel>
 				</ScrollViewer>
 			</TabItem>

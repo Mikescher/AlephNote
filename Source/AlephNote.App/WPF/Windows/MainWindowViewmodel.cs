@@ -251,7 +251,7 @@ namespace AlephNote.WPF.Windows
 
 		public void OnNoteChanged(NoteChangedEventArgs e)
 		{
-			if (Owner.NotesListView.GetTopNote() != e.Note) Owner.NotesListView.RefreshView();
+			if (Owner.NotesViewControl.GetTopNote() != e.Note) Owner.NotesViewControl.RefreshView();
 		}
 
 		private void GridSplitterChanged()
@@ -474,11 +474,11 @@ namespace AlephNote.WPF.Windows
 
 			_preventScintillaFocus = true;
 			{
-				Owner.NotesListView.RefreshView();
-				if (Owner.NotesListView.Contains(sn)) 
+				Owner.NotesViewControl.RefreshView();
+				if (Owner.NotesViewControl.Contains(sn)) 
 					SelectedNote = sn;
 				else
-					SelectedNote = Owner.NotesListView.NotesView.FirstOrDefault<INote>();
+					SelectedNote = Owner.NotesViewControl.GetTopNote();
 			}
 			_preventScintillaFocus = false;
 

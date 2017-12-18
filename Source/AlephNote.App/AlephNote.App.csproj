@@ -85,8 +85,12 @@
     <Compile Include="Log\LogEvent.cs" />
     <Compile Include="Log\LogEventType.cs" />
     <Compile Include="WPF\Controls\AutoActionMenuItem.cs" />
-    <Compile Include="WPF\Controls\NotesListView.xaml.cs">
-      <DependentUpon>NotesListView.xaml</DependentUpon>
+    <Compile Include="WPF\Controls\INotesViewControl.cs" />
+    <Compile Include="WPF\Controls\NotesViewFlat.xaml.cs">
+      <DependentUpon>NotesViewFlat.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Controls\NotesViewHierachical.xaml.cs">
+      <DependentUpon>NotesViewHierachical.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Controls\PHelpBtn.xaml.cs">
       <DependentUpon>PHelpBtn.xaml</DependentUpon>
@@ -168,6 +172,7 @@
     <Compile Include="WPF\Services\WatermarkAdorner.cs" />
     <Compile Include="WPF\Services\WatermarkService.cs" />
     <Compile Include="WPF\Util\MenuItemContainerTemplateSelector.cs" />
+    <Compile Include="WPF\Util\NotesListViewTemplateSelector.cs" />
     <Compile Include="WPF\Util\ScintillaHighlighter.cs" />
     <Compile Include="WPF\Util\ScintillaSearcher.cs" />
     <Compile Include="WPF\Windows\AboutWindowViewmodel.cs">
@@ -214,7 +219,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WPF\Controls\NotesListView.xaml">
+    <Page Include="WPF\Controls\NotesViewFlat.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Controls\NotesViewHierachical.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

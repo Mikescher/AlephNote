@@ -288,6 +288,10 @@ namespace AlephNote.Common.Settings
 		public bool RememberScroll { get { return _rememberScroll; } set { _rememberScroll = value; OnPropertyChanged(); } }
 		private bool _rememberScroll = false;
 
+		[AlephXMLField]
+		public bool UseHierachicalNoteStructure { get { return _useHierachicalNoteStructure; } set { _useHierachicalNoteStructure = value; OnPropertyChanged(); } }
+		private bool _useHierachicalNoteStructure = false;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;
