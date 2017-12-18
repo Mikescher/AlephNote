@@ -12,9 +12,6 @@ namespace WPFCustomMessageBox
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
 
-    /// <summary>
-    /// TODO: Update summary.
-    /// </summary>
     internal static class Util
     {
         internal static ImageSource ToImageSource(this Icon icon)

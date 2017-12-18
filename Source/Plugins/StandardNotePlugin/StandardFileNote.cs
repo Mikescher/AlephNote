@@ -62,7 +62,7 @@ namespace AlephNote.Plugins.StandardNote
 				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("ContentVersion", _contentVersion),
-				new XElement("AuthHash", _contentVersion),
+				new XElement("AuthHash", _authHash),
 			};
 
 			var r = new XElement("standardnote", data);

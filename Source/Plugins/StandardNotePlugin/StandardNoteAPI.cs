@@ -390,7 +390,8 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				Text = content.text,
 				Title = content.title,
-				ContentVersion = StandardNotePlugin.CURRENT_SCHEMA,
+				AuthHash = encNote.auth_hash,
+				ContentVersion = StandardNoteCrypt.GetSchemaVersion(encNote.content),
 			};
 
 			var refTags = new List<StandardFileTag>();
