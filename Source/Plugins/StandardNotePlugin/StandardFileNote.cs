@@ -12,6 +12,8 @@ namespace AlephNote.Plugins.StandardNote
 {
 	public class StandardFileNote : BasicNote
 	{
+		public class StandardFileRef { public Guid UUID; public string Type; }
+
 		private Guid _id;
 		public Guid ID { get { return _id; } set { _id = value; OnPropertyChanged(); } }
 
@@ -39,6 +41,9 @@ namespace AlephNote.Plugins.StandardNote
 		private readonly ObservableCollection<string> _tags = new ObservableCollection<string>();
 		public override ObservableCollection<string> Tags { get { return _tags; } }
 
+		private readonly ObservableCollection<StandardFileRef> _internalRef = new ObservableCollection<StandardFileRef>();
+		public ObservableCollection<StandardFileRef> InternalReferences { get { return _internalRef; } }
+
 		private bool _ignoreTagsChanged = false;
 		private readonly StandardNoteConfig _config;
 
@@ -63,6 +68,7 @@ namespace AlephNote.Plugins.StandardNote
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("ContentVersion", _contentVersion),
 				new XElement("AuthHash", _authHash),
+				new XElement("InternalReferences", _internalRef.Select(ir => new XElement("Ref", new XAttribute("Type", ir.Type), new XAttribute("UUID", ir.UUID.ToString("P").ToUpper())))),
 			};
 
 			var r = new XElement("standardnote", data);
@@ -86,6 +92,9 @@ namespace AlephNote.Plugins.StandardNote
 				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
 				_contentVersion = XHelper.GetChildValueStringOrDefault(input, "ContentVersion", "?");
 				_authHash = XHelper.GetChildValueStringOrDefault(input, "AuthHash", "?");
+
+				var intref = XHelper.GetChildOrNull(input, "InternalReferences")?.Elements("Ref").Select(x => new StandardFileRef {UUID = XHelper.GetAttributeGuid(x, "UUID"), Type = XHelper.GetAttributeString(x, "Type")}).ToList();
+				if (intref != null) _internalRef.Synchronize(intref);
 			}
 		}
 
@@ -132,6 +141,11 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
+		public void SetReferences(List<StandardNoteAPI.APIResultContentRef> refs)
+		{
+			_internalRef.Synchronize(refs.Select(r => new StandardFileRef{UUID = r.uuid, Type = r.content_type}));
+		}
+
 		public override string GetUniqueName()
 		{
 			return _id.ToString("N");
@@ -147,6 +161,7 @@ namespace AlephNote.Plugins.StandardNote
 				_creationDate = other.CreationDate;
 				_internalTags = other._internalTags;
 				ResyncTags();
+				_internalRef.Synchronize(other._internalRef);
 			}
 		}
 
@@ -164,6 +179,7 @@ namespace AlephNote.Plugins.StandardNote
 				_title = other.Title;
 				_contentVersion = other.ContentVersion;
 				_authHash = other.AuthHash;
+				_internalRef.Synchronize(other._internalRef);
 			}
 		}
 
@@ -181,6 +197,7 @@ namespace AlephNote.Plugins.StandardNote
 		protected override BasicNote CreateClone()
 		{
 			var n               = new StandardFileNote(_id, _config);
+
 			n._internalTags     = _internalTags.ToList();
 			n.ResyncTags();
 			n._text             = _text;
@@ -189,6 +206,7 @@ namespace AlephNote.Plugins.StandardNote
 			n._modificationDate = _modificationDate;
 			n._contentVersion   = _contentVersion;
 			n._authHash         = _authHash;
+			n._internalRef.Synchronize(_internalRef);
 			return n;
 		}
 	}

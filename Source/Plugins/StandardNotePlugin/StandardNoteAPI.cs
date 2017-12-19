@@ -412,6 +412,7 @@ namespace AlephNote.Plugins.StandardNote
 			}
 
 			n.SetTags(refTags);
+			n.SetReferences(content.references);
 			n.CreationDate = encNote.created_at;
 			n.ModificationDate = encNote.updated_at;
 
