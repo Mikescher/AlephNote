@@ -52,7 +52,7 @@ namespace AlephNote.Common.Repository
 			pathLocalBase = path;
 			pathLocalFolder = Path.Combine(path, acc.ID.ToString("B"));
 			pathLocalData = Path.Combine(path, acc.ID.ToString("B") + ".xml");
-			conn = acc.Plugin.CreateRemoteStorageConnection(cfg.CreateProxy(), acc.Config);
+			conn = acc.Plugin.CreateRemoteStorageConnection(cfg.CreateProxy(), acc.Config, cfg.GetHierachicalConfig());
 			account = acc;
 			appconfig = cfg;
 			listener = fb;
@@ -129,7 +129,7 @@ namespace AlephNote.Common.Repository
 			var data = root.Element("data");
 			if (data == null) throw new Exception("missing data node");
 
-			var note = account.Plugin.CreateEmptyNote(account.Config);
+			var note = account.Plugin.CreateEmptyNote(Connection, account.Config);
 			note.Deserialize(data.Elements().FirstOrDefault());
 			note.ResetLocalDirty();
 			note.ResetRemoteDirty();
@@ -144,7 +144,7 @@ namespace AlephNote.Common.Repository
 
 		public INote CreateNewNote()
 		{
-			var note = account.Plugin.CreateEmptyNote(account.Config);
+			var note = account.Plugin.CreateEmptyNote(Connection, account.Config);
 			Notes.Add(note);
 			note.SetDirty();
 			SaveNote(note);
@@ -181,6 +181,8 @@ namespace AlephNote.Common.Repository
 				meta.Add(new XElement("provider", account.Plugin.GetUniqueID().ToString("B")));
 				meta.Add(new XElement("dirty", !note.IsRemoteSaved));
 				meta.Add(new XElement("conflict", note.IsConflictNote));
+				meta.Add(new XElement("real_title", note.Title));
+				meta.Add(new XElement("real_path", string.Join("/", note.Path.Enumerate())));
 				root.Add(meta);
 
 				root.Add(new XElement("data", note.Serialize()));
@@ -407,6 +409,8 @@ namespace AlephNote.Common.Repository
 		public void SyncError(List<Tuple<string, Exception>> errors)
 		{
 			// [event from sync thread]
+
+			LocalGitBackup.UpdateRepository(this, appconfig, logger);
 		}
 
 		public void OnSyncRequest()

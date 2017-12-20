@@ -68,6 +68,11 @@ namespace AlephNote.Plugins.SimpleNote
 			if (id == ID_BLANKFMT) BlankLineBelowTitle = value;
 		}
 
+		public void SetProperty(int id, int value)
+		{
+			throw new NotImplementedException();
+		}
+
 		public bool IsEqual(IRemoteStorageConfiguration iother)
 		{
 			var other = iother as SimpleNoteConfig;

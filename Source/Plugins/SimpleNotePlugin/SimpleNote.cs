@@ -9,7 +9,7 @@ using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.SimpleNote
 {
-	class SimpleNote : BasicNote
+	class SimpleNote : BasicFlatNote
 	{
 		private string _id;
 		public string ID { get { return _id; } set { _id = value; OnPropertyChanged(); } }
@@ -40,7 +40,8 @@ namespace AlephNote.Plugins.SimpleNote
 
 		private readonly SimpleNoteConfig _config;
 
-		public SimpleNote(string uid, SimpleNoteConfig cfg)
+		public SimpleNote(string uid, SimpleNoteConfig cfg, HierachyEmulationConfig hcfg)
+			: base(hcfg)
 		{
 			_id = uid;
 			_config = cfg;
@@ -92,7 +93,7 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		public override string Title
+		public override string InternalTitle
 		{
 			get
 			{
@@ -177,9 +178,9 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		protected override BasicNote CreateClone()
+		protected override BasicFlatNote CreateClone()
 		{
-			var n = new SimpleNote(_id, _config);
+			var n = new SimpleNote(_id, _config, _hConfig);
 			n._tags.Synchronize(_tags.ToList());
 			n._content = _content;
 			n._deleted = _deleted;

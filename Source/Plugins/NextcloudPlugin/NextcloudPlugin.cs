@@ -1,5 +1,6 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
+using AlephNote.PluginInterface.Util;
 using System;
 using System.Net;
 using System.Reflection;
@@ -28,12 +29,12 @@ namespace AlephNote.Plugins.Nextcloud
 			return new NextcloudConfig();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hConfig)
 		{
 			return new NextcloudConnection(_logger, proxy, (NextcloudConfig)config);
 		}
 
-		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
+		public override INote CreateEmptyNote(IRemoteStorageConnection iconn, IRemoteStorageConfiguration cfg)
 		{
 			return new NextcloudNote(-1, Guid.NewGuid(), (NextcloudConfig)cfg);
 		}
@@ -41,6 +42,11 @@ namespace AlephNote.Plugins.Nextcloud
 		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()
 		{
 			return new NextcloudData();
+		}
+
+		public override bool HasNativeDirectorySupport()
+		{
+			return true;
 		}
 	}
 }

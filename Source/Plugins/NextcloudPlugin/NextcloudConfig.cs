@@ -66,6 +66,11 @@ namespace AlephNote.Plugins.Nextcloud
 			if (id == ID_BLANKFMT) BlankLineBelowTitle = value;
 		}
 
+		public void SetProperty(int id, int value)
+		{
+			throw new NotSupportedException();
+		}
+
 		public bool IsEqual(IRemoteStorageConfiguration iother)
 		{
 			var other = iother as NextcloudConfig;

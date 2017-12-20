@@ -9,13 +9,15 @@ namespace AlephNote.Plugins.Filesystem
 {
 	public class FilesystemConfig : IRemoteStorageConfiguration
 	{
-		private const int ID_FOLDER    = 6454;
-		private const int ID_EXTENSION = 6455;
-		private const int ID_ENCODING  = 6456;
+		private const int ID_FOLDER      = 6454;
+		private const int ID_EXTENSION   = 6455;
+		private const int ID_ENCODING    = 6456;
+		private const int ID_SEARCHDEPTH = 6457;
 
-		public string Folder    = string.Empty;
-		public string Extension = "txt";
+		public string Folder      = string.Empty;
+		public string Extension   = "txt";
 		public string StrEncoding = "UTF-8";
+		public int SearchDepth    = 8;
 
 		public Encoding Encoding => Encoding.GetEncoding(StrEncoding);
 
@@ -26,6 +28,7 @@ namespace AlephNote.Plugins.Filesystem
 				new XElement("Folder", Folder),
 				new XElement("Extension", Extension),
 				new XElement("Encoding", StrEncoding),
+				new XElement("SearchDepth", SearchDepth),
 			};
 
 			var r = new XElement("config", data);
@@ -38,9 +41,10 @@ namespace AlephNote.Plugins.Filesystem
 		{
 			if (input.Name.LocalName != "config") throw new Exception("LocalName != 'config'");
 
-			Folder = XHelper.GetChildValue(input, "Folder", string.Empty);
-			Extension = XHelper.GetChildValue(input, "Extension", "txt");
-			StrEncoding = XHelper.GetChildValue(input, "Encoding", "UTF-8");
+			Folder      = XHelper.GetChildValue(input, "Folder",      string.Empty);
+			Extension   = XHelper.GetChildValue(input, "Extension",   "txt");
+			StrEncoding = XHelper.GetChildValue(input, "Encoding",    "UTF-8");
+			SearchDepth = XHelper.GetChildValue(input, "SearchDepth", 8);
 		}
 
 		public IEnumerable<DynamicSettingValue> ListProperties()
@@ -48,13 +52,19 @@ namespace AlephNote.Plugins.Filesystem
 			yield return DynamicSettingValue.CreateFolderChooser(ID_FOLDER, "Folder", Folder);
 			yield return DynamicSettingValue.CreateText(ID_EXTENSION, "Extension", Extension);
 			yield return DynamicSettingValue.CreateCombobox(ID_ENCODING, "Encoding", StrEncoding, new[] { "UTF-8", "UTF-16", "UTF-32", "ASCII" });
+			yield return DynamicSettingValue.CreateNumberChooser(ID_SEARCHDEPTH, "Max search depth", SearchDepth, FilesystemPlugin.MIN_SEARCH_DEPTH, FilesystemPlugin.MAX_SEARCH_DEPTH, "SearchDepth");
 		}
 
 		public void SetProperty(int id, string value)
 		{
 			if (id == ID_FOLDER) Folder = value;
-			if (id == ID_EXTENSION) Extension = value;
+			if (id == ID_EXTENSION) Extension = (value.Trim().Length==0) ? "txt" : value;
 			if (id == ID_ENCODING) StrEncoding = value;
+		}
+
+		public void SetProperty(int id, int value)
+		{
+			if (id == ID_SEARCHDEPTH) SearchDepth = value;
 		}
 
 		public void SetProperty(int id, bool value)
@@ -67,8 +77,10 @@ namespace AlephNote.Plugins.Filesystem
 			var other = iother as FilesystemConfig;
 			if (other == null) return false;
 
-			if (this.Folder    != other.Folder)    return false;
-			if (this.Extension != other.Extension) return false;
+			if (this.Folder      != other.Folder)      return false;
+			if (this.Extension   != other.Extension)   return false;
+			if (this.StrEncoding != other.StrEncoding) return false;
+			if (this.SearchDepth != other.SearchDepth) return false;
 
 			return true;
 		}
@@ -79,6 +91,7 @@ namespace AlephNote.Plugins.Filesystem
 			{
 				Folder = this.Folder,
 				Extension = this.Extension,
+				StrEncoding = this.StrEncoding,
 			};
 		}
 

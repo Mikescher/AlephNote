@@ -1,5 +1,6 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
+using AlephNote.PluginInterface.Util;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -29,14 +30,15 @@ namespace AlephNote.Plugins.SimpleNote
 			return new SimpleNoteConfig();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hConfig)
 		{
-			return new SimpleNoteConnection(_logger, proxy, (SimpleNoteConfig)config);
+			return new SimpleNoteConnection(_logger, proxy, (SimpleNoteConfig)config, hConfig);
 		}
 
-		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
+		public override INote CreateEmptyNote(IRemoteStorageConnection iconn, IRemoteStorageConfiguration cfg)
 		{
-			return new SimpleNote(Guid.NewGuid().ToString("N").ToUpper(), (SimpleNoteConfig)cfg);
+			var conn = (SimpleNoteConnection)iconn;
+			return new SimpleNote(Guid.NewGuid().ToString("N").ToUpper(), (SimpleNoteConfig)cfg, conn.HConfig);
 		}
 
 		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()
@@ -47,6 +49,11 @@ namespace AlephNote.Plugins.SimpleNote
 		public override IEnumerable<Tuple<string, string>> CreateHelpTexts()
 		{
 			yield return Tuple.Create("PermanentlyDeleteNotes", "SimpleNote can either 'really' delete notes on the server or only mark them as 'deleted'.\nIf this option is checked locally deleted notes are permanently deleted on the server.");
+		}
+
+		public override bool HasNativeDirectorySupport()
+		{
+			return false;
 		}
 	}
 }

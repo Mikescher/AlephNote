@@ -1,5 +1,6 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
+using AlephNote.PluginInterface.Util;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -32,14 +33,15 @@ namespace AlephNote.Plugins.StandardNote
 			return new StandardNoteConfig();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hConfig)
 		{
-			return new StandardNoteConnection(_logger, proxy, (StandardNoteConfig)config);
+			return new StandardNoteConnection(_logger, proxy, (StandardNoteConfig)config, hConfig);
 		}
 
-		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
+		public override INote CreateEmptyNote(IRemoteStorageConnection iconn, IRemoteStorageConfiguration cfg)
 		{
-			return new StandardFileNote(Guid.NewGuid(), (StandardNoteConfig) cfg) {ContentVersion = CURRENT_SCHEMA};
+			var conn = (StandardNoteConnection)iconn;
+			return new StandardFileNote(Guid.NewGuid(), (StandardNoteConfig) cfg, conn.HConfig) {ContentVersion = CURRENT_SCHEMA};
 		}
 
 		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()
@@ -52,6 +54,11 @@ namespace AlephNote.Plugins.StandardNote
 			yield return Tuple.Create("SendEncrypted", "If checked the note content is encrypted locally before being send to the server."+"\n"+
 				                                       "No one can read your notes without your password, not even the server administrator.");
 			yield return Tuple.Create("RemEmptyTags", "If checked tags that are not linked with any note are deleted on the server.");
+		}
+
+		public override bool HasNativeDirectorySupport()
+		{
+			return false;
 		}
 	}
 }

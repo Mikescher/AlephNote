@@ -5,10 +5,11 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Xml.Linq;
 using System.Runtime.CompilerServices;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.PluginInterface.Impl
 {
-	public abstract class BasicNote : INotifyPropertyChanged, INote
+	public abstract class BasicHierachicalNote : INotifyPropertyChanged, INote
 	{
 		private int _dirtySupressor = 0;
 
@@ -25,9 +26,9 @@ namespace AlephNote.PluginInterface.Impl
 
 		private class NoteDirtyBlocker : IDisposable
 		{
-			private readonly BasicNote note;
+			private readonly BasicHierachicalNote note;
 
-			public NoteDirtyBlocker(BasicNote n)
+			public NoteDirtyBlocker(BasicHierachicalNote n)
 			{
 				note = n;
 				note._dirtySupressor++;
@@ -51,7 +52,7 @@ namespace AlephNote.PluginInterface.Impl
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		protected BasicNote()
+		protected BasicHierachicalNote()
 		{
 			PropertyChanged += Changed;
 			Tags.CollectionChanged += TagsChanged;
@@ -61,24 +62,22 @@ namespace AlephNote.PluginInterface.Impl
 		{
 			if (_dirtySupressor > 0) return;
 
-			if (e.PropertyName == "Text" || e.PropertyName == "Title")
+			if (e.PropertyName == "Text" || e.PropertyName == "Title" || e.PropertyName == "Path")
 			{
 				SetDirty();
-
 				ModificationDate = DateTimeOffset.Now;
-
 				if (IsConflictNote) IsConflictNote = false;
-
 				OnChanged?.Invoke(this, new NoteChangedEventArgs(this, e.PropertyName));
 			}
 		}
 
 		private void TagsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
+			if (_dirtySupressor > 0) return;
+
 			SetDirty();
-
+			ModificationDate = DateTimeOffset.Now;
 			if (IsConflictNote) IsConflictNote = false;
-
 			OnChanged?.Invoke(this, new NoteChangedEventArgs(this, "Tags"));
 		}
 
@@ -123,10 +122,11 @@ namespace AlephNote.PluginInterface.Impl
 		public abstract ObservableCollection<string> Tags { get; }
 		public abstract string Text { get; set; }
 		public abstract string Title { get; set; }
+		public abstract DirectoryPath Path { get; set; }
 		public abstract DateTimeOffset CreationDate { get; set; }
 		public abstract DateTimeOffset ModificationDate { get; set; }
 
-		protected abstract BasicNote CreateClone();
+		protected abstract BasicHierachicalNote CreateClone();
 
 		public INote Clone()
 		{
@@ -150,6 +150,7 @@ namespace AlephNote.PluginInterface.Impl
 				{
 					OnExplicitPropertyChanged("Text");
 					OnExplicitPropertyChanged("Title");
+					OnExplicitPropertyChanged("Path");
 					OnExplicitPropertyChanged("Tags");
 				}
 			}
@@ -157,6 +158,7 @@ namespace AlephNote.PluginInterface.Impl
 			{
 				OnExplicitPropertyChanged("Text");
 				OnExplicitPropertyChanged("Title");
+				OnExplicitPropertyChanged("Path");
 				OnExplicitPropertyChanged("Tags");
 			}
 		}

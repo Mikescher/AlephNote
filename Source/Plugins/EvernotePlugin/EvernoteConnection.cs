@@ -35,8 +35,12 @@ namespace AlephNote.Plugins.Evernote
 		private NoteStore.Client nsClient;
 		private string _token = null;
 
-		public EvernoteConnection(IAlephLogger log, IWebProxy proxy, EvernoteConfig config)
+		public readonly HierachyEmulationConfig HConfig;
+
+		public EvernoteConnection(IAlephLogger log, IWebProxy proxy, EvernoteConfig config, HierachyEmulationConfig hConfig)
 		{
+			HConfig = hConfig;
+
 			_config = config;
 			_proxy = proxy;
 			_logger = log;
@@ -271,7 +275,7 @@ namespace AlephNote.Plugins.Evernote
 		{
 			var remote = nsClient.getNote(_token, id.ToString("D"), true, false, false, false);
 
-			var note = new EvernoteNote(Guid.Parse(remote.Guid), _config);
+			var note = new EvernoteNote(Guid.Parse(remote.Guid), _config, HConfig);
 
 			if (remote.__isset.tagGuids) note.Tags.Synchronize(ConvertTagsFromUUID(remote.TagGuids));
 			if (remote.__isset.updateSequenceNum) note.UpdateSequenceNumber = remote.UpdateSequenceNum;

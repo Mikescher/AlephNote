@@ -1,5 +1,6 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
+using AlephNote.PluginInterface.Util;
 using System;
 using System.Net;
 using System.Reflection;
@@ -21,17 +22,22 @@ namespace AlephNote.Plugins.Headless
 			//
 		}
 
+		public override bool HasNativeDirectorySupport()
+		{
+			return true;
+		}
+
 		public override IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration()
 		{
 			return new HeadlessConfig();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hConfig)
 		{
 			return new HeadlessConnection();
 		}
 
-		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
+		public override INote CreateEmptyNote(IRemoteStorageConnection conn, IRemoteStorageConfiguration cfg)
 		{
 			return new HeadlessNote(Guid.NewGuid());
 		}

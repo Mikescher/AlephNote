@@ -1,15 +1,15 @@
 ﻿using AlephNote.PluginInterface;
-using AlephNote.PluginInterface.Impl;
 using System;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using AlephNote.PluginInterface.Util;
+using AlephNote.PluginInterface.Impl;
 
 namespace AlephNote.Plugins.Evernote
 {
-	public class EvernoteNote : BasicNote
+	public class EvernoteNote : BasicFlatNote
 	{
 		private Guid _id;
 		public Guid ID { get { return _id; } set { _id = value; OnPropertyChanged(); } }
@@ -17,8 +17,8 @@ namespace AlephNote.Plugins.Evernote
 		private string _text = "";
 		public override string Text { get { return _text; } set { _text = value; OnPropertyChanged(); } }
 
-		private string _title = "";
-		public override string Title { get { return _title; } set { _title = value; OnPropertyChanged(); } }
+		private string _internalTitle = "";
+		public override string InternalTitle { get { return _internalTitle; } set { _internalTitle = value; OnPropertyChanged(); } }
 
 		private DateTimeOffset _creationDate = DateTimeOffset.Now;
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
@@ -34,7 +34,8 @@ namespace AlephNote.Plugins.Evernote
 
 		private readonly EvernoteConfig _config;
 
-		public EvernoteNote(Guid id, EvernoteConfig cfg)
+		public EvernoteNote(Guid id, EvernoteConfig cfg, HierachyEmulationConfig hcfg)
+			:base(hcfg)
 		{
 			_id = id;
 			_config = cfg;
@@ -45,7 +46,7 @@ namespace AlephNote.Plugins.Evernote
 			var data = new object[]
 			{
 				new XElement("ID", _id),
-				new XElement("Title", _title),
+				new XElement("Title", _internalTitle),
 				new XElement("Text", XHelper.ConvertToC80Base64(_text)),
 				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
@@ -63,11 +64,11 @@ namespace AlephNote.Plugins.Evernote
 		{
 			using (SuppressDirtyChanges())
 			{
-				_id = XHelper.GetChildValueGUID(input, "ID");
-				_title = XHelper.GetChildValueString(input, "Title");
-				_text = XHelper.GetChildBase64String(input, "Text");
-				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
-				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
+				_id                   = XHelper.GetChildValueGUID(input, "ID");
+				_internalTitle        = XHelper.GetChildValueString(input, "Title");
+				_text                 = XHelper.GetChildBase64String(input, "Text");
+				_creationDate         = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
+				_modificationDate     = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
 				_updateSequenceNumber = XHelper.GetChildValueInt(input, "UpdateSequenceNumber");
 			}
 		}
@@ -94,15 +95,15 @@ namespace AlephNote.Plugins.Evernote
 				_modificationDate = other.ModificationDate;
 				_updateSequenceNumber = other.UpdateSequenceNumber;
 				_tags.Synchronize(other.Tags);
-				_title = other.Title;
+				_internalTitle = other.InternalTitle;
 				_text = other.Text;
 			}
 		}
 
-		protected override BasicNote CreateClone()
+		protected override BasicFlatNote CreateClone()
 		{
-			var n = new EvernoteNote(_id, _config);
-			n._title = _title;
+			var n = new EvernoteNote(_id, _config, _hConfig);
+			n._internalTitle = _internalTitle;
 			n._text = _text;
 			n._creationDate = _creationDate;
 			n._modificationDate = _modificationDate;

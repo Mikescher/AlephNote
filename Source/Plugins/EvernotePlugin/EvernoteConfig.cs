@@ -61,6 +61,11 @@ namespace AlephNote.Plugins.Evernote
 			if (id == ID_SANDBOX) UseSandbox = value;
 		}
 
+		public void SetProperty(int id, int value)
+		{
+			throw new NotSupportedException();
+		}
+
 		public bool IsEqual(IRemoteStorageConfiguration iother)
 		{
 			var other = iother as EvernoteConfig;

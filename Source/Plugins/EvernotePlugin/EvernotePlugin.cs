@@ -3,6 +3,7 @@ using System.Net;
 using System.Reflection;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.Evernote
 {
@@ -28,19 +29,25 @@ namespace AlephNote.Plugins.Evernote
 			return new EvernoteConfig();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hConfig)
 		{
-			return new EvernoteConnection(_logger, proxy, (EvernoteConfig)config);
+			return new EvernoteConnection(_logger, proxy, (EvernoteConfig)config, hConfig);
 		}
 
-		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
+		public override INote CreateEmptyNote(IRemoteStorageConnection iconn, IRemoteStorageConfiguration cfg)
 		{
-			return new EvernoteNote(Guid.NewGuid(), (EvernoteConfig)cfg);
+			var conn = (EvernoteConnection)iconn;
+			return new EvernoteNote(Guid.NewGuid(), (EvernoteConfig)cfg, conn.HConfig);
 		}
 
 		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()
 		{
 			return new EvernoteData();
+		}
+
+		public override bool HasNativeDirectorySupport()
+		{
+			return false;
 		}
 	}
 }

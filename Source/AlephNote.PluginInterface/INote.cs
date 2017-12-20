@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlephNote.PluginInterface.Util;
+using System;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
 
@@ -26,6 +27,8 @@ namespace AlephNote.PluginInterface
 		ObservableCollection<string> Tags { get; }
 		string Text { get; set; }
 		string Title { get; set; }
+		DirectoryPath Path { get; set; }
+
 		bool IsLocalSaved { get; set; }
 		bool IsRemoteSaved { get; set; }
 		bool IsConflictNote { get; set; }

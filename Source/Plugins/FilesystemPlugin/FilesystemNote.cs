@@ -6,10 +6,11 @@ using System.IO;
 using System.Text;
 using System.Xml.Linq;
 using AlephNote.PluginInterface.Util;
+using System.Linq;
 
 namespace AlephNote.Plugins.Filesystem
 {
-	class FilesystemNote : BasicNote
+	class FilesystemNote : BasicHierachicalNote
 	{
 		private Guid _id;
 		public Guid ID { get { return _id; } set { _id = value; OnPropertyChanged(); } }
@@ -19,6 +20,9 @@ namespace AlephNote.Plugins.Filesystem
 
 		private string _title = "";
 		public override string Title { get { return _title; } set { _title = value; OnPropertyChanged(); } }
+
+		private DirectoryPath _path = DirectoryPath.Root();
+		public override DirectoryPath Path { get { return _path; } set { _path = value; OnPropertyChanged(); } }
 
 		private string _pathRemote = "";
 		public string PathRemote { get { return _pathRemote; } set { _pathRemote = value; OnPropertyChanged(); } }
@@ -43,18 +47,16 @@ namespace AlephNote.Plugins.Filesystem
 
 		public string GetPath(FilesystemConfig cfg)
 		{
-			var cleanTitle = Title
-				.Replace(':', '_')
-				.Replace('?', '_')
-				.Replace('/', '_')
-				.Replace('\\', '_')
-				.Replace('*', '_')
-				.Replace('<', '_')
-				.Replace('>', '_')
-				.Replace('|', '_')
-				.Replace('"', '_');
+			var dat = new[] { cfg.Folder }
+				.Concat(Path.Enumerate().Select(CleanForFS))
+				.Concat(new[] { CleanForFS(Title) + "." + cfg.Extension });
 
-			return Path.Combine(cfg.Folder, cleanTitle + "." + cfg.Extension);
+			return System.IO.Path.Combine(dat.ToArray());
+		}
+
+		private static string CleanForFS(string str)
+		{
+			return FilenameHelper.StripStringForFilename(str, '_');
 		}
 
 		public override string GetUniqueName()
@@ -72,6 +74,7 @@ namespace AlephNote.Plugins.Filesystem
 				new XElement("PathRemote", _pathRemote),
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("ModificationDate", _modificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
+				new XElement("Path", Path.Serialize()),
 			};
 
 			var r = new XElement("fsnote", data);
@@ -88,17 +91,19 @@ namespace AlephNote.Plugins.Filesystem
 				_id = XHelper.GetChildValueGUID(input, "ID");
 				_text = XHelper.GetChildBase64String(input, "Text");
 				_title = Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetChildValueString(input, "Title")));
+				_path = DirectoryPath.Deserialize(XHelper.GetChildrenOrEmpty(input, "Path", "PathComponent"));
 				_pathRemote = XHelper.GetChildValueString(input, "PathRemote");
 				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
 			}
 		}
 
-		protected override BasicNote CreateClone()
+		protected override BasicHierachicalNote CreateClone()
 		{
 			var n = new FilesystemNote(_id, _config);
 			n._text = _text;
 			n._title = _title;
+			n._path = _path;
 			n._pathRemote = _pathRemote;
 			n._creationDate = _creationDate;
 			n._modificationDate = _modificationDate;
@@ -125,6 +130,7 @@ namespace AlephNote.Plugins.Filesystem
 				_modificationDate = other.ModificationDate;
 				_text             = other.Text;
 				_title            = other.Title;
+				_path             = other.Path;
 				_pathRemote       = other.PathRemote;
 			}
 		}

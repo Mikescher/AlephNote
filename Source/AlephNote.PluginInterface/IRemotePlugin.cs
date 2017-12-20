@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlephNote.PluginInterface.Util;
+using System;
 using System.Collections.Generic;
 using System.Net;
 
@@ -14,11 +15,12 @@ namespace AlephNote.PluginInterface
 		Guid GetUniqueID();
 		string GetName();
 		Version GetVersion(); //SemVer. set last digit <> 0 to create a debug version (will not be loaded in RELEASE) 
+		bool HasNativeDirectorySupport();
 
 		IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
-		IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config);
+		IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hierachicalConfig);
 		IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData();
-		INote CreateEmptyNote(IRemoteStorageConfiguration cfg);
+		INote CreateEmptyNote(IRemoteStorageConnection conn, IRemoteStorageConfiguration cfg);
 
 		IDictionary<string, string> GetHelpTexts();
 	}

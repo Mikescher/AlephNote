@@ -11,6 +11,7 @@ namespace AlephNote.PluginInterface
 		IEnumerable<DynamicSettingValue> ListProperties();
 		void SetProperty(int id, string value);
 		void SetProperty(int id, bool value);
+		void SetProperty(int id, int value);
 
 		bool IsEqual(IRemoteStorageConfiguration other);
 		IRemoteStorageConfiguration Clone();

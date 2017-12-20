@@ -1,5 +1,6 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
+using AlephNote.PluginInterface.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,8 +24,12 @@ namespace AlephNote.Plugins.SimpleNote
 
 		private SimpleNoteData _data;
 
-		public SimpleNoteConnection(IAlephLogger log, IWebProxy proxy, SimpleNoteConfig config)
+		public readonly HierachyEmulationConfig HConfig;
+
+		public SimpleNoteConnection(IAlephLogger log, IWebProxy proxy, SimpleNoteConfig config, HierachyEmulationConfig hConfig)
 		{
+			HConfig = hConfig;
+
 			_config = config;
 			_proxy = proxy;
 			_logger = log;
@@ -119,7 +124,7 @@ namespace AlephNote.Plugins.SimpleNote
 		{
 			using (var web = CreateAuthenticatedClient())
 			{
-				var d = SimpleNoteAPI.GetNoteData(web, id, _config);
+				var d = SimpleNoteAPI.GetNoteData(web, id, _config, this);
 
 				if (d.Deleted)
 				{
@@ -177,7 +182,7 @@ namespace AlephNote.Plugins.SimpleNote
 				if (remote == null)
 				{
 					conflict = null;
-					inote = SimpleNoteAPI.UploadNewNote(web, note, _config);
+					inote = SimpleNoteAPI.UploadNewNote(web, note, _config, this);
 					return RemoteUploadResult.Uploaded;
 				}
 				else
@@ -186,14 +191,14 @@ namespace AlephNote.Plugins.SimpleNote
 					{
 						if (strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.UseClientCreateConflictFile)
 						{
-							conflict = SimpleNoteAPI.GetNoteData(web, note.ID, _config);
-							inote = SimpleNoteAPI.ChangeExistingNote(web, note, _config, out _);
+							conflict = SimpleNoteAPI.GetNoteData(web, note.ID, _config, this);
+							inote = SimpleNoteAPI.ChangeExistingNote(web, note, _config, this, out _);
 							return RemoteUploadResult.Conflict;
 						}
 						else if (strategy == ConflictResolutionStrategy.UseServerVersion || strategy == ConflictResolutionStrategy.UseServerCreateConflictFile)
 						{
 							conflict = inote.Clone();
-							inote = SimpleNoteAPI.GetNoteData(web, note.ID, _config);
+							inote = SimpleNoteAPI.GetNoteData(web, note.ID, _config, this);
 							return RemoteUploadResult.Conflict;
 						}
 						else
@@ -205,7 +210,7 @@ namespace AlephNote.Plugins.SimpleNote
 					{
 						conflict = null;
 						bool updated;
-						inote = SimpleNoteAPI.ChangeExistingNote(web, note, _config, out updated);
+						inote = SimpleNoteAPI.ChangeExistingNote(web, note, _config, this, out updated);
 						return updated ? RemoteUploadResult.Uploaded : RemoteUploadResult.UpToDate;
 					}
 				}
@@ -224,7 +229,7 @@ namespace AlephNote.Plugins.SimpleNote
 
 				if (remote.v == note.LocalVersion) return RemoteDownloadResult.UpToDate;
 
-				var unote = SimpleNoteAPI.GetNoteData(web, note.ID, _config);
+				var unote = SimpleNoteAPI.GetNoteData(web, note.ID, _config, this);
 				if (unote.Deleted) return RemoteDownloadResult.DeletedOnRemote;
 
 				inote.ApplyUpdatedData(unote);

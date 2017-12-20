@@ -68,6 +68,11 @@ namespace AlephNote.Plugins.StandardNote
 			if (id == ID_REMTAGS) RemEmptyTags = value;
 		}
 
+		public void SetProperty(int id, int value)
+		{
+			throw new NotImplementedException();
+		}
+
 		public bool IsEqual(IRemoteStorageConfiguration iother)
 		{
 			var other = iother as StandardNoteConfig;

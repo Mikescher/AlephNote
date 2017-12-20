@@ -473,9 +473,10 @@
 
 							</Grid>
 						</GroupBox>
-						<GroupBox Header="Folder structure for notes" Padding="4">
+						<GroupBox Header="Directory structure for notes" Padding="4">
 							<Grid>
 								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto"/>
 									<RowDefinition Height="Auto"/>
 									<RowDefinition/>
 								</Grid.RowDefinitions>
@@ -486,8 +487,28 @@
 								</Grid.ColumnDefinitions>
 
 								<TextBlock     Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Enable hierachical note structure" />
-								<CheckBox      Grid.Row="0" Grid.Column="1" IsChecked="{Binding Settings.UseHierachicalNoteStructure}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+								<CheckBox      Grid.Row="0" Grid.Column="1" IsChecked="{Binding Settings.UseHierachicalNoteStructure}" VerticalAlignment="Center"/>
 								<ctrl:PHelpBtn Grid.Row="0" Grid.Column="2" HelpProperty="UseHierachicalNoteStructure" Margin="2,0" VerticalAlignment="Center" />
+
+								<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" IsEnabled="{Binding Settings.UseHierachicalNoteStructure}">
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition/>
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+
+									<TextBlock     Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Emulate directories in note title" />
+									<CheckBox      Grid.Row="0" Grid.Column="1" IsChecked="{Binding Settings.EmulateHierachicalStructure}" VerticalAlignment="Center"/>
+									<ctrl:PHelpBtn Grid.Row="0" Grid.Column="2" HelpProperty="EmulateHierachicalStructure" Margin="2,0" VerticalAlignment="Center" />
+
+									<TextBlock     Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Emulated directory seperator" />
+									<ComboBox      Grid.Row="1" Grid.Column="1" Margin="3" ItemsSource="{mext:EnumSource settings:HierachicalStructureSeperator}" SelectedValue="{Binding Settings.HStructureSeperator}" />
+								</Grid>
 
 							</Grid>
 						</GroupBox>

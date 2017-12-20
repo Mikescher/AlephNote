@@ -156,7 +156,7 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		public static SyncResult Sync(ISimpleJsonRest web, APIResultAuthorize authToken, StandardNoteConfig cfg, StandardNoteData dat, List<StandardFileNote> allNotes, List<StandardFileNote> notesUpload, List<StandardFileNote> notesDelete, List<StandardFileTag> tagsDelete)
+		public static SyncResult Sync(ISimpleJsonRest web, StandardNoteConnection conn, APIResultAuthorize authToken, StandardNoteConfig cfg, StandardNoteData dat, List<StandardFileNote> allNotes, List<StandardFileNote> notesUpload, List<StandardFileNote> notesDelete, List<StandardFileTag> tagsDelete)
 		{
 			APIBodySync d = new APIBodySync();
 			d.cursor_token = null;
@@ -229,34 +229,34 @@ namespace AlephNote.Plugins.StandardNote
 				.retrieved_items
 				.Where(p => p.content_type.ToLower() == "note")
 				.Where(p => !p.deleted)
-				.Select(n => CreateNote(web, n, authToken, cfg, dat))
+				.Select(n => CreateNote(web, conn, n, authToken, cfg, dat))
 				.ToList();
 
 			syncresult.deleted_notes = result
 				.retrieved_items
 				.Where(p => p.content_type.ToLower() == "note")
 				.Where(p => p.deleted)
-				.Select(n => CreateNote(web, n, authToken, cfg, dat))
+				.Select(n => CreateNote(web, conn, n, authToken, cfg, dat))
 				.ToList();
 
 			syncresult.saved_notes = result
 				.saved_items
 				.Where(p => p.content_type.ToLower() == "note")
-				.Select(n => CreateNote(web, n, authToken, cfg, dat))
+				.Select(n => CreateNote(web, conn, n, authToken, cfg, dat))
 				.ToList();
 
 			syncresult.conflict_notes = result
 				.unsaved
 				.Where(p => p.item.content_type.ToLower() == "note")
 				.Where(p => p.error.tag == "sync_conflict")
-				.Select(n => CreateNote(web, n.item, authToken, cfg, dat))
+				.Select(n => CreateNote(web, conn, n.item, authToken, cfg, dat))
 				.ToList();
 
 			syncresult.error_notes = result
 				.unsaved
 				.Where(p => p.item.content_type.ToLower() == "note")
 				.Where(p => p.error.tag != "sync_conflict")
-				.Select(n => CreateNote(web, n.item, authToken, cfg, dat))
+				.Select(n => CreateNote(web, conn, n.item, authToken, cfg, dat))
 				.ToList();
 
 			return syncresult;
@@ -359,11 +359,11 @@ namespace AlephNote.Plugins.StandardNote
 			});
 		}
 
-		private static StandardFileNote CreateNote(ISimpleJsonRest web, APIResultItem encNote, APIResultAuthorize authToken, StandardNoteConfig cfg, StandardNoteData dat)
+		private static StandardFileNote CreateNote(ISimpleJsonRest web, StandardNoteConnection conn, APIResultItem encNote, APIResultAuthorize authToken, StandardNoteConfig cfg, StandardNoteData dat)
 		{
 			if (encNote.deleted)
 			{
-				var nd = new StandardFileNote(encNote.uuid, cfg)
+				var nd = new StandardFileNote(encNote.uuid, cfg, conn.HConfig)
 				{
 					CreationDate = encNote.created_at,
 					Text = "",
@@ -386,7 +386,7 @@ namespace AlephNote.Plugins.StandardNote
 				throw new StandardNoteAPIException("Cannot decrypt note with local masterkey", e);
 			}
 
-			var n = new StandardFileNote(encNote.uuid, cfg)
+			var n = new StandardFileNote(encNote.uuid, cfg, conn.HConfig)
 			{
 				Text = content.text,
 				Title = content.title,

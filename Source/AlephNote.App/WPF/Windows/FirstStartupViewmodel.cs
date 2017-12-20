@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows;
 using AlephNote.Common.MVVM;
 using AlephNote.Impl;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.WPF.Windows
 {
@@ -197,7 +198,7 @@ namespace AlephNote.WPF.Windows
 		{
 			var data = SelectedProvider.CreateEmptyRemoteSyncData();
 
-			var conn = acc.Plugin.CreateRemoteStorageConnection(PluginManagerSingleton.Inst.GetProxyFactory().Build(), acc.Config);
+			var conn = acc.Plugin.CreateRemoteStorageConnection(PluginManagerSingleton.Inst.GetProxyFactory().Build(), acc.Config, new HierachyEmulationConfig(false, "\\", '\\'));
 
 			var resultNotes = new List<INote>();
 

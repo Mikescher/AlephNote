@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using AlephNote.Common.Repository;
 using AlephNote.Common.Settings;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Common.Operations
 {
@@ -126,7 +127,7 @@ namespace AlephNote.Common.Operations
 
 		private static string GetFilename(INote note)
 		{
-			var fn = FilenameHelper.StripStringForFilename(note.Title);
+			var fn = FilenameHelper.ConvertStringForFilename(note.Title);
 			if (string.IsNullOrWhiteSpace(fn)) fn = FilenameHelper.StripStringForFilename(note.GetUniqueName());
 
 			var ext = ".txt";
@@ -162,7 +163,7 @@ namespace AlephNote.Common.Operations
 				.Where(f => f.ToLower().EndsWith(".txt") || f.ToLower().EndsWith(".md"))
 				.Select(Path.GetFileName).Select(f => f.ToLower()).ToList();
 
-			var filesThis = repo.Notes.Select(GetFilename).Select(f => f.ToLower()).ToList();
+			var filesThis = repo.Notes.Select(GetFilename).Select(f => f.ToLower()).ToList(); //TODO What happens when 2 notes have same title
 
 			if (filesGit.Count != filesThis.Count) return true;
 			if (filesGit.Except(filesThis).Any()) return true;

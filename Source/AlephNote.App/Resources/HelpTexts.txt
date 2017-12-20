@@ -193,6 +193,14 @@ On startup remember and show the note that was selected last time
 
 [UseHierachicalNoteStructure]
 If selected you can put notes in folders and subfolders.
-Only works if the remote plugin and the remote server support directory information.
+Only works if the remote plugin and the remote server support directory information or if "Emulate directories" is enabled.
 
 This replaces the notes view control in the main window to display subfolders in a treeview.
+
+[EmulateHierachicalStructure]
+Not all remote account types support subdirectories for notes.
+For all unsupported plugins we can "emulate" a directory structure by writing the full path into the note title, seperated by a special character.
+
+You should choose a directory seperator that does not normally appear in you note titles, to prevent conflicts.
+
+This setting does nothing for remote accounts where subdirectories are natively supported.

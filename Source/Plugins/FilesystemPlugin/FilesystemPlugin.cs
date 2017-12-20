@@ -1,6 +1,8 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
+using AlephNote.PluginInterface.Util;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
 
@@ -10,6 +12,9 @@ namespace AlephNote.Plugins.Filesystem
 	{
 		public static readonly Version Version = GetInformationalVersion(typeof(FilesystemPlugin).GetTypeInfo().Assembly);
 		public const string Name = "FilesystemPlugin";
+
+		public const int MIN_SEARCH_DEPTH =  1;
+		public const int MAX_SEARCH_DEPTH = 16;
 
 		private IAlephLogger logger;
 
@@ -28,12 +33,12 @@ namespace AlephNote.Plugins.Filesystem
 			return new FilesystemConfig();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hConfig)
 		{
 			return new FilesystemConnection(logger, (FilesystemConfig)config);
 		}
 
-		public override INote CreateEmptyNote(IRemoteStorageConfiguration cfg)
+		public override INote CreateEmptyNote(IRemoteStorageConnection iconn, IRemoteStorageConfiguration cfg)
 		{
 			return new FilesystemNote(Guid.NewGuid(), (FilesystemConfig)cfg);
 		}
@@ -41,6 +46,16 @@ namespace AlephNote.Plugins.Filesystem
 		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()
 		{
 			return new FilesystemData();
+		}
+
+		public override bool HasNativeDirectorySupport()
+		{
+			return true;
+		}
+
+		public override IEnumerable<Tuple<string, string>> CreateHelpTexts()
+		{
+			yield return Tuple.Create("SearchDepth", "The maximum folder depth for notes. Files in deeper nesting levels will be ignored.");
 		}
 	}
 }

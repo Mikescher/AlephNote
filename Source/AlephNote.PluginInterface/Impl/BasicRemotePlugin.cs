@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlephNote.PluginInterface.Util;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -59,9 +60,11 @@ namespace AlephNote.PluginInterface.Impl
 		public abstract void Init(IAlephLogger logger);
 
 		public abstract IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
-		public abstract IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config);
+		public abstract IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hierachicalConfig);
 		public abstract IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData();
-		public abstract INote CreateEmptyNote(IRemoteStorageConfiguration cfg);
+		public abstract INote CreateEmptyNote(IRemoteStorageConnection conn, IRemoteStorageConfiguration cfg);
+
+		public abstract bool HasNativeDirectorySupport();
 
 		public virtual IEnumerable<Tuple<string, string>> CreateHelpTexts()
 		{

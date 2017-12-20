@@ -74,14 +74,14 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		public static SimpleNote GetNoteData(ISimpleJsonRest web, string noteID, SimpleNoteConfig cfg, int? version = null)
+		public static SimpleNote GetNoteData(ISimpleJsonRest web, string noteID, SimpleNoteConfig cfg, SimpleNoteConnection conn, int? version = null)
 		{
 			try
 			{
 				if (version != null)
-					return GetNoteFromQuery(web.Get<APIResultNoteData>(string.Format("note/i/{0}/v/{1}", noteID, version)), web, noteID, cfg);
+					return GetNoteFromQuery(web.Get<APIResultNoteData>(string.Format("note/i/{0}/v/{1}", noteID, version)), web, noteID, cfg, conn);
 				else
-					return GetNoteFromQuery(web.Get<APIResultNoteData>("note/i/" + noteID), web, noteID, cfg);
+					return GetNoteFromQuery(web.Get<APIResultNoteData>("note/i/" + noteID), web, noteID, cfg, conn);
 			}
 			catch (RestStatuscodeException e1)
 			{
@@ -95,7 +95,7 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		public static SimpleNote UploadNewNote(ISimpleJsonRest web, SimpleNote note, SimpleNoteConfig cfg)
+		public static SimpleNote UploadNewNote(ISimpleJsonRest web, SimpleNote note, SimpleNoteConfig cfg, SimpleNoteConnection conn)
 		{
 			note.Deleted = false;
 			note.CreationDate = DateTimeOffset.Now;
@@ -117,7 +117,7 @@ namespace AlephNote.Plugins.SimpleNote
 			{
 				var r = web.PostTwoWay<APIResultNoteData>(data, "note/i/" + note.ID, "response=1");
 
-				return GetNoteFromQuery(r, web, note.ID, cfg);
+				return GetNoteFromQuery(r, web, note.ID, cfg, conn);
 			}
 			catch (RestStatuscodeException e1)
 			{
@@ -131,7 +131,7 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		public static SimpleNote ChangeExistingNote(ISimpleJsonRest web, SimpleNote note, SimpleNoteConfig cfg, out bool updated)
+		public static SimpleNote ChangeExistingNote(ISimpleJsonRest web, SimpleNote note, SimpleNoteConfig cfg, SimpleNoteConnection conn, out bool updated)
 		{
 			if (note.Deleted) throw new SimpleNoteAPIException("Cannot update an already deleted note");
 			if (note.ID == "") throw new SimpleNoteAPIException("Cannot change a not uploaded note");
@@ -157,7 +157,7 @@ namespace AlephNote.Plugins.SimpleNote
 				}
 
 				updated = true;
-				return GetNoteFromQuery(r, web, note.ID, cfg);
+				return GetNoteFromQuery(r, web, note.ID, cfg, conn);
 			}
 			catch (RestStatuscodeException e1)
 			{
@@ -218,11 +218,11 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		private static SimpleNote GetNoteFromQuery(APIResultNoteData r, ISimpleJsonRest c, string id, SimpleNoteConfig cfg)
+		private static SimpleNote GetNoteFromQuery(APIResultNoteData r, ISimpleJsonRest c, string id, SimpleNoteConfig cfg, SimpleNoteConnection conn)
 		{
 			try
 			{
-				var n = new SimpleNote(id, cfg)
+				var n = new SimpleNote(id, cfg, conn.HConfig)
 				{
 					Deleted = r.deleted,
 					ShareURL = r.shareURL,

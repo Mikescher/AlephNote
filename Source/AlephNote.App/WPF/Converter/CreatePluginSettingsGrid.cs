@@ -12,6 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using Xceed.Wpf.Toolkit;
 
 namespace AlephNote.WPF.Converter
 {
@@ -98,6 +99,17 @@ namespace AlephNote.WPF.Converter
 						};
 						hl.MouseDown += (o, e) => Process.Start((string)xprop.Arguments[0]);
 						AddComponent(prop, plugin, ref row, grid, hl, false);
+						break;
+
+					case DynamicSettingValue.SettingType.Spinner:
+						var iud = new IntegerUpDown();
+						iud.Minimum = (int)xprop.Arguments[1];
+						iud.Maximum = (int)xprop.Arguments[2];
+						iud.Value   = (int)xprop.Arguments[0];
+
+						iud.ValueChanged += (s, a) => { cfg.SetProperty(xprop.ID, iud.Value.Value); listener?.OnChanged("pluginconfig", xprop.ID, iud.Value); };
+
+						AddComponent(prop, plugin, ref row, grid, iud);
 						break;
 
 					default:

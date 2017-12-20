@@ -1,5 +1,6 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
+using AlephNote.PluginInterface.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,18 +12,21 @@ namespace AlephNote.Plugins.StandardNote
 	/// https://github.com/standardnotes/doc/blob/master/Client%20Development%20Guide.md
 	/// http://standardfile.org/#api
 	/// </summary>
-	class StandardNoteConnection : BasicRemoteConnection
+	public class StandardNoteConnection : BasicRemoteConnection
 	{
 		private readonly StandardNoteConfig _config;
 		private readonly IWebProxy _proxy;
 		private readonly IAlephLogger _logger;
 
 		private StandardNoteAPI.APIResultAuthorize _token = null;
-
 		private StandardNoteAPI.SyncResult _syncResult = null;
 
-		public StandardNoteConnection(IAlephLogger log, IWebProxy proxy, StandardNoteConfig config)
+		public readonly HierachyEmulationConfig HConfig;
+
+		public StandardNoteConnection(IAlephLogger log, IWebProxy proxy, StandardNoteConfig config, HierachyEmulationConfig hConfig)
 		{
+			HConfig = hConfig;
+
 			_config = config;
 			_proxy = proxy;
 			_logger = log;
@@ -91,7 +95,7 @@ namespace AlephNote.Plugins.StandardNote
 				var delNotes = localdeletednotes.Cast<StandardFileNote>().ToList();
 				var delTags = data.GetUnusedTags(localnotes.ToList());
 
-				_syncResult = StandardNoteAPI.Sync(web, _token, _config, data, localnotes, upNotes, delNotes, delTags);
+				_syncResult = StandardNoteAPI.Sync(web, this, _token, _config, data, localnotes, upNotes, delNotes, delTags);
 
 				_logger.Debug(StandardNotePlugin.Name, "StandardFile sync finished.",
 					string.Format("upload:[notes={8} deleted={9}]" + "\r\n" + "download:[note:[retrieved={0} deleted={1} saved={2} conflicts={3} errors={4}] tags:[retrieved={5} saved={6} unsaved={7}]]",

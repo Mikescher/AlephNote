@@ -8,6 +8,7 @@ using AlephNote.Common.MVVM;
 using AlephNote.Common.Plugins;
 using AlephNote.Common.Settings.Types;
 using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Common.Settings
 {
@@ -292,6 +293,14 @@ namespace AlephNote.Common.Settings
 		public bool UseHierachicalNoteStructure { get { return _useHierachicalNoteStructure; } set { _useHierachicalNoteStructure = value; OnPropertyChanged(); } }
 		private bool _useHierachicalNoteStructure = false;
 
+		[AlephXMLField]
+		public bool EmulateHierachicalStructure { get { return _emulateHierachicalStructure; } set { _emulateHierachicalStructure = value; OnPropertyChanged(); } }
+		private bool _emulateHierachicalStructure = true;
+
+		[AlephXMLField]
+		public HierachicalStructureSeperator HStructureSeperator { get { return _hStructureSeperator; } set { _hStructureSeperator = value; OnPropertyChanged(); } }
+		private HierachicalStructureSeperator _hStructureSeperator = HierachicalStructureSeperator.SeperatorForwardSlash;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;
@@ -431,6 +440,16 @@ namespace AlephNote.Common.Settings
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+		}
+
+		public HierachyEmulationConfig GetHierachicalConfig()
+		{
+			bool enabled = UseHierachicalNoteStructure && EmulateHierachicalStructure;
+
+			var sep = StructureSeperatorHelper.GetSeperator(HStructureSeperator);
+			var esc = StructureSeperatorHelper.GetEscapeChar(HStructureSeperator);
+
+			return new HierachyEmulationConfig(enabled, sep, esc);
 		}
 
 		private static KeyValueCustomList<SnippetDefinition> CreateDefaultSnippetList()

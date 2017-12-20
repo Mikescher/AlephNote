@@ -157,7 +157,11 @@ namespace AlephNote.WPF.Windows
 		{
 			try
 			{
-				var reconnectRepo = !Settings.ActiveAccount.IsEqual(newSettings.ActiveAccount);
+				var reconnectRepo = false;
+				if (!Settings.ActiveAccount.IsEqual(newSettings.ActiveAccount)) reconnectRepo = true;
+				if (Settings.EmulateHierachicalStructure != newSettings.EmulateHierachicalStructure) reconnectRepo = true;
+				if (Settings.HStructureSeperator != newSettings.HStructureSeperator) reconnectRepo = true;
+				if (Settings.UseHierachicalNoteStructure != newSettings.UseHierachicalNoteStructure) reconnectRepo = true;
 
 				if (reconnectRepo)
 				{

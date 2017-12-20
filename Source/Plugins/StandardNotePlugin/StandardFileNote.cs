@@ -10,7 +10,7 @@ using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.StandardNote
 {
-	public class StandardFileNote : BasicNote
+	public class StandardFileNote : BasicFlatNote
 	{
 		public class StandardFileRef { public Guid UUID; public string Type; }
 
@@ -20,8 +20,8 @@ namespace AlephNote.Plugins.StandardNote
 		private string _text = "";
 		public override string Text { get { return _text; } set { _text = value; OnPropertyChanged(); } }
 
-		private string _title = "";
-		public override string Title { get { return _title; } set { _title = value; OnPropertyChanged(); } }
+		private string _internaltitle = "";
+		public override string InternalTitle { get { return _internaltitle; } set { _internaltitle = value; OnPropertyChanged(); } }
 
 		private DateTimeOffset _creationDate;
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
@@ -47,7 +47,8 @@ namespace AlephNote.Plugins.StandardNote
 		private bool _ignoreTagsChanged = false;
 		private readonly StandardNoteConfig _config;
 
-		public StandardFileNote(Guid uid, StandardNoteConfig cfg)
+		public StandardFileNote(Guid uid, StandardNoteConfig cfg, HierachyEmulationConfig hcfg)
+			: base(hcfg)
 		{
 			_id = uid;
 			_config = cfg;
@@ -63,7 +64,7 @@ namespace AlephNote.Plugins.StandardNote
 				new XElement("ID", _id),
 				new XElement("Tags", _internalTags.Select(t => t.Serialize()).Cast<object>().ToArray()),
 				new XElement("Text", XHelper.ConvertToC80Base64(_text)),
-				new XElement("Title", _title),
+				new XElement("Title", _internaltitle),
 				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("ContentVersion", _contentVersion),
@@ -87,7 +88,7 @@ namespace AlephNote.Plugins.StandardNote
 				_id = XHelper.GetChildValueGUID(input, "ID");
 				_tags.Synchronize(_internalTags.Select(it => it.Title));
 				_text = XHelper.GetChildBase64String(input, "Text");
-				_title = XHelper.GetChildValueString(input, "Title");
+				_internaltitle = XHelper.GetChildValueString(input, "Title");
 				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
 				_contentVersion = XHelper.GetChildValueStringOrDefault(input, "ContentVersion", "?");
@@ -176,7 +177,7 @@ namespace AlephNote.Plugins.StandardNote
 				_internalTags = other._internalTags.ToList();
 				ResyncTags();
 				_text = other.Text;
-				_title = other.Title;
+				_internaltitle = other.Title;
 				_contentVersion = other.ContentVersion;
 				_authHash = other.AuthHash;
 				_internalRef.Synchronize(other._internalRef);
@@ -189,19 +190,19 @@ namespace AlephNote.Plugins.StandardNote
 			if (_creationDate != other._creationDate) return false;
 			if (!new HashSet<StandardFileTag>(_internalTags).SetEquals(other._internalTags)) return false;
 			if (_text != other._text) return false;
-			if (_title != other._title) return false;
+			if (_internaltitle != other._internaltitle) return false;
 
 			return true;
 		}
 
-		protected override BasicNote CreateClone()
+		protected override BasicFlatNote CreateClone()
 		{
-			var n               = new StandardFileNote(_id, _config);
+			var n               = new StandardFileNote(_id, _config, _hConfig);
 
 			n._internalTags     = _internalTags.ToList();
 			n.ResyncTags();
 			n._text             = _text;
-			n._title            = _title;
+			n._internaltitle    = _internaltitle;
 			n._creationDate     = _creationDate;
 			n._modificationDate = _modificationDate;
 			n._contentVersion   = _contentVersion;

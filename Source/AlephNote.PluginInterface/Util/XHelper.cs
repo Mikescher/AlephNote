@@ -248,6 +248,14 @@ namespace AlephNote.PluginInterface.Util
 				yield return str.Substring(i, Math.Min(maxChunkSize, str.Length - i));
 		}
 
+		public static IEnumerable<XElement> GetChildrenOrEmpty(XElement parent, string childName, string subChildName)
+		{
+			var child = GetChildOrNull(parent, childName);
+			if (child == null) return Enumerable.Empty<XElement>(); ;
+
+			return child.Elements(subChildName);
+		}
+
 		#region GetAttribute
 
 		public static Guid GetAttributeGuid(XElement elem, string attrname)

@@ -22,8 +22,8 @@ namespace AlephNote.Plugins.Filesystem
 
 		public override void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes, List<INote> localdeletednotes)
 		{
-			_syncScan = Directory
-				.EnumerateFiles(_config.Folder)
+			_syncScan = FileSystemUtil
+				.EnumerateFilesDeep(_config.Folder, _config.SearchDepth)
 				.Where(p => (Path.GetExtension(p) ?? "").ToLower() == "." + _config.Extension.ToLower())
 				.ToList();
 
@@ -78,7 +78,7 @@ namespace AlephNote.Plugins.Filesystem
 
 				WriteNoteToPath(note, path);
 				conflict = null;
-				File.Delete(note.PathRemote);
+				FileSystemUtil.DeleteFileAndFolderIfEmpty(_logger, _config.Folder, note.PathRemote);
 				note.PathRemote = path;
 				return RemoteUploadResult.Uploaded;
 			}
@@ -93,7 +93,7 @@ namespace AlephNote.Plugins.Filesystem
 					if (strategy == ConflictResolutionStrategy.UseClientCreateConflictFile || strategy == ConflictResolutionStrategy.UseClientVersion)
 					{
 						WriteNoteToPath(note, path);
-						File.Delete(note.PathRemote);
+						FileSystemUtil.DeleteFileAndFolderIfEmpty(_logger, _config.Folder, note.PathRemote);
 						note.PathRemote = path;
 						return RemoteUploadResult.Conflict;
 					}
@@ -107,7 +107,7 @@ namespace AlephNote.Plugins.Filesystem
 				{
 					WriteNoteToPath(note, path);
 					conflict = null;
-					File.Delete(note.PathRemote);
+					FileSystemUtil.DeleteFileAndFolderIfEmpty(_logger, _config.Folder, note.PathRemote);
 					note.PathRemote = path;
 					return RemoteUploadResult.Uploaded;
 				}
@@ -121,7 +121,7 @@ namespace AlephNote.Plugins.Filesystem
 					if (strategy == ConflictResolutionStrategy.UseClientCreateConflictFile || strategy == ConflictResolutionStrategy.UseClientVersion)
 					{
 						WriteNoteToPath(note, path);
-						if (note.PathRemote != "") File.Delete(note.PathRemote);
+						if (note.PathRemote != "") FileSystemUtil.DeleteFileAndFolderIfEmpty(_logger, _config.Folder, note.PathRemote);
 						note.PathRemote = path;
 						return RemoteUploadResult.Conflict;
 					}
@@ -196,7 +196,7 @@ namespace AlephNote.Plugins.Filesystem
 
 			if (note.IsConflictNote) return;
 
-			if (File.Exists(note.PathRemote)) File.Delete(note.PathRemote);
+			if (File.Exists(note.PathRemote)) FileSystemUtil.DeleteFileAndFolderIfEmpty(_logger, _config.Folder, note.PathRemote);
 		}
 
 		private FilesystemNote ReadNoteFromPath(string path)
@@ -206,7 +206,8 @@ namespace AlephNote.Plugins.Filesystem
 			var note = new FilesystemNote(Guid.NewGuid(), _config);
 
 			note.Title = Path.GetFileNameWithoutExtension(info.FullName);
-			note.Text = File.ReadAllText(info.FullName, _config.Encoding);
+			note.Path = FileSystemUtil.GetDirectoryPath(_config.Folder, info.DirectoryName);
+			note.Text  = File.ReadAllText(info.FullName, _config.Encoding);
 			note.CreationDate = info.CreationTime;
 			note.ModificationDate = info.LastWriteTime;
 			note.PathRemote = info.FullName;
@@ -216,12 +217,13 @@ namespace AlephNote.Plugins.Filesystem
 
 		private void WriteNoteToPath(FilesystemNote note, string path)
 		{
+			Directory.CreateDirectory(Path.GetDirectoryName(path));
+
 			File.WriteAllText(path, note.Text);
 
 			var info = new FileInfo(path);
 
 			note.ModificationDate = info.LastWriteTime;
 		}
-
 	}
 }

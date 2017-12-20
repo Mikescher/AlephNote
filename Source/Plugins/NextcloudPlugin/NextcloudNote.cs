@@ -8,7 +8,7 @@ using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.Nextcloud
 {
-	public class NextcloudNote : BasicNote
+	public class NextcloudNote : BasicHierachicalNote
 	{
 		private int _remoteID;
 		public int RemoteID { get { return _remoteID; } set { _remoteID = value; OnPropertyChanged(); } }
@@ -28,8 +28,17 @@ namespace AlephNote.Plugins.Nextcloud
 		private readonly ObservableCollection<string> _tags = new VoidObservableCollection<string>();
 		public override ObservableCollection<string> Tags { get { return _tags; } }
 
+		private DirectoryPath _path = DirectoryPath.Root();
+		public override DirectoryPath Path { get { return _path; } set { _path = value; OnPropertyChanged(); } }
+
 		private int _remoteTimestamp = -1;
 		public int RemoteTimestamp { get { return _remoteTimestamp; } set { _remoteTimestamp = value; OnPropertyChanged(); } }
+
+		private bool _favorite = false;
+		public bool Favorite { get { return _favorite; } set { _favorite = value; OnPropertyChanged(); } }
+
+		private string _etag = "";
+		public string ETag { get { return _etag; } set { _etag = value??""; OnPropertyChanged(); } }
 
 		private readonly NextcloudConfig _config;
 
@@ -44,7 +53,7 @@ namespace AlephNote.Plugins.Nextcloud
 		{
 			get
 			{
-				var lines = _content.Split('\n');
+				var lines = _content.Replace("\r\n", "\n").Split('\n');
 				if (lines.Length == 0) return string.Empty;
 				if (lines.Length == 1) return string.Empty;
 				if (lines.Length == 2) return lines[1];
@@ -87,11 +96,11 @@ namespace AlephNote.Plugins.Nextcloud
 		{
 			get
 			{
-				return _content.Split('\n').FirstOrDefault() ?? string.Empty;
+				return _content.Replace("\r\n", "\n").Split('\n').FirstOrDefault() ?? string.Empty;
 			}
 			set
 			{
-				var lines = _content.Split('\n');
+				var lines = _content.Replace("\r\n", "\n").Split('\n');
 				if (lines.Length == 0)
 				{
 					_content = value;
@@ -133,6 +142,9 @@ namespace AlephNote.Plugins.Nextcloud
 				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("Timestamp", _remoteTimestamp),
+				new XElement("Favorite", _favorite),
+				new XElement("ETag", _etag),
+				new XElement("Path", Path.Serialize().Select(p=>(object)p).ToArray()),
 			};
 
 			var r = new XElement("nextcloudnote", data);
@@ -149,9 +161,12 @@ namespace AlephNote.Plugins.Nextcloud
 				_remoteID = XHelper.GetChildValueInt(input, "RemoteID");
 				_localID = XHelper.GetChildValueGUID(input, "LocalID");
 				_content = XHelper.GetChildBase64String(input, "Content");
+				Path = DirectoryPath.Deserialize(XHelper.GetChildrenOrEmpty(input, "Path", "PathComponent"));
 				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
 				_remoteTimestamp = XHelper.GetChildValueInt(input, "Timestamp");
+				_favorite = XHelper.GetChildValue(input, "Favorite", false);
+				_etag = XHelper.GetChildValue(input, "ETag", "");
 			}
 		}
 
@@ -166,9 +181,13 @@ namespace AlephNote.Plugins.Nextcloud
 
 			using (SuppressDirtyChanges())
 			{
+				if (Title != other.Title) Title = other.Title;
+
 				_modificationDate = other.ModificationDate;
 				_remoteTimestamp = other.RemoteTimestamp;
 				_remoteID = other.RemoteID;
+				_favorite = other.Favorite;
+				_etag = other.ETag;
 			}
 		}
 
@@ -181,18 +200,24 @@ namespace AlephNote.Plugins.Nextcloud
 				_modificationDate = other.ModificationDate;
 				_tags.Synchronize(other.Tags);
 				_content = other.Content;
+				_path = other._path;
 				_remoteTimestamp = other.RemoteTimestamp;
 				_remoteID = other.RemoteID;
+				_favorite = other._favorite;
+				_etag = other._etag;
 			}
 		}
 
-		protected override BasicNote CreateClone()
+		protected override BasicHierachicalNote CreateClone()
 		{
 			var n = new NextcloudNote(_remoteID, _localID, _config);
 			n._content = _content;
+			n._path = _path;
 			n._creationDate = _creationDate;
 			n._modificationDate = _modificationDate;
 			n._remoteTimestamp = _remoteTimestamp;
+			n._favorite = _favorite;
+			n._etag = _etag;
 			return n;
 		}
 	}

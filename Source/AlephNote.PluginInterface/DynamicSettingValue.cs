@@ -5,7 +5,7 @@ namespace AlephNote.PluginInterface
 {
 	public class DynamicSettingValue
 	{
-		public enum SettingType { Text, Password, Hyperlink, Checkbox, ComboBox, Folder }
+		public enum SettingType { Text, Password, Hyperlink, Checkbox, ComboBox, Folder, Spinner }
 
 		public readonly int ID;
 		public readonly string Description;
@@ -52,6 +52,11 @@ namespace AlephNote.PluginInterface
 		public static DynamicSettingValue CreateFolderChooser(int id, string description, string value, string helpID = null)
 		{
 			return new DynamicSettingValue(id, SettingType.Folder, description, value, helpID, new object[0]);
+		}
+
+		public static DynamicSettingValue CreateNumberChooser(int id, string description, int value, int min, int max, string helpID = null)
+		{
+			return new DynamicSettingValue(id, SettingType.Spinner, description, "", helpID, new object[] { value, min, max });
 		}
 	}
 }
