@@ -70,9 +70,9 @@ namespace AlephNote.Properties {
         ///
         ///The following remotes are provided by default:
         ///
-        /// - SimpleNote: Synchronization with the SimpleNote server
+        /// - SimpleNote:   Synchronization with the SimpleNote server
         /// - StandardNote: Synchronization with a StandardFile server
-        /// - Next [rest of string was truncated]&quot;;.
+        /// - Ne [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HelpTexts {
             get {

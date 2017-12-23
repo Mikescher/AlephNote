@@ -32,9 +32,9 @@
 	
 	<Grid x:Name="LayoutRoot">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="{Binding OverviewListWidth, Mode=TwoWay}"/>
+			<ColumnDefinition Width="{Binding OverviewListWidth, Mode=TwoWay}" MinWidth="50"/>
 			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="2*"/>
+			<ColumnDefinition Width="2*" MinWidth="50"/>
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
@@ -137,10 +137,12 @@
 						<controls:NotesViewHierachical
 									NotesListDrop="NotesList_Drop"
 									NotesListKeyDown="NotesList_KeyDown"
+									GridSplitterChanged="VertGridSplitterChanged"
 									ParentAnchor="{Binding ., ElementName=LayoutRoot}"
 									Settings="{Binding Settings}"
-									SelectedNote="{Binding SelectedNote}"
 									AllNotes="{Binding Repository.Notes}" 
+									SelectedNote="{Binding SelectedNote}"
+									SelectedFolderPath="{Binding SelectedFolderPath}"
 									SearchText="{Binding SearchText}" />
 					</DataTemplate>
 					

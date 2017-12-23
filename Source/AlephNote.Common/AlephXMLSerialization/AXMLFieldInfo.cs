@@ -23,6 +23,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 			String,
 			Enum,
 
+			DirectoryPath,
 			RemoteStorageAccount,
 			ListRemoteStorageAccount,
 
@@ -98,6 +99,9 @@ namespace AlephNote.Common.AlephXMLSerialization
 					d.Serialize(x2);
 					return x2;
 
+				case SettingObjectTypeEnum.DirectoryPath:
+					return new XElement(PropInfo.Name, ((DirectoryPath)objdata).Serialize(), new XAttribute("type", _objectType));
+
 				default:
 					throw new ArgumentOutOfRangeException(nameof(objdata), _objectType, null);
 			}
@@ -169,6 +173,11 @@ namespace AlephNote.Common.AlephXMLSerialization
 					var currCust = ((IAlephCustomSerializableField)current);
 					var cchild = XHelper.GetChildOrNull(root, PropInfo.Name);
 					if (cchild != null) PropInfo.SetValue(obj, currCust.DeserializeNew(cchild));
+					break;
+
+				case SettingObjectTypeEnum.DirectoryPath:
+					var dp = DirectoryPath.Deserialize(XHelper.GetChildrenOrEmpty(root, PropInfo.Name, "PathComponent"));
+					PropInfo.SetValue(obj, dp);
 					break;
 
 				default:

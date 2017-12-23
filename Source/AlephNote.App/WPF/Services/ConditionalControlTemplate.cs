@@ -5,12 +5,12 @@ using System.Windows.Markup;
 namespace AlephNote.WPF.Services
 {
 	[ContentProperty("Template")]
-	public class ConditionalDataTemplate : DependencyObject
+	public class ConditionalControlTemplate : DependencyObject
 	{
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
 			"Value",
 			typeof(object),
-			typeof(ConditionalDataTemplate));
+			typeof(ConditionalControlTemplate));
 
 		public object Value
 		{
@@ -20,12 +20,12 @@ namespace AlephNote.WPF.Services
 
 		public static readonly DependencyProperty TemplateProperty = DependencyProperty.Register(
 			"Template",
-			typeof(DataTemplate),
-			typeof(ConditionalDataTemplate));
+			typeof(ControlTemplate),
+			typeof(ConditionalControlTemplate));
 
-		public DataTemplate Template
+		public ControlTemplate Template
 		{
-			get { return (DataTemplate)GetValue(TemplateProperty); }
+			get { return (ControlTemplate)GetValue(TemplateProperty); }
 			set { SetValue(TemplateProperty, value); }
 		}
 	}

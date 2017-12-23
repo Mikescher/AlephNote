@@ -14,7 +14,6 @@ using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
 using AlephNote.Impl;
 using AlephNote.WPF.Controls;
-using AlephNote.PluginInterface;
 using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.MVVM;
 using Hardcodet.Wpf.TaskbarNotification;
@@ -38,7 +37,7 @@ namespace AlephNote.WPF.Windows
 
 		public MainWindowViewmodel VM => viewmodel;
 
-		public INotesViewControl NotesViewControl => new NotesViewFlat(); //(INotesViewControl)NotesViewControlWrapper.Content;
+		public INotesViewControl NotesViewControl => (INotesViewControl)NotesViewControlWrapper.GetChildOfType<INotesViewControl>(); //(INotesViewControl)NotesViewControlWrapper.Content;
 
 		public MainWindow()
 		{
@@ -532,6 +531,11 @@ namespace AlephNote.WPF.Windows
 			{
 				VM.OnScroll(NoteEdit.FirstVisibleLine);
 			}
+		}
+
+		private void VertGridSplitterChanged(object sender, EventArgs e)
+		{
+			VM.GridSplitterChanged();
 		}
 	}
 }

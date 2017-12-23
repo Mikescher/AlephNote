@@ -24,6 +24,7 @@ using AlephNote.Common.Settings;
 using AlephNote.Common.Threading;
 using AlephNote.Impl;
 using AlephNote.WPF.Extensions;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.WPF.Windows
 {
@@ -62,7 +63,10 @@ namespace AlephNote.WPF.Windows
 		public NoteRepository Repository { get { return _repository; } private set { _repository = value; OnPropertyChanged(); } }
 
 		private INote _selectedNote;
-		public INote SelectedNote { get { return _selectedNote; } set { if (_selectedNote != value) { _selectedNote = value; OnPropertyChanged(); SelectedNoteChanged();} } }
+		public INote SelectedNote { get { return _selectedNote; } set { if (_selectedNote != value) { _selectedNote = value; OnPropertyChanged(); SelectedNoteChanged(); } } }
+
+		private DirectoryPath _selectedFolderPath;
+		public DirectoryPath SelectedFolderPath { get { return _selectedFolderPath; } set { if (_selectedFolderPath != value) { _selectedFolderPath = value; OnPropertyChanged(); SelectedFolderPathChanged(); } } }
 
 		private DateTimeOffset? _lastSynchronized = null;
 
@@ -81,7 +85,20 @@ namespace AlephNote.WPF.Windows
 		public bool DebugMode { get { return App.DebugMode; } }
 
 		private GridLength _overviewGridLength = new GridLength(0);
-		public GridLength OverviewListWidth { get { return _overviewGridLength; } set { if (value != _overviewGridLength) { _overviewGridLength = value; OnPropertyChanged(); GridSplitterChanged(); } } }
+		public GridLength OverviewListWidth
+		{
+			get { return _overviewGridLength; }
+			set
+			{
+				if (value != _overviewGridLength)
+				{
+					_overviewGridLength = value;
+					OnPropertyChanged();
+					Settings.OverviewListWidth = value.Value;
+					GridSplitterChanged();
+				}
+			}
+		}
 
 		public string FullVersion { get { return "AlephNote v" + App.APP_VERSION; } }
 
@@ -108,9 +125,17 @@ namespace AlephNote.WPF.Windows
 			_scrollCache = Settings.RememberScroll ? ScrollCache.LoadFromFile(App.PATH_SCROLLCACHE, App.Logger) : ScrollCache.CreateEmpty(App.PATH_SCROLLCACHE, App.Logger);
 
 			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
-			
-			if (_settings.LastSelectedNote != null && _settings.RememberLastSelectedNote) SelectedNote = Repository.Notes.FirstOrDefault(n => n.GetUniqueName() == _settings.LastSelectedNote);
-			if (SelectedNote == null ) SelectedNote = Repository.Notes.FirstOrDefault();
+
+
+			var initialNote   = _settings.LastSelectedNote;
+			var initialFolder = _settings.LastSelectedFolder;
+			if (initialNote != null && _settings.RememberLastSelectedNote)
+			{
+				if (initialFolder != null) SelectedFolderPath = initialFolder; //TODO Does note work
+				SelectedNote = Repository.Notes.FirstOrDefault(n => n.GetUniqueName() == initialNote);
+			}
+			if (SelectedNote == null) SelectedNote = Repository.Notes.FirstOrDefault();
+
 
 			OverviewListWidth = new GridLength(settings.OverviewListWidth);
 
@@ -131,7 +156,7 @@ namespace AlephNote.WPF.Windows
 			SettingsChanged();
 		}
 
-		private void ShowSettings()
+		private void ShowSettings() //TODO Why does show settings take so long?
 		{
 			var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
 
@@ -144,8 +169,9 @@ namespace AlephNote.WPF.Windows
 		{
 			try
 			{
+				var path = Owner.NotesViewControl.GetNewNotesPath();
 				if (Owner.Visibility == Visibility.Hidden) ShowMainWindow();
-				SelectedNote = Repository.CreateNewNote();
+				SelectedNote = Repository.CreateNewNote(path);
 			}
 			catch (Exception e)
 			{
@@ -162,6 +188,7 @@ namespace AlephNote.WPF.Windows
 				if (Settings.EmulateHierachicalStructure != newSettings.EmulateHierachicalStructure) reconnectRepo = true;
 				if (Settings.HStructureSeperator != newSettings.HStructureSeperator) reconnectRepo = true;
 				if (Settings.UseHierachicalNoteStructure != newSettings.UseHierachicalNoteStructure) reconnectRepo = true;
+				var refreshNotesView = (Settings.UseHierachicalNoteStructure != newSettings.UseHierachicalNoteStructure);
 
 				if (reconnectRepo)
 				{
@@ -208,6 +235,14 @@ namespace AlephNote.WPF.Windows
 					if (registryKey?.GetValue(string.Format(App.APPNAME_REG, Settings.ClientID)) != null) registryKey.DeleteValue(string.Format(App.APPNAME_REG, Settings.ClientID));
 				}
 
+				if (refreshNotesView)
+				{
+					// refresh Template
+					var cts = Owner.NotesViewControlWrapper.ContentTemplateSelector;
+					Owner.NotesViewControlWrapper.ContentTemplateSelector = null;
+					Owner.NotesViewControlWrapper.ContentTemplateSelector = cts;
+				}
+
 				Owner.SetupScintilla(Settings);
 				Owner.UpdateShortcuts(Settings);
 
@@ -235,7 +270,21 @@ namespace AlephNote.WPF.Windows
 
 			if (Settings != null && Settings.RememberScroll) Owner.ScrollScintilla(_scrollCache.Get(SelectedNote));
 
-			if (Settings != null && Settings.RememberLastSelectedNote) Settings.LastSelectedNote = SelectedNote?.GetUniqueName();
+			if (Settings != null && Settings.RememberLastSelectedNote)
+			{
+				Settings.LastSelectedNote = SelectedNote?.GetUniqueName();
+				Settings.LastSelectedFolder = SelectedFolderPath ?? DirectoryPath.Root();
+			}
+			RequestSettingsSave();
+		}
+
+		private void SelectedFolderPathChanged()
+		{
+			if (Settings != null && Settings.RememberLastSelectedNote)
+			{
+				Settings.LastSelectedNote = SelectedNote?.GetUniqueName();
+				Settings.LastSelectedFolder = SelectedFolderPath ?? DirectoryPath.Root();
+			}
 			RequestSettingsSave();
 		}
 
@@ -258,9 +307,8 @@ namespace AlephNote.WPF.Windows
 			if (Owner.NotesViewControl.GetTopNote() != e.Note) Owner.NotesViewControl.RefreshView();
 		}
 
-		private void GridSplitterChanged()
+		public void GridSplitterChanged()
 		{
-			Settings.OverviewListWidth = OverviewListWidth.Value;
 			RequestSettingsSave();
 		}
 

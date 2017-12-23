@@ -169,5 +169,10 @@ namespace AlephNote.PluginInterface.Impl
 		}
 
 		public abstract void ApplyUpdatedData(INote other);
+
+		public override string ToString()
+		{
+			return $"Note: {Path} :: {Title}";
+		}
 	}
 }

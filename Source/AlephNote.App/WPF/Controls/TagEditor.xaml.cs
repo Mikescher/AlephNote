@@ -9,6 +9,7 @@ using System.Windows.Input;
 using AlephNote.Common.Extensions;
 using AlephNote.Common.Repository;
 using AlephNote.Common.Settings;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.WPF.Controls
 {

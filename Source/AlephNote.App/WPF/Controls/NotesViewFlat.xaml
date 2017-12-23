@@ -40,7 +40,7 @@
 					  AllowDrop="True"
 					  Drop="NotesList_Drop"
 					  KeyDown="NotesList_KeyDown"
-					  services:MultiDatatemplateService.MultiTemplateSelector="{Binding Settings.NotePreviewStyle}"
+					  services:MultiDataTemplateService.MultiDataTemplateSelector="{Binding Settings.NotePreviewStyle}"
 					  HorizontalContentAlignment="Stretch"
 					  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 					  SelectionMode="Single"
@@ -59,12 +59,12 @@
 			</ListView.ContextMenu>
 
 			<!-- ReSharper disable Xaml.RedundantResource -->
-			<services:MultiDatatemplateService.MultiTemplate>
+			<services:MultiDataTemplateService.MultiDataTemplate>
 
 				<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.Simple}">
 					<DataTemplate >
 						<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}"  d:DataContext="{d:DesignInstance pi:INote}">
-							<TextBlock Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" TextTrimming="CharacterEllipsis" />
+							<TextBlock Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
 						</Grid>
 					</DataTemplate>
 				</services:ConditionalDataTemplate>
@@ -76,8 +76,8 @@
 								<ColumnDefinition Width="*" />
 								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
-							<TextBlock Grid.Column="0" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" TextTrimming="CharacterEllipsis" />
-							<TextBlock Grid.Column="1" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}}" VerticalAlignment="Center" Foreground="DimGray" >
+							<TextBlock Grid.Column="0" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+							<TextBlock Grid.Column="1" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" VerticalAlignment="Center" Foreground="DimGray" >
 								<TextBlock.LayoutTransform>
 									<ScaleTransform ScaleX="0.9" ScaleY="0.9" />
 								</TextBlock.LayoutTransform>
@@ -96,23 +96,23 @@
 								<RowDefinition Height="Auto" />
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
-							<TextBlock Grid.Row="0" FontWeight="Bold" FontStyle="Normal" Foreground="Black" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...'}" TextTrimming="CharacterEllipsis" />
+							<TextBlock Grid.Row="0" FontWeight="Bold" FontStyle="Normal" Foreground="Black" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
 							<TextBlock Grid.Row="1" TextWrapping="NoWrap">
-									<Run Foreground="Brown" FontWeight="Normal" FontStyle="Normal" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}}" />
-									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0}" />
+									<Run Foreground="Brown" FontWeight="Normal" FontStyle="Normal" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
+									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
 							</TextBlock>
 							<TextBlock Grid.Row="2" TextWrapping="NoWrap">
-									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=1}" />
+									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=1, Mode=OneWay}" />
 							</TextBlock>
 							<TextBlock Grid.Row="3" TextWrapping="NoWrap">
-									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=2}" />
+									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=2, Mode=OneWay}" />
 							</TextBlock>
 							<Separator Grid.Row="4" Background="Snow" Margin="6,7,6,7" />
 						</Grid>
 					</DataTemplate>
 				</services:ConditionalDataTemplate>
 
-			</services:MultiDatatemplateService.MultiTemplate>
+			</services:MultiDataTemplateService.MultiDataTemplate>
 			<!-- ReSharper restore Xaml.RedundantResource -->
 
 		</ListView>

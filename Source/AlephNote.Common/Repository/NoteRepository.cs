@@ -142,9 +142,11 @@ namespace AlephNote.Common.Repository
 			return note;
 		}
 
-		public INote CreateNewNote()
+		public INote CreateNewNote(DirectoryPath p = null)
 		{
+			p = p ?? DirectoryPath.Root();
 			var note = account.Plugin.CreateEmptyNote(Connection, account.Config);
+			note.Path = p;
 			Notes.Add(note);
 			note.SetDirty();
 			SaveNote(note);

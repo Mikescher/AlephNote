@@ -301,6 +301,14 @@ namespace AlephNote.Common.Settings
 		public HierachicalStructureSeperator HStructureSeperator { get { return _hStructureSeperator; } set { _hStructureSeperator = value; OnPropertyChanged(); } }
 		private HierachicalStructureSeperator _hStructureSeperator = HierachicalStructureSeperator.SeperatorForwardSlash;
 
+		[AlephXMLField]
+		public double NotesViewFolderHeight { get { return _notesViewFolderHeight; } set { _notesViewFolderHeight = value; OnPropertyChanged(); } }
+		private double _notesViewFolderHeight = 120;
+
+		[AlephXMLField]
+		public DirectoryPath LastSelectedFolder { get { return _lastSelectedFolder; } set { _lastSelectedFolder = value; OnPropertyChanged(); } }
+		private DirectoryPath _lastSelectedFolder = DirectoryPath.Root();
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

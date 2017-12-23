@@ -13,6 +13,8 @@ using AlephNote.WPF.MVVM;
 using System.Linq;
 using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.Windows;
+using System.Collections.ObjectModel;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.WPF.Controls
 {
@@ -68,13 +70,13 @@ namespace AlephNote.WPF.Controls
 		public static readonly DependencyProperty AllNotesProperty =
 			DependencyProperty.Register(
 			"AllNotes",
-			typeof(IList<INote>),
+			typeof(ObservableCollection<INote>),
 			typeof(NotesViewFlat),
 			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, (obj,args) => { ((NotesViewFlat)obj).OnAllNotesChanged(); }));
 
-		public IList<INote> AllNotes
+		public ObservableCollection<INote> AllNotes
 		{
-			get { return (IList<INote>)GetValue(AllNotesProperty); }
+			get { return (ObservableCollection<INote>)GetValue(AllNotesProperty); }
 			set { SetValue(AllNotesProperty, value); }
 		}
 
@@ -198,6 +200,11 @@ namespace AlephNote.WPF.Controls
 				var ges = new KeyGesture((Key)sc.Value.Key, (ModifierKeys)sc.Value.Modifiers);
 				NotesList.InputBindings.Add(new InputBinding(cmd, ges));
 			}
+		}
+		
+		public DirectoryPath GetNewNotesPath()
+		{
+			return DirectoryPath.Root();
 		}
 	}
 }

@@ -59,7 +59,7 @@ namespace AlephNote.AutoUpdater
 			KillProcess();
 
 			_setState(progress++, max, "Migration");
-			Migrate();
+			Migrate(out var versionOld);
 
 			foreach (var ffile in files)
 			{
@@ -83,27 +83,33 @@ namespace AlephNote.AutoUpdater
 				if (delta > 0) Thread.Sleep(delta);
 			}
 
+			var versionNew = File.Exists(Path.Combine(_targetPath, "AlephNote.exe"))
+				? new Version(FileVersionInfo.GetVersionInfo(Path.Combine(_targetPath, "AlephNote.exe")).FileVersion)
+				: null;
+
 			_setState(progress++, max, "Migrate repository");
 			RepoMigrate();
 
 			_setState(progress++, max, "Restarting");
-			Process.Start(Path.Combine(_targetPath, "AlephNote.exe"));
+			Process.Start(Path.Combine(_targetPath, "AlephNote.exe"), $"--updated --migration_from={versionOld?.ToString()??"NULL"} --migration_to={versionNew?.ToString()??"NULL"}");
 			Thread.Sleep(500);
 		}
 
-		private void Migrate()
+		private void Migrate(out Version versionOld)
 		{
 			var exe = Path.Combine(_targetPath, "AlephNote.exe");
 			if (!File.Exists(exe))
 			{
 				_showMessage("AlephNote.exe in targetfolder not found - cannot run migrations", true);
 				Thread.Sleep(300);
+				versionOld = null;
 				return;
 			}
 
 			var fvi = FileVersionInfo.GetVersionInfo(exe);
 
 			var version = new Version(fvi.FileVersion);
+			versionOld = version;
 
 			if (version <= new Version("1.4.1.0"))
 			{

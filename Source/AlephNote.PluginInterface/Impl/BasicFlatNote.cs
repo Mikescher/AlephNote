@@ -233,5 +233,10 @@ namespace AlephNote.PluginInterface.Impl
 
 			return p;
 		}
+
+		public override string ToString()
+		{
+			return $"Note: {Path} :: {Title}";
+		}
 	}
 }

@@ -47,6 +47,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 			if (prop.PropertyType == typeof(Guid?)) return AXMLFieldInfo.SettingObjectTypeEnum.NGuid;
 			if (prop.PropertyType.GetTypeInfo().IsEnum) return AXMLFieldInfo.SettingObjectTypeEnum.Enum;
 			if (prop.PropertyType == typeof(RemoteStorageAccount)) return AXMLFieldInfo.SettingObjectTypeEnum.RemoteStorageAccount;
+			if (prop.PropertyType == typeof(DirectoryPath)) return AXMLFieldInfo.SettingObjectTypeEnum.DirectoryPath;
 			if (typeof(IList<RemoteStorageAccount>).IsAssignableFrom(prop.PropertyType)) return AXMLFieldInfo.SettingObjectTypeEnum.ListRemoteStorageAccount;
 			if (typeof(IAlephCustomSerializableField).IsAssignableFrom(prop.PropertyType)) return AXMLFieldInfo.SettingObjectTypeEnum.CustomSerializable;
 

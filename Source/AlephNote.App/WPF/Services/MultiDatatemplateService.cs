@@ -8,40 +8,40 @@ namespace AlephNote.WPF.Services
 {
 	public class ConditionalDataTemplateCollection : ObservableCollection<ConditionalDataTemplate> { }
 
-	public static class MultiDatatemplateService
+	public static class MultiDataTemplateService
 	{
-		public static readonly DependencyProperty MultiTemplateProperty = DependencyProperty.RegisterAttached(
-			"MultiTemplateInternal",
+		public static readonly DependencyProperty MultiDataTemplateProperty = DependencyProperty.RegisterAttached(
+			"MultiDataTemplateInternal",
 			typeof(ConditionalDataTemplateCollection),
-			typeof(MultiDatatemplateService),
+			typeof(MultiDataTemplateService),
 			new FrameworkPropertyMetadata(null, MultiTemplateChanged));
 
-		public static ConditionalDataTemplateCollection GetMultiTemplate(DependencyObject d)
+		public static ConditionalDataTemplateCollection GetMultiDataTemplate(DependencyObject d)
 		{
-			var v = (ConditionalDataTemplateCollection)d.GetValue(MultiTemplateProperty);
+			var v = (ConditionalDataTemplateCollection)d.GetValue(MultiDataTemplateProperty);
 			if (v == null)
 			{
 				v = new ConditionalDataTemplateCollection();
 				v.CollectionChanged += (s, e) => MultiTemplateCollectionChanged(d, e);
-				d.SetValue(MultiTemplateProperty, v);
+				d.SetValue(MultiDataTemplateProperty, v);
 			}
 			return v;
 		}
 
-		public static readonly DependencyProperty MultiTemplateSelectorProperty = DependencyProperty.RegisterAttached(
-			"MultiTemplateSelector",
+		public static readonly DependencyProperty MultiDataTemplateSelectorProperty = DependencyProperty.RegisterAttached(
+			"MultiDataTemplateSelector",
 			typeof(object),
-			typeof(MultiDatatemplateService),
+			typeof(MultiDataTemplateService),
 			new FrameworkPropertyMetadata(null, SelectorChanged));
 
-		public static object GetMultiTemplateSelector(DependencyObject d)
+		public static object GetMultiDataTemplateSelector(DependencyObject d)
 		{
-			return d.GetValue(MultiTemplateSelectorProperty);
+			return d.GetValue(MultiDataTemplateSelectorProperty);
 		}
 
-		public static void SetMultiTemplateSelector(DependencyObject d, object value)
+		public static void SetMultiDataTemplateSelector(DependencyObject d, object value)
 		{
-			d.SetValue(MultiTemplateSelectorProperty, value);
+			d.SetValue(MultiDataTemplateSelectorProperty, value);
 		}
 		
 		private static void SelectorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -61,8 +61,8 @@ namespace AlephNote.WPF.Services
 
 		private static void UpdateTemplate(ItemsControl c)
 		{
-			var selector = GetMultiTemplateSelector(c);
-			var templates = GetMultiTemplate(c);
+			var selector = GetMultiDataTemplateSelector(c);
+			var templates = GetMultiDataTemplate(c);
 
 			// ReSharper disable RedundantCheckBeforeAssignment
 			if (templates == null)
