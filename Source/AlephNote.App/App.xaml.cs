@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Threading;
+using AlephNote.Commandline;
 using AlephNote.Common.Plugins;
 using AlephNote.Impl;
 
@@ -24,8 +25,14 @@ namespace AlephNote
 
 		public static readonly Random GlobalRandom = new Random();
 
+		public static CommandLineArguments Args;
+
 		public static readonly EventLogger Logger = new EventLogger();
 		public static bool DebugMode = false;
+
+		public static bool IsUpdateMigration = false;
+		public static Version UpdateMigrationFrom;
+		public static Version UpdateMigrationTo;
 
 		public App()
 		{
@@ -33,7 +40,15 @@ namespace AlephNote
 
 			PluginManagerSingleton.Register(new PluginManager());
 
-			if (Environment.GetCommandLineArgs().Any(a => a.TrimStart('-').ToLower() == "debug")) DebugMode = true;
+			Args = new CommandLineArguments(Environment.GetCommandLineArgs(), false);
+
+			if (Args.Contains("debug")) DebugMode = true;
+
+			UpdateMigrationFrom = Args.GetVersionDefault("migration_from", default(Version));
+			UpdateMigrationTo   = Args.GetVersionDefault("migration_to", default(Version));
+
+			IsUpdateMigration = (UpdateMigrationFrom != default(Version)) && (UpdateMigrationTo != default(Version)) && Args.Contains("updated");
+
 #if DEBUG
 			DebugMode = true;
 #endif

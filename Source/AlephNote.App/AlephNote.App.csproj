@@ -96,6 +96,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Commandline\CommandLineArguments.cs" />
     <Compile Include="Impl\PluginManager.cs" />
     <Compile Include="Impl\ProxyFactory.cs" />
     <Compile Include="Impl\SynchronizationDispatcher.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="WPF\Controls\TagEditor.xaml.cs">
       <DependentUpon>TagEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Converter\StringIsNotWhitespace.cs" />
     <Compile Include="WPF\Converter\PropertyToHelpText.cs" />
     <Compile Include="WPF\Converter\FontNameToFontFamily.cs" />
     <Compile Include="WPF\Converter\NegateBool.cs" />
@@ -127,6 +129,9 @@
     <Compile Include="WPF\Converter\SnippetsToSnippetSource.cs" />
     <Compile Include="WPF\Converter\TagsToPlaceholder.cs" />
     <Compile Include="WPF\Converter\TagToBorderBrush.cs" />
+    <Compile Include="WPF\Dialogs\FolderNameDialog.xaml.cs">
+      <DependentUpon>FolderNameDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Services\ConditionalControlTemplate.cs" />
     <Compile Include="WPF\Services\MultiControlTemplateService.cs" />
     <Compile Include="WPF\Shortcuts\GlobalShortcutManager.cs" />
@@ -261,6 +266,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WPF\Controls\TagEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Dialogs\FolderNameDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

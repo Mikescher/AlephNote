@@ -11,6 +11,9 @@
 		[EnumDescriptor("Notes list")]
 		NoteList,
 
+		[EnumDescriptor("Folder list")]
+		FolderList,
+
 		[EnumDescriptor("Notes edit area")]
 		NoteEdit,
 

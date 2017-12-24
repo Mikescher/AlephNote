@@ -29,6 +29,10 @@ namespace AlephNote.WPF.Shortcuts
 			AddCommand("NewNoteFromClipboard", vm => vm.CreateNewNoteFromClipboardCommand, "Create new note from current clipboard content");
 			AddCommand("ExportNote",           vm => vm.ExportCommand,                     "Export the current note");
 			AddCommand("DeleteNote",           vm => vm.DeleteCommand,                     "Delete the current note");
+			AddCommand("DeleteFolder",         vm => vm.DeleteFolderCommand,               "Delete the current selected folder");
+			AddCommand("AddSubFolder",         vm => vm.AddSubFolderCommand,               "Add a new sub folder under the currently selected folder");
+			AddCommand("AddFolder",            vm => vm.AddFolderCommand,                  "Add a new folder");
+			AddCommand("RenameFolder",         vm => vm.RenameFolderCommand,               "Rename currently selected folder");
 
 			AddCommand("SaveAndSync",          vm => vm.SaveAndSyncCommand,                "Save current note and synchronize");
 			AddCommand("Resync",               vm => vm.ResyncCommand,                     "Start synchronization with remote");

@@ -182,6 +182,10 @@ The shortcut is available in the main window
 ### Notes list ###
 The shortcut is only available while the focus is in the list on the left side
 
+### Folder list ###
+The shortcut is only available while the focus is in the folder list on the left side
+(Folder list only visible if "hierachical note structure" is enabled)
+
 ### Notes edit area ###
 The shortcut is only available while the focus is in edit area
 

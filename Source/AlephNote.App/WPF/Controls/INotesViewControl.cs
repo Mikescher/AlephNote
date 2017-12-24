@@ -13,6 +13,9 @@ namespace AlephNote.WPF.Controls
 		bool Contains(INote n);
 		DirectoryPath GetNewNotesPath();
 
+		void DeleteFolder(DirectoryPath folder);
+		void AddFolder(DirectoryPath folder);
+
 		IEnumerable<INote> EnumerateVisibleNotes();
 		void SetShortcuts(MainWindow mw, List<KeyValuePair<string, ShortcutDefinition>> list);
 	}

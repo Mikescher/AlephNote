@@ -50,6 +50,7 @@
 				  FontFamily="{Binding Settings.ListFontFamily, Converter={conv:FontNameToFontFamily}}" 
 				  FontWeight="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontWeight}}" 
 				  FontStyle="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontStyle}}"
+				  PreviewMouseRightButtonDown="FolderTreeView_OnPreviewMouseRightButtonDown"
 				  SelectedItemChanged="TreeView_SelectedItemChanged">
 			
 			<TreeView.Resources>
@@ -57,6 +58,17 @@
 				<Style TargetType="{x:Type TreeViewItem}">
 					<Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}" />
 					<Setter Property="IsExpanded" Value="{Binding Path=IsExpanded, Mode=TwoWay}" />
+
+					<Setter Property="ContextMenu">
+						<Setter.Value>
+							<ContextMenu>
+								<self:AutoActionMenuItem Header="Rename folder" AlephAction="RenameFolder" ParentAnchor="{Binding ParentAnchor}" />
+								<self:AutoActionMenuItem Header="Delete folder" AlephAction="DeleteFolder" ParentAnchor="{Binding ParentAnchor}" />
+								<self:AutoActionMenuItem Header="Add subfolder" AlephAction="AddSubFolder" ParentAnchor="{Binding ParentAnchor}" />
+							</ContextMenu>
+						</Setter.Value>
+					</Setter>
+					
 				</Style>
 
 				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}" />
@@ -65,6 +77,12 @@
 				
 			</TreeView.Resources>
 
+			<TreeView.ContextMenu>
+				<ContextMenu>
+					<self:AutoActionMenuItem Header="Add folder" AlephAction="AddFolder" ParentAnchor="{Binding ParentAnchor}" />
+				</ContextMenu>
+			</TreeView.ContextMenu>
+			
 			<TreeView.ItemTemplate>
 				<HierarchicalDataTemplate ItemsSource="{Binding SubFolder}" DataType="{x:Type util:HierachicalFolderWrapper}">
 

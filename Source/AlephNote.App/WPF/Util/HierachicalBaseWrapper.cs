@@ -39,7 +39,7 @@ namespace AlephNote.WPF.Util
 
 		public override IEnumerable<INote> AllSubNotes => _baseWrapper.AllSubNotes;
 
-		public HierachicalFlatViewWrapper(HierachicalFolderWrapper baseWrapper) : base("All notes", DirectoryPath.Root(), false)
+		public HierachicalFlatViewWrapper(HierachicalFolderWrapper baseWrapper) : base("All notes", DirectoryPath.Root(), false, false)
 		{
 			_baseWrapper = baseWrapper;
 			IsSelected = true;
@@ -66,23 +66,27 @@ namespace AlephNote.WPF.Util
 
 		public virtual IEnumerable<INote> AllSubNotes => DirectSubNotes.Concat(SubFolder.Where(sf => !(sf is HierachicalFlatViewWrapper)).SelectMany(sf => sf.AllSubNotes));
 
-		public HierachicalFolderWrapper(string header, DirectoryPath path, bool root)
+		public bool Permanent = false;
+
+		public HierachicalFolderWrapper(string header, DirectoryPath path, bool root, bool perm)
 		{
 			_isRoot = root;
 			_path = path;
 			_header = header;
+			Permanent = perm;
 
 			if (_isRoot) SubFolder.Add(AllNotesWrapper = new HierachicalFlatViewWrapper(this));
 		}
 
-		public HierachicalFolderWrapper GetOrCreateFolder(string txt)
+		public HierachicalFolderWrapper GetOrCreateFolder(string txt, out bool created)
 		{
 			foreach (var item in SubFolder)
 			{
-				if (item.Header.ToLower() == txt.ToLower()) return item;
+				if (item.Header.ToLower() == txt.ToLower()) { created = false; return item;}
 			}
-			var i = new HierachicalFolderWrapper(txt, _path.SubDir(txt), false);
+			var i = new HierachicalFolderWrapper(txt, _path.SubDir(txt), false, false);
 			SubFolder.Add(i);
+			created = true;
 			return i;
 		}
 
@@ -113,11 +117,32 @@ namespace AlephNote.WPF.Util
 			}
 
 			bool FCompare(HierachicalFolderWrapper a, HierachicalFolderWrapper b) => a.Header.ToLower() == b.Header.ToLower();
-			HierachicalFolderWrapper FCopy(HierachicalFolderWrapper a) => new HierachicalFolderWrapper(a.Header, a._path, a._isRoot);
+			HierachicalFolderWrapper FCopy(HierachicalFolderWrapper a) => new HierachicalFolderWrapper(a.Header, a._path, a._isRoot, a.Permanent);
 			SubFolder.SynchronizeCollection(other.SubFolder, FCompare, FCopy);
 			Debug.Assert(SubFolder.Count == other.SubFolder.Count);
 
 			for (int i = 0; i < SubFolder.Count; i++) SubFolder[i].Sync(other.SubFolder[i], parents.Concat(new []{this}).ToArray());
+		}
+
+		public void CopyPermanentsTo(HierachicalFolderWrapper other)
+		{
+			foreach (var folder1 in SubFolder)
+			{
+				var folder2 = other.SubFolder.FirstOrDefault(sf => sf._path.EqualsIgnoreCase(folder1._path));
+				if (folder2 == null && folder1.Permanent)
+				{
+					folder2 = other.GetOrCreateFolder(folder1.Header, out _);
+					folder2.Permanent = true;
+				}
+
+				if (folder2 != null) folder1.CopyPermanentsTo(folder2);
+			}
+		}
+
+		public void ClearPermanents()
+		{
+			Permanent = false;
+			foreach (var sf in SubFolder) sf.ClearPermanents();
 		}
 
 		public void Add(HierachicalFolderWrapper elem) { SubFolder.Add(elem); }
@@ -166,6 +191,16 @@ namespace AlephNote.WPF.Util
 		public DirectoryPath GetNewNotePath()
 		{
 			return _path;
+		}
+
+		public bool RemoveFind(DirectoryPath folder)
+		{
+			for (int i = 0; i < SubFolder.Count; i++)
+			{
+				if (SubFolder[i].GetNewNotePath().EqualsIgnoreCase(folder)) {SubFolder.RemoveAt(i); return true; }
+				if (SubFolder[i].RemoveFind(folder)) return true;
+			}
+			return false;
 		}
 	}
 }

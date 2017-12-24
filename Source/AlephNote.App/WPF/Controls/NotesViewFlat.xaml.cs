@@ -185,6 +185,16 @@ namespace AlephNote.WPF.Controls
 			return NotesView.Contains(n);
 		}
 
+		public void DeleteFolder(DirectoryPath folder)
+		{
+			// no...
+		}
+
+		public void AddFolder(DirectoryPath folder)
+		{
+			// no...
+		}
+
 		public IEnumerable<INote> EnumerateVisibleNotes()
 		{
 			return NotesView.OfType<INote>();

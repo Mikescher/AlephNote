@@ -17,14 +17,13 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using AlephNote.Common.Extensions;
 using AlephNote.Common.MVVM;
 using AlephNote.Common.Operations;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Threading;
 using AlephNote.Impl;
-using AlephNote.WPF.Extensions;
 using AlephNote.PluginInterface.Util;
+using AlephNote.WPF.Dialogs;
 
 namespace AlephNote.WPF.Windows
 {
@@ -37,6 +36,10 @@ namespace AlephNote.WPF.Windows
 		public ICommand ShowMainWindowCommand { get { return new RelayCommand(ShowMainWindow); } }
 		public ICommand ExportCommand { get { return new RelayCommand(ExportNote); } }
 		public ICommand DeleteCommand { get { return new RelayCommand(DeleteNote); } }
+		public ICommand DeleteFolderCommand { get { return new RelayCommand(DeleteFolder); } }
+		public ICommand AddFolderCommand { get { return new RelayCommand(AddRootFolder); } }
+		public ICommand AddSubFolderCommand { get { return new RelayCommand(AddSubFolder); } }
+		public ICommand RenameFolderCommand { get { return new RelayCommand(RenameFolder); } }
 		public ICommand ExitCommand { get { return new RelayCommand(Exit); } }
 		public ICommand ShowAboutCommand { get { return new RelayCommand(ShowAbout); } }
 		public ICommand ShowLogCommand { get { return new RelayCommand(ShowLog); } }
@@ -449,7 +452,7 @@ namespace AlephNote.WPF.Windows
 			{
 				if (SelectedNote == null) return;
 
-				if (MessageBox.Show(Owner, "Do you really want to delete this note?", "Delete note ?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+				if (MessageBox.Show(Owner, "Do you really want to delete this note?", "Delete note?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
 
 				Repository.DeleteNote(SelectedNote, true);
 
@@ -459,6 +462,96 @@ namespace AlephNote.WPF.Windows
 			{
 				App.Logger.Error("Main", "Could not delete note", e);
 				ExceptionDialog.Show(Owner, "Could not delete note", e);
+			}
+		}
+
+		private void DeleteFolder()
+		{
+			try
+			{
+				var fp = SelectedFolderPath;
+
+				if (fp == null || fp.IsRoot()) return;
+
+				var delNotes = Repository.Notes.Where(n => n.Path.IsPathOrSubPath(fp)).ToList();
+
+				if (MessageBox.Show(Owner, $"Do you really want to delete this folder together with {delNotes.Count} contained notes?", "Delete folder?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+
+				foreach (var note in delNotes)
+				{
+					Repository.DeleteNote(note, true);
+				}
+
+				Owner.NotesViewControl.DeleteFolder(fp);
+
+				SelectedNote = Owner.NotesViewControl.EnumerateVisibleNotes().FirstOrDefault() ?? Repository.Notes.FirstOrDefault();
+			}
+			catch (Exception e)
+			{
+				App.Logger.Error("Main", "Could not delete folder", e);
+				ExceptionDialog.Show(Owner, "Could not delete folder", e);
+			}
+		}
+
+		private void AddSubFolder()
+		{
+			var fnd = new FolderNameDialog {DialogText = "Insert the name for the new subfolder", Owner = Owner };
+
+			if (fnd.ShowDialog() != true) return;
+
+			var foldercomponent = fnd.FolderName;
+			if (string.IsNullOrWhiteSpace(foldercomponent)) return;
+
+			var path = SelectedFolderPath.SubDir(foldercomponent);
+
+			Owner.NotesViewControl.AddFolder(path);
+		}
+
+		private void AddRootFolder()
+		{
+			var fnd = new FolderNameDialog { DialogText = "Insert the name for the new folder", Owner = Owner };
+
+			if (fnd.ShowDialog() != true) return;
+
+			var foldercomponent = fnd.FolderName;
+			if (string.IsNullOrWhiteSpace(foldercomponent)) return;
+
+			var path = DirectoryPath.Create(Enumerable.Repeat(foldercomponent, 1));
+
+			Owner.NotesViewControl.AddFolder(path);
+		}
+
+		private void RenameFolder()
+		{
+			try
+			{
+				var oldPath = SelectedFolderPath;
+				if (oldPath.IsRoot()) return;
+
+				var fnd = new FolderNameDialog { DialogText = "Insert the new name for the folder", FolderName = oldPath.GetLastComponent(), Owner = Owner};
+
+				if (fnd.ShowDialog() != true) return;
+
+				var newPath = oldPath.ParentPath().SubDir(fnd.FolderName);
+
+				if (newPath.EqualsWithCase(oldPath)) return;
+
+				Owner.NotesViewControl.AddFolder(newPath);
+
+				foreach (INote n in Repository.Notes.ToList())
+				{
+					if (n.Path.IsPathOrSubPath(oldPath))
+					{
+						n.Path = n.Path.Replace(oldPath, newPath);
+					}
+				}
+
+				Owner.NotesViewControl.AddFolder(newPath);
+			}
+			catch (Exception e)
+			{
+				App.Logger.Error("Main", "Could not rename folder", e);
+				ExceptionDialog.Show(Owner, "Could not rename folder", e);
 			}
 		}
 

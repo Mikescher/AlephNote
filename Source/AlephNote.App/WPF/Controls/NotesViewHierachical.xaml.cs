@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using AlephNote.WPF.Util;
 using System.Collections.Specialized;
 using System.Threading;
+using System.Windows.Controls;
 using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.MVVM;
 using AlephNote.WPF.Shortcuts;
@@ -148,7 +149,7 @@ namespace AlephNote.WPF.Controls
 				}
 			} }
 
-		private HierachicalFolderWrapper _displayItems = new HierachicalFolderWrapper("ROOT", DirectoryPath.Root(), true);
+		private HierachicalFolderWrapper _displayItems = new HierachicalFolderWrapper("ROOT", DirectoryPath.Root(), true, false);
 		public HierachicalFolderWrapper DisplayItems { get { return _displayItems; } }
 
 		#endregion
@@ -171,6 +172,8 @@ namespace AlephNote.WPF.Controls
 
 		private void OnSettingsChanged(DependencyPropertyChangedEventArgs args)
 		{
+			DisplayItems.ClearPermanents();
+
 			if (AllNotes != null) ResyncDisplayItems(AllNotes);
 
 			if (args.NewValue != null && args.OldValue == null)
@@ -238,6 +241,8 @@ namespace AlephNote.WPF.Controls
 			if (args.OldValue != null) ((ObservableCollection<INote>)args.OldValue).CollectionChanged -= OnAllNotesCollectionChanged;
 			if (args.NewValue != null) ((ObservableCollection<INote>)args.NewValue).CollectionChanged += OnAllNotesCollectionChanged;
 
+			DisplayItems.ClearPermanents();
+
 			if (args.NewValue != null)
 			{
 				ResyncDisplayItems((ObservableCollection<INote>)args.NewValue);
@@ -261,7 +266,7 @@ namespace AlephNote.WPF.Controls
 
 		private void ResyncDisplayItems(IList<INote> notes)
 		{
-			var root = new HierachicalFolderWrapper("ROOT", DirectoryPath.Root(), true);
+			var root = new HierachicalFolderWrapper("ROOT", DirectoryPath.Root(), true, false);
 
 			foreach (var note in notes)
 			{
@@ -269,10 +274,12 @@ namespace AlephNote.WPF.Controls
 
 				foreach (var pathcomp in note.Path.Enumerate())
 				{
-					parent = parent.GetOrCreateFolder(pathcomp);
+					parent = parent.GetOrCreateFolder(pathcomp, out _);
 				}
 				parent.Add(note);
 			}
+
+			DisplayItems.CopyPermanentsTo(root);
 
 			DisplayItems.Sync(root, new HierachicalFolderWrapper[0]);
 		}
@@ -297,6 +304,19 @@ namespace AlephNote.WPF.Controls
 			return EnumerateVisibleNotes().Contains(n);
 		}
 
+		public void AddFolder(DirectoryPath folder)
+		{
+			var curr = DisplayItems;
+
+			foreach (var comp in folder.Enumerate())
+			{
+				curr = curr.GetOrCreateFolder(comp, out var created);
+				if (created) curr.Permanent = true;
+			}
+
+			SelectedFolderPath = folder;
+		}
+
 		public IEnumerable<INote> EnumerateVisibleNotes()
 		{
 			return SelectedFolder?.AllSubNotes ?? Enumerable.Empty<INote>();
@@ -316,7 +336,7 @@ namespace AlephNote.WPF.Controls
 			//---------
 
 			FolderTreeView.InputBindings.Clear();
-			foreach (var sc in shortcuts.Where(s => s.Value.Scope == AlephShortcutScope.NoteList))
+			foreach (var sc in shortcuts.Where(s => s.Value.Scope == AlephShortcutScope.FolderList))
 			{
 				var sckey = sc.Key;
 				var cmd = new RelayCommand(() => ShortcutManager.Execute(mw, sckey));
@@ -343,6 +363,23 @@ namespace AlephNote.WPF.Controls
 		private void HierachicalNotesList_Drop(object sender, DragEventArgs e)
 		{
 			NotesListDrop?.Invoke(sender, e);
+		}
+
+		public void DeleteFolder(DirectoryPath folder)
+		{
+			DisplayItems.RemoveFind(folder);
+			ResyncDisplayItems(AllNotes);
+		}
+
+		private void FolderTreeView_OnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			TreeViewItem treeViewItem = WPFHelper.VisualTVUpwardSearch(e.OriginalSource as DependencyObject);
+
+			if (treeViewItem != null)
+			{
+				treeViewItem.Focus();
+				e.Handled = true;
+			}
 		}
 	}
 }

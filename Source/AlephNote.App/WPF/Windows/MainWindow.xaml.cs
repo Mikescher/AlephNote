@@ -54,6 +54,11 @@ namespace AlephNote.WPF.Windows
 				if (File.Exists(App.PATH_SETTINGS))
 				{
 					settings = AppSettings.Load(App.PATH_SETTINGS);
+					if (App.IsUpdateMigration)
+					{
+						settings.Migrate(App.UpdateMigrationFrom, App.UpdateMigrationTo, App.Logger);
+						settings.Save();
+					}
 				}
 				else
 				{
@@ -504,7 +509,7 @@ namespace AlephNote.WPF.Windows
 			}
 
 			// ================ NOTESLIST ================
-			NotesViewControl.SetShortcuts(this, settings.Shortcuts.Where(s => s.Value.Scope == AlephShortcutScope.NoteList).ToList());
+			NotesViewControl.SetShortcuts(this, settings.Shortcuts.ToList());
 
 			// ================ GLOBAL ================
 			_scManager.Clear();

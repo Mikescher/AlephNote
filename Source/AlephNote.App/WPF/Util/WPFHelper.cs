@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace AlephNote.WPF.Util
@@ -23,6 +24,14 @@ namespace AlephNote.WPF.Util
 				if (result != null) return result;
 			}
 			return null;
+		}
+
+		public static TreeViewItem VisualTVUpwardSearch(DependencyObject source)
+		{
+			while (source != null && !(source is TreeViewItem))
+				source = VisualTreeHelper.GetParent(source);
+
+			return source as TreeViewItem;
 		}
 	}
 }
