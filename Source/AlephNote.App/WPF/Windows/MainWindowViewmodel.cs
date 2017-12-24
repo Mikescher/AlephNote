@@ -156,7 +156,7 @@ namespace AlephNote.WPF.Windows
 			SettingsChanged();
 		}
 
-		private void ShowSettings() //TODO Why does show settings take so long?
+		private void ShowSettings()
 		{
 			var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
 

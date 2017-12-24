@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
-using AlephNote.Common.Encryption;
 using AlephNote.Common.Settings;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Common.AlephXMLSerialization
 {

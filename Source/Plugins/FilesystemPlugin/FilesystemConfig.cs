@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.Objects;
+using AlephNote.PluginInterface.Objects.AXML;
 using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.Filesystem
@@ -21,7 +23,7 @@ namespace AlephNote.Plugins.Filesystem
 
 		public Encoding Encoding => Encoding.GetEncoding(StrEncoding);
 
-		public XElement Serialize()
+		public XElement Serialize(AXMLSerializationSettings opt)
 		{
 			var data = new object[]
 			{
@@ -37,7 +39,7 @@ namespace AlephNote.Plugins.Filesystem
 			return r;
 		}
 
-		public void Deserialize(XElement input)
+		public void Deserialize(XElement input, AXMLSerializationSettings opt)
 		{
 			if (input.Name.LocalName != "config") throw new Exception("LocalName != 'config'");
 

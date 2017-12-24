@@ -5,6 +5,8 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Collections;
 using AlephNote.Common.MVVM;
+using AlephNote.PluginInterface.Objects;
+using AlephNote.PluginInterface.Objects.AXML;
 
 namespace AlephNote.Common.Settings.Types
 {
@@ -22,9 +24,9 @@ namespace AlephNote.Common.Settings.Types
 			DefaultDictValue = ddv;
 		}
 
-		public object DeserializeNew(XElement source)
+		public object DeserializeNew(XElement source, AXMLSerializationSettings opt)
 		{
-			var d = source.Elements("Value").Select(p => Tuple.Create(p.Attribute("Key").Value, (TValue)DefaultDictValue.DeserializeNew(p.Value))).ToArray();
+			var d = source.Elements("Value").Select(p => Tuple.Create(p.Attribute("Key").Value, (TValue)DefaultDictValue.DeserializeNew(p.Value, opt))).ToArray();
 			return new KeyValueFlatCustomList<TValue>(d, DefaultDictValue);
 		}
 
@@ -33,14 +35,14 @@ namespace AlephNote.Common.Settings.Types
 			return $"KeyValueCustomList[{DefaultDictValue.GetTypeStr()}]";
 		}
 
-		public void Serialize(XElement target)
+		public void Serialize(XElement target, AXMLSerializationSettings opt)
 		{
 			foreach (var d in _data)
 			{
 				var x = new XElement("Value");
 				x.Add(new XAttribute("Key", d.Key));
-				x.Add(new XAttribute("type", d.Value.GetTypeStr()));
-				x.Value = d.Value.Serialize();
+				if ((opt & AXMLSerializationSettings.IncludeTypeInfo) != 0) x.Add(new XAttribute("type", d.Value.GetTypeStr()));
+				x.Value = d.Value.Serialize(opt);
 				target.Add(x);
 			}
 		}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -8,6 +9,7 @@ using AlephNote.Common.MVVM;
 using AlephNote.Common.Plugins;
 using AlephNote.Common.Settings.Types;
 using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.Objects.AXML;
 using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Common.Settings
@@ -342,13 +344,13 @@ namespace AlephNote.Common.Settings
 
 		public string Serialize()
 		{
-			return _serializer.Serialize(this);
+			return _serializer.Serialize(this, AlephXMLSerializer<AppSettings>.DEFAULT_SERIALIZATION_SETTINGS);
 		}
 
 		public static AppSettings Deserialize(string xml, string path)
 		{
 			var r = CreateEmpty(path);
-			_serializer.Deserialize(r, xml);
+			_serializer.Deserialize(r, xml, AlephXMLSerializer<AppSettings>.DEFAULT_SERIALIZATION_SETTINGS);
 			return r;
 		}
 

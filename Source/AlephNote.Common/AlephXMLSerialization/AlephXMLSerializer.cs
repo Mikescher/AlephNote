@@ -2,15 +2,24 @@
 using AlephNote.PluginInterface.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.Objects;
+using AlephNote.PluginInterface.Objects.AXML;
 
 namespace AlephNote.Common.AlephXMLSerialization
 {
 	public class AlephXMLSerializer<T> where T : IAlephSerializable
 	{
 		private class AttrObj { public PropertyInfo Info; public List<object> Attributes; }
+
+		public const AXMLSerializationSettings DEFAULT_SERIALIZATION_SETTINGS = 
+			AXMLSerializationSettings.FormattedOutput |
+			AXMLSerializationSettings.SplittedBase64  |
+			AXMLSerializationSettings.UseEncryption   |
+			AXMLSerializationSettings.IncludeTypeInfo;
 
 		private readonly string _rootNode;
 		private readonly List<AXMLFieldInfo> _fields;
@@ -54,7 +63,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 			throw new NotSupportedException("Setting of type " + prop.PropertyType + " not supported");
 		}
 
-		public string Serialize(T obj)
+		public string Serialize(T obj, AXMLSerializationSettings opt)
 		{
 			obj.OnBeforeSerialize();
 
@@ -64,13 +73,16 @@ namespace AlephNote.Common.AlephXMLSerialization
 			{
 				var data = prop.PropInfo.GetValue(obj);
 
-				root.Add(prop.Serialize(data));
+				root.Add(prop.Serialize(data, opt));
 			}
 
-			return XHelper.ConvertToString(new XDocument(root));
+			if ((opt & AXMLSerializationSettings.FormattedOutput) != 0)
+				return XHelper.ConvertToStringFormatted(new XDocument(root));
+			else
+				return XHelper.ConvertToStringRaw(new XDocument(root));
 		}
 
-		public void Deserialize(T obj, string xml)
+		public void Deserialize(T obj, string xml, AXMLSerializationSettings opt)
 		{
 			var xd = XDocument.Parse(xml);
 			var root = xd.Root;
@@ -78,7 +90,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 
 			foreach (var prop in _fields)
 			{
-				prop.Deserialize(obj, root);
+				prop.Deserialize(obj, root, opt);
 			}
 
 			obj.OnAfterDeserialize();
@@ -86,14 +98,18 @@ namespace AlephNote.Common.AlephXMLSerialization
 
 		public void Clone(T source, T target)
 		{
-			var xml = Serialize(source);
-			Deserialize(target, xml);
+			var opt = AXMLSerializationSettings.None;
+
+			var xml = Serialize(source, opt);
+			Deserialize(target, xml, opt);
 		}
 
 		public bool IsEqual(T a, T b)
 		{
-			var xml1 = Serialize(a);
-			var xml2 = Serialize(b);
+			var opt = AXMLSerializationSettings.None;
+
+			var xml1 = Serialize(a, opt);
+			var xml2 = Serialize(b, opt);
 
 			return xml1 == xml2;
 		}

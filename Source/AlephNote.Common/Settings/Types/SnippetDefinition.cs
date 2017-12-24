@@ -1,5 +1,7 @@
 ﻿using AlephNote.Common.AlephXMLSerialization;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.Objects;
+using AlephNote.PluginInterface.Objects.AXML;
 
 namespace AlephNote.Common.Settings.Types
 {
@@ -16,7 +18,7 @@ namespace AlephNote.Common.Settings.Types
 			Value = val;
 		}
 
-		public object DeserializeNew(XElement source)
+		public object DeserializeNew(XElement source, AXMLSerializationSettings opt)
 		{
 			return new SnippetDefinition(source.Attribute("display").Value, source.Attribute("value").Value);
 		}
@@ -26,7 +28,7 @@ namespace AlephNote.Common.Settings.Types
 			return "SnippetDefinition";
 		}
 
-		public void Serialize(XElement target)
+		public void Serialize(XElement target, AXMLSerializationSettings opt)
 		{
 			target.Add(new XAttribute("display", DisplayName));
 			target.Add(new XAttribute("value", Value));

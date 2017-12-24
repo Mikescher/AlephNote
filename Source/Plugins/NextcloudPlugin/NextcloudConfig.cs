@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.Objects;
+using AlephNote.PluginInterface.Objects.AXML;
 using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.Nextcloud
@@ -21,12 +23,12 @@ namespace AlephNote.Plugins.Nextcloud
 		public string Host = "https://example.com";
 		public bool BlankLineBelowTitle = true;
 
-		public XElement Serialize()
+		public XElement Serialize(AXMLSerializationSettings opt)
 		{
 			var data = new object[]
 			{
 				new XElement("Username", Username),
-				new XElement("Password", Encrypt(Password)),
+				new XElement("Password", Encrypt(Password, opt)),
 				new XElement("Host", Host),
 				new XElement("BlankLineBelowTitle", BlankLineBelowTitle),
 			};
@@ -37,12 +39,12 @@ namespace AlephNote.Plugins.Nextcloud
 			return r;
 		}
 
-		public void Deserialize(XElement input)
+		public void Deserialize(XElement input, AXMLSerializationSettings opt)
 		{
 			if (input.Name.LocalName != "config") throw new Exception("LocalName != 'config'");
 
 			Username = XHelper.GetChildValue(input, "Username", Username);
-			Password = Decrypt(XHelper.GetChildValue(input, "Password", string.Empty));
+			Password = Decrypt(XHelper.GetChildValue(input, "Password", string.Empty), opt);
 			Host = XHelper.GetChildValue(input, "Host", Host);
 		}
 
@@ -95,14 +97,18 @@ namespace AlephNote.Plugins.Nextcloud
 			};
 		}
 
-		private string Encrypt(string data)
+		private string Encrypt(string data, AXMLSerializationSettings opt)
 		{
+			if ((opt & AXMLSerializationSettings.UseEncryption) == 0) return data;
+
 			if (string.IsNullOrWhiteSpace(data)) return string.Empty;
 			return Convert.ToBase64String(AESThenHMAC.SimpleEncryptWithPassword(Encoding.UTF32.GetBytes(data), ENCRYPTION_KEY));
 		}
 
-		private string Decrypt(string data)
+		private string Decrypt(string data, AXMLSerializationSettings opt)
 		{
+			if ((opt & AXMLSerializationSettings.UseEncryption) == 0) return data;
+
 			if (string.IsNullOrWhiteSpace(data)) return string.Empty;
 			return Encoding.UTF32.GetString(AESThenHMAC.SimpleDecryptWithPassword(Convert.FromBase64String(data), ENCRYPTION_KEY));
 		}

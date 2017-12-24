@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Xml.Linq;
 using AlephNote.Common.Plugins;
 using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.Objects;
+using AlephNote.PluginInterface.Objects.AXML;
 using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Common.AlephXMLSerialization
@@ -39,7 +41,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 			PropInfo = i;
 		}
 
-		public XElement Serialize(object objdata)
+		public XElement Serialize(object objdata, AXMLSerializationSettings opt)
 		{
 			string resultdata;
 
@@ -67,7 +69,10 @@ namespace AlephNote.Common.AlephXMLSerialization
 					break;
 
 				case SettingObjectTypeEnum.EncryptedString:
-					resultdata = AlephXMLSerializerHelper.Encrypt((string)objdata);
+					if ((opt & AXMLSerializationSettings.UseEncryption) != 0)
+						resultdata = AlephXMLSerializerHelper.Encrypt((string)objdata);
+					else
+						resultdata = (string)objdata; // Omit encryption
 					break;
 
 				case SettingObjectTypeEnum.String:
@@ -87,29 +92,27 @@ namespace AlephNote.Common.AlephXMLSerialization
 					break;
 
 				case SettingObjectTypeEnum.ListRemoteStorageAccount:
-					var x1 = new XElement(PropInfo.Name);
-					x1.Add(new XAttribute("type", SettingObjectTypeEnum.ListRemoteStorageAccount));
-					x1.Add(((IList<RemoteStorageAccount>)objdata).Select(SerializeRemoteStorageAccount));
+					var x1 = CreateXElem(PropInfo.Name, SettingObjectTypeEnum.ListRemoteStorageAccount, null, opt);
+					x1.Add(((IList<RemoteStorageAccount>)objdata).Select(rsa => SerializeRemoteStorageAccount(rsa, opt)));
 					return x1;
 
 				case SettingObjectTypeEnum.CustomSerializable:
-					var x2 = new XElement(PropInfo.Name);
 					var d = ((IAlephCustomSerializableField)objdata);
-					x2.Add(new XAttribute("type", d.GetTypeStr()));
-					d.Serialize(x2);
+					var x2 = CreateXElem(PropInfo.Name, d.GetTypeStr(), null, opt);
+					d.Serialize(x2, opt);
 					return x2;
 
 				case SettingObjectTypeEnum.DirectoryPath:
-					return new XElement(PropInfo.Name, ((DirectoryPath)objdata).Serialize(), new XAttribute("type", _objectType));
+					return CreateXElem(PropInfo.Name, _objectType, ((DirectoryPath)objdata).Serialize(), opt);
 
 				default:
 					throw new ArgumentOutOfRangeException(nameof(objdata), _objectType, null);
 			}
 
-			return new XElement(PropInfo.Name, resultdata, new XAttribute("type", _objectType));
+			return CreateXElem(PropInfo.Name, _objectType, resultdata, opt);
 		}
 
-		public void Deserialize(object obj, XElement root)
+		public void Deserialize(object obj, XElement root, AXMLSerializationSettings opt)
 		{
 			var current = PropInfo.GetValue(obj);
 
@@ -140,7 +143,10 @@ namespace AlephNote.Common.AlephXMLSerialization
 					return;
 
 				case SettingObjectTypeEnum.EncryptedString:
-					PropInfo.SetValue(obj, AlephXMLSerializerHelper.Decrypt(XHelper.GetChildValue(root, PropInfo.Name, AlephXMLSerializerHelper.Encrypt((string)current))));
+					if ((opt & AXMLSerializationSettings.UseEncryption) != 0)
+						PropInfo.SetValue(obj, AlephXMLSerializerHelper.Decrypt(XHelper.GetChildValue(root, PropInfo.Name, AlephXMLSerializerHelper.Encrypt((string)current))));
+					else
+						PropInfo.SetValue(obj, XHelper.GetChildValue(root, PropInfo.Name, (string)current));
 					return;
 
 				case SettingObjectTypeEnum.String:
@@ -164,7 +170,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 						list.Clear();
 						foreach (var elem in XHelper.GetChildOrThrow(root, PropInfo.Name).Elements())
 						{
-							list.Add(DeserializeRemoteStorageAccount(elem));
+							list.Add(DeserializeRemoteStorageAccount(elem, opt));
 						}
 					}
 					break;
@@ -172,7 +178,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 				case SettingObjectTypeEnum.CustomSerializable:
 					var currCust = ((IAlephCustomSerializableField)current);
 					var cchild = XHelper.GetChildOrNull(root, PropInfo.Name);
-					if (cchild != null) PropInfo.SetValue(obj, currCust.DeserializeNew(cchild));
+					if (cchild != null) PropInfo.SetValue(obj, currCust.DeserializeNew(cchild, opt));
 					break;
 
 				case SettingObjectTypeEnum.DirectoryPath:
@@ -185,23 +191,29 @@ namespace AlephNote.Common.AlephXMLSerialization
 			}
 		}
 
-		private XElement SerializeRemoteStorageAccount(RemoteStorageAccount rsa)
+		private XElement SerializeRemoteStorageAccount(RemoteStorageAccount rsa, AXMLSerializationSettings opt)
 		{
-			var x = new XElement("Account");
-			x.Add(new XAttribute("type", SettingObjectTypeEnum.RemoteStorageAccount));
-			x.Add(new XElement("ID", rsa.ID.ToString("B"), new XAttribute("type", SettingObjectTypeEnum.Guid)));
-			x.Add(new XElement("Plugin", rsa.Plugin.GetUniqueID().ToString("B"), new XAttribute("type", SettingObjectTypeEnum.Guid)));
-			x.Add(new XElement("Config", rsa.Config.Serialize(), new XAttribute("type", "Generic")));
+			var x = CreateXElem("Account", SettingObjectTypeEnum.RemoteStorageAccount, null, opt);
+			x.Add(CreateXElem("ID", SettingObjectTypeEnum.Guid, rsa.ID.ToString("B"), opt));
+			x.Add(CreateXElem("Plugin", SettingObjectTypeEnum.Guid, rsa.Plugin.GetUniqueID().ToString("B"), opt));
+			x.Add(CreateXElem("Config", "Generic", rsa.Config.Serialize(opt), opt));
 			return x;
 		}
 
-		private RemoteStorageAccount DeserializeRemoteStorageAccount(XElement e)
+		private XElement CreateXElem(string name, object type, object content, AXMLSerializationSettings opt)
+		{
+			var r = content!= null ? new XElement(name, content) : new XElement(name);
+			if (type != null && (opt & AXMLSerializationSettings.IncludeTypeInfo) != 0) r.Add(new XAttribute("type", type));
+			return r;
+		}
+
+		private RemoteStorageAccount DeserializeRemoteStorageAccount(XElement e, AXMLSerializationSettings opt)
 		{
 			var rsa = new RemoteStorageAccount();
 			rsa.ID = XHelper.GetChildValue(e, "ID", Guid.Empty);
 			rsa.Plugin = PluginManagerSingleton.Inst.GetPlugin(XHelper.GetChildValue(e, "Plugin", Guid.Empty));
 			rsa.Config = rsa.Plugin.CreateEmptyRemoteStorageConfiguration();
-			rsa.Config.Deserialize(XHelper.GetChildOrThrow(e, "Config").Elements().Single());
+			rsa.Config.Deserialize(XHelper.GetChildOrThrow(e, "Config").Elements().Single(), opt);
 			return rsa;
 		}
 	}

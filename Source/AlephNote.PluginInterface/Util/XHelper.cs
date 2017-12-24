@@ -211,9 +211,9 @@ namespace AlephNote.PluginInterface.Util
 			return parent.Elements(childName).FirstOrDefault();
 		}
 
-		public static string ConvertToString(XDocument doc)
+		public static string ConvertToStringFormatted(XDocument doc)
 		{
-			if (doc == null) throw new ArgumentNullException("doc");
+			if (doc == null) throw new ArgumentNullException(nameof(doc));
 
 			StringBuilder builder = new StringBuilder();
 			using (TextWriter writer = new StringWriter(builder))
@@ -224,6 +224,13 @@ namespace AlephNote.PluginInterface.Util
 			var lines = Regex.Split(builder.ToString(), @"\r?\n");
 			if (lines.Any()) lines[0] = lines[0].Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 			return string.Join(Environment.NewLine, lines);
+		}
+
+		public static string ConvertToStringRaw(XDocument doc)
+		{
+			if (doc == null) throw new ArgumentNullException(nameof(doc));
+
+			return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" + doc.ToString(SaveOptions.DisableFormatting);
 		}
 
 		public static string ConvertToC80Base64(string content, int indent = 8, int indentLast = 6)

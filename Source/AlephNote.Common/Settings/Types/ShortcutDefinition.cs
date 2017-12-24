@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AlephNote.Common.MVVM;
+using AlephNote.PluginInterface.Objects;
+using AlephNote.PluginInterface.Objects.AXML;
 
 namespace AlephNote.Common.Settings.Types
 {
@@ -27,7 +29,7 @@ namespace AlephNote.Common.Settings.Types
 			Key = k;
 		}
 
-		public object DeserializeNew(string source)
+		public object DeserializeNew(string source, AXMLSerializationSettings opt)
 		{
 			if (string.IsNullOrWhiteSpace(source)) return new ShortcutDefinition(AlephShortcutScope.None, AlephModifierKeys.None, AlephKey.None);
 
@@ -89,7 +91,7 @@ namespace AlephNote.Common.Settings.Types
 			return "ShortcutDefinition";
 		}
 
-		public string Serialize()
+		public string Serialize(AXMLSerializationSettings opt)
 		{
 			if (Key == AlephKey.None) return "";
 			if (Modifiers == AlephModifierKeys.None)

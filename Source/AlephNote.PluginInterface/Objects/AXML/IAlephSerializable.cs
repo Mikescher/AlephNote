@@ -1,4 +1,4 @@
-﻿namespace AlephNote.Common.AlephXMLSerialization
+﻿namespace AlephNote.PluginInterface.Objects.AXML
 {
 	public interface IAlephSerializable
 	{

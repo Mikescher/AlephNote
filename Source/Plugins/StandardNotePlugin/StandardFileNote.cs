@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using AlephNote.PluginInterface.Impl;
 using AlephNote.PluginInterface.Util;
 
