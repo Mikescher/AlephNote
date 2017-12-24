@@ -311,6 +311,10 @@ namespace AlephNote.Common.Settings
 		public DirectoryPath LastSelectedFolder { get { return _lastSelectedFolder; } set { _lastSelectedFolder = value; OnPropertyChanged(); } }
 		private DirectoryPath _lastSelectedFolder = DirectoryPath.Root();
 
+		[AlephXMLField]
+		public bool SmoothScrollNotesView { get { return _smoothScrollNotesView; } set { _smoothScrollNotesView = value; OnPropertyChanged(); } }
+		private bool _smoothScrollNotesView = false;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

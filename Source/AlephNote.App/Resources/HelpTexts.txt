@@ -204,3 +204,9 @@ For all unsupported plugins we can "emulate" a directory structure by writing th
 You should choose a directory seperator that does not normally appear in you note titles, to prevent conflicts.
 
 This setting does nothing for remote accounts where subdirectories are natively supported.
+
+[SmoothScrollNotesView]
+Use smooth scrolling for the left notes view.
+
+Do not enabled this if you have a lot of notes, this increases the drawing load substantially and can lead to UI lag.
+Also the effect is only really visible with the 'full preview' setting for the notes preview style.

@@ -10,7 +10,9 @@ namespace AlephNote.WPF.Converter
 		{
 			if (!int.TryParse(System.Convert.ToString(parameter), out var index)) return "";
 
-			return Regex.Split(value, @"\r?\n").Where(p => !string.IsNullOrWhiteSpace(p)).Skip(index).FirstOrDefault() ?? "";
+			var line = (Regex.Split(value, @"\r?\n").Where(p => !string.IsNullOrWhiteSpace(p)).Skip(index).FirstOrDefault() ?? "");
+			if (line.Length > 48) line = line.Substring(0, 48-3)+"...";
+			return line;
 		}
 	}
 }

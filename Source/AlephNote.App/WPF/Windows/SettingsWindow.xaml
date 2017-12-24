@@ -179,6 +179,7 @@
 										<RowDefinition Height="*" />
 										<RowDefinition Height="*" />
 										<RowDefinition Height="*" />
+										<RowDefinition Height="*" />
 									</Grid.RowDefinitions>
 									
 									<CheckBox      Grid.Row="0" Grid.Column="0" Margin="2" Content="Minimize to tray" IsChecked="{Binding Settings.MinimizeToTray}" />
@@ -190,6 +191,9 @@
 									<CheckBox      Grid.Row="3" Grid.Column="0" Margin="2" Content="Remember last selected note"  IsChecked="{Binding Settings.RememberLastSelectedNote}" />
 									<ctrl:PHelpBtn Grid.Row="3" Grid.Column="1" HelpProperty="RememberLastSelectedNote" Margin="2,0" VerticalAlignment="Center" />
 
+									<CheckBox      Grid.Row="4" Grid.Column="0" Margin="2" Content="Smooth scrolling"  IsChecked="{Binding Settings.SmoothScrollNotesView}" />
+									<ctrl:PHelpBtn Grid.Row="4" Grid.Column="1" HelpProperty="SmoothScrollNotesView" Margin="2,0" VerticalAlignment="Center" />
+
 								</Grid>
 								
 								<Grid Grid.Row="0" Grid.Column="1">
@@ -198,6 +202,7 @@
 										<ColumnDefinition Width="Auto" />
 									</Grid.ColumnDefinitions>
 									<Grid.RowDefinitions>
+										<RowDefinition Height="*" />
 										<RowDefinition Height="*" />
 										<RowDefinition Height="*" />
 										<RowDefinition Height="*" />

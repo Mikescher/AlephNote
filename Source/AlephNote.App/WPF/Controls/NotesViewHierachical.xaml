@@ -54,11 +54,15 @@
 			
 			<TreeView.Resources>
 
-				<Style TargetType="TreeViewItem">
+				<Style TargetType="{x:Type TreeViewItem}">
 					<Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}" />
 					<Setter Property="IsExpanded" Value="{Binding Path=IsExpanded, Mode=TwoWay}" />
 				</Style>
 
+				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black" />
+				
 			</TreeView.Resources>
 
 			<TreeView.ItemTemplate>
@@ -82,7 +86,8 @@
 					  KeyDown="HierachicalNotesList_KeyDown"
 					  services:MultiDataTemplateService.MultiDataTemplateSelector="{Binding Settings.NotePreviewStyle}"
 					  HorizontalContentAlignment="Stretch"
-					  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+					  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					  ScrollViewer.CanContentScroll="{Binding Settings.SmoothScrollNotesView, Converter={conv:NegateBool}}"
 					  SelectionMode="Single"
 					  ItemsSource="{Binding SelectedFolder.AllSubNotes}" 
 					  SelectedValue="{Binding SelectedNote}"
@@ -98,12 +103,18 @@
 				</ContextMenu>
 			</ListView.ContextMenu>
 
+			<ListBox.ItemContainerStyle>
+				<Style TargetType="ListBoxItem">
+					<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+				</Style>
+			</ListBox.ItemContainerStyle>
+
 			<!-- ReSharper disable Xaml.RedundantResource -->
 			<services:MultiDataTemplateService.MultiDataTemplate>
 
 				<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.Simple}">
 					<DataTemplate >
-						<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}"  d:DataContext="{d:DesignInstance pi:INote}">
+						<Grid   d:DataContext="{d:DesignInstance pi:INote}">
 							<TextBlock Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
 						</Grid>
 					</DataTemplate>
@@ -111,10 +122,11 @@
 
 				<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.Extended}">
 					<DataTemplate>
-						<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}"  d:DataContext="{d:DesignInstance pi:INote}">
+						<Grid d:DataContext="{d:DesignInstance pi:INote}">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="*" />
 								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="3" />
 							</Grid.ColumnDefinitions>
 							<TextBlock Grid.Column="0" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
 							<TextBlock Grid.Column="1" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" VerticalAlignment="Center" Foreground="DimGray" >
@@ -128,7 +140,7 @@
 
 				<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.FullPreview}">
 					<DataTemplate>
-						<Grid Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}}, Path=ActualWidth, Converter={conv:Subtract}, ConverterParameter=3}" d:DataContext="{d:DesignInstance pi:INote}">
+						<Grid d:DataContext="{d:DesignInstance pi:INote}">
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto" />
 								<RowDefinition Height="Auto" />
