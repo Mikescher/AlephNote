@@ -148,11 +148,10 @@ namespace AlephNote.WPF.Controls
 				}
 			} }
 
-
-		#endregion
-
 		private HierachicalFolderWrapper _displayItems = new HierachicalFolderWrapper("ROOT", DirectoryPath.Root(), true);
 		public HierachicalFolderWrapper DisplayItems { get { return _displayItems; } }
+
+		#endregion
 
 		#region Events
 
@@ -161,6 +160,8 @@ namespace AlephNote.WPF.Controls
 		public event EventHandler GridSplitterChanged;
 
 		#endregion
+
+		private DirectoryPath _initFolderPath = null;
 
 		public NotesViewHierachical()
 		{
@@ -211,8 +212,25 @@ namespace AlephNote.WPF.Controls
 
 		private void OnSelectedFolderPathChanged()
 		{
-			var f = DisplayItems.Find(SelectedFolderPath) ?? DisplayItems.AllNotesWrapper;
-			if (!f.IsSelected) f.IsSelected = true;
+			var f = DisplayItems.Find(SelectedFolderPath);
+
+			if (f != null)
+			{
+				if (!f.IsSelected) f.IsSelected = true;
+			}
+			else
+			{
+				if (AllNotes == null && !SelectedFolderPath.IsRoot() && !SelectedFolderPath.EqualsIgnoreCase(SelectedFolder?.GetNewNotePath()))
+				{
+					_initFolderPath = SelectedFolderPath;
+					SelectedFolderPath = SelectedFolder?.GetNewNotePath() ?? DirectoryPath.Root();
+				}
+				else
+				{
+					if (!DisplayItems.AllNotesWrapper.IsSelected) DisplayItems.AllNotesWrapper.IsSelected = true;
+				}
+			}
+
 		}
 
 		private void OnAllNotesChanged(DependencyPropertyChangedEventArgs args)
@@ -227,6 +245,12 @@ namespace AlephNote.WPF.Controls
 			else
 			{
 				DisplayItems.Clear();
+			}
+
+			if (args.OldValue == null && _initFolderPath != null)
+			{
+				SelectedFolderPath = _initFolderPath;
+				_initFolderPath = null;
 			}
 		}
 

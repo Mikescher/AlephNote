@@ -193,7 +193,6 @@
     <Compile Include="WPF\Services\WatermarkAdorner.cs" />
     <Compile Include="WPF\Services\WatermarkService.cs" />
     <Compile Include="WPF\Util\MenuItemContainerTemplateSelector.cs" />
-    <Compile Include="WPF\Util\NotesListViewTemplateSelector.cs" />
     <Compile Include="WPF\Util\ScintillaHighlighter.cs" />
     <Compile Include="WPF\Util\ScintillaSearcher.cs" />
     <Compile Include="WPF\Util\WPFHelper.cs" />

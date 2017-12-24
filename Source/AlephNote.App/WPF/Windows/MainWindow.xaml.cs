@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using System.Diagnostics;
+using System.Windows.Controls;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
 using AlephNote.Impl;
@@ -37,7 +38,7 @@ namespace AlephNote.WPF.Windows
 
 		public MainWindowViewmodel VM => viewmodel;
 
-		public INotesViewControl NotesViewControl => (INotesViewControl)NotesViewControlWrapper.GetChildOfType<INotesViewControl>(); //(INotesViewControl)NotesViewControlWrapper.Content;
+		public INotesViewControl NotesViewControl { get; private set; }
 
 		public MainWindow()
 		{
@@ -67,6 +68,8 @@ namespace AlephNote.WPF.Windows
 				ExceptionDialog.Show(null, "Could not load settings", "Could not load settings from " + App.PATH_SETTINGS, e);
 				settings = AppSettings.CreateEmpty(App.PATH_SETTINGS);
 			}
+
+			UpdateNotesViewComponent(settings);
 
 			_scManager = new GlobalShortcutManager(this);
 
@@ -536,6 +539,17 @@ namespace AlephNote.WPF.Windows
 		private void VertGridSplitterChanged(object sender, EventArgs e)
 		{
 			VM.GridSplitterChanged();
+		}
+
+		public void UpdateNotesViewComponent(AppSettings settings)
+		{
+			var templ = (ControlTemplate) NotesViewCtrlWrapper.Resources[(settings.UseHierachicalNoteStructure) ? "TemplateHierachical" : "TemplateFlat"];
+
+			var ctrl = templ.LoadContent();
+
+			NotesViewCtrlWrapper.Content = ctrl;
+
+			NotesViewControl = (INotesViewControl) ctrl;
 		}
 	}
 }

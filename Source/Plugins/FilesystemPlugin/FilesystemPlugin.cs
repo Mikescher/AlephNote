@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace AlephNote.Plugins.Filesystem
 {
-	public class FilesystemPlugin : BasicRemotePlugin
+	public class FilesystemPlugin : BasicRemotePlugin //TODO Option for FileWatcher
 	{
 		public static readonly Version Version = GetInformationalVersion(typeof(FilesystemPlugin).GetTypeInfo().Assembly);
 		public const string Name = "FilesystemPlugin";

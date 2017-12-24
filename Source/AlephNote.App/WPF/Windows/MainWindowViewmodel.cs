@@ -131,7 +131,7 @@ namespace AlephNote.WPF.Windows
 			var initialFolder = _settings.LastSelectedFolder;
 			if (initialNote != null && _settings.RememberLastSelectedNote)
 			{
-				if (initialFolder != null) SelectedFolderPath = initialFolder; //TODO Does note work
+				if (initialFolder != null) SelectedFolderPath = initialFolder;
 				SelectedNote = Repository.Notes.FirstOrDefault(n => n.GetUniqueName() == initialNote);
 			}
 			if (SelectedNote == null) SelectedNote = Repository.Notes.FirstOrDefault();
@@ -238,9 +238,7 @@ namespace AlephNote.WPF.Windows
 				if (refreshNotesView)
 				{
 					// refresh Template
-					var cts = Owner.NotesViewControlWrapper.ContentTemplateSelector;
-					Owner.NotesViewControlWrapper.ContentTemplateSelector = null;
-					Owner.NotesViewControlWrapper.ContentTemplateSelector = cts;
+					Owner.UpdateNotesViewComponent(Settings);
 				}
 
 				Owner.SetupScintilla(Settings);

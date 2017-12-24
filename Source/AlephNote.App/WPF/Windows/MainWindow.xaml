@@ -26,10 +26,6 @@
 		Topmost="{Binding Settings.AlwaysOnTop}"
 		Title="AlephNote" Height="350" Width="525">
 
-	<Window.Resources>
-		<util:NotesListViewTemplateSelector x:Key="NLVTemplateSelector" />
-	</Window.Resources>
-	
 	<Grid x:Name="LayoutRoot">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="{Binding OverviewListWidth, Mode=TwoWay}" MinWidth="50"/>
@@ -119,10 +115,10 @@
 				<Image Source="/Resources/plus.png" />
 			</Button>
 
-			<ContentControl Content="{Binding .}" ContentTemplateSelector="{StaticResource NLVTemplateSelector}" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"  x:Name="NotesViewControlWrapper">
+			<ContentControl Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"  x:Name="NotesViewCtrlWrapper">
 				<ContentControl.Resources>
 					
-					<DataTemplate x:Key="TemplateFlat" DataType="{x:Type windows:MainWindowViewmodel}">
+					<ControlTemplate x:Key="TemplateFlat" >
 						<controls:NotesViewFlat
 									NotesListDrop="NotesList_Drop"
 									NotesListKeyDown="NotesList_KeyDown"
@@ -131,9 +127,9 @@
 									SelectedNote="{Binding SelectedNote}"
 									AllNotes="{Binding Repository.Notes}" 
 									SearchText="{Binding SearchText}" />
-					</DataTemplate>
+					</ControlTemplate>
 
-					<DataTemplate x:Key="TemplateHierachical" DataType="{x:Type windows:MainWindowViewmodel}">
+					<ControlTemplate x:Key="TemplateHierachical">
 						<controls:NotesViewHierachical
 									NotesListDrop="NotesList_Drop"
 									NotesListKeyDown="NotesList_KeyDown"
@@ -144,11 +140,10 @@
 									SelectedNote="{Binding SelectedNote}"
 									SelectedFolderPath="{Binding SelectedFolderPath}"
 									SearchText="{Binding SearchText}" />
-					</DataTemplate>
+					</ControlTemplate>
 					
 				</ContentControl.Resources>
 			</ContentControl>
-
 
 		</Grid>
 
