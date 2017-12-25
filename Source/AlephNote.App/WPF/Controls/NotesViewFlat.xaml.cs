@@ -1,4 +1,5 @@
-﻿using AlephNote.Common.Settings.Types;
+﻿using System.Collections;
+using AlephNote.Common.Settings.Types;
 using AlephNote.PluginInterface;
 using AlephNote.WPF.Util;
 using System.Collections.Generic;
@@ -123,7 +124,7 @@ namespace AlephNote.WPF.Controls
 
 				var source = (ListCollectionView)CollectionViewSource.GetDefaultView(AllNotes);
 				source.Filter = p => SearchFilter((INote)p);
-				if (Settings.NoteSorting != SortingMode.None) source.CustomSort = Settings.GetNoteComparator();
+				if (Settings.NoteSorting != SortingMode.None) source.CustomSort = (IComparer)Settings.GetNoteComparator();
 
 				return source;
 			}

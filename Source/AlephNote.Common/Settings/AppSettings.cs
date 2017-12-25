@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -439,20 +440,21 @@ namespace AlephNote.Common.Settings
 			}
 		}
 
-		public IComparer GetNoteComparator()
+		public static readonly IComparer<INote> COMPARER_NONE  = ProjectionComparer.Create<INote, string>(n => n.GetUniqueName());
+		public static readonly IComparer<INote> COMPARER_NAME  = ProjectionComparer.Create<INote, string>(n => n.Title);
+		public static readonly IComparer<INote> COMPARER_CDATE = ProjectionComparer.Create<INote, DateTimeOffset>(n => n.CreationDate, true);
+		public static readonly IComparer<INote> COMPARER_MDATE = ProjectionComparer.Create<INote, DateTimeOffset>(n => n.ModificationDate, true);
+
+		public IComparer<INote> GetNoteComparator()
 		{
 			switch (NoteSorting)
 			{
-				case SortingMode.None:
-					return ProjectionComparer.Create<INote, string>(n => n.GetUniqueName());
-				case SortingMode.ByName:
-					return ProjectionComparer.Create<INote, string>(n => n.Title);
-				case SortingMode.ByCreationDate:
-					return ProjectionComparer.Create<INote, DateTimeOffset>(n => n.CreationDate, true);
-				case SortingMode.ByModificationDate:
-					return ProjectionComparer.Create<INote, DateTimeOffset>(n => n.ModificationDate, true);
-				default:
-					throw new ArgumentOutOfRangeException();
+				case SortingMode.None:               return COMPARER_NONE;
+				case SortingMode.ByName:             return COMPARER_NAME;
+				case SortingMode.ByCreationDate:     return COMPARER_CDATE;
+				case SortingMode.ByModificationDate: return COMPARER_MDATE;
+
+				default: throw new ArgumentOutOfRangeException();
 			}
 		}
 

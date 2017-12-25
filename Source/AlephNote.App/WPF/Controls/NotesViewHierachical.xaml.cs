@@ -14,6 +14,7 @@ using AlephNote.WPF.Util;
 using System.Collections.Specialized;
 using System.Threading;
 using System.Windows.Controls;
+using AlephNote.Common.MVVM;
 using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.MVVM;
 using AlephNote.WPF.Shortcuts;
@@ -23,7 +24,7 @@ namespace AlephNote.WPF.Controls
 	/// <summary>
 	/// Interaction logic for NotesViewHierachical.xaml
 	/// </summary>
-	public partial class NotesViewHierachical : INotifyPropertyChanged, INotesViewControl
+	public partial class NotesViewHierachical : INotifyPropertyChanged, INotesViewControl, IHierachicalWrapperConfig
 	{
 		#region INotifyPropertyChanged
 
@@ -149,7 +150,7 @@ namespace AlephNote.WPF.Controls
 				}
 			} }
 
-		private HierachicalFolderWrapper _displayItems = new HierachicalFolderWrapper("ROOT", DirectoryPath.Root(), true, false);
+		private HierachicalFolderWrapper _displayItems;
 		public HierachicalFolderWrapper DisplayItems { get { return _displayItems; } }
 
 		#endregion
@@ -166,6 +167,7 @@ namespace AlephNote.WPF.Controls
 
 		public NotesViewHierachical()
 		{
+			_displayItems = new HierachicalFolderWrapper("ROOT", this, DirectoryPath.Root(), true, false);
 			InitializeComponent();
 			RootGrid.DataContext = this;
 		}
@@ -180,6 +182,8 @@ namespace AlephNote.WPF.Controls
 			{
 				NotesViewFolderHeight = new GridLength(((AppSettings)args.NewValue).NotesViewFolderHeight);
 			}
+
+			SelectedFolder?.TriggerAllSubNotesChanged();
 		}
 
 		private void OnSelectedNoteChanged()
@@ -266,7 +270,7 @@ namespace AlephNote.WPF.Controls
 
 		private void ResyncDisplayItems(IList<INote> notes)
 		{
-			var root = new HierachicalFolderWrapper("ROOT", DirectoryPath.Root(), true, false);
+			var root = new HierachicalFolderWrapper("ROOT", this, DirectoryPath.Root(), true, false);
 
 			foreach (var note in notes)
 			{
@@ -284,9 +288,21 @@ namespace AlephNote.WPF.Controls
 			DisplayItems.Sync(root, new HierachicalFolderWrapper[0]);
 		}
 
+		public bool SearchFilter(INote note)
+		{
+			return ScintillaSearcher.IsInFilter(note, SearchText);
+		}
+
+		public IComparer<INote> DisplaySorter()
+		{
+			return Settings?.GetNoteComparator() ?? AppSettings.COMPARER_NONE;
+		}
+
 		private void OnSearchTextChanged()
 		{
 			if (AllNotes != null) ResyncDisplayItems(AllNotes);
+
+			SelectedFolder?.TriggerAllSubNotesChanged();
 		}
 
 		public INote GetTopNote()

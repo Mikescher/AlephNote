@@ -12,6 +12,12 @@ using System.Windows;
 // ReSharper disable UnusedMemberInSuper.Global
 namespace AlephNote.WPF.Util
 {
+	public interface IHierachicalWrapperConfig
+	{
+		bool SearchFilter(INote note);
+		IComparer<INote> DisplaySorter();
+	}
+
 	public abstract class HierachicalBaseWrapper : ObservableObject
 	{
 		public abstract string Header { get; }
@@ -39,7 +45,7 @@ namespace AlephNote.WPF.Util
 
 		public override IEnumerable<INote> AllSubNotes => _baseWrapper.AllSubNotes;
 
-		public HierachicalFlatViewWrapper(HierachicalFolderWrapper baseWrapper) : base("All notes", DirectoryPath.Root(), false, false)
+		public HierachicalFlatViewWrapper(HierachicalFolderWrapper baseWrapper, IHierachicalWrapperConfig cfg) : base("All notes", cfg, DirectoryPath.Root(), false, false)
 		{
 			_baseWrapper = baseWrapper;
 			IsSelected = true;
@@ -49,6 +55,7 @@ namespace AlephNote.WPF.Util
 	public class HierachicalFolderWrapper : HierachicalBaseWrapper
 	{
 		private readonly bool _isRoot;
+		private readonly IHierachicalWrapperConfig _config;
 		private string _header;
 		public override string Header => _header;
 
@@ -64,18 +71,29 @@ namespace AlephNote.WPF.Util
 
 		public List<INote> DirectSubNotes = new List<INote>();
 
-		public virtual IEnumerable<INote> AllSubNotes => DirectSubNotes.Concat(SubFolder.Where(sf => !(sf is HierachicalFlatViewWrapper)).SelectMany(sf => sf.AllSubNotes));
+		public virtual IEnumerable<INote> AllSubNotes
+		{
+			get
+			{
+				return DirectSubNotes
+					.Concat(SubFolder.Where(sf => !(sf is HierachicalFlatViewWrapper))
+					.SelectMany(sf => sf.AllSubNotes))
+					.Where(_config.SearchFilter)
+					.OrderBy(p=>p, _config.DisplaySorter());
+			}
+		}
 
 		public bool Permanent = false;
 
-		public HierachicalFolderWrapper(string header, DirectoryPath path, bool root, bool perm)
+		public HierachicalFolderWrapper(string header, IHierachicalWrapperConfig cfg, DirectoryPath path, bool root, bool perm)
 		{
 			_isRoot = root;
 			_path = path;
 			_header = header;
+			_config = cfg;
 			Permanent = perm;
 
-			if (_isRoot) SubFolder.Add(AllNotesWrapper = new HierachicalFlatViewWrapper(this));
+			if (_isRoot) SubFolder.Add(AllNotesWrapper = new HierachicalFlatViewWrapper(this, cfg));
 		}
 
 		public HierachicalFolderWrapper GetOrCreateFolder(string txt, out bool created)
@@ -84,13 +102,13 @@ namespace AlephNote.WPF.Util
 			{
 				if (item.Header.ToLower() == txt.ToLower()) { created = false; return item;}
 			}
-			var i = new HierachicalFolderWrapper(txt, _path.SubDir(txt), false, false);
+			var i = new HierachicalFolderWrapper(txt, _config, _path.SubDir(txt), false, false);
 			SubFolder.Add(i);
 			created = true;
 			return i;
 		}
 
-		protected void TriggerAllSubNotesChanged()
+		public void TriggerAllSubNotesChanged()
 		{
 			OnPropertyChanged("DirectSubNotes");
 			OnPropertyChanged("AllSubNotes");
@@ -117,7 +135,7 @@ namespace AlephNote.WPF.Util
 			}
 
 			bool FCompare(HierachicalFolderWrapper a, HierachicalFolderWrapper b) => a.Header.ToLower() == b.Header.ToLower();
-			HierachicalFolderWrapper FCopy(HierachicalFolderWrapper a) => new HierachicalFolderWrapper(a.Header, a._path, a._isRoot, a.Permanent);
+			HierachicalFolderWrapper FCopy(HierachicalFolderWrapper a) => new HierachicalFolderWrapper(a.Header, _config, a._path, a._isRoot, a.Permanent);
 			SubFolder.SynchronizeCollection(other.SubFolder, FCompare, FCopy);
 			Debug.Assert(SubFolder.Count == other.SubFolder.Count);
 
@@ -151,7 +169,7 @@ namespace AlephNote.WPF.Util
 		public void Clear()
 		{
 			SubFolder.Clear();
-			if (_isRoot) SubFolder.Add(new HierachicalFlatViewWrapper(this));
+			if (_isRoot) SubFolder.Add(new HierachicalFlatViewWrapper(this, _config));
 
 			DirectSubNotes.Clear();
 		}
@@ -201,6 +219,12 @@ namespace AlephNote.WPF.Util
 				if (SubFolder[i].RemoveFind(folder)) return true;
 			}
 			return false;
+		}
+
+		public void Sort()
+		{
+			SubFolder.SynchronizeGenericCollection(SubFolder.OrderBy(p => p.Header.ToLower()));
+			foreach (var sf in SubFolder) sf.Sort();
 		}
 	}
 }
