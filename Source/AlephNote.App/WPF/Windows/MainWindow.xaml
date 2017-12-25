@@ -157,6 +157,7 @@
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
 
@@ -183,7 +184,36 @@
 				<TextBlock Text="{Binding SelectedNote.ModificationDate, Converter={conv:SmartDateTimeToDisplay}}" ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DTOToDisplay}}" Foreground="DarkGray" />
 			</StackPanel>
 
-			<Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+			<ItemsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding SelectedNote.Path.ListProperty}" Margin="0,0,0,4" MinHeight="20" Visibility="{Binding Settings.UseHierachicalNoteStructure, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Orientation="Horizontal" />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal">
+							<Border CornerRadius="4" BorderThickness="1" BorderBrush="LightGray" Padding="4,1" Margin="0,0,5,0">
+								<Border.Style>
+									<Style TargetType="{x:Type Border}">
+										<Setter Property="Background" Value="White"/>
+										<Style.Triggers>
+											<Trigger Property="IsMouseOver" Value="True">
+												<Setter Property="Background" Value="Linen"/>
+											</Trigger>
+										</Style.Triggers>
+									</Style>
+								</Border.Style>
+								<TextBlock Text="{Binding .}"/>
+							</Border>
+							<TextBlock Text="/" Margin="0,0,5,0"/>
+						</StackPanel>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+
+			</ItemsControl>
+
+			<Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*"/>
 					<RowDefinition Height="Auto"/>

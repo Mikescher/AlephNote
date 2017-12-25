@@ -12,6 +12,8 @@ namespace AlephNote.PluginInterface.Util
 
 		private readonly List<string> _path;
 
+		public IEnumerable<string> ListProperty => _path;
+
 		private DirectoryPath(IEnumerable<string> path)
 		{
 			_path = path.ToList();
