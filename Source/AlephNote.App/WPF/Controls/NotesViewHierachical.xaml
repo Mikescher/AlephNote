@@ -132,7 +132,7 @@
 
 				<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.Simple}">
 					<DataTemplate >
-						<Grid   d:DataContext="{d:DesignInstance pi:INote}">
+						<Grid d:DataContext="{d:DesignInstance pi:INote}">
 							<TextBlock Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
 						</Grid>
 					</DataTemplate>

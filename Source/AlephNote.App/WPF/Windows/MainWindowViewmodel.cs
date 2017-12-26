@@ -309,7 +309,23 @@ namespace AlephNote.WPF.Windows
 
 		public void OnNoteChanged(NoteChangedEventArgs e)
 		{
-			if (Owner.NotesViewControl.GetTopNote() != e.Note) Owner.NotesViewControl.RefreshView();
+			if (Settings.NoteSorting == SortingMode.ByModificationDate && Owner.NotesViewControl.GetTopNote() != e.Note)
+			{
+				Owner.NotesViewControl.RefreshView();
+				return;
+			}
+
+			if (Settings.NoteSorting == SortingMode.ByName && e.PropertyName == "Title")
+			{
+				Owner.NotesViewControl.RefreshView();
+				return;
+			}
+
+			if (Settings.UseHierachicalNoteStructure && e.PropertyName == "Path")
+			{
+				Owner.NotesViewControl.RefreshView();
+				return;
+			}
 		}
 
 		public void GridSplitterChanged()

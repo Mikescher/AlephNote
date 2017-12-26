@@ -581,6 +581,9 @@ namespace AlephNote.WPF.Windows
 			if (VM.SelectedNote.Path.EqualsWithCase(newPath)) return;
 
 			VM.SelectedNote.Path = newPath;
+			VM.SelectedFolderPath = newPath;
+
+			FolderPopup.IsOpen = false;
 		}
 	}
 }

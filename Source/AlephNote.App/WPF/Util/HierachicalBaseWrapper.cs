@@ -40,10 +40,12 @@ namespace AlephNote.WPF.Util
 
 		public override void Sync(HierachicalBaseWrapper aother, HierachicalFolderWrapper[] parents)
 		{
-			Debug.Assert(aother is HierachicalFlatViewWrapper);
+			var other = (HierachicalFlatViewWrapper)aother;
+
+			AllSubNotes.SynchronizeCollection(other.AllSubNotes);
 		}
 
-		public override IEnumerable<INote> AllSubNotes => _baseWrapper.AllSubNotes;
+		public override IEnumerable<INote> GetAllSubNotes() => _baseWrapper.AllSubNotes;
 
 		public HierachicalFlatViewWrapper(HierachicalFolderWrapper baseWrapper, IHierachicalWrapperConfig cfg) : base("All notes", cfg, DirectoryPath.Root(), false, false)
 		{
@@ -69,18 +71,16 @@ namespace AlephNote.WPF.Util
 		private ObservableCollection<HierachicalFolderWrapper> _subFolders = new ObservableCollection<HierachicalFolderWrapper>();
 		public ObservableCollection<HierachicalFolderWrapper> SubFolder { get { return _subFolders; } }
 
-		public List<INote> DirectSubNotes = new List<INote>();
+		public ObservableCollection<INote> AllSubNotes { get; set; } = new ObservableCollection<INote>();
+		private List<INote> _directSubNotes = new List<INote>();
 
-		public virtual IEnumerable<INote> AllSubNotes
+		public virtual IEnumerable<INote> GetAllSubNotes()
 		{
-			get
-			{
-				return DirectSubNotes
-					.Concat(SubFolder.Where(sf => !(sf is HierachicalFlatViewWrapper))
-					.SelectMany(sf => sf.AllSubNotes))
-					.Where(_config.SearchFilter)
-					.OrderBy(p=>p, _config.DisplaySorter());
-			}
+			return _directSubNotes
+				.Concat(SubFolder.Where(sf => !(sf is HierachicalFlatViewWrapper))
+				.SelectMany(sf => sf.AllSubNotes))
+				.Where(_config.SearchFilter)
+				.OrderBy(p => p, _config.DisplaySorter());
 		}
 
 		public bool Permanent = false;
@@ -122,17 +122,8 @@ namespace AlephNote.WPF.Util
 			Debug.Assert(this._isRoot == other._isRoot);
 
 			_path = other._path;
-
-			DirectSubNotes.Synchronize(other.DirectSubNotes, out var changed);
-			if (changed)
-			{
-				TriggerAllSubNotesChanged();
-				foreach (var p in parents)
-				{
-					p.TriggerAllSubNotesChanged();
-					if (p._isRoot) p.AllNotesWrapper.TriggerAllSubNotesChanged();
-				}
-			}
+			_directSubNotes = other._directSubNotes;
+			AllSubNotes.SynchronizeCollection(other.AllSubNotes);
 
 			bool FCompare(HierachicalFolderWrapper a, HierachicalFolderWrapper b) => a.Header.ToLower() == b.Header.ToLower();
 			HierachicalFolderWrapper FCopy(HierachicalFolderWrapper a) => new HierachicalFolderWrapper(a.Header, _config, a._path, a._isRoot, a.Permanent);
@@ -164,19 +155,21 @@ namespace AlephNote.WPF.Util
 		}
 
 		public void Add(HierachicalFolderWrapper elem) { SubFolder.Add(elem); }
-		public void Add(INote elem) { DirectSubNotes.Add(elem); }
+		public void Add(INote elem) { _directSubNotes.Add(elem); }
 
 		public void Clear()
 		{
 			SubFolder.Clear();
 			if (_isRoot) SubFolder.Add(new HierachicalFlatViewWrapper(this, _config));
 
-			DirectSubNotes.Clear();
+			_directSubNotes.Clear();
+
+			AllSubNotes.Clear();
 		}
 
 		public override string ToString()
 		{
-			return $"{{{Header}}}::[{string.Join(", ", DirectSubNotes)}]";
+			return $"{{{Header}}}::[{string.Join(", ", _directSubNotes)}]";
 		}
 
 		public HierachicalFolderWrapper Find(INote note)
@@ -187,7 +180,7 @@ namespace AlephNote.WPF.Util
 				var n = item.Find(note);
 				if (n != null) return null;
 			}
-			foreach (var item in DirectSubNotes)
+			foreach (var item in _directSubNotes)
 			{
 				if (item == note) return this;
 			}
@@ -225,6 +218,12 @@ namespace AlephNote.WPF.Util
 		{
 			SubFolder.SynchronizeGenericCollection(SubFolder.OrderBy(p => p.Header.ToLower()));
 			foreach (var sf in SubFolder) sf.Sort();
+		}
+
+		public void FinalizeCollection()
+		{
+			AllSubNotes.Synchronize(GetAllSubNotes().ToList());
+			foreach (var sf in SubFolder) sf.FinalizeCollection();
 		}
 
 		public IEnumerable<DirectoryPath> ListPaths()

@@ -284,6 +284,8 @@ namespace AlephNote.WPF.Controls
 			}
 
 			DisplayItems.CopyPermanentsTo(root);
+			root.Sort();
+			root.FinalizeCollection();
 
 			DisplayItems.Sync(root, new HierachicalFolderWrapper[0]);
 		}
