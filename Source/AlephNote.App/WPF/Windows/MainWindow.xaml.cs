@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
 using AlephNote.Impl;
+using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.Controls;
 using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.MVVM;
@@ -555,6 +556,31 @@ namespace AlephNote.WPF.Windows
 			NotesViewCtrlWrapper.Content = ctrl;
 
 			NotesViewControl = (INotesViewControl) ctrl;
+		}
+
+		public void ShowMoveFolderPopup()
+		{
+			if (VM.SelectedNote == null) return;
+
+			FolderPopupListView.Items.Clear();
+
+			foreach (var folder in NotesViewControl.ListFolder()) FolderPopupListView.Items.Add(folder);
+
+			FolderPopupListView.SelectedItem = VM.SelectedNote.Path;
+
+			FolderPopup.IsOpen = true;
+		}
+
+		private void ButtonMoveFolder_OnClick(object sender, RoutedEventArgs e)
+		{
+			if (VM.SelectedNote == null) return;
+
+			var newPath = FolderPopupListView.SelectedItem as DirectoryPath;
+			if (newPath == null) return;
+
+			if (VM.SelectedNote.Path.EqualsWithCase(newPath)) return;
+
+			VM.SelectedNote.Path = newPath;
 		}
 	}
 }

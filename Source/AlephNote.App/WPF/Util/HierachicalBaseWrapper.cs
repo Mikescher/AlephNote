@@ -226,5 +226,14 @@ namespace AlephNote.WPF.Util
 			SubFolder.SynchronizeGenericCollection(SubFolder.OrderBy(p => p.Header.ToLower()));
 			foreach (var sf in SubFolder) sf.Sort();
 		}
+
+		public IEnumerable<DirectoryPath> ListPaths()
+		{
+			yield return _path;
+			foreach (var sf in SubFolder)
+			{
+				foreach (var p in sf.ListPaths()) yield return p;
+			}
+		}
 	}
 }

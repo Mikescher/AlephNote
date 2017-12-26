@@ -1,4 +1,5 @@
-﻿using AlephNote.PluginInterface;
+﻿using System.Collections;
+using AlephNote.PluginInterface;
 using System.Collections.Generic;
 using AlephNote.Common.Settings.Types;
 using AlephNote.PluginInterface.Util;
@@ -18,5 +19,6 @@ namespace AlephNote.WPF.Controls
 
 		IEnumerable<INote> EnumerateVisibleNotes();
 		void SetShortcuts(MainWindow mw, List<KeyValuePair<string, ShortcutDefinition>> list);
+		IEnumerable<DirectoryPath> ListFolder();
 	}
 }

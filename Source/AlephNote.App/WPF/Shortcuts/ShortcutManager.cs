@@ -21,7 +21,7 @@ namespace AlephNote.WPF.Shortcuts
 			public AlephAction(ActionType t, Action<MainWindow> e, string d) { AType = t; Run = e; Description = d; }
 		}
 
-		private static Dictionary<string, AlephAction> _actions = new Dictionary<string, AlephAction>();
+		private static readonly Dictionary<string, AlephAction> _actions = new Dictionary<string, AlephAction>();
 
 		static ShortcutManager()
 		{
@@ -33,6 +33,7 @@ namespace AlephNote.WPF.Shortcuts
 			AddCommand("AddSubFolder",         vm => vm.AddSubFolderCommand,               "Add a new sub folder under the currently selected folder");
 			AddCommand("AddFolder",            vm => vm.AddFolderCommand,                  "Add a new folder");
 			AddCommand("RenameFolder",         vm => vm.RenameFolderCommand,               "Rename currently selected folder");
+			AddCommand("ChangeNotePath",       vm => vm.ChangePathCommand,                 "Change the path of the currently selected note");
 
 			AddCommand("SaveAndSync",          vm => vm.SaveAndSyncCommand,                "Save current note and synchronize");
 			AddCommand("Resync",               vm => vm.ResyncCommand,                     "Start synchronization with remote");
@@ -81,7 +82,7 @@ namespace AlephNote.WPF.Shortcuts
 
 		public static void AddCommand(string k, Func<MainWindowViewmodel, ICommand> a, string desc)
 		{
-			Action<MainWindow> ac = (w) =>
+			void Exec(MainWindow w)
 			{
 				var vm = w.VM;
 				if (vm != null)
@@ -89,9 +90,9 @@ namespace AlephNote.WPF.Shortcuts
 					var c = a(vm);
 					if (c.CanExecute(null)) c.Execute(null);
 				}
-			};
+			}
 
-			_actions.Add(k, new AlephAction(ActionType.Internal, ac, desc));
+			_actions.Add(k, new AlephAction(ActionType.Internal, Exec, desc));
 		}
 
 		public static bool Contains(string snipkey)
@@ -101,7 +102,7 @@ namespace AlephNote.WPF.Shortcuts
 
 		public static void AddSnippetCommand(string snippetactionkey, string snippetvalue, string displayname)
 		{
-			Action<MainWindow> ac = (w) =>
+			void Exec(MainWindow w)
 			{
 				var vm = w.VM;
 				if (vm != null)
@@ -109,9 +110,9 @@ namespace AlephNote.WPF.Shortcuts
 					var c = vm.InsertSnippetCommand;
 					if (c.CanExecute(snippetvalue)) c.Execute(snippetvalue);
 				}
-			};
+			}
 
-			_actions.Add(snippetactionkey, new AlephAction(ActionType.FromSnippet, ac, $"Inserts the snippet '{displayname}'"));
+			_actions.Add(snippetactionkey, new AlephAction(ActionType.FromSnippet, Exec, $"Inserts the snippet '{displayname}'"));
 		}
 
 		public static ObservableCollectionNoReset<ObservableShortcutConfig> ListObservableShortcuts(AppSettings settings)

@@ -360,7 +360,12 @@ namespace AlephNote.WPF.Controls
 				FolderTreeView.InputBindings.Add(new InputBinding(cmd, ges));
 			}
 		}
-		
+
+		public IEnumerable<DirectoryPath> ListFolder()
+		{
+			return DisplayItems.ListPaths().Distinct();
+		}
+
 		public DirectoryPath GetNewNotesPath()
 		{
 			return SelectedFolder?.GetNewNotePath() ?? DirectoryPath.Root();

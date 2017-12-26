@@ -186,35 +186,59 @@
 				<TextBlock Text="{Binding SelectedNote.ModificationDate, Converter={conv:SmartDateTimeToDisplay}}" ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DTOToDisplay}}" Foreground="DarkGray" />
 			</StackPanel>
 
-			<ItemsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding SelectedNote.Path.ListProperty}" Margin="0,0,0,4" MinHeight="20" Visibility="{Binding Settings.UseHierachicalNoteStructure, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}">
-				<ItemsControl.ItemsPanel>
-					<ItemsPanelTemplate>
-						<StackPanel Orientation="Horizontal" />
-					</ItemsPanelTemplate>
-				</ItemsControl.ItemsPanel>
-				<ItemsControl.ItemTemplate>
-					<DataTemplate>
-						<StackPanel Orientation="Horizontal">
-							<Border CornerRadius="4" BorderThickness="1" BorderBrush="LightGray" Padding="4,1" Margin="0,0,5,0">
-								<Border.Style>
-									<Style TargetType="{x:Type Border}">
-										<Setter Property="Background" Value="White"/>
-										<Style.Triggers>
-											<Trigger Property="IsMouseOver" Value="True">
-												<Setter Property="Background" Value="Linen"/>
-											</Trigger>
-										</Style.Triggers>
-									</Style>
-								</Border.Style>
-								<TextBlock Text="{Binding .}"/>
-							</Border>
-							<TextBlock Text="/" Margin="0,0,5,0"/>
+			<Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				
+				<ItemsControl Grid.Column="0" ItemsSource="{Binding SelectedNote.Path.ListProperty}" Margin="0,0,0,4" MinHeight="20" Visibility="{Binding Settings.UseHierachicalNoteStructure, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<StackPanel Orientation="Horizontal" />
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal">
+								<Border CornerRadius="4" BorderThickness="1" BorderBrush="LightGray" Padding="4,1" Margin="0,0,5,0">
+									<Border.Style>
+										<Style TargetType="{x:Type Border}">
+											<Setter Property="Background" Value="White"/>
+											<Style.Triggers>
+												<Trigger Property="IsMouseOver" Value="True">
+													<Setter Property="Background" Value="Linen"/>
+												</Trigger>
+											</Style.Triggers>
+										</Style>
+									</Border.Style>
+									<TextBlock Text="{Binding .}"/>
+								</Border>
+								<TextBlock Text="/" Margin="0,0,5,0"/>
+							</StackPanel>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+
+				<Button Grid.Column="1" Content="..." Margin="2,0" MinWidth="30" VerticalAlignment="Center" Background="White" Command="{Binding ChangePathCommand}" />
+				<Popup Grid.Column="1" StaysOpen="False" Placement="Right" x:Name="FolderPopup">
+					<Grid Background="Beige">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+
+						<TextBlock  Grid.Row="0" Text="Move Note" FontWeight="Bold" HorizontalAlignment="Center" FontSize="16" />
+						<ListView   Grid.Row="1" x:Name="FolderPopupListView" DisplayMemberPath="Formatted" MaxHeight="200" Margin="2" />
+						<StackPanel Grid.Row="2">
+							<Button Content="Move" MinWidth="200" FontWeight="Bold" Click="ButtonMoveFolder_OnClick" HorizontalAlignment="Right" Margin="2" />
 						</StackPanel>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-
-			</ItemsControl>
-
+					</Grid>
+				</Popup>
+				
+			</Grid>
+			
 			<Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*"/>

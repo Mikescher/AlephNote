@@ -26,6 +26,8 @@ namespace AlephNote.PluginInterface.Util
 		public int Length => _path.Count;
 		public int Count => _path.Count;
 
+		public string Formatted => IsRoot() ? "<root>" : string.Join("  /  ", _path);
+
 		public XElement[] Serialize()
 		{
 			var result = new List<XElement>();

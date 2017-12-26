@@ -212,7 +212,12 @@ namespace AlephNote.WPF.Controls
 				NotesList.InputBindings.Add(new InputBinding(cmd, ges));
 			}
 		}
-		
+
+		public IEnumerable<DirectoryPath> ListFolder()
+		{
+			yield return DirectoryPath.Root();
+		}
+
 		public DirectoryPath GetNewNotesPath()
 		{
 			return DirectoryPath.Root();
