@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Text;
+using System.Xml.Linq;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Log
 {
@@ -17,6 +20,35 @@ namespace AlephNote.Log
 			Source = src;
 			Text = txt;
 			LongText = longtxt;
+		}
+
+		private LogEvent(LogEventType t, DateTime dt, string src, string txt, string longtxt)
+		{
+			Type = t;
+			DateTime = dt;
+			Source = src;
+			Text = txt;
+			LongText = longtxt;
+		}
+
+		public XElement Serialize()
+		{
+			return new XElement("event",
+				new XAttribute("Type", Type),
+				new XAttribute("DateTime", DateTime),
+				new XAttribute("Source", Source),
+				new XAttribute("Text", Text),
+				new XAttribute("LongText", Convert.ToBase64String(Encoding.UTF8.GetBytes(LongText ?? ""))));
+		}
+
+		public static LogEvent Deserialize(XElement elem)
+		{
+			return new LogEvent(
+				XHelper.GetAttributeEnum<LogEventType>(elem, "Type"),
+				XHelper.GetAttributeDateTime(elem, "DateTime"),
+				XHelper.GetAttributeString(elem, "Source"),
+				XHelper.GetAttributeString(elem, "Text"),
+				Encoding.UTF8.GetString(Convert.FromBase64String(XHelper.GetAttributeString(elem, "LongText"))));
 		}
 	}
 }

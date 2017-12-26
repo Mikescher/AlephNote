@@ -73,7 +73,11 @@
 			<RowDefinition Height="1*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
-		<TextBlock Grid.Row="0" Text="Eventlog" FontWeight="Bold" FontSize="24" Margin="20,5" HorizontalAlignment="Left" />
+		<StackPanel Grid.Row="0" Orientation="Horizontal">
+			<TextBlock Text="Eventlog" FontWeight="Bold" FontSize="24" Margin="20,5" HorizontalAlignment="Left" />
+			<Button Content="Export" VerticalAlignment="Top" Margin="4,1" Click="ButtonExport_Click" />
+			<Button Content="Import" VerticalAlignment="Top" Margin="4,1" Click="ButtonImport_Click" />
+		</StackPanel>
 		<CheckBox  Grid.Row="0" Content="Log debug events" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10,2" x:Name="CheckBoxDebug" Checked="OnChangedDebugLog" Unchecked="OnChangedDebugLog" />
 		<Button    Grid.Row="0" Content="Clear" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="0" Margin="10,2" Command="{Binding ClearCommand}" />
 		<ListView ItemsSource="{Binding LogView}" SelectedItem="{Binding SelectedLog}" Grid.Row="1">

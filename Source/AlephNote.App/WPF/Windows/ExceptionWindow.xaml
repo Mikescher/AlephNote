@@ -17,12 +17,13 @@
 
 		<TextBox Grid.Row="1" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" x:Name="ErrorTrace" />
 
-		<Button Grid.Row="2" HorizontalAlignment="Right" Content="OK" Margin="5" MinWidth="100" FontWeight="Bold" Click="ButtonBase_OnClick" VerticalAlignment="Bottom" />
+		<Button Grid.Row="2" HorizontalAlignment="Right" Content="OK" Margin="5" MinWidth="100" FontWeight="Bold"  Click="ButtonBase_OnClick" VerticalAlignment="Bottom" />
+		<Button Grid.Row="2" HorizontalAlignment="Right" Content="Export log file" Margin="5" FontStyle="Italic" Click="ButtonExportLogfile_OnClick" VerticalAlignment="Top" />
 		
 		<TextBlock Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"  Margin="5,5,150,5" TextWrapping="Wrap" FontStyle="Italic" Foreground="DimGray">
 			<Run>If this happens again please file a bug report at</Run>
 			<Run TextDecorations="Underline" Foreground="Blue" Cursor="Hand" MouseDown="ClickLink">http://github.com/Mikescher/CommonNote</Run>
-			<Run>. Attach the here displayed stack trace and really do it! This is the only way I can fix bugs, by hearing about them.</Run>
+			<Run>. Attach the here displayed stack trace and the log file. This is the only way I can fix bugs, by hearing about them!</Run>
 		</TextBlock>
 		
 	</Grid>

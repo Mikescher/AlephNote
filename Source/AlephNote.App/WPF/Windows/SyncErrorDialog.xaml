@@ -25,6 +25,7 @@
 		<StackPanel Grid.Row="3" HorizontalAlignment="Right" >
 			<Button Content="OK" Margin="5" MinWidth="100" FontWeight="Bold" Click="ButtonBase_OnClick" />
 		</StackPanel>
-		
+		<Button Grid.Row="3" Content="Export full log file" Margin="5" MinWidth="100" FontStyle="Italic" Click="ButtonExportLog_OnClick" HorizontalAlignment="Left" />
+
 	</Grid>
 </controls:DialogWindow>

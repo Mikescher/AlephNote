@@ -294,6 +294,36 @@ namespace AlephNote.PluginInterface.Util
 			return int.Parse(attr.Value);
 		}
 
+		public static DateTime GetAttributeDateTime(XElement elem, string attrname)
+		{
+			var attr = elem.Attribute(attrname);
+			if (attr == null) throw new XMLStructureException("Attribute not found: " + attrname);
+			return DateTime.Parse(attr.Value);
+		}
+
+		public static TEnumType GetAttributeEnum<TEnumType>(XElement elem, string attrname) where TEnumType : struct, IComparable, IFormattable, IConvertible
+		{
+			var attr = elem.Attribute(attrname);
+			if (attr == null) throw new XMLStructureException("Attribute not found: " + attrname);
+
+			int value;
+			TEnumType evalue;
+			if (int.TryParse(attr.Value, out value))
+			{
+				foreach (var enumValue in Enum.GetValues(typeof(TEnumType)))
+				{
+					if (value == Convert.ToInt32(Enum.Parse(typeof(TEnumType), enumValue.ToString())))
+						return (TEnumType)enumValue;
+				}
+			}
+			if (Enum.TryParse(attr.Value, true, out evalue))
+			{
+				return evalue;
+			}
+
+			throw new ArgumentException("'" + attr.Value + "' is not a valid value for Enum");
+		}
+
 		#endregion
 	}
 }

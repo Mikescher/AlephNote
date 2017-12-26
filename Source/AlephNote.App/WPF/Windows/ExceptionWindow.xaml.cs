@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.Win32;
 
 namespace AlephNote.WPF.Windows
 {
@@ -75,6 +77,16 @@ namespace AlephNote.WPF.Windows
 		private void ClickLink(object sender, MouseButtonEventArgs e)
 		{
 			Process.Start(@"https://github.com/Mikescher/CommonNote/issues");
+		}
+
+		private void ButtonExportLogfile_OnClick(object sender, RoutedEventArgs e)
+		{
+			var sfd = new SaveFileDialog { Filter = "Log files (*.xml)|*.xml", FileName = "Log.xml" };
+
+			if (sfd.ShowDialog(this) == true)
+			{
+				File.WriteAllText(sfd.FileName, App.Logger.Export());
+			}
 		}
 	}
 }
