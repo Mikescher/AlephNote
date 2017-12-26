@@ -230,7 +230,7 @@ namespace AlephNote.Plugins.Evernote
 
 			var remoteNote = new Note();
 			remoteNote.Guid = note.ID.ToString("D");
-			remoteNote.Title = note.Title;
+			remoteNote.Title = note.InternalTitle;
 			remoteNote.Content = note.CreateENML();
 			remoteNote.TagNames = note.Tags.ToList();
 			remoteNote.Updated = ConvertToEpochDate(note.ModificationDate);
@@ -240,7 +240,7 @@ namespace AlephNote.Plugins.Evernote
 			if (updatedNote.__isset.tagGuids) note.Tags.Synchronize(ConvertTagsFromUUID(updatedNote.TagGuids));
 			if (updatedNote.__isset.updateSequenceNum) note.UpdateSequenceNumber = updatedNote.UpdateSequenceNum;
 			if (updatedNote.__isset.content) note.SetTextFromENML(updatedNote.Content);
-			if (updatedNote.__isset.title) note.Title = updatedNote.Title;
+			if (updatedNote.__isset.title) note.InternalTitle = updatedNote.Title;
 			if (updatedNote.__isset.updated) note.ModificationDate = ConvertFromEpochDate(updatedNote.Updated);
 			if (updatedNote.__isset.created) note.CreationDate = ConvertFromEpochDate(updatedNote.Created);
 
@@ -253,7 +253,7 @@ namespace AlephNote.Plugins.Evernote
 
 			var remoteNote = new Note();
 			remoteNote.Guid = note.ID.ToString("D");
-			remoteNote.Title = note.Title;
+			remoteNote.Title = note.InternalTitle;
 			remoteNote.Content = note.CreateENML();
 			remoteNote.TagNames = note.Tags.ToList();
 			remoteNote.Created = ConvertToEpochDate(note.CreationDate);
@@ -264,7 +264,7 @@ namespace AlephNote.Plugins.Evernote
 			if (createdNote.__isset.tagGuids) note.Tags.Synchronize(ConvertTagsFromUUID(createdNote.TagGuids));
 			if (createdNote.__isset.updateSequenceNum) note.UpdateSequenceNumber = createdNote.UpdateSequenceNum;
 			if (createdNote.__isset.content) note.SetTextFromENML(createdNote.Content);
-			if (createdNote.__isset.title) note.Title = createdNote.Title;
+			if (createdNote.__isset.title) note.InternalTitle = createdNote.Title;
 			if (createdNote.__isset.updated) note.ModificationDate = ConvertFromEpochDate(createdNote.Updated);
 			if (createdNote.__isset.created) note.CreationDate = ConvertFromEpochDate(createdNote.Created);
 
@@ -280,7 +280,7 @@ namespace AlephNote.Plugins.Evernote
 			if (remote.__isset.tagGuids) note.Tags.Synchronize(ConvertTagsFromUUID(remote.TagGuids));
 			if (remote.__isset.updateSequenceNum) note.UpdateSequenceNumber = remote.UpdateSequenceNum;
 			if (remote.__isset.content) note.SetTextFromENML(remote.Content);
-			if (remote.__isset.title) note.Title = remote.Title;
+			if (remote.__isset.title) note.InternalTitle = remote.Title;
 			if (remote.__isset.updated) note.ModificationDate = ConvertFromEpochDate(remote.Updated);
 			if (remote.__isset.created) note.CreationDate = ConvertFromEpochDate(remote.Created);
 

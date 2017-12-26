@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 
 namespace AlephNote.WPF.Dialogs
 {
@@ -26,6 +27,8 @@ namespace AlephNote.WPF.Dialogs
 		{
 			InitializeComponent();
 			RootGrid.DataContext = this;
+			TBox.Focus();
+			Keyboard.Focus(TBox);
 		}
 
 		private void Button_OK_Click(object sender, System.Windows.RoutedEventArgs e)

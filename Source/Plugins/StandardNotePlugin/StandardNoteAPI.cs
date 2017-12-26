@@ -293,7 +293,7 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			var jsnContent = new ContentNote
 			{
-				title = note.Title,
+				title = note.InternalTitle,
 				text = note.Text,
 				references = new List<APIResultContentRef>(),
 			};
@@ -367,7 +367,7 @@ namespace AlephNote.Plugins.StandardNote
 				{
 					CreationDate = encNote.created_at,
 					Text = "",
-					Title = "",
+					InternalTitle = "",
 					AuthHash = encNote.auth_hash,
 					ContentVersion = StandardNoteCrypt.GetSchemaVersion(encNote.content),
 				};
@@ -389,7 +389,7 @@ namespace AlephNote.Plugins.StandardNote
 			var n = new StandardFileNote(encNote.uuid, cfg, conn.HConfig)
 			{
 				Text = content.text,
-				Title = content.title,
+				InternalTitle = content.title,
 				AuthHash = encNote.auth_hash,
 				ContentVersion = StandardNoteCrypt.GetSchemaVersion(encNote.content),
 			};

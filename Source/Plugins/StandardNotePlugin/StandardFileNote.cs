@@ -178,7 +178,7 @@ namespace AlephNote.Plugins.StandardNote
 				_internalTags = other._internalTags.ToList();
 				ResyncTags();
 				_text = other.Text;
-				_internaltitle = other.Title;
+				_internaltitle = other.InternalTitle;
 				_contentVersion = other.ContentVersion;
 				_authHash = other.AuthHash;
 				_internalRef.Synchronize(other._internalRef);
