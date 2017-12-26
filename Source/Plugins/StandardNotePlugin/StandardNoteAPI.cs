@@ -405,9 +405,13 @@ namespace AlephNote.Plugins.StandardNote
 				{
 					refTags.Add(new StandardFileTag(cref.uuid, dat.Tags.First(t => t.UUID == cref.uuid).Title));
 				}
+				else if (cref.content_type == "Tag")
+				{
+					Logger.Warn(StandardNotePlugin.Name, $"Reference to missing tag {cref.uuid} in note {encNote.uuid}");
+				}
 				else
 				{
-					Logger.Error(StandardNotePlugin.Name, string.Format("Downloaded note contains an unknown reference :{0} ({1})", cref.uuid, cref.content_type));
+					Logger.Error(StandardNotePlugin.Name, $"Downloaded note contains an unknown reference :{cref.uuid} ({cref.content_type}) in note {encNote.uuid}");
 				}
 			}
 
