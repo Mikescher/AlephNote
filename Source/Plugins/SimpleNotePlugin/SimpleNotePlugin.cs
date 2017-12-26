@@ -23,6 +23,7 @@ namespace AlephNote.Plugins.SimpleNote
 		public override void Init(IAlephLogger logger)
 		{
 			_logger = logger;
+			SimpleNoteAPI.Logger = logger;
 		}
 
 		public override IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration()

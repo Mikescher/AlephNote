@@ -24,8 +24,11 @@ namespace AlephNote.Plugins.SimpleNote
 		public class APIDeleteNoteData { public bool deleted; }
 		public class APISendAuth { public string username, password; }
 		public class APIBadRequest { public string field, message; }
+
 		// ReSharper restore All
 #pragma warning restore 0649
+
+		public static IAlephLogger Logger = new AlephDummyLoggger();
 
 		public static APIResultAuthorize Authenticate(ISimpleJsonRest web, string userName, string password)
 		{
@@ -246,7 +249,12 @@ namespace AlephNote.Plugins.SimpleNote
 
 		private static DateTimeOffset ConvertFromEpochDate(double seconds)
 		{
-			if (seconds <= 0) return TIMESTAMP_ORIGIN;
+			const double DTO_MAX = 10.0 * 1000 * 1000 * 1000;
+
+			if (seconds <= 0)               { Logger.Warn(SimpleNotePlugin.Name, "ConvertFromEpochDate with invalid value (<=0)",        $"seconds: {seconds}"); return TIMESTAMP_ORIGIN; }
+			if (double.IsNaN(seconds))      { Logger.Warn(SimpleNotePlugin.Name, "ConvertFromEpochDate with invalid value (IsNaN)",      $"seconds: {seconds}"); return TIMESTAMP_ORIGIN; }
+			if (double.IsInfinity(seconds)) { Logger.Warn(SimpleNotePlugin.Name, "ConvertFromEpochDate with invalid value (IsInfinity)", $"seconds: {seconds}"); return TIMESTAMP_ORIGIN; }
+			if (seconds > DTO_MAX)          { Logger.Warn(SimpleNotePlugin.Name, "ConvertFromEpochDate with invalid value (>Max)",       $"seconds: {seconds}"); return TIMESTAMP_ORIGIN; }
 
 			return TIMESTAMP_ORIGIN.AddSeconds(seconds);
 		}

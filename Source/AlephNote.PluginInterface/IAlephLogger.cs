@@ -15,4 +15,18 @@ namespace AlephNote.PluginInterface
 		void ShowExceptionDialog(string title, Exception e);
 		void ShowExceptionDialog(string title, string message, Exception e, params Exception[] additionalExceptions);
 	}
+
+	public class AlephDummyLoggger : IAlephLogger
+	{
+		public Version AppVersion { get; } = new Version(0, 0, 0, 0);
+
+		public void Debug(string src, string text, string longtext = null) { }
+		public void Info(string src, string text, string longtext = null) { }
+		public void Warn(string src, string text, string longtext = null) { }
+		public void Error(string src, string text, string longtext = null) { }
+		public void Error(string src, string text, Exception e) { }
+
+		public void ShowExceptionDialog(string title, Exception e) { }
+		public void ShowExceptionDialog(string title, string message, Exception e, params Exception[] additionalExceptions) { }
+	}
 }
