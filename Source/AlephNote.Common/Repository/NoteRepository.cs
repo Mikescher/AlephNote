@@ -176,20 +176,9 @@ namespace AlephNote.Common.Repository
 				var path = Path.Combine(localFolder, note.GetUniqueName() + ".xml");
 				var tempPath = Path.GetTempFileName();
 
-				var root = new XElement("note");
+				var doc = SerializeNote(note);
 
-				var meta = new XElement("meta");
-				meta.Add(new XElement("date", DateTime.Now.ToString("O")));
-				meta.Add(new XElement("provider", account.Plugin.GetUniqueID().ToString("B")));
-				meta.Add(new XElement("dirty", !note.IsRemoteSaved));
-				meta.Add(new XElement("conflict", note.IsConflictNote));
-				meta.Add(new XElement("real_title", note.Title));
-				meta.Add(new XElement("real_path", string.Join("/", note.Path.Enumerate())));
-				root.Add(meta);
-
-				root.Add(new XElement("data", note.Serialize()));
-
-				using (var file = File.OpenWrite(tempPath)) new XDocument(root).Save(file);
+				using (var file = File.OpenWrite(tempPath)) doc.Save(file);
 
 				try
 				{
@@ -210,6 +199,24 @@ namespace AlephNote.Common.Repository
 					throw new Exception("Serialization failed (Sanity check):" + e.Message, e);
 				}
 			}
+		}
+
+		public XDocument SerializeNote(INote note)
+		{
+			var root = new XElement("note");
+
+			var meta = new XElement("meta");
+			meta.Add(new XElement("date", DateTime.Now.ToString("O")));
+			meta.Add(new XElement("provider", account.Plugin.GetUniqueID().ToString("B")));
+			meta.Add(new XElement("dirty", !note.IsRemoteSaved));
+			meta.Add(new XElement("conflict", note.IsConflictNote));
+			meta.Add(new XElement("real_title", note.Title));
+			meta.Add(new XElement("real_path", string.Join("/", note.Path.Enumerate())));
+			root.Add(meta);
+
+			root.Add(new XElement("data", note.Serialize()));
+
+			return new XDocument(root);
 		}
 
 		private void NoteCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

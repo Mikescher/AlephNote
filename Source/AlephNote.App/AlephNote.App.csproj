@@ -207,6 +207,9 @@
     <Compile Include="WPF\Windows\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Windows\DebugTextWindow.xaml.cs">
+      <DependentUpon>DebugTextWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Windows\FirstStartupWindow.xaml.cs">
       <DependentUpon>FirstStartupWindow.xaml</DependentUpon>
     </Compile>
@@ -274,6 +277,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WPF\Windows\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Windows\DebugTextWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

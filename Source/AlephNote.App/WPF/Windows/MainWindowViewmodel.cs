@@ -48,7 +48,6 @@ namespace AlephNote.WPF.Windows
 		public ICommand CloseDocumentSearchCommand { get { return new RelayCommand(HideDocSearchBar); } }
 		public ICommand FullResyncCommand { get { return new RelayCommand(FullResync); } }
 		public ICommand ManuallyCheckForUpdatesCommand { get { return new RelayCommand(ManuallyCheckForUpdates); } }
-		public ICommand DebugCreateIpsumNotesCommand { get { return new RelayCommand(DebugCreateIpsumNotes); } }
 		public ICommand InsertSnippetCommand { get { return new RelayCommand<string>(InsertSnippet); } }
 
 		public ICommand ClosingEvent { get { return new RelayCommand<CancelEventArgs>(OnClosing); } }
@@ -58,7 +57,11 @@ namespace AlephNote.WPF.Windows
 		public ICommand SettingAlwaysOnTopCommand { get { return new RelayCommand(ChangeSettingAlwaysOnTop); } }
 		public ICommand SettingLineNumbersCommand { get { return new RelayCommand(ChangeSettingLineNumbers); } }
 		public ICommand SettingsWordWrapCommand   { get { return new RelayCommand(ChangeSettingWordWrap); } }
-		
+
+		public ICommand DebugCreateIpsumNotesCommand { get { return new RelayCommand(DebugCreateIpsumNotes); } }
+		public ICommand DebugSerializeSettingsCommand { get { return new RelayCommand(DebugSerializeSettings); } }
+		public ICommand DebugSerializeNoteCommand { get { return new RelayCommand(DebugSerializeNote); } }
+
 		private AppSettings _settings;
 		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); SettingsChanged(); } }
 
@@ -742,6 +745,17 @@ namespace AlephNote.WPF.Windows
 				int tc = App.GlobalRandom.Next(5);
 				for (int j = 0; j < tc; j++) n.Tags.Add(CreateLoremIpsum(1,1));
 			}
+		}
+
+		private void DebugSerializeSettings()
+		{
+			DebugTextWindow.Show(Owner, Settings.Serialize(), "Settings.Serialize()");
+		}
+
+		private void DebugSerializeNote()
+		{
+			if (SelectedNote == null) return;
+			DebugTextWindow.Show(Owner, XHelper.ConvertToStringFormatted(Repository.SerializeNote(SelectedNote)), "XHelper.ConvertToStringFormatted(Repository.SerializeNote(SelectedNote))");
 		}
 
 		private string CreateLoremIpsum(int len, int linelen)

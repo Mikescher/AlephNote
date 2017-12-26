@@ -92,6 +92,8 @@
 			</MenuItem>
 			<MenuItem Header="Debug" Visibility="{Binding DebugMode, Converter={conv:BoolToVisibility}, ConverterParameter=Visible;Collapsed}">
 				<MenuItem Header="Create 10 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" />
+				<MenuItem Header="Serialize Settings" Command="{Binding DebugSerializeSettingsCommand}" />
+				<MenuItem Header="Serialize CurrentNote" Command="{Binding DebugSerializeNoteCommand}" />
 			</MenuItem>
 		</Menu>
 

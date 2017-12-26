@@ -1,0 +1,13 @@
+﻿<Window x:Class="AlephNote.WPF.Windows.DebugTextWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AlephNote.WPF.Windows"
+        mc:Ignorable="d"
+		WindowStartupLocation="CenterOwner"
+        Title="DebugTextWindow" Height="450" Width="575">
+	<Grid>
+		<TextBox VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" FontFamily="Courier New" IsReadOnly="True" IsReadOnlyCaretVisible="True" Name="Tb1" />
+	</Grid>
+</Window>
