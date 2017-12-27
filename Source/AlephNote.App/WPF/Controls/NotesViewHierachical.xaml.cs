@@ -14,6 +14,7 @@ using AlephNote.WPF.Util;
 using System.Collections.Specialized;
 using System.Threading;
 using System.Windows.Controls;
+using System.Windows.Media;
 using AlephNote.Common.MVVM;
 using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.MVVM;
@@ -333,6 +334,35 @@ namespace AlephNote.WPF.Controls
 			}
 
 			SelectedFolderPath = folder;
+		}
+
+		public bool ExternalScrollEmulation(int eDelta)
+		{
+			{
+				var hit = VisualTreeHelper.HitTest(HierachicalNotesList, Mouse.GetPosition(HierachicalNotesList));
+				if (hit != null)
+				{
+					var sv = WPFHelper.GetScrollViewer(HierachicalNotesList);
+					if (sv == null) return false;
+
+					sv.ScrollToVerticalOffset(sv.VerticalOffset - eDelta/3f);
+					return true;
+				}
+			}
+
+			{
+				var hit = VisualTreeHelper.HitTest(FolderTreeView, Mouse.GetPosition(FolderTreeView));
+				if (hit != null)
+				{
+					var sv = WPFHelper.GetScrollViewer(FolderTreeView);
+					if (sv == null) return false;
+
+					sv.ScrollToVerticalOffset(sv.VerticalOffset - eDelta/3f);
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		public IEnumerable<INote> EnumerateVisibleNotes()

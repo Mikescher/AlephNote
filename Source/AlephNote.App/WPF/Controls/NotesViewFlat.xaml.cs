@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using AlephNote.Common.Settings.Types;
 using AlephNote.PluginInterface;
 using AlephNote.WPF.Util;
@@ -16,6 +17,7 @@ using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.Windows;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using System.Windows.Media;
 using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.WPF.Controls
@@ -195,6 +197,21 @@ namespace AlephNote.WPF.Controls
 		public void AddFolder(DirectoryPath folder)
 		{
 			// no...
+		}
+
+		public bool ExternalScrollEmulation(int eDelta)
+		{
+			var hit = VisualTreeHelper.HitTest(NotesList, Mouse.GetPosition(NotesList));
+			if (hit != null)
+			{
+				var sv = WPFHelper.GetScrollViewer(NotesList);
+				if (sv == null) return false;
+				
+				sv.ScrollToVerticalOffset(sv.VerticalOffset - eDelta/3f);
+				return true;
+			}
+
+			return false;
 		}
 
 		public IEnumerable<INote> EnumerateVisibleNotes()

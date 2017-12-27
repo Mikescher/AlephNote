@@ -16,6 +16,7 @@ namespace AlephNote.WPF.Controls
 
 		void DeleteFolder(DirectoryPath folder);
 		void AddFolder(DirectoryPath folder);
+		bool ExternalScrollEmulation(int eDelta);
 
 		IEnumerable<INote> EnumerateVisibleNotes();
 		void SetShortcuts(MainWindow mw, List<KeyValuePair<string, ShortcutDefinition>> list);

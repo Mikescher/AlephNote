@@ -33,5 +33,20 @@ namespace AlephNote.WPF.Util
 
 			return source as TreeViewItem;
 		}
+
+		public static ScrollViewer GetScrollViewer(DependencyObject o)
+		{
+			// Return the DependencyObject if it is a ScrollViewer
+			if (o is ScrollViewer s) return s;
+
+			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(o); i++)
+			{
+				var child = VisualTreeHelper.GetChild(o, i);
+
+				var result = GetScrollViewer(child);
+				if (result != null) return result;
+			}
+			return null;
+		}
 	}
 }

@@ -248,6 +248,7 @@
 					<WindowsFormsHost.Child>
 						<scinet:Scintilla x:Name="NoteEdit" AllowDrop="True"
 										  UpdateUI="NoteEdit_UpdateUI"
+										  MouseWheel="NoteEdit_OnMouseWheel"
 										  KeyPress="NoteEdit_OnKeyPress" 
 										  KeyDown="NoteEdit_OnKeyDown" 
 										  StyleNeeded="NoteEdit_StyleNeeded" 

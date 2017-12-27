@@ -320,6 +320,10 @@ namespace AlephNote.Common.Settings
 		public bool AutofocusScintilla { get { return _autofocusScintilla; } set { _autofocusScintilla = value; OnPropertyChanged(); } }
 		private bool _autofocusScintilla = true;
 
+		[AlephXMLField]
+		public bool FixScintillaScrollMessages { get { return _fixScintillaScrollMessages; } set { _fixScintillaScrollMessages = value; OnPropertyChanged(); } }
+		private bool _fixScintillaScrollMessages = true;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

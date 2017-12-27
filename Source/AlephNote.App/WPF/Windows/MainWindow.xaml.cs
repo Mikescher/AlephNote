@@ -20,6 +20,8 @@ using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.MVVM;
 using Hardcodet.Wpf.TaskbarNotification;
 using AlephNote.WPF.Converter;
+using Color = System.Drawing.Color;
+using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
 namespace AlephNote.WPF.Windows
 {
@@ -590,6 +592,18 @@ namespace AlephNote.WPF.Windows
 			VM.SelectedFolderPath = newPath;
 
 			FolderPopup.IsOpen = false;
+		}
+
+		private void NoteEdit_OnMouseWheel(object sender, MouseEventArgs e)
+		{
+			if (Settings?.FixScintillaScrollMessages != true) return;
+			// Windows Forms dows not "scroll under cursor" but "scroll where focus is"
+			// To have the same behaviour with the other controls we emulate WPF behaviour 
+			// for the scintilla control
+
+			var handled = NotesViewControl.ExternalScrollEmulation(e.Delta);
+
+			if (handled && e is HandledMouseEventArgs e2) e2.Handled = true;
 		}
 	}
 }
