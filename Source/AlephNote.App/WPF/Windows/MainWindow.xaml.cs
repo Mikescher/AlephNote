@@ -182,7 +182,8 @@ namespace AlephNote.WPF.Windows
 
 			NoteEdit.WhitespaceSize = 1;
 			NoteEdit.ViewWhitespace = s.SciShowWhitespace ? WhitespaceMode.VisibleAlways : WhitespaceMode.Invisible;
-			NoteEdit.SetWhitespaceForeColor(true, Color.Orange);
+			//NoteEdit.SetWhitespaceForeColor(true, Color.FromArgb(255, 165, 0));
+			NoteEdit.SetWhitespaceForeColor(true, Color.FromArgb(255, 195, 85));
 
 			UpdateMargins(s);
 			NoteEdit.BorderStyle = BorderStyle.FixedSingle;
@@ -349,14 +350,17 @@ namespace AlephNote.WPF.Windows
 						{
 							ShortcutManager.Execute(this, sc.Key);
 							e.Handled = true;
+							return;
 						}
 					}
 				}
 			}
-			else if (e.Key == Key.System && ReferenceEquals(e.OriginalSource, NoteEditHost))
+
+			if (e.Key == Key.System && ReferenceEquals(e.OriginalSource, NoteEditHost))
 			{
 				// Prevent ALT key removing focus of control
 				e.Handled = true;
+				return;
 			}
 		}
 
