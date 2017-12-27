@@ -214,3 +214,6 @@ Use smooth scrolling for the left notes view.
 
 Do not enabled this if you have a lot of notes, this increases the drawing load substantially and can lead to UI lag.
 Also the effect is only really visible with the 'full preview' setting for the notes preview style.
+
+[AutofocusScintilla]
+Automatically put the keyboard focus in the note editor when selecting a note (in the sidebar).

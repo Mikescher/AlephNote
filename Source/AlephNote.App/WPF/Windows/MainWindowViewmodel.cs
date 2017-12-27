@@ -269,7 +269,7 @@ namespace AlephNote.WPF.Windows
 
 			Owner.ResetScintillaScrollAndUndo();
 			if (Settings != null) Owner.UpdateMargins(Settings);
-			if (!_preventScintillaFocus) Owner.FocusScintillaDelayed();
+			if (!_preventScintillaFocus && Settings?.AutofocusScintilla == true) Owner.FocusScintillaDelayed();
 
 			if (SelectedNote != null) ScintillaSearcher.Highlight(Owner.NoteEdit, SelectedNote, SearchText);
 

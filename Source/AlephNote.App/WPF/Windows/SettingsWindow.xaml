@@ -154,12 +154,13 @@
 			<TabItem Header="View">
 				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 					<StackPanel Orientation="Vertical">
-						<GroupBox Header="Main" Padding="4">
+						
+						<GroupBox Header="Window" Padding="4">
 							<Grid>
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="10" />
 									<ColumnDefinition Width="1*" />
-									<ColumnDefinition Width="Auto" />
 								</Grid.ColumnDefinitions>
 								<Grid.RowDefinitions>
 									<RowDefinition Height="Auto" />
@@ -171,13 +172,10 @@
 
 								<Grid Grid.Row="0" Grid.Column="0">
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="*" />
 										<ColumnDefinition Width="Auto" />
 									</Grid.ColumnDefinitions>
 									<Grid.RowDefinitions>
-										<RowDefinition Height="*" />
-										<RowDefinition Height="*" />
-										<RowDefinition Height="*" />
 										<RowDefinition Height="*" />
 										<RowDefinition Height="*" />
 									</Grid.RowDefinitions>
@@ -186,48 +184,141 @@
 
 									<CheckBox      Grid.Row="1" Grid.Column="0" Margin="2" Content="Always on top" IsChecked="{Binding Settings.AlwaysOnTop}" />
 
-									<CheckBox      Grid.Row="2" Grid.Column="0" Margin="2" Content="Show tag autocompletion"  IsChecked="{Binding Settings.TagAutocomplete}" />
-
-									<CheckBox      Grid.Row="3" Grid.Column="0" Margin="2" Content="Remember last selected note"  IsChecked="{Binding Settings.RememberLastSelectedNote}" />
-									<ctrl:PHelpBtn Grid.Row="3" Grid.Column="1" HelpProperty="RememberLastSelectedNote" Margin="2,0" VerticalAlignment="Center" />
-
-									<CheckBox      Grid.Row="4" Grid.Column="0" Margin="2" Content="Smooth scrolling"  IsChecked="{Binding Settings.SmoothScrollNotesView}" />
-									<ctrl:PHelpBtn Grid.Row="4" Grid.Column="1" HelpProperty="SmoothScrollNotesView" Margin="2,0" VerticalAlignment="Center" />
-
 								</Grid>
-								
-								<Grid Grid.Row="0" Grid.Column="1">
+
+								<Grid Grid.Row="0" Grid.Column="2">
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="*" />
 										<ColumnDefinition Width="Auto" />
 									</Grid.ColumnDefinitions>
 									<Grid.RowDefinitions>
 										<RowDefinition Height="*" />
 										<RowDefinition Height="*" />
-										<RowDefinition Height="*" />
+									</Grid.RowDefinitions>
+
+									<CheckBox      Grid.Row="0" Grid.Column="0" Margin="2" Content="Close to tray" IsChecked="{Binding Settings.CloseToTray}" />
+									<ctrl:PHelpBtn Grid.Row="0" Grid.Column="1" HelpProperty="CloseToTray" Margin="2,0" VerticalAlignment="Center" />
+								</Grid>
+							</Grid>
+						</GroupBox>
+
+						<GroupBox Header="Note editor" Padding="4">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="10" />
+									<ColumnDefinition Width="1*" />
+								</Grid.ColumnDefinitions>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+
+								<Grid Grid.Row="0" Grid.Column="0">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*" />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+									<Grid.RowDefinitions>
 										<RowDefinition Height="*" />
 										<RowDefinition Height="*" />
 									</Grid.RowDefinitions>
-									
-									<CheckBox      Grid.Row="0" Grid.Column="0" Margin="2" Content="Close to tray" IsChecked="{Binding Settings.CloseToTray}" />
-									<ctrl:PHelpBtn Grid.Row="0" Grid.Column="1" HelpProperty="CloseToTray" Margin="2,0" VerticalAlignment="Center" />
-									
-									<CheckBox      Grid.Row="2" Grid.Column="0" Margin="2" Content="Automatically sort tags"  IsChecked="{Binding Settings.AutoSortTags}" />
-									<ctrl:PHelpBtn Grid.Row="2" Grid.Column="1" HelpProperty="AutoSortTags" Margin="2,0" VerticalAlignment="Center" />
 
-									<CheckBox      Grid.Row="3" Grid.Column="0" Margin="2" Content="Remember scroll position per note"  IsChecked="{Binding Settings.RememberScroll}" />
-									<ctrl:PHelpBtn Grid.Row="3" Grid.Column="1" HelpProperty="RememberScroll" Margin="2,0" VerticalAlignment="Center" />
+									<CheckBox      Grid.Row="0" Grid.Column="0" Margin="2" Content="Remember scroll position per note"  IsChecked="{Binding Settings.RememberScroll}" />
+									<ctrl:PHelpBtn Grid.Row="0" Grid.Column="1" HelpProperty="RememberScroll" Margin="2,0" VerticalAlignment="Center" />
+
+									<CheckBox      Grid.Row="1" Grid.Column="0" Margin="2" Content="Automatically sort tags"  IsChecked="{Binding Settings.AutoSortTags}" />
+									<ctrl:PHelpBtn Grid.Row="1" Grid.Column="1" HelpProperty="AutoSortTags" Margin="2,0" VerticalAlignment="Center" />
+
+								</Grid>
+
+								<Grid Grid.Row="0" Grid.Column="2">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*" />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="*" />
+										<RowDefinition Height="*" />
+									</Grid.RowDefinitions>
+
+									<CheckBox      Grid.Row="0" Grid.Column="0" Margin="2" Content="Auto focus editor" IsChecked="{Binding Settings.AutofocusScintilla}" />
+									<ctrl:PHelpBtn Grid.Row="0" Grid.Column="1" HelpProperty="AutofocusScintilla" Margin="2,0" VerticalAlignment="Center" />
+
+									<CheckBox      Grid.Row="1" Grid.Column="0" Margin="2" Content="Show tag autocompletion"  IsChecked="{Binding Settings.TagAutocomplete}" />
+								</Grid>
+							</Grid>
+						</GroupBox>
+
+						<GroupBox Header="Note sidebar" Padding="4">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="10"/>
+									<ColumnDefinition Width="1*" />
+								</Grid.ColumnDefinitions>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+
+								<Grid Grid.Row="0" Grid.Column="0">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*" />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="*" />
+										<RowDefinition Height="*" />
+									</Grid.RowDefinitions>
+
+									<CheckBox      Grid.Row="0" Grid.Column="0" Margin="2" Content="Remember last selected note"  IsChecked="{Binding Settings.RememberLastSelectedNote}" />
+									<ctrl:PHelpBtn Grid.Row="0" Grid.Column="1" HelpProperty="RememberLastSelectedNote" Margin="2,0" VerticalAlignment="Center" />
+
+								</Grid>
+
+								<Grid Grid.Row="0" Grid.Column="2">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*" />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="*" />
+										<RowDefinition Height="*" />
+									</Grid.RowDefinitions>
+
+									<CheckBox      Grid.Row="0" Grid.Column="0" Margin="2" Content="Smooth scrolling"  IsChecked="{Binding Settings.SmoothScrollNotesView}" />
+									<ctrl:PHelpBtn Grid.Row="0" Grid.Column="1" HelpProperty="SmoothScrollNotesView" Margin="2,0" VerticalAlignment="Center" />
 								</Grid>
 
 								<TextBlock     Grid.Row="1" Grid.Column="0" Margin="5"  Text="Note sorting:"/>
-								<ComboBox      Grid.Row="1" Grid.Column="1" Margin="5"  ItemsSource="{mext:EnumSource settings:SortingMode}" SelectedValue="{Binding Settings.NoteSorting}" />
-								<ctrl:PHelpBtn Grid.Row="1" Grid.Column="2" HelpProperty="NoteSorting" Margin="2,0" VerticalAlignment="Center" />
+								<Grid Grid.Row="1" Grid.Column="2">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*" />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+									<ComboBox      Grid.Column="0" Margin="5"  ItemsSource="{mext:EnumSource settings:SortingMode}" SelectedValue="{Binding Settings.NoteSorting}" />
+									<ctrl:PHelpBtn Grid.Column="1" HelpProperty="NoteSorting" Margin="2,0" VerticalAlignment="Center" />
+								</Grid>
 
 								<TextBlock     Grid.Row="2" Grid.Column="0" Margin="5"  Text="Note Preview:"/>
-								<ComboBox      Grid.Row="2" Grid.Column="1" Margin="5"  ItemsSource="{mext:EnumSource settings:NotePreviewStyle}" SelectedValue="{Binding Settings.NotePreviewStyle}" />
-								<ctrl:PHelpBtn Grid.Row="2" Grid.Column="2" HelpProperty="NotePreviewStyle" Margin="2,0" VerticalAlignment="Center" />
+								<Grid Grid.Row="2" Grid.Column="2">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*" />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+									<ComboBox      Grid.Column="0" Margin="5"  ItemsSource="{mext:EnumSource settings:NotePreviewStyle}" SelectedValue="{Binding Settings.NotePreviewStyle}" />
+									<ctrl:PHelpBtn Grid.Column="1" HelpProperty="NotePreviewStyle" Margin="2,0" VerticalAlignment="Center" />
+								</Grid>
 							</Grid>
 						</GroupBox>
+
 						<GroupBox Padding="4">
 							<GroupBox.Header>
 								<StackPanel Orientation="Horizontal">
@@ -267,6 +358,7 @@
 
 							</Grid>
 						</GroupBox>
+						
 					</StackPanel>
 				</ScrollViewer>
 			</TabItem>
