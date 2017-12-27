@@ -100,16 +100,34 @@
 							</Grid.RowDefinitions>
 							<TextBlock Grid.Row="0" FontWeight="Bold" FontStyle="Normal" Foreground="Black" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
 							<TextBlock Grid.Row="1" TextWrapping="NoWrap">
-									<Run Foreground="Brown" FontWeight="Normal" FontStyle="Normal" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
-									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
+								<Run Foreground="Brown" FontWeight="Normal" FontStyle="Normal" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
+								<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
 							</TextBlock>
 							<TextBlock Grid.Row="2" TextWrapping="NoWrap">
-									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=1, Mode=OneWay}" />
+								<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=1, Mode=OneWay}" />
 							</TextBlock>
 							<TextBlock Grid.Row="3" TextWrapping="NoWrap">
-									<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=2, Mode=OneWay}" />
+								<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=2, Mode=OneWay}" />
 							</TextBlock>
 							<Separator Grid.Row="4" Background="Snow" Margin="6,7,6,7" />
+						</Grid>
+					</DataTemplate>
+				</services:ConditionalDataTemplate>
+
+				<services:ConditionalDataTemplate Value="{x:Static settings:NotePreviewStyle.SingleLinePreview}">
+					<DataTemplate>
+						<Grid d:DataContext="{d:DesignInstance pi:INote}">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<TextBlock Grid.Row="0" FontWeight="Bold" FontStyle="Normal" Foreground="Black" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+							<TextBlock Grid.Row="1" TextWrapping="NoWrap">
+								<Run Foreground="Brown" FontWeight="Normal" FontStyle="Normal" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
+								<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
+							</TextBlock>
+							<Separator Grid.Row="2" Background="Snow" Margin="6,7,6,7" />
 						</Grid>
 					</DataTemplate>
 				</services:ConditionalDataTemplate>
