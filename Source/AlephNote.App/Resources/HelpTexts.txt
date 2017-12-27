@@ -217,3 +217,7 @@ Also the effect is only really visible with the 'full preview' setting for the n
 
 [AutofocusScintilla]
 Automatically put the keyboard focus in the note editor when selecting a note (in the sidebar).
+
+[DeepFolderView]
+Show the notes of the currently selected folder and all the notes of all subfolders.
+Otherwise only notes directly in the current selected folder are shown
