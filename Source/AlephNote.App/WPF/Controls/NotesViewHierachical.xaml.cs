@@ -404,5 +404,25 @@ namespace AlephNote.WPF.Controls
 				e.Handled = true;
 			}
 		}
+
+		public void FocusNotesList()
+		{
+			HierachicalNotesList.Focus();
+			Keyboard.Focus(HierachicalNotesList);
+
+			HierachicalNotesList.UpdateLayout();
+			if (HierachicalNotesList.SelectedItem == null) return;
+
+			var listBoxItem = HierachicalNotesList.ItemContainerGenerator.ContainerFromItem(HierachicalNotesList.SelectedItem) as ListBoxItem;
+			if (listBoxItem == null) return;
+
+			listBoxItem.Focus();
+		}
+
+		public void FocusFolderList()
+		{
+			FolderTreeView.Focus();
+			Keyboard.Focus(FolderTreeView);
+		}
 	}
 }

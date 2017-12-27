@@ -96,7 +96,7 @@
 			
 		</TreeView>
 
-		<GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="3" />
+		<GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="3" Focusable="False"/>
 
 		<ListView x:Name="HierachicalNotesList" Grid.Row="2"
 					  AllowDrop="True"

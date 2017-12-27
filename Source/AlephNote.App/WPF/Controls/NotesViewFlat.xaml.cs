@@ -15,6 +15,7 @@ using System.Linq;
 using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.Windows;
 using System.Collections.ObjectModel;
+using System.Windows.Controls;
 using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.WPF.Controls
@@ -216,6 +217,25 @@ namespace AlephNote.WPF.Controls
 		public IEnumerable<DirectoryPath> ListFolder()
 		{
 			yield return DirectoryPath.Root();
+		}
+
+		public void FocusNotesList()
+		{
+			NotesList.Focus();
+			Keyboard.Focus(NotesList);
+
+			NotesList.UpdateLayout();
+			if (NotesList.SelectedItem == null) return;
+
+			var listBoxItem = NotesList.ItemContainerGenerator.ContainerFromItem(NotesList.SelectedItem) as ListBoxItem;
+			if (listBoxItem == null) return;
+
+			listBoxItem.Focus();
+		}
+
+		public void FocusFolderList()
+		{
+			// control does not exist
 		}
 
 		public DirectoryPath GetNewNotesPath()

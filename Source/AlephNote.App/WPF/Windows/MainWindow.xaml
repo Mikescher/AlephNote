@@ -107,7 +107,7 @@
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
 
-			<controls:ClickSelectTextBox Grid.Row="0" Margin="0,2" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+			<controls:ClickSelectTextBox Grid.Row="0" Margin="0,2" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" x:Name="GlobalSearchBar">
 				<services:WatermarkService.Watermark>
 					<TextBlock Text="Search" Padding="5,0"/>
 				</services:WatermarkService.Watermark>
@@ -149,7 +149,7 @@
 
 		</Grid>
 
-		<GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Width="3" />
+		<GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Width="3" Focusable="False" />
 
 		<Grid Grid.Column="2" Margin="1" Grid.Row="1" Visibility="{Binding SelectedNote, Converter={conv:IsNullToVisibility}, ConverterParameter=Hidden;Visible}" >
 			<Grid.ColumnDefinitions>

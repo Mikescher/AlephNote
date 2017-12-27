@@ -45,7 +45,7 @@ namespace AlephNote.WPF.Util
 			AllSubNotes.SynchronizeCollection(other.AllSubNotes);
 		}
 
-		public override IEnumerable<INote> GetAllSubNotes() => _baseWrapper.AllSubNotes;
+		public override IEnumerable<INote> GetAllSubNotes() => _baseWrapper.GetAllSubNotes();
 
 		public HierachicalFlatViewWrapper(HierachicalFolderWrapper baseWrapper, IHierachicalWrapperConfig cfg) : base("All notes", cfg, DirectoryPath.Root(), false, false)
 		{
@@ -78,7 +78,7 @@ namespace AlephNote.WPF.Util
 		{
 			return _directSubNotes
 				.Concat(SubFolder.Where(sf => !(sf is HierachicalFlatViewWrapper))
-				.SelectMany(sf => sf.AllSubNotes))
+				.SelectMany(sf => sf.GetAllSubNotes()))
 				.Where(_config.SearchFilter)
 				.OrderBy(p => p, _config.DisplaySorter());
 		}

@@ -50,6 +50,11 @@ namespace AlephNote.WPF.Windows
 		public ICommand ManuallyCheckForUpdatesCommand { get { return new RelayCommand(ManuallyCheckForUpdates); } }
 		public ICommand InsertSnippetCommand { get { return new RelayCommand<string>(InsertSnippet); } }
 		public ICommand ChangePathCommand { get { return new RelayCommand(ChangePath); } }
+		public ICommand HideCommand { get { return new RelayCommand(() => Owner.Hide()); } }
+		public ICommand FocusScintillaCommand { get { return new RelayCommand(() => Owner.FocusScintilla()); } }
+		public ICommand FocusNotesListCommand { get { return new RelayCommand(() => Owner.NotesViewControl.FocusNotesList()); } }
+		public ICommand FocusGlobalSearchCommand { get { return new RelayCommand(() => Owner.FocusGlobalSearch()); } }
+		public ICommand FocusFolderCommand { get { return new RelayCommand(() => Owner.NotesViewControl.FocusFolderList()); } }
 
 		public ICommand ClosingEvent { get { return new RelayCommand<CancelEventArgs>(OnClosing); } }
 		public ICommand CloseEvent { get { return new RelayCommand<EventArgs>(OnClose); } }

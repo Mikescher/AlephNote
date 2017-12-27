@@ -20,5 +20,8 @@ namespace AlephNote.WPF.Controls
 		IEnumerable<INote> EnumerateVisibleNotes();
 		void SetShortcuts(MainWindow mw, List<KeyValuePair<string, ShortcutDefinition>> list);
 		IEnumerable<DirectoryPath> ListFolder();
+
+		void FocusNotesList();
+		void FocusFolderList();
 	}
 }

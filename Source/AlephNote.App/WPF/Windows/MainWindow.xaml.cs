@@ -327,6 +327,12 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.Focus();
 		}
 
+		public void FocusGlobalSearch()
+		{
+			GlobalSearchBar.Focus();
+			Keyboard.Focus(GlobalSearchBar);
+		}
+
 		private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
 		{
 			if (Settings != null && ReferenceEquals(e.OriginalSource, NoteEditHost))

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AlephNote.WPF.Windows;
 using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Interop;
 using AlephNote.Common.Settings.Types;
 using System.Windows.Input;
@@ -86,8 +87,12 @@ namespace AlephNote.WPF.Shortcuts
 				var hk = _hotkeys.FirstOrDefault(p => p.Item3 == hkid && p.Item2 == (((int) lParam >> 16) & 0xFFFF));
 				if (hk != null)
 				{
-					ShortcutManager.Execute(_window, hk.Item4);
-					handled = true;
+					var curr = Application.Current;
+					if (curr != null)
+					{
+						curr.Dispatcher.BeginInvoke(new Action(() => ShortcutManager.Execute(_window, hk.Item4)));
+						handled = true;
+					}
 				}
 			}
 			return IntPtr.Zero;
