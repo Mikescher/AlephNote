@@ -49,39 +49,33 @@ Windows Version:
 Linux version
  - TBA
 
-## Planned/Possible/Implemented features
+## Features
 
  - [X] Synchronization with [SimpleNote](https://simplenote.com/)
  - [X] Synchronization with [Nextcloud Notes](https://github.com/nextcloud/notes)
  - [X] Synchronization with [Standard Notes](https://standardnotes.org/)
- - [ ] Synchronization with [Evernote](https://evernote.com)
  - [X] Usage without remote provider (= headless plugin)
+ - [X] In-editor markdown rendering (similar to [qownnotes](http://www.qownnotes.org/))
+ - [X] interactive highlighting of checkbox lists (e.g. TODO lists)
+ - [X] clickable + highlighted links
+ - [X] (optionally) backup all notes to local git repo (for backup / history)
+ - [X] Drop files/text directly into app to create notes
+ - [X] Sort notes into folders
+ - [X] simulate folders for notes with remote provider that do not support folders (path is encoded in filename)
+ - [X] Customizable shortcuts
+
+## Planned  features
+
+ - [ ] Synchronization with [Evernote](https://evernote.com)
  - [ ] Client side encryption (for all plugins)
  - [ ] Get history from provider that support it (SimpleNote + Standard Notes)
- - [X] In-editor markdown rendering (similar to [qownnotes](http://www.qownnotes.org/))
- - [X] clickable + highlighted links (http/https/ftp/mailto)
- - [X] (optionally) backup all notes to local git repo (for backup/history)
- - [X] Highlight todo lists (markdown/github syntax)
- - [X] Ctrl+F search function (content of single note)
- - [X] Global search function (normal search | regex search | tag search)
- - [X] Tag autocompletion
  - [ ] Installer (if there is demand)
  - [ ] Linux version (UI mit Eto.Forms, .Net core)
- - [X] auto updater (get version from github API)
- - [X] multiple conflict solving strategies (use local | use server | create conflict note)
- - [X] Remember last selected note
  - [ ] readonly mode
- - [X] sort tags alphabetically
  - [ ] edit tags without deleting (F2 ?)
- - [X] highlight search results when using global search
- - [X] Better first launch wizard (description, images, directly set provider), see [#6](https://github.com/Mikescher/AlephNote/issues/6)
  - [ ] Sync with multiple provider (eg sync with SimpleNote but also with local plaintext version of notes), see [#7](https://github.com/Mikescher/AlephNote/issues/7)
- - [X] Drop files/text directly into app
- - [X] Customizable shortcuts
- - [X] performance improvements in scintilla control
  - [ ] unit tests (+ CI)
  - [ ] github wiki
- - [X] WPF warnings in MainWindow + SettingsWindow
 
 ## License
 
