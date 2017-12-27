@@ -1,10 +1,8 @@
-﻿using AlephNote.PluginInterface;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using AlephNote.PluginInterface.Util;
 
-namespace AlephNote.Plugins.Filesystem
+namespace AlephNote.PluginInterface.Util
 {
 	public static class FileSystemUtil
 	{
@@ -20,14 +18,14 @@ namespace AlephNote.Plugins.Filesystem
 			}
 		}
 
-		public static void DeleteFileAndFolderIfEmpty(IAlephLogger log, string baseFolder, string file)
+		public static void DeleteFileAndFolderIfEmpty(string logsrc, IAlephLogger log, string baseFolder, string file)
 		{
 			File.Delete(file);
 
-			DeleteFolderIfEmpty(log, baseFolder, Path.GetDirectoryName(file));
+			DeleteFolderIfEmpty(logsrc, log, baseFolder, Path.GetDirectoryName(file));
 		}
 
-		public static void DeleteFolderIfEmpty(IAlephLogger log, string baseFolder, string folder)
+		public static void DeleteFolderIfEmpty(string logsrc, IAlephLogger log, string baseFolder, string folder)
 		{
 			var p1 = Path.GetFullPath(baseFolder).TrimEnd(Path.DirectorySeparatorChar).ToLower();
 			var p2 = Path.GetFullPath(folder).TrimEnd(Path.DirectorySeparatorChar).ToLower();
@@ -36,7 +34,19 @@ namespace AlephNote.Plugins.Filesystem
 
 			if (Directory.EnumerateFileSystemEntries(folder).Any()) return;
 
-			log.Debug(FilesystemPlugin.Name, $"Cleanup empty folder '{p2}' (base = '{p1}')");
+			log.Debug(logsrc, $"Cleanup empty folder '{p2}' (base = '{p1}')");
+			Directory.Delete(folder);
+		}
+
+		public static void DeleteFolderIfEmpty(string baseFolder, string folder)
+		{
+			var p1 = Path.GetFullPath(baseFolder).TrimEnd(Path.DirectorySeparatorChar).ToLower();
+			var p2 = Path.GetFullPath(folder).TrimEnd(Path.DirectorySeparatorChar).ToLower();
+			if (p1 == p2) return;
+			if (p1.Count(c => c == Path.DirectorySeparatorChar) >= p2.Count(c => c == Path.DirectorySeparatorChar)) return;
+
+			if (Directory.EnumerateFileSystemEntries(folder).Any()) return;
+
 			Directory.Delete(folder);
 		}
 

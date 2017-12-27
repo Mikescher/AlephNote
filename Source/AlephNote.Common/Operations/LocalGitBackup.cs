@@ -77,9 +77,12 @@ namespace AlephNote.Common.Operations
 						foreach (var note in repo.Notes)
 						{
 							var fn = GetFilename(note);
+							var path = Path.Combine(subfolder, fn);
+							var fld = Path.GetDirectoryName(path);
 							var txt = GetFileContent(note);
 
-							File.WriteAllText(Path.Combine(subfolder, fn), txt, new UTF8Encoding(false));
+							if (fld != null) Directory.CreateDirectory(fld);
+							File.WriteAllText(path, txt, new UTF8Encoding(false));
 						}
 					}
 					else
@@ -89,9 +92,12 @@ namespace AlephNote.Common.Operations
 						foreach (var note in repo.Notes)
 						{
 							var fn = GetFilename(note);
+							var path = Path.Combine(config.GitMirrorPath, fn);
+							var fld = Path.GetDirectoryName(path);
 							var txt = GetFileContent(note);
 
-							File.WriteAllText(Path.Combine(config.GitMirrorPath, fn), txt, new UTF8Encoding(false));
+							if (fld != null) Directory.CreateDirectory(fld);
+							File.WriteAllText(path, txt, new UTF8Encoding(false));
 						}
 					}
 				}
@@ -123,6 +129,12 @@ namespace AlephNote.Common.Operations
 			{
 				if (file.ToLower().EndsWith(".txt") || file.ToLower().EndsWith(".md")) File.Delete(file);
 			}
+
+			foreach (var dir in Directory.EnumerateDirectories(folder))
+			{
+				if ((Path.GetFileName(dir) ?? "").ToLower() == ".git") continue;
+				Directory.Delete(dir, true);
+			}
 		}
 
 		private static string GetFilename(INote note)
@@ -134,7 +146,11 @@ namespace AlephNote.Common.Operations
 
 			if (note.HasTagCasInsensitive(AppSettings.TAG_MARKDOWN)) ext = ".md";
 
-			return fn + ext;
+			var path = Path.Combine(note.Path.Enumerate().Select(c => FilenameHelper.StripStringForFilename(c)).ToArray());
+
+			if (string.IsNullOrWhiteSpace(path)) return fn + ext;
+
+			return Path.Combine(path, fn + ext);
 		}
 
 		private static string GetFileContent(INote note)
@@ -158,8 +174,8 @@ namespace AlephNote.Common.Operations
 
 			if (!Directory.Exists(folder)) return true;
 			
-			var filesGit  = Directory
-				.EnumerateFiles(folder)
+			var filesGit  = FileSystemUtil
+				.EnumerateFilesDeep(folder, 8)
 				.Where(f => f.ToLower().EndsWith(".txt") || f.ToLower().EndsWith(".md"))
 				.Select(Path.GetFileName).Select(f => f.ToLower()).ToList();
 
