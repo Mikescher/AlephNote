@@ -69,7 +69,14 @@ namespace AlephNote.Common.Settings.Types
 
 		public KeyValueFlatCustomList<TValue> Concat(Tuple<string, TValue> v)
 		{
-			return new KeyValueFlatCustomList<TValue>(ListData.AsEnumerable().Select(ld => Tuple.Create(ld.Key, ld.Value)).Concat(new []{v}), DefaultDictValue);
+			return new KeyValueFlatCustomList<TValue>(
+				ListData
+					.AsEnumerable()
+					.Select(ld => Tuple.Create(ld.Key, ld.Value))
+					.Concat(new []{v})
+					.GroupBy(p => p.Item1)
+					.Select(p => p.First()), 
+				DefaultDictValue);
 		}
 	}
 }
