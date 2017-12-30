@@ -186,13 +186,13 @@
 				<TextBlock Text="{Binding SelectedNote.ModificationDate, Converter={conv:SmartDateTimeToDisplay}}" ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DTOToDisplay}}" Foreground="DarkGray" />
 			</StackPanel>
 
-			<Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+			<Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="{Binding Settings.UseHierachicalNoteStructure, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 				
-				<ItemsControl Grid.Column="0" ItemsSource="{Binding SelectedNote.Path.ListProperty}" Margin="0,0,0,4" MinHeight="20" Visibility="{Binding Settings.UseHierachicalNoteStructure, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}">
+				<ItemsControl Grid.Column="0" ItemsSource="{Binding SelectedNote.Path.ListProperty}" Margin="0,0,0,4" MinHeight="20">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
 							<StackPanel Orientation="Horizontal" />
