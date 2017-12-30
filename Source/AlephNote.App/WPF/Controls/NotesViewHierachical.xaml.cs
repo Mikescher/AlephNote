@@ -220,6 +220,9 @@ namespace AlephNote.WPF.Controls
 
 		private void OnSelectedFolderPathChanged()
 		{
+			if (SelectedFolderPath == null) return;
+			if (DisplayItems == null) return;
+
 			var f = DisplayItems.Find(SelectedFolderPath);
 
 			if (f != null)
