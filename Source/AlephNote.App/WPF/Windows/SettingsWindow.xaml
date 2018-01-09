@@ -13,7 +13,7 @@
 		d:DataContext="{d:DesignInstance windows:SettingsWindowViewmodel}"
 		WindowStartupLocation="CenterOwner"
 		Icon="/Resources/IconMain.png"
-		Title="Common Note - Configuration" MinHeight="300" MinWidth="300" Height="650" Width="535">
+		Title="AlephNote - Configuration" MinHeight="300" MinWidth="300" Height="650" Width="535">
 	<Window.Resources>
 		<converter:CreatePluginSettingsGrid x:Key="CreateGridConv" />
 	</Window.Resources>
