@@ -10,6 +10,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -196,6 +197,8 @@ namespace AlephNote.WPF.Windows
 		{
 			try
 			{
+				var sw = Stopwatch.StartNew();
+
 				var reconnectRepo = false;
 				if (!Settings.ActiveAccount.IsEqual(newSettings.ActiveAccount)) reconnectRepo = true;
 				if (Settings.EmulateHierachicalStructure != newSettings.EmulateHierachicalStructure) reconnectRepo = true;
@@ -217,8 +220,10 @@ namespace AlephNote.WPF.Windows
 					}
 				}
 
+				var sw2 = Stopwatch.StartNew();
 				Settings = newSettings;
 				Settings.Save();
+				App.Logger.Trace("Main", $"Settings saved in {sw2.ElapsedMilliseconds}ms");
 
 				if (reconnectRepo)
 				{
@@ -258,6 +263,8 @@ namespace AlephNote.WPF.Windows
 				Owner.UpdateShortcuts(Settings);
 
 				SearchText = string.Empty;
+
+				App.Logger.Trace("Main", $"ChangeSettings took {sw.ElapsedMilliseconds}ms");
 			}
 			catch (Exception e)
 			{

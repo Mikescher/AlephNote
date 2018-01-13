@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -71,6 +72,8 @@ namespace AlephNote.Common.Repository
 
 		public void Init()
 		{
+			var sw = Stopwatch.StartNew();
+
 			if (!Directory.Exists(pathLocalFolder))
 			{
 				logger.Info("Repository", "Create local note folder: " + pathLocalFolder);
@@ -80,17 +83,23 @@ namespace AlephNote.Common.Repository
 			LoadNotesFromLocal();
 
 			thread.Start(appconfig.GetSyncDelay());
+
+			logger.Trace("Repository", $"SyncThread init took {sw.ElapsedMilliseconds}ms");
 		}
 
 		public void Shutdown(bool lastSync = true)
 		{
+			var sw = Stopwatch.StartNew();
+
 			invSaveNotesLocal.CancelPendingRequests();
 			SaveAllDirtyNotes();
 
-			if (lastSync && Notes.Any(n => !n.IsRemoteSaved))
+			if (lastSync && Notes.Any(n => !n.IsRemoteSaved && !n.IsConflictNote))
 				thread.SyncNowAndStopAsync();
 			else
 				thread.StopAsync();
+
+			logger.Trace("Repository", $"SyncThread shutdown took {sw.ElapsedMilliseconds}ms");
 		}
 
 		public void KillThread()
@@ -118,7 +127,7 @@ namespace AlephNote.Common.Repository
 				}
 			}
 
-			logger.Info("Repository", "Loaded " + Notes.Count + " notes from local repository");
+			logger.Trace("Repository", "Loaded " + Notes.Count + " notes from local repository");
 		}
 
 		private INote LoadNoteFromFile(string noteFile)

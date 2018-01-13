@@ -39,6 +39,10 @@ namespace AlephNote.Log
 			else
 				disp.BeginInvoke(new Action(() => Events.Add(e)));
 		}
+		void IAlephLogger.Trace(string src, string text, string longtext)
+		{
+			Trace(src, text, longtext);
+		}
 
 		[Conditional("DEBUG")]
 		public void Trace(string src, string text, string longtext = null)

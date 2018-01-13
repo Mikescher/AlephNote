@@ -18,16 +18,18 @@ namespace AlephNote.Common.Repository
 		private int delay;
 
 		private static readonly object _syncobj = new object();
+		private readonly ManualResetEvent _comChannel;
 		private Thread thread;
 
 		private readonly IAlephDispatcher dispatcher;
 		private readonly IAlephLogger _log;
 
-		private bool prioritysync = false;
-		private bool cancel = false;
-		private bool running = false;
-		private bool isSyncing = false;
-		
+		private volatile bool prioritysync = false;
+		private volatile bool cancel = false;
+		private volatile bool running = false;
+		private volatile bool isSyncing = false;
+
+
 		public SynchronizationThread(NoteRepository repository, ISynchronizationFeedback[] synclistener, ConflictResolutionStrategyConfig strat, IAlephLogger log, IAlephDispatcher disp)
 		{
 			repo = repository;
@@ -35,6 +37,7 @@ namespace AlephNote.Common.Repository
 			conflictStrategy = ConflictResolutionStrategyHelper.ToInterfaceType(strat);
 			_log = log;
 			dispatcher = disp;
+			_comChannel = new ManualResetEvent(false);
 		}
 
 		public void Start(int syncdelay)
@@ -56,7 +59,10 @@ namespace AlephNote.Common.Repository
 				lock (_syncobj)
 				{
 					isSyncing = true;
-					DoSync();
+					{
+						_comChannel.Reset();
+						DoSync();
+					}
 					isSyncing = false;
 				}
 
@@ -65,8 +71,8 @@ namespace AlephNote.Common.Repository
 				{
 					if (cancel) { running = false; _log.Info("Sync", "Thread cancelled"); return; }
 					if (prioritysync) { prioritysync = false; _log.Info("Sync", "Thread ffwd (priority sync)"); break; }
-					
-					Thread.Sleep(333);
+
+					_comChannel.WaitOne(10 * 1000); // 10 sec
 
 				} while (Environment.TickCount - tick < delay);
 			}
@@ -84,7 +90,7 @@ namespace AlephNote.Common.Repository
 			{
 				var data = repo.GetSyncData();
 
-				List<Tuple<INote, INote>> allNotes = new List<Tuple<INote, INote>>();
+				List<Tuple<INote, INote>> allNotes = new List<Tuple<INote, INote>>(); // <real, clone>
 				List<INote> notesToDelete = new List<INote>();
 				dispatcher.Invoke(() =>
 				{
@@ -96,12 +102,16 @@ namespace AlephNote.Common.Repository
 
 				repo.Connection.StartSync(data, allNotes.Select(p => p.Item2).ToList(), notesToDelete);
 				{
-					var notesToUpload = allNotes.Where(p => repo.Connection.NeedsUpload(p.Item2)).ToList();
-					var notesToDownload = allNotes.Where(p => repo.Connection.NeedsDownload(p.Item2)).ToList();
+					// plugin says 'upload'
+					var notesToUpload     = allNotes.Where(p => repo.Connection.NeedsUpload(p.Item2)).ToList();
+					// plugin says 'download'
+					var notesToDownload   = allNotes.Where(p => repo.Connection.NeedsDownload(p.Item2)).ToList();
+					// we think 'upload', but provider doesn't say so
+					var notesToResetDirty = allNotes.Where(p => !p.Item2.IsRemoteSaved && !notesToUpload.Contains(p)).ToList();
 
 					_log.Info("Sync", string.Format("Found {0} notes for upload and {1} notes for download", notesToUpload.Count, notesToDownload.Count));
 
-					UploadNotes(notesToUpload, ref errors);
+					UploadNotes(notesToUpload, notesToResetDirty, ref errors);
 
 					DownloadNotes(notesToDownload, ref errors);
 
@@ -134,7 +144,7 @@ namespace AlephNote.Common.Repository
 			_log.Info("Sync", "Finished remote synchronization");
 		}
 
-		private void UploadNotes(List<Tuple<INote, INote>> notesToUpload, ref List<Tuple<string, Exception>> errors)
+		private void UploadNotes(List<Tuple<INote, INote>> notesToUpload, List<Tuple<INote, INote>> notesToResetRemoteDirty, ref List<Tuple<string, Exception>> errors)
 		{
 			foreach (var notetuple in notesToUpload)
 			{
@@ -153,8 +163,7 @@ namespace AlephNote.Common.Repository
 						});
 					}
 
-					INote conflictnote;
-					var result = repo.Connection.UploadNoteToRemote(ref clonenote, out conflictnote, conflictStrategy);
+					var result = repo.Connection.UploadNoteToRemote(ref clonenote, out var conflictnote, conflictStrategy);
 
 					switch (result)
 					{
@@ -194,6 +203,43 @@ namespace AlephNote.Common.Repository
 				catch (Exception e)
 				{
 					var message = string.Format("Could not upload note '{2}' ({0}) cause of {1}", clonenote.GetUniqueName(), e.Message, clonenote.Title);
+
+					_log.Error("Sync", message, e);
+					errors.Add(Tuple.Create(message, e));
+				}
+			}
+
+
+			foreach (var notetuple in notesToResetRemoteDirty)
+			{
+				var realnote = notetuple.Item1;
+				var clonenote = notetuple.Item2;
+
+				_log.Info("Sync", string.Format("Reset remote dirty of note {0} (no upload needed)", clonenote.GetUniqueName()));
+
+				try
+				{
+					if (!clonenote.IsLocalSaved)
+					{
+						dispatcher.Invoke(() =>
+						{
+							if (!realnote.IsLocalSaved) repo.SaveNote(realnote);
+						});
+					}
+
+					dispatcher.Invoke(() =>
+					{
+						if (realnote.IsLocalSaved)
+						{
+							realnote.ResetRemoteDirty();
+							repo.SaveNote(realnote);
+						}
+					});
+
+				}
+				catch (Exception e)
+				{
+					var message = string.Format("Could not reset remote dirty note '{2}' ({0}) cause of {1}", clonenote.GetUniqueName(), e.Message, clonenote.Title);
 
 					_log.Error("Sync", message, e);
 					errors.Add(Tuple.Create(message, e));
@@ -430,6 +476,7 @@ namespace AlephNote.Common.Repository
 		{
 			_log.Info("Sync", "Requesting priorty sync");
 			prioritysync = true;
+			_comChannel.Set();
 		}
 
 		public void StopAsync()
@@ -441,11 +488,13 @@ namespace AlephNote.Common.Repository
 				_log.Info("Sync", "Requesting stop (early exit due to isSyncing)");
 
 				cancel = true;
+				_comChannel.Set();
 				return;
 			}
 
 			prioritysync = false;
 			cancel = true;
+			_comChannel.Set();
 			for (int i = 0; i < 100; i++)
 			{
 				if (!running)
@@ -458,6 +507,7 @@ namespace AlephNote.Common.Repository
 				{
 					_log.Info("Sync", "Requesting stop - abort waiting (isSyncing=true)");
 					cancel = true;
+					_comChannel.Set();
 
 					for (int j = 0; j < 300; j++)
 					{
@@ -489,6 +539,7 @@ namespace AlephNote.Common.Repository
 				{
 					_log.Info("Sync", "Requesting sync&stop (early exit due to isSyncing)");
 					cancel = true;
+					_comChannel.Set();
 
 					for (int j = 0; j < 300; j++)
 					{
@@ -504,6 +555,7 @@ namespace AlephNote.Common.Repository
 				}
 
 				prioritysync = true;
+				_comChannel.Set();
 				for (int i = 0; i < 100; i++)
 				{
 					if (!running)
@@ -516,7 +568,8 @@ namespace AlephNote.Common.Repository
 					{
 						_log.Info("Sync", "Requesting sync&stop stop waiting (prioritysync=false)");
 						cancel = true;
-					
+						_comChannel.Set();
+
 						for (int j = 0; j < 300; j++)
 						{
 							if (!isSyncing)

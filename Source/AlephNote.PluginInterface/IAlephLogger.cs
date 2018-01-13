@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace AlephNote.PluginInterface
 {
@@ -6,6 +7,7 @@ namespace AlephNote.PluginInterface
 	{
 		Version AppVersion { get; }
 
+		void Trace(string src, string text, string longtext = null);
 		void Debug(string src, string text, string longtext = null);
 		void Info (string src, string text, string longtext = null);
 		void Warn (string src, string text, string longtext = null);
@@ -20,6 +22,7 @@ namespace AlephNote.PluginInterface
 	{
 		public Version AppVersion { get; } = new Version(0, 0, 0, 0);
 
+		public void Trace(string src, string text, string longtext = null) { }
 		public void Debug(string src, string text, string longtext = null) { }
 		public void Info(string src, string text, string longtext = null) { }
 		public void Warn(string src, string text, string longtext = null) { }
