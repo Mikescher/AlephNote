@@ -24,10 +24,6 @@ namespace AlephNote.Log
 
 			if (curr == null)
 			{
-#if DEBUG
-				Debugger.Break();
-#endif
-
 				Console.Error.WriteLine("Could not Log event ... Application.Current == null");
 				Console.Out.WriteLine(e.Source);
 				Console.Out.WriteLine(e.Type);

@@ -451,6 +451,8 @@ namespace AlephNote.WPF.Windows
 		{
 			if (e.Key >= Key.A && e.Key <= Key.Z)
 			{
+				e.Handled = true; // important, otherwise the normal listbox behaviour is executed after this
+
 				char chr = (char)('A' + (e.Key - Key.A));
 			
 				bool found = false;
