@@ -495,14 +495,15 @@ namespace AlephNote.Common.Settings
 		{
 			return new KeyValueFlatCustomList<ShortcutDefinition>(new[]
 			{
-				Tuple.Create("NewNote",             new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.N)),       // v1.6.0
-				Tuple.Create("SaveAndSync",         new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.S)),       // v1.6.0
-				Tuple.Create("DocumentSearch",      new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Control, AlephKey.F)),       // v1.6.0
-				Tuple.Create("CloseDocumentSearch", new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.None,    AlephKey.Escape)),  // v1.6.0
-				Tuple.Create("DeleteNote",          new ShortcutDefinition(AlephShortcutScope.NoteList,   AlephModifierKeys.None,    AlephKey.Delete)),  // v1.6.0
-				Tuple.Create("AppExit",             new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Alt,     AlephKey.F4)),      // v1.6.0
-				Tuple.Create("DeleteFolder",        new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None,    AlephKey.Delete)),  // v1.6.4
-				Tuple.Create("RenameFolder",        new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None,    AlephKey.F2)),      // v1.6.4
+				Tuple.Create("NewNote",              new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.N)),       // v1.6.0
+				Tuple.Create("NewNoteFromClipboard", new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.O)),       // v1.6.6
+				Tuple.Create("SaveAndSync",          new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.S)),       // v1.6.0
+				Tuple.Create("DocumentSearch",       new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Control, AlephKey.F)),       // v1.6.0
+				Tuple.Create("CloseDocumentSearch",  new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.None,    AlephKey.Escape)),  // v1.6.0
+				Tuple.Create("DeleteNote",           new ShortcutDefinition(AlephShortcutScope.NoteList,   AlephModifierKeys.None,    AlephKey.Delete)),  // v1.6.0
+				Tuple.Create("AppExit",              new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Alt,     AlephKey.F4)),      // v1.6.0
+				Tuple.Create("DeleteFolder",         new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None,    AlephKey.Delete)),  // v1.6.4
+				Tuple.Create("RenameFolder",         new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None,    AlephKey.F2)),      // v1.6.4
 			}, 
 			ShortcutDefinition.DEFAULT);
 		}
@@ -510,6 +511,7 @@ namespace AlephNote.Common.Settings
 		public void Migrate(Version from, Version to, IAlephLogger log)
 		{
 			var v1_6_4 = new Version(1, 6, 4, 0);
+			var v1_6_6 = new Version(1, 6, 6, 0);
 
 			log.Info("AppSettings", $"Migrate settings from {from} to {to}");
 
@@ -522,6 +524,11 @@ namespace AlephNote.Common.Settings
 			{
 				log.Info("AppSettings", "(Migration) Insert shortcut for [RenameFolder]");
 				Shortcuts = Shortcuts.Concat(Tuple.Create("RenameFolder", new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None, AlephKey.F2)));
+			}
+			if (from < v1_6_6)
+			{
+				log.Info("AppSettings", "(Migration) Insert shortcut for [NewNoteFromClipboard]");
+				Shortcuts = Shortcuts.Concat(Tuple.Create("NewNoteFromClipboard", new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.Control, AlephKey.O)));
 			}
 		}
 	}

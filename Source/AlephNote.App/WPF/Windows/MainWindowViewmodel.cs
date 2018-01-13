@@ -32,6 +32,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand SettingsCommand { get { return new RelayCommand(ShowSettings); } }
 		public ICommand CreateNewNoteCommand { get { return new RelayCommand(CreateNote);} }
 		public ICommand CreateNewNoteFromClipboardCommand { get { return new RelayCommand(CreateNoteFromClipboard);} }
+		public ICommand CreateNewNoteFromTextfileCommand { get { return new RelayCommand(CreateNewNoteFromTextfile);} }
 		public ICommand ResyncCommand { get { return new RelayCommand(Resync); } }
 		public ICommand ShowMainWindowCommand { get { return new RelayCommand(ShowMainWindow); } }
 		public ICommand ExportCommand { get { return new RelayCommand(ExportNote); } }
@@ -821,6 +822,8 @@ namespace AlephNote.WPF.Windows
 		{
 			try
 			{
+				var notepath = Owner.NotesViewControl.GetNewNotesPath();
+
 				if (data.GetDataPresent(DataFormats.FileDrop, true))
 				{
 					string[] paths = data.GetData(DataFormats.FileDrop, true) as string[];
@@ -829,7 +832,7 @@ namespace AlephNote.WPF.Windows
 						var filename = Path.GetFileNameWithoutExtension(path) ?? "New note from unknown file";
 						var filecontent = File.ReadAllText(path);
 
-						SelectedNote = Repository.CreateNewNote();
+						SelectedNote = Repository.CreateNewNote(notepath);
 						SelectedNote.Title = filename;
 						SelectedNote.Text  = filecontent;
 					}
@@ -840,7 +843,7 @@ namespace AlephNote.WPF.Windows
 					var notecontent = data.GetData(DataFormats.Text, true) as string;
 					if (!string.IsNullOrWhiteSpace(notecontent))
 					{
-						SelectedNote = Repository.CreateNewNote();
+						SelectedNote = Repository.CreateNewNote(notepath);
 						SelectedNote.Title = notetitle;
 						SelectedNote.Text  = notecontent;
 					}
@@ -854,32 +857,68 @@ namespace AlephNote.WPF.Windows
 
 		private void CreateNoteFromClipboard()
 		{
+			var notepath = Owner.NotesViewControl.GetNewNotesPath();
+
 			if (Clipboard.ContainsFileDropList())
 			{
 				if (Owner.Visibility == Visibility.Hidden) ShowMainWindow();
 
 				foreach (var path in Clipboard.GetFileDropList())
 				{
-					var filename = Path.GetFileNameWithoutExtension(path) ?? "New note from unknown file";
+					var filename    = Path.GetFileNameWithoutExtension(path) ?? "New note from unknown file";
 					var filecontent = File.ReadAllText(path);
 
-					SelectedNote = Repository.CreateNewNote();
+					SelectedNote       = Repository.CreateNewNote(notepath);
 					SelectedNote.Title = filename;
-					SelectedNote.Text = filecontent;
+					SelectedNote.Text  = filecontent;
 				}
 			}
 			else if (Clipboard.ContainsText())
 			{
 				if (Owner.Visibility == Visibility.Hidden) ShowMainWindow();
 
-				var notetitle = "New note from clipboard";
+				var notetitle   = "New note from clipboard";
 				var notecontent = Clipboard.GetText();
 				if (!string.IsNullOrWhiteSpace(notecontent))
 				{
-					SelectedNote = Repository.CreateNewNote();
+					SelectedNote       = Repository.CreateNewNote(notepath);
 					SelectedNote.Title = notetitle;
-					SelectedNote.Text = notecontent;
+					SelectedNote.Text  = notecontent;
 				}
+			}
+		}
+
+		private void CreateNewNoteFromTextfile()
+		{
+			var notepath = Owner.NotesViewControl.GetNewNotesPath();
+
+			var ofd = new OpenFileDialog
+			{
+				Multiselect = true,
+				ShowReadOnly = true,
+				DefaultExt = ".txt",
+				Title = "Import new notes from text files",
+				CheckFileExists = true,
+				Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+			};
+
+			if (ofd.ShowDialog() != true) return;
+
+			try
+			{ 
+				foreach (var path in ofd.FileNames)
+				{
+					var filename    = Path.GetFileNameWithoutExtension(path) ?? "New note from unknown file";
+					var filecontent = File.ReadAllText(path);
+
+					SelectedNote       = Repository.CreateNewNote(notepath);
+					SelectedNote.Title = filename;
+					SelectedNote.Text  = filecontent;
+				}
+			}
+			catch (Exception ex)
+			{
+				ExceptionDialog.Show(Owner, "Reading file failed", "Creating note from file failed due to an error", ex);
 			}
 		}
 

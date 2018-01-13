@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using AlephNote.Common.Settings.Types;
 using AlephNote.PluginInterface;
 using AlephNote.WPF.Util;

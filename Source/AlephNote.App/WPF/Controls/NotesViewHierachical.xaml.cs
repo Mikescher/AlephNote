@@ -227,7 +227,7 @@ namespace AlephNote.WPF.Controls
 
 			if (!p.EqualsIgnoreCase(SelectedFolderPath))
 			{
-				App.Logger.Trace("NotesViewHierachical", $"OnSelectedFolderChanged :: SelectedFolderPath = '{p?.Formatted}'");
+				App.Logger.Trace("NotesViewHierachical", $"OnSelectedFolderChanged :: SelectedFolderPath = '{p.Formatted}'");
 				SelectedFolderPath = p;
 			}
 		}
@@ -245,7 +245,7 @@ namespace AlephNote.WPF.Controls
 			{
 				if (!f.IsSelected)
 				{
-					App.Logger.Trace("NotesViewHierachical", $"OnSelectedFolderPathChanged :: f.IsSelected = true (f={f?.Header})");
+					App.Logger.Trace("NotesViewHierachical", $"OnSelectedFolderPathChanged :: f.IsSelected = true (f={f.Header})");
 					f.IsSelected = true;
 				}
 			}
@@ -363,7 +363,7 @@ namespace AlephNote.WPF.Controls
 
 		public void AddFolder(DirectoryPath folder)
 		{
-			App.Logger.Trace("NotesViewHierachical", $"AddFolder({folder?.Formatted})");
+			App.Logger.Trace("NotesViewHierachical", $"AddFolder({folder.Formatted})");
 
 			var curr = DisplayItems;
 

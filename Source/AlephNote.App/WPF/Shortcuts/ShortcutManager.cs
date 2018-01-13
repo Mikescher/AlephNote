@@ -25,8 +25,9 @@ namespace AlephNote.WPF.Shortcuts
 
 		static ShortcutManager()
 		{
-			AddCommand("NewNote",              vm => vm.CreateNewNoteCommand,              "Create new note");
-			AddCommand("NewNoteFromClipboard", vm => vm.CreateNewNoteFromClipboardCommand, "Create new note from current clipboard content");
+			AddCommand("NewNote",              vm => vm.CreateNewNoteCommand,              "Create a new note"); 
+			AddCommand("NewNoteFromClipboard", vm => vm.CreateNewNoteFromClipboardCommand, "Create a new note from current clipboard content");
+			AddCommand("NewNoteFromTextFile",  vm => vm.CreateNewNoteFromTextfileCommand,  "Create a new note from a file");
 			AddCommand("ExportNote",           vm => vm.ExportCommand,                     "Export the current note");
 			AddCommand("DeleteNote",           vm => vm.DeleteCommand,                     "Delete the current note");
 			AddCommand("DeleteFolder",         vm => vm.DeleteFolderCommand,               "Delete the current selected folder");
