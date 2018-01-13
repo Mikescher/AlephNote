@@ -611,5 +611,10 @@ namespace AlephNote.WPF.Windows
 
 			if (handled && e is HandledMouseEventArgs e2) e2.Handled = true;
 		}
+		
+		private void CDC_DoChangeAccount(object sender, ConnectionDisplayControl.AccountChangeEventArgs e)
+		{
+			VM.ChangeAccount(e.AccountID);
+		}
 	}
 }

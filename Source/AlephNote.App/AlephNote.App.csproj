@@ -95,6 +95,9 @@
     <Compile Include="Log\LogEvent.cs" />
     <Compile Include="Log\LogEventType.cs" />
     <Compile Include="WPF\Controls\AutoActionMenuItem.cs" />
+    <Compile Include="WPF\Controls\ConnectionDisplayControl.xaml.cs">
+      <DependentUpon>ConnectionDisplayControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Controls\INotesViewControl.cs" />
     <Compile Include="WPF\Controls\NotesViewFlat.xaml.cs">
       <DependentUpon>NotesViewFlat.xaml</DependentUpon>
@@ -235,6 +238,10 @@
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\WpfScreen.cs" />
+    <Page Include="WPF\Controls\ConnectionDisplayControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WPF\Controls\FontBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

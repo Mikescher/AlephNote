@@ -43,7 +43,9 @@ namespace AlephNote.Common.Repository
 		public IRemoteStorageConnection Connection { get { return conn; } }
 
 		public string ConnectionName { get { return account.Plugin.DisplayTitleShort; } }
+		public string ConnectionDisplayTitle { get { return account.DisplayTitle; } }
 		public string ConnectionUUID { get { return account.ID.ToString("B"); } }
+		public Guid ConnectionID { get { return account.ID; } }
 		public string ProviderID { get { return account.Plugin.GetUniqueID().ToString("B"); } }
 		public Guid ProviderUID { get { return account.Plugin.GetUniqueID(); } }
 

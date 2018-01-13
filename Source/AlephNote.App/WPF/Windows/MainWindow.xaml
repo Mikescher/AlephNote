@@ -61,7 +61,7 @@
 							<ctrl:AutoActionMenuItem />
 						</ItemContainerTemplate>
 					</MenuItem.Resources>
-					
+
 					<MenuItem.ItemContainerStyle>
 						<Style TargetType="{x:Type ctrl:AutoActionMenuItem}" >
 							<Setter Property="Header" Value="{Binding Header}"/>
@@ -70,7 +70,7 @@
 							<Setter Property="ParentAnchor" Value="{Binding ., ElementName=LayoutRoot}"/>
 						</Style>
 					</MenuItem.ItemContainerStyle>
-					
+
 					<MenuItem.ItemContainerTemplateSelector>
 						<util:MenuItemContainerTemplateSelector>
 							<DataTemplate>
@@ -120,7 +120,7 @@
 
 			<ContentControl Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"  x:Name="NotesViewCtrlWrapper">
 				<ContentControl.Resources>
-					
+
 					<ControlTemplate x:Key="TemplateFlat" >
 						<controls:NotesViewFlat
 									NotesListDrop="NotesList_Drop"
@@ -144,7 +144,7 @@
 									SelectedFolderPath="{Binding SelectedFolderPath}"
 									SearchText="{Binding SearchText}" />
 					</ControlTemplate>
-					
+
 				</ContentControl.Resources>
 			</ContentControl>
 
@@ -192,7 +192,7 @@
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
-				
+
 				<ItemsControl Grid.Column="0" ItemsSource="{Binding SelectedNote.Path.ListProperty}" Margin="0,0,0,4" MinHeight="20">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
@@ -237,9 +237,9 @@
 						</StackPanel>
 					</Grid>
 				</Popup>
-				
+
 			</Grid>
-			
+
 			<Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*"/>
@@ -287,7 +287,7 @@
 			<StatusBarItem Content="{Binding SelectedNote.CreationDate, Converter={conv:DateOnlyToDisplay}, FallbackValue=''}" ToolTip="{Binding SelectedNote.CreationDate, Converter={conv:DTOToDisplay}, FallbackValue=''}"/>
 			<StatusBarItem Content="Synchronized: " />
 			<StatusBarItem Content="{Binding SelectedNote.IsRemoteSaved, FallbackValue='?'}"/>
-			<StatusBarItem Content="{Binding Repository.ConnectionName}" ToolTip="{Binding Repository.ConnectionUUID}" HorizontalAlignment="Right" Margin="0,0,15,0"/>
+			<controls:ConnectionDisplayControl Settings="{Binding Settings}" Repository="{Binding Repository}" ChangeAccount="CDC_DoChangeAccount"  HorizontalAlignment="Right" Margin="0,0,15,0"/>
 		</StatusBar>
 
 		<tb:TaskbarIcon Grid.Column="0" Grid.Row="0"
@@ -298,7 +298,7 @@
 			TrayRightMouseDown="TrayIcon_TrayRightMouseDown"
 			LeftClickCommand="{Binding ShowMainWindowCommand}"
 			DoubleClickCommand="{Binding ShowMainWindowCommand}">
-			
+
 			<tb:TaskbarIcon.ContextMenu>
 				<ContextMenu>
 					<ctrl:AutoActionMenuItem Header="New Note" AlephAction="NewNote" />
@@ -310,7 +310,7 @@
 					<ctrl:AutoActionMenuItem Header="Exit" AlephAction="AppExit" />
 				</ContextMenu>
 			</tb:TaskbarIcon.ContextMenu>
-			
+
 		</tb:TaskbarIcon>
 
 	</Grid>

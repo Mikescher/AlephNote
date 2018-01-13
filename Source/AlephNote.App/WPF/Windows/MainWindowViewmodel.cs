@@ -266,6 +266,16 @@ namespace AlephNote.WPF.Windows
 			}
 		}
 
+		public void ChangeAccount(Guid newAccountUUID)
+		{
+			if (newAccountUUID == Repository.ConnectionID) return;
+
+			var newSettings = Settings.Clone();
+			newSettings.ActiveAccount = newSettings.Accounts.FirstOrDefault(a => a.ID == newAccountUUID);
+
+			ChangeSettings(newSettings);
+		}
+
 		private void SelectedNoteChanged()
 		{
 			if (SelectedNote != null && Settings != null && Settings.AutoSortTags)

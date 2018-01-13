@@ -1,0 +1,21 @@
+﻿<StatusBarItem x:Class="AlephNote.WPF.Controls.ConnectionDisplayControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:self="clr-namespace:AlephNote.WPF.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="20" d:DesignWidth="50">
+
+	<Border x:Name="OuterBorder" BorderThickness="1" BorderBrush="Transparent">
+		<Grid x:Name="LayoutRoot"
+		      d:DataContext="{d:DesignInstance self:ConnectionDisplayControl}"
+		      ContextMenuService.IsEnabled="false" ToolTip="{Binding ConnectionTooltip}"
+		      MouseLeftButtonDown="ShowAccountChooser" MouseEnter="UIElement_OnMouseEnter" MouseLeave="UIElement_OnMouseLeave">
+
+			<TextBlock Text="{Binding Repository.ConnectionName}"  FontSize="10" Margin="4,0" />
+
+		</Grid>
+	</Border>
+
+</StatusBarItem>
