@@ -11,10 +11,11 @@ namespace AlephNote.WPF.Converter
 		{
 			switch (value)
 			{
-				case LogEventType.Debug: return Brushes.DimGray;
+				case LogEventType.Trace:       return Brushes.LightSkyBlue;
+				case LogEventType.Debug:       return Brushes.DimGray;
 				case LogEventType.Information: return Brushes.Black;
-				case LogEventType.Warning: return Brushes.Black;
-				case LogEventType.Error: return Brushes.Black;
+				case LogEventType.Warning:     return Brushes.Black;
+				case LogEventType.Error:       return Brushes.Black;
 
 				default:
 					throw new ArgumentOutOfRangeException(nameof(value));

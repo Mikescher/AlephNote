@@ -269,7 +269,7 @@ namespace AlephNote.WPF.Windows
 		{
 			if (SelectedNote != null && Settings != null && Settings.AutoSortTags)
 			{
-				SelectedNote.Tags.SynchronizeCollection(SelectedNote.Tags.OrderBy(p => p));
+				SelectedNote.Tags.SynchronizeCollectionSafe(SelectedNote.Tags.OrderBy(p => p));
 			}
 
 			Owner.ResetScintillaScrollAndUndo();
@@ -754,12 +754,14 @@ namespace AlephNote.WPF.Windows
 
 		private void DebugCreateIpsumNotes()
 		{
+			var path = Owner.NotesViewControl.GetNewNotesPath();
+
 			for (int i = 0; i < 10; i++)
 			{
 				string title = CreateLoremIpsum(4 + App.GlobalRandom.Next(5), 16);
 				string text = CreateLoremIpsum((16 + App.GlobalRandom.Next(16)) * (8 + App.GlobalRandom.Next(8)), App.GlobalRandom.Next(8)+8);
 
-				var n = Repository.CreateNewNote();
+				var n = Repository.CreateNewNote(path);
 
 				n.Title = title;
 				n.Text = text;

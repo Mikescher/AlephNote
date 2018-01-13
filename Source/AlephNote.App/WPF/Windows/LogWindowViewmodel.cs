@@ -21,7 +21,7 @@ namespace AlephNote.WPF.Windows
 				if (App.Logger?.Events == null) return (ListCollectionView)CollectionViewSource.GetDefaultView(new List<LogEvent>());
 
 				var source = (ListCollectionView)CollectionViewSource.GetDefaultView(App.Logger.Events);
-				source.Filter = p => (App.Logger.DebugEnabled || ((LogEvent)p).Type != LogEventType.Debug);
+				source.Filter = p => Filter((LogEvent)p);
 
 				return _logView = source;
 			}
@@ -29,5 +29,18 @@ namespace AlephNote.WPF.Windows
 
 		private LogEvent _selectedLog = null;
 		public LogEvent SelectedLog { get { return _selectedLog; } set { _selectedLog = value; OnPropertyChanged(); } }
+
+		public bool IsDebugMode => App.DebugMode;
+
+		private bool _showTrace = false;
+		public bool ShowTrace { get { return _showTrace; } set { _showTrace = value; OnPropertyChanged(); LogView.Refresh(); } }
+
+		private bool Filter(LogEvent p)
+		{
+			if (!ShowTrace && p.Type == LogEventType.Trace) return false;
+
+			if (App.Logger.DebugEnabled) return true;
+			return p.Type > LogEventType.Debug;
+		}
 	}
 }

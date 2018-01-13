@@ -7,6 +7,7 @@ namespace AlephNote.WPF.Converter
 {
 	class LogToBackground : OneWayConverter<LogEventType, Brush>
 	{
+		private readonly Brush _brushTrace = Brushes.White;
 		private readonly Brush _brushDebug = Brushes.White;
 		private readonly Brush _brushInfo  = Brushes.White;
 		private readonly Brush _brushWarn  = new SolidColorBrush(Color.FromRgb(255, 255, 128));
@@ -16,6 +17,7 @@ namespace AlephNote.WPF.Converter
 		{
 			switch (value)
 			{
+				case LogEventType.Trace:       return _brushTrace;
 				case LogEventType.Debug:       return _brushDebug;
 				case LogEventType.Information: return _brushInfo;
 				case LogEventType.Warning:     return _brushWarn;

@@ -73,13 +73,24 @@
 			<RowDefinition Height="1*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
-		<StackPanel Grid.Row="0" Orientation="Horizontal">
-			<TextBlock Text="Eventlog" FontWeight="Bold" FontSize="24" Margin="20,5" HorizontalAlignment="Left" />
-			<Button Content="Export" VerticalAlignment="Top" Margin="4,1" Click="ButtonExport_Click" />
-			<Button Content="Import" VerticalAlignment="Top" Margin="4,1" Click="ButtonImport_Click" />
-		</StackPanel>
-		<CheckBox  Grid.Row="0" Content="Log debug events" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10,2" x:Name="CheckBoxDebug" Checked="OnChangedDebugLog" Unchecked="OnChangedDebugLog" />
-		<Button    Grid.Row="0" Content="Clear" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="0" Margin="10,2" Command="{Binding ClearCommand}" />
+		<Grid Grid.Row="0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<TextBlock Grid.Column="0" Text="Eventlog" FontWeight="Bold" FontSize="24" Margin="20,5" HorizontalAlignment="Left" />
+			<Button    Grid.Column="1" Content="Export" VerticalAlignment="Top" Margin="4,1" Click="ButtonExport_Click" />
+			<Button    Grid.Column="2" Content="Import" VerticalAlignment="Top" Margin="4,1" Click="ButtonImport_Click" Visibility="{Binding IsDebugMode, Converter={conv:BoolToVisibility}}" />
+			<StackPanel Grid.Column="4" Orientation="Vertical">
+				<CheckBox Content="Log debug events" Margin="10,2,10,0" x:Name="CheckBoxDebug" Checked="OnChangedDebugLog" Unchecked="OnChangedDebugLog" />
+				<CheckBox Content="Show trace entries" Margin="10,2,10,0" IsChecked="{Binding ShowTrace}" />
+			</StackPanel>
+			<Button    Grid.Column="5" Grid.Row="0" Content="Clear" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="0" Margin="10,4" Command="{Binding ClearCommand}" />
+		</Grid>
 		<ListView ItemsSource="{Binding LogView}" SelectedItem="{Binding SelectedLog}" Grid.Row="1">
 			<ListView.Resources>
 				<Style TargetType="ListViewItem">

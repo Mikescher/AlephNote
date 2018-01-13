@@ -11,10 +11,11 @@ namespace AlephNote.WPF.Converter
 		{
 			switch (value)
 			{
-				case LogEventType.Debug: return FontStyles.Italic;
+				case LogEventType.Trace:       return FontStyles.Italic;
+				case LogEventType.Debug:       return FontStyles.Italic;
 				case LogEventType.Information: return FontStyles.Normal;
-				case LogEventType.Warning: return FontStyles.Normal;
-				case LogEventType.Error: return FontStyles.Normal;
+				case LogEventType.Warning:     return FontStyles.Normal;
+				case LogEventType.Error:       return FontStyles.Normal;
 
 				default:
 					throw new ArgumentOutOfRangeException(nameof(value));

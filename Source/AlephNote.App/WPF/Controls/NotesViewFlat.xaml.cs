@@ -16,6 +16,7 @@ using System.Linq;
 using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.Windows;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Controls;
 using System.Windows.Media;
 using AlephNote.PluginInterface.Util;
@@ -135,6 +136,8 @@ namespace AlephNote.WPF.Controls
 
 		public NotesViewFlat()
 		{
+			App.Logger.Trace("NotesViewFlat", ".ctr()");
+
 			InitializeComponent();
 			RootGrid.DataContext = this;
 		}
@@ -151,6 +154,7 @@ namespace AlephNote.WPF.Controls
 
 		private void OnAllNotesChanged()
 		{
+			App.Logger.Trace("NotesViewFlat", "OnAllNotesChanged()");
 			OnExplicitPropertyChanged("NotesView");
 		}
 
@@ -166,6 +170,7 @@ namespace AlephNote.WPF.Controls
 
 		private void NotesList_Drop(object sender, DragEventArgs e)
 		{
+			App.Logger.Trace("NotesViewFlat", "NotesList_Drop()");
 			NotesListDrop?.Invoke(sender, e);
 		}
 
@@ -181,6 +186,7 @@ namespace AlephNote.WPF.Controls
 
 		public void RefreshView()
 		{
+			App.Logger.Trace("NotesViewFlat", "RefreshView()");
 			NotesView.Refresh();
 		}
 
@@ -192,11 +198,13 @@ namespace AlephNote.WPF.Controls
 		public void DeleteFolder(DirectoryPath folder)
 		{
 			// no...
+			Debug.Assert(false);
 		}
 
 		public void AddFolder(DirectoryPath folder)
 		{
 			// no...
+			Debug.Assert(false);
 		}
 
 		public bool ExternalScrollEmulation(int eDelta)
@@ -238,6 +246,8 @@ namespace AlephNote.WPF.Controls
 
 		public void FocusNotesList()
 		{
+			App.Logger.Trace("NotesViewFlat", "FocusNotesList()");
+
 			NotesList.Focus();
 			Keyboard.Focus(NotesList);
 

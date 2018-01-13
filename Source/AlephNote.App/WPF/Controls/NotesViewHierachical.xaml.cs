@@ -168,6 +168,8 @@ namespace AlephNote.WPF.Controls
 
 		public NotesViewHierachical()
 		{
+			App.Logger.Trace("NotesViewHierachical", ".ctr()");
+
 			_displayItems = new HierachicalFolderWrapper("ROOT", this, DirectoryPath.Root(), true, false);
 			InitializeComponent();
 			RootGrid.DataContext = this;
@@ -175,6 +177,8 @@ namespace AlephNote.WPF.Controls
 
 		private void OnSettingsChanged(DependencyPropertyChangedEventArgs args)
 		{
+			App.Logger.Trace("NotesViewHierachical", "OnSettingsChanged()");
+
 			DisplayItems.ClearPermanents();
 
 			if (AllNotes != null) ResyncDisplayItems(AllNotes);
@@ -189,14 +193,19 @@ namespace AlephNote.WPF.Controls
 
 		private void OnSelectedNoteChanged()
 		{
+			App.Logger.Trace("NotesViewHierachical", $"OnSelectedNoteChanged(SelectedNote={SelectedNote?.Title} | SelectedFolder={SelectedFolder?.Header})");
+
 			if (SelectedNote != null && (SelectedFolder == null || !SelectedFolder.AllSubNotes.Contains(SelectedNote)))
 			{
+				App.Logger.Trace("NotesViewHierachical", $"OnSelectedNoteChanged :: AllNotesWrapper.IsSelected = true");
 				DisplayItems.AllNotesWrapper.IsSelected = true;
 			}
 		}
 
 		private void OnSelectedFolderChanged()
 		{
+			App.Logger.Trace("NotesViewHierachical", $"OnSelectedFolderChanged(SelectedNote={SelectedNote?.Title} | SelectedFolder={SelectedFolder?.Header})");
+
 			if (SelectedFolder != null && (SelectedNote == null || !SelectedFolder.AllSubNotes.Contains(SelectedNote)) && SelectedFolder.AllSubNotes.Any())
 			{
 				var n = SelectedFolder.AllSubNotes.FirstOrDefault();
@@ -207,6 +216,7 @@ namespace AlephNote.WPF.Controls
 					{
 						if (SelectedFolder != null && (SelectedNote == null || !SelectedFolder.AllSubNotes.Contains(SelectedNote)) && SelectedFolder.AllSubNotes.Any())
 						{
+							App.Logger.Trace("NotesViewHierachical", $"OnSelectedFolderChanged[thread] :: SelectedNote = {n?.Title}");
 							SelectedNote = n;
 						}
 					}));
@@ -215,11 +225,17 @@ namespace AlephNote.WPF.Controls
 
 			var p = SelectedFolder?.GetNewNotePath() ?? DirectoryPath.Root();
 
-			if (!p.EqualsIgnoreCase(SelectedFolderPath)) SelectedFolderPath = p;
+			if (!p.EqualsIgnoreCase(SelectedFolderPath))
+			{
+				App.Logger.Trace("NotesViewHierachical", $"OnSelectedFolderChanged :: SelectedFolderPath = '{p?.Formatted}'");
+				SelectedFolderPath = p;
+			}
 		}
 
 		private void OnSelectedFolderPathChanged()
 		{
+			App.Logger.Trace("NotesViewHierachical", $"OnSelectedFolderPathChanged(SelectedFolderPath={SelectedFolderPath?.Formatted})");
+
 			if (SelectedFolderPath == null) return;
 			if (DisplayItems == null) return;
 
@@ -227,18 +243,28 @@ namespace AlephNote.WPF.Controls
 
 			if (f != null)
 			{
-				if (!f.IsSelected) f.IsSelected = true;
+				if (!f.IsSelected)
+				{
+					App.Logger.Trace("NotesViewHierachical", $"OnSelectedFolderPathChanged :: f.IsSelected = true (f={f?.Header})");
+					f.IsSelected = true;
+				}
 			}
 			else
 			{
 				if (AllNotes == null && !SelectedFolderPath.IsRoot() && !SelectedFolderPath.EqualsIgnoreCase(SelectedFolder?.GetNewNotePath()))
 				{
+					App.Logger.Trace("NotesViewHierachical", $"OnSelectedFolderPathChanged :: SelectedFolderPath = SelectedFolder?.GetNewNotePath() ?? DirectoryPath.Root() (SelectedFolder={SelectedFolder?.Header})");
 					_initFolderPath = SelectedFolderPath;
 					SelectedFolderPath = SelectedFolder?.GetNewNotePath() ?? DirectoryPath.Root();
 				}
 				else
 				{
-					if (!DisplayItems.AllNotesWrapper.IsSelected) DisplayItems.AllNotesWrapper.IsSelected = true;
+					if (!DisplayItems.AllNotesWrapper.IsSelected)
+					{
+						App.Logger.Trace("NotesViewHierachical", $"OnSelectedFolderPathChanged :: DisplayItems.AllNotesWrapper.IsSelected = true");
+
+						DisplayItems.AllNotesWrapper.IsSelected = true;
+					}
 				}
 			}
 
@@ -246,6 +272,8 @@ namespace AlephNote.WPF.Controls
 
 		private void OnAllNotesChanged(DependencyPropertyChangedEventArgs args)
 		{
+			App.Logger.Trace("NotesViewHierachical", $"OnAllNotesChanged()");
+
 			if (args.OldValue != null) ((ObservableCollection<INote>)args.OldValue).CollectionChanged -= OnAllNotesCollectionChanged;
 			if (args.NewValue != null) ((ObservableCollection<INote>)args.NewValue).CollectionChanged += OnAllNotesCollectionChanged;
 
@@ -262,6 +290,7 @@ namespace AlephNote.WPF.Controls
 
 			if (args.OldValue == null && _initFolderPath != null)
 			{
+				App.Logger.Trace("NotesViewHierachical", $"SelectedFolderPath = _initFolderPath; (_initFolderPath = {_initFolderPath?.Formatted})");
 				SelectedFolderPath = _initFolderPath;
 				_initFolderPath = null;
 			}
@@ -269,11 +298,15 @@ namespace AlephNote.WPF.Controls
 
 		private void OnAllNotesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
+			App.Logger.Trace("NotesViewHierachical", $"OnAllNotesCollectionChanged()");
+
 			if (AllNotes != null) ResyncDisplayItems(AllNotes);
 		}
 
 		private void ResyncDisplayItems(IList<INote> notes)
 		{
+			App.Logger.Trace("NotesViewHierachical", $"ResyncDisplayItems()");
+
 			var root = new HierachicalFolderWrapper("ROOT", this, DirectoryPath.Root(), true, false);
 
 			foreach (var note in notes)
@@ -306,6 +339,8 @@ namespace AlephNote.WPF.Controls
 
 		private void OnSearchTextChanged()
 		{
+			App.Logger.Trace("NotesViewHierachical", $"OnSearchTextChanged()");
+
 			if (AllNotes != null) ResyncDisplayItems(AllNotes);
 
 			SelectedFolder?.TriggerAllSubNotesChanged();
@@ -328,6 +363,8 @@ namespace AlephNote.WPF.Controls
 
 		public void AddFolder(DirectoryPath folder)
 		{
+			App.Logger.Trace("NotesViewHierachical", $"AddFolder({folder?.Formatted})");
+
 			var curr = DisplayItems;
 
 			foreach (var comp in folder.Enumerate())
@@ -375,6 +412,8 @@ namespace AlephNote.WPF.Controls
 
 		public void SetShortcuts(MainWindow mw, List<KeyValuePair<string, ShortcutDefinition>> shortcuts)
 		{
+			App.Logger.Trace("NotesViewHierachical", $"SetShortcuts({shortcuts.Count})");
+
 			HierachicalNotesList.InputBindings.Clear();
 			foreach (var sc in shortcuts.Where(s => s.Value.Scope == AlephShortcutScope.NoteList))
 			{
@@ -408,6 +447,8 @@ namespace AlephNote.WPF.Controls
 
 		private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
+			App.Logger.Trace("NotesViewHierachical", $"TreeView_SelectedItemChanged({(FolderTreeView.SelectedItem as HierachicalFolderWrapper)?.Header})");
+
 			SelectedFolder = FolderTreeView.SelectedItem as HierachicalFolderWrapper;
 		}
 
@@ -418,11 +459,15 @@ namespace AlephNote.WPF.Controls
 
 		private void HierachicalNotesList_Drop(object sender, DragEventArgs e)
 		{
+			App.Logger.Trace("NotesViewHierachical", $"HierachicalNotesList_Drop()");
+
 			NotesListDrop?.Invoke(sender, e);
 		}
 
 		public void DeleteFolder(DirectoryPath folder)
 		{
+			App.Logger.Trace("NotesViewHierachical", $"DeleteFolder()");
+
 			DisplayItems.RemoveFind(folder);
 			ResyncDisplayItems(AllNotes);
 		}
@@ -440,6 +485,8 @@ namespace AlephNote.WPF.Controls
 
 		public void FocusNotesList()
 		{
+			App.Logger.Trace("NotesViewHierachical", $"FocusNotesList()");
+
 			HierachicalNotesList.Focus();
 			Keyboard.Focus(HierachicalNotesList);
 
@@ -454,6 +501,8 @@ namespace AlephNote.WPF.Controls
 
 		public void FocusFolderList()
 		{
+			App.Logger.Trace("NotesViewHierachical", $"FocusFolderList()");
+
 			FolderTreeView.Focus();
 			Keyboard.Focus(FolderTreeView);
 		}

@@ -8,10 +8,18 @@ namespace AlephNote.WPF.Converter
 	{
 		protected override Visibility Convert(bool value, object parameter)
 		{
-			if (value)
-				return (Visibility)Enum.Parse(typeof(Visibility), parameter.ToString().Split(';')[0]);
+			if (string.IsNullOrWhiteSpace(parameter?.ToString()))
+			{
+				return value ? Visibility.Visible : Visibility.Hidden;
+			}
 			else
-				return (Visibility)Enum.Parse(typeof(Visibility), parameter.ToString().Split(';')[1]);
+			{
+				if (value)
+					return (Visibility)Enum.Parse(typeof(Visibility), parameter.ToString().Split(';')[0]);
+				else
+					return (Visibility)Enum.Parse(typeof(Visibility), parameter.ToString().Split(';')[1]);
+			}
+
 		}
 	}
 }

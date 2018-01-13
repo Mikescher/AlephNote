@@ -42,7 +42,7 @@ namespace AlephNote.WPF.Util
 		{
 			var other = (HierachicalFlatViewWrapper)aother;
 
-			AllSubNotes.SynchronizeCollection(other.AllSubNotes);
+			AllSubNotes.SynchronizeCollectionSafe(other.AllSubNotes);
 		}
 
 		public override IEnumerable<INote> GetAllSubNotes(bool rec) => _baseWrapper.GetAllSubNotes(true);
@@ -128,7 +128,7 @@ namespace AlephNote.WPF.Util
 
 			_path = other._path;
 			_directSubNotes = other._directSubNotes;
-			AllSubNotes.SynchronizeCollection(other.AllSubNotes);
+			AllSubNotes.SynchronizeCollectionSafe(other.AllSubNotes);
 
 			bool FCompare(HierachicalFolderWrapper a, HierachicalFolderWrapper b) => a.Header.ToLower() == b.Header.ToLower();
 			HierachicalFolderWrapper FCopy(HierachicalFolderWrapper a) => new HierachicalFolderWrapper(a.Header, _config, a._path, a._isRoot, a.Permanent);
@@ -213,7 +213,7 @@ namespace AlephNote.WPF.Util
 		{
 			for (int i = 0; i < SubFolder.Count; i++)
 			{
-				if (SubFolder[i].GetNewNotePath().EqualsIgnoreCase(folder)) {SubFolder.RemoveAt(i); return true; }
+				if (SubFolder[i].GetNewNotePath().EqualsIgnoreCase(folder)) { SubFolder.RemoveAt(i); return true; }
 				if (SubFolder[i].RemoveFind(folder)) return true;
 			}
 			return false;
@@ -221,7 +221,7 @@ namespace AlephNote.WPF.Util
 
 		public void Sort()
 		{
-			SubFolder.SynchronizeGenericCollection(SubFolder.OrderBy(p => p.Header.ToLower()));
+			SubFolder.SynchronizeCollectionSafe(SubFolder.OrderBy(p => p.Header.ToLower()));
 			foreach (var sf in SubFolder) sf.Sort();
 		}
 
