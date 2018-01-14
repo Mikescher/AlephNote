@@ -27,6 +27,7 @@ namespace AlephNote.PluginInterface
 		ObservableCollection<string> Tags { get; }
 		string Text { get; set; }
 		string Title { get; set; }
+		bool IsPinned { get; set; }
 		DirectoryPath Path { get; set; }
 
 		bool IsLocalSaved { get; set; }

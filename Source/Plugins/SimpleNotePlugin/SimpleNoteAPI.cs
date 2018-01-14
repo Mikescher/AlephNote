@@ -20,7 +20,7 @@ namespace AlephNote.Plugins.SimpleNote
 		public class APIResultIndex { public string current, mark; public List<APIResultIndexObj> index = new List<APIResultIndexObj>(); }
 		public class APIResultIndexObj { public string id; public int v; }
 		public class APIResultNoteData { public List<string> tags = new List<string>(); public bool deleted; public string shareURL, content, publishURL; public List<string> systemTags = new List<string>(); public double modificationDate, creationDate; }
-		public class APISendNoteData { public List<string> tags = new List<string>(); public string content; public double modificationDate; }
+		public class APISendNoteData { public List<string> tags = new List<string>(); public string content; public double modificationDate; public List<string> systemTags = new List<string>(); }
 		public class APIDeleteNoteData { public bool deleted; }
 		public class APISendAuth { public string username, password; }
 		public class APIBadRequest { public string field, message; }
@@ -145,6 +145,7 @@ namespace AlephNote.Plugins.SimpleNote
 				tags = note.Tags.ToList(),
 				content = note.Content,
 				modificationDate = ConvertToEpochDate(note.ModificationDate),
+				systemTags = note.SystemTags.ToList(),
 			};
 
 			try

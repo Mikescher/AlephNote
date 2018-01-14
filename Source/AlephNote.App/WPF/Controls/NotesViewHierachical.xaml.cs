@@ -339,7 +339,7 @@ namespace AlephNote.WPF.Controls
 
 		public IComparer<INote> DisplaySorter()
 		{
-			return Settings?.GetNoteComparator() ?? AppSettings.COMPARER_NONE;
+			return Settings?.GetNoteComparator() ?? AppSettings.COMPARER_NOPIN_NONE;
 		}
 
 		private void OnSearchTextChanged()

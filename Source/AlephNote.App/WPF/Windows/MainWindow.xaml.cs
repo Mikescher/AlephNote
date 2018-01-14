@@ -449,7 +449,11 @@ namespace AlephNote.WPF.Windows
 
 		private void NotesList_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.Key >= Key.A && e.Key <= Key.Z)
+			var modShift = e.KeyboardDevice.IsKeyDown(Key.LeftShift) || e.KeyboardDevice.IsKeyDown(Key.RightShift);
+			var modCtrl  = e.KeyboardDevice.IsKeyDown(Key.LeftCtrl)  || e.KeyboardDevice.IsKeyDown(Key.RightCtrl);
+			var modAlt   = e.KeyboardDevice.IsKeyDown(Key.LeftAlt)   || e.KeyboardDevice.IsKeyDown(Key.RightAlt);
+
+			if (e.Key >= Key.A && e.Key <= Key.Z && !modShift && !modCtrl && !modAlt)
 			{
 				e.Handled = true; // important, otherwise the normal listbox behaviour is executed after this
 

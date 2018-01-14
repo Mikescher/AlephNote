@@ -35,7 +35,7 @@ namespace AlephNote.Plugins.StandardNote
 		public class SyncResultTag { public Guid uuid; public string title; public bool deleted; public string enc_item_key, item_key; }
 		public class SyncResult { public List<StandardFileNote> retrieved_notes, saved_notes, conflict_notes, error_notes, deleted_notes; public List<SyncResultTag> retrieved_tags, saved_tags, unsaved_tags, deleted_tags; }
 		public class APIResultContentRef { public Guid uuid; public string content_type; }
-		public class ContentNote { public string title, text; public List<APIResultContentRef> references; }
+		public class ContentNote { public string title, text; public List<APIResultContentRef> references; public Dictionary<string, Dictionary<string, object>> appData; }
 		public class ContentTag { public string title; public List<APIResultContentRef> references; }
 		// ReSharper restore All
 #pragma warning restore 0649
@@ -296,6 +296,7 @@ namespace AlephNote.Plugins.StandardNote
 				title = note.InternalTitle,
 				text = note.Text,
 				references = new List<APIResultContentRef>(),
+				appData = new Dictionary<string, Dictionary<string, object>>{ { "org.standardnotes.sn", new Dictionary<string, object> { { "pinned", note.IsPinned } } } },
 			};
 
 			foreach (var itertag in note.InternalTags.ToList())
@@ -379,6 +380,16 @@ namespace AlephNote.Plugins.StandardNote
 			try
 			{
 				var contentJson = StandardNoteCrypt.DecryptContent(encNote.content, encNote.enc_item_key, encNote.auth_hash, authToken.masterkey, authToken.masterauthkey);
+
+				Logger.Debug(
+					StandardNotePlugin.Name, 
+					$"DecryptContent of note {encNote.uuid:B}", 
+					$"[content]:\r\n{encNote.content}\r\n"+
+					$"[enc_item_key]:\r\n{encNote.enc_item_key}\r\n" +
+					$"[auth_hash]:\r\n{encNote.auth_hash}\r\n" +
+					$"\r\n\r\n" +
+					$"[contentJson]:\r\n{contentJson}\r\n");
+
 				content = web.ParseJsonWithoutConverter<ContentNote>(contentJson);
 			}
 			catch (Exception e)
@@ -392,6 +403,7 @@ namespace AlephNote.Plugins.StandardNote
 				InternalTitle = content.title,
 				AuthHash = encNote.auth_hash,
 				ContentVersion = StandardNoteCrypt.GetSchemaVersion(encNote.content),
+				IsPinned = GetAppDataBool(content.appData, "org.standardnotes.sn", "pinned", false),
 			};
 
 			var refTags = new List<StandardFileTag>();
@@ -441,6 +453,16 @@ namespace AlephNote.Plugins.StandardNote
 			try
 			{
 				var contentJson = StandardNoteCrypt.DecryptContent(encTag.content, encTag.enc_item_key, encTag.auth_hash, authToken.masterkey, authToken.masterauthkey);
+
+				Logger.Debug(
+					StandardNotePlugin.Name,
+					$"DecryptContent of tag {encTag.uuid:B}",
+					$"[content]:\r\n{encTag.content}\r\n" +
+					$"[enc_item_key]:\r\n{encTag.enc_item_key}\r\n" +
+					$"[auth_hash]:\r\n{encTag.auth_hash}\r\n" +
+					$"\r\n\r\n" +
+					$"[contentJson]:\r\n{contentJson}\r\n");
+
 				content = web.ParseJsonWithoutConverter<ContentTag>(contentJson);
 			}
 			catch (Exception e)
@@ -455,6 +477,19 @@ namespace AlephNote.Plugins.StandardNote
 				uuid = encTag.uuid,
 				enc_item_key = encTag.enc_item_key,
 			};
+		}
+
+		private static bool GetAppDataBool(Dictionary<string, Dictionary<string, object>> appData, string ns, string ident, bool defValue)
+		{
+			if (appData == null) return defValue;
+
+			if (!appData.TryGetValue(ns, out var values)) return defValue;
+
+			if (!values.TryGetValue(ident, out var value)) return defValue;
+
+			if (value is bool bvalue) return bvalue;
+
+			return XElementExtensions.TryParseBool(value?.ToString()) ?? defValue;
 		}
 	}
 }

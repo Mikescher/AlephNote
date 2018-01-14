@@ -17,9 +17,9 @@ namespace AlephNote.Common.MVVM
 			return new ProjectionComparer<TSource, TKey>(projection, invert);
 		}
 
-		public static ProjectionComparer<TSource, TKey> Create<TSource, TKey>(TSource ignored, Func<TSource, TKey> projection, bool invert = false)
+		public static ExtendedProjectionComparer<TSource, TKey> CreateExtended<TSource, TKey>(Func<TSource, TKey> projection, Func<TSource, bool> ispin, bool invert = false)
 		{
-			return new ProjectionComparer<TSource, TKey>(projection, invert);
+			return new ExtendedProjectionComparer<TSource, TKey>(projection, ispin, invert);
 		}
 
 	}
@@ -81,6 +81,51 @@ namespace AlephNote.Common.MVVM
 		public int Compare(object x, object y)
 		{
 			return Compare((TSource) x, (TSource) y);
+		}
+	}
+	public class ExtendedProjectionComparer<TSource, TKey> : IComparer<TSource>, IComparer
+	{
+		private readonly Func<TSource, TKey> _projection;
+		private readonly Func<TSource, bool> _priority;
+		private readonly IComparer<TKey> _comparer;
+		private readonly int _inverted;
+
+		public ExtendedProjectionComparer(Func<TSource, TKey> projection, Func<TSource, bool> priority, bool invert = false)
+		{
+			_comparer = Comparer<TKey>.Default;
+			_priority = priority;
+			_projection = projection;
+			_inverted = invert ? -1 : 1;
+		}
+
+		public int Compare(TSource x, TSource y)
+		{
+			// Don't want to project from nullity
+			if (x == null && y == null)
+			{
+				return 0;
+			}
+			if (x == null)
+			{
+				return -1 * _inverted;
+			}
+			if (y == null)
+			{
+				return 1 * _inverted;
+			}
+
+			var px = _priority(x);
+			var py = _priority(y);
+
+			if (px && !py) return -1;
+			if (!px && py) return +1;
+
+			return _comparer.Compare(_projection(x), _projection(y)) * _inverted;
+		}
+
+		public int Compare(object x, object y)
+		{
+			return Compare((TSource)x, (TSource)y);
 		}
 	}
 }

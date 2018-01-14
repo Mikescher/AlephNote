@@ -120,6 +120,8 @@ namespace AlephNote.PluginInterface.Util
 
 		public static bool? TryParseBool(string value)
 		{
+			if (value == null) return null;
+
 			if (value.ToLower() == "true") return true;
 			if (value.ToLower() == "false") return false;
 

@@ -40,14 +40,16 @@
 
 		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" >
 			<MenuItem Header="File">
-				<ctrl:AutoActionMenuItem Header="New Note" AlephAction="NewNote" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Header="New Note"                  AlephAction="NewNote"              Settings="{Binding Settings}"  />
 				<ctrl:AutoActionMenuItem Header="New Note (from clipboard)" AlephAction="NewNoteFromClipboard" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="New Note (from text file)" AlephAction="NewNoteFromTextFile" Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Header="New Note (from text file)" AlephAction="NewNoteFromTextFile"  Settings="{Binding Settings}" />
 				<Separator />
-				<ctrl:AutoActionMenuItem Header="Export Note" AlephAction="ExportNote" Settings="{Binding Settings}" />
-				<ctrl:AutoActionMenuItem Header="Delete Note" AlephAction="DeleteNote" Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Header="Duplicate Note"            AlephAction="DuplicateNote"        Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Header="Pin / Unpin Note"          AlephAction="PinUnpinNote"         Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Header="Export Note"               AlephAction="ExportNote"           Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Header="Delete Note"               AlephAction="DeleteNote"           Settings="{Binding Settings}" />
 				<Separator />
-				<ctrl:AutoActionMenuItem Header="Exit" AlephAction="AppExit" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Header="Exit"                      AlephAction="AppExit"              Settings="{Binding Settings}"  />
 			</MenuItem>
 			<MenuItem Header="Edit">
 				<ctrl:AutoActionMenuItem Header="Settings" AlephAction="ShowSettings" Settings="{Binding Settings}"  />

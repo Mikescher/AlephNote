@@ -29,6 +29,8 @@ namespace AlephNote.Plugins.Evernote
 		private readonly ObservableCollection<string> _tags = new VoidObservableCollection<string>();
 		public override ObservableCollection<string> Tags { get { return _tags; } }
 
+		public override bool IsPinned { get { return false; } set  { /* no */ } }
+
 		private int _updateSequenceNumber = 0;
 		public int UpdateSequenceNumber { get { return _updateSequenceNumber; } set { _updateSequenceNumber = value; OnPropertyChanged(); } }
 

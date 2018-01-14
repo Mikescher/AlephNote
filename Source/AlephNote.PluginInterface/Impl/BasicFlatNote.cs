@@ -78,7 +78,7 @@ namespace AlephNote.PluginInterface.Impl
 				OnExplicitPropertyChanged("Path");
 			}
 
-			if (e.PropertyName == "Text" || e.PropertyName == "Title" || e.PropertyName == "Path")
+			if (e.PropertyName == "Text" || e.PropertyName == "Title" || e.PropertyName == "Path" || e.PropertyName == "IsPinned")
 			{
 				SetDirty();
 				ModificationDate = DateTimeOffset.Now;
@@ -137,6 +137,7 @@ namespace AlephNote.PluginInterface.Impl
 
 		public abstract ObservableCollection<string> Tags { get; }
 		public abstract string Text { get; set; }
+		public abstract bool IsPinned { get; set; }
 		public abstract string InternalTitle { get; set; }
 		public abstract DateTimeOffset CreationDate { get; set; }
 		public abstract DateTimeOffset ModificationDate { get; set; }
@@ -167,6 +168,7 @@ namespace AlephNote.PluginInterface.Impl
 					OnExplicitPropertyChanged("Title");
 					OnExplicitPropertyChanged("Path");
 					OnExplicitPropertyChanged("Tags");
+					OnExplicitPropertyChanged("IsPinned");
 				}
 			}
 			else
@@ -175,6 +177,7 @@ namespace AlephNote.PluginInterface.Impl
 				OnExplicitPropertyChanged("Title");
 				OnExplicitPropertyChanged("Path");
 				OnExplicitPropertyChanged("Tags");
+				OnExplicitPropertyChanged("IsPinned");
 			}
 		}
 

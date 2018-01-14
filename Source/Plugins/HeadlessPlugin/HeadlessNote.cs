@@ -27,6 +27,9 @@ namespace AlephNote.Plugins.Headless
 		private DateTimeOffset _creationDate = DateTimeOffset.Now;
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
 
+		private bool _isPinned = false;
+		public override bool IsPinned { get { return _isPinned; } set { _isPinned = value; OnPropertyChanged(); } }
+
 		private readonly ObservableCollection<string> _tags = new ObservableCollection<string>();
 
 		public override ObservableCollection<string> Tags { get { return _tags; } }
@@ -52,6 +55,7 @@ namespace AlephNote.Plugins.Headless
 				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("CreationDate", CreationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("Path", Path.Serialize()),
+				new XElement("IsPinned", IsPinned),
 			};
 
 			var r = new XElement("localnote", data);
@@ -70,6 +74,7 @@ namespace AlephNote.Plugins.Headless
 			Tags.Synchronize(XHelper.GetChildValueStringList(input, "Tags", "Tag"));
 			CreationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 			ModificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
+			IsPinned = XHelper.GetChildValue(input, "IsPinned", false);
 		}
 
 		protected override BasicHierachicalNote CreateClone()
@@ -79,6 +84,7 @@ namespace AlephNote.Plugins.Headless
 			n._text = _text;
 			n._tags.Synchronize(_tags);
 			n._path = _path;
+			n._isPinned = _isPinned;
 			return n;
 		}
 
@@ -92,6 +98,7 @@ namespace AlephNote.Plugins.Headless
 				_text = other.Text;
 				_tags.Synchronize(other.Tags);
 				_path = other._path;
+				_isPinned = other._isPinned;
 			}
 		}
 

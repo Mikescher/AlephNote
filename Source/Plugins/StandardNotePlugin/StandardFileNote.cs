@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
-using System.Xml.Serialization;
 using AlephNote.PluginInterface.Impl;
 using AlephNote.PluginInterface.Util;
 
@@ -42,6 +41,9 @@ namespace AlephNote.Plugins.StandardNote
 		private readonly ObservableCollection<string> _tags = new ObservableCollection<string>();
 		public override ObservableCollection<string> Tags { get { return _tags; } }
 
+		private bool _isPinned = false;
+		public override bool IsPinned { get { return _isPinned; } set { _isPinned = value; OnPropertyChanged(); } }
+
 		private readonly ObservableCollection<StandardFileRef> _internalRef = new ObservableCollection<StandardFileRef>();
 		public ObservableCollection<StandardFileRef> InternalReferences { get { return _internalRef; } }
 
@@ -71,6 +73,7 @@ namespace AlephNote.Plugins.StandardNote
 				new XElement("ContentVersion", _contentVersion),
 				new XElement("AuthHash", _authHash),
 				new XElement("InternalReferences", _internalRef.Select(ir => new XElement("Ref", new XAttribute("Type", ir.Type), new XAttribute("UUID", ir.UUID.ToString("P").ToUpper())))),
+				new XElement("IsPinned", _isPinned),
 			};
 
 			var r = new XElement("standardnote", data);
@@ -94,6 +97,7 @@ namespace AlephNote.Plugins.StandardNote
 				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
 				_contentVersion = XHelper.GetChildValueStringOrDefault(input, "ContentVersion", "?");
 				_authHash = XHelper.GetChildValueStringOrDefault(input, "AuthHash", "?");
+				_isPinned = XHelper.GetChildValue(input, "IsPinned", false);
 
 				var intref = XHelper.GetChildOrNull(input, "InternalReferences")?.Elements("Ref").Select(x => new StandardFileRef {UUID = XHelper.GetAttributeGuid(x, "UUID"), Type = XHelper.GetAttributeString(x, "Type")}).ToList();
 				if (intref != null) _internalRef.Synchronize(intref);
@@ -164,6 +168,7 @@ namespace AlephNote.Plugins.StandardNote
 				_internalTags = other._internalTags;
 				ResyncTags();
 				_internalRef.Synchronize(other._internalRef);
+				_isPinned = other._isPinned;
 			}
 		}
 
@@ -182,6 +187,7 @@ namespace AlephNote.Plugins.StandardNote
 				_contentVersion = other.ContentVersion;
 				_authHash = other.AuthHash;
 				_internalRef.Synchronize(other._internalRef);
+				_isPinned = other._isPinned;
 			}
 		}
 
@@ -192,6 +198,7 @@ namespace AlephNote.Plugins.StandardNote
 			if (!new HashSet<StandardFileTag>(_internalTags).SetEquals(other._internalTags)) return false;
 			if (_text != other._text) return false;
 			if (_internaltitle != other._internaltitle) return false;
+			if (_isPinned != other._isPinned) return false;
 
 			return true;
 		}
@@ -209,6 +216,7 @@ namespace AlephNote.Plugins.StandardNote
 			n._contentVersion   = _contentVersion;
 			n._authHash         = _authHash;
 			n._internalRef.Synchronize(_internalRef);
+			n._isPinned         = _isPinned;
 			return n;
 		}
 	}

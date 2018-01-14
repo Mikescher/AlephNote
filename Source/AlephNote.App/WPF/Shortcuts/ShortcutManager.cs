@@ -35,6 +35,8 @@ namespace AlephNote.WPF.Shortcuts
 			AddCommand("AddFolder",            vm => vm.AddFolderCommand,                  "Add a new folder");
 			AddCommand("RenameFolder",         vm => vm.RenameFolderCommand,               "Rename currently selected folder");
 			AddCommand("ChangeNotePath",       vm => vm.ChangePathCommand,                 "Change the path of the currently selected note");
+			AddCommand("DuplicateNote",        vm => vm.DuplicateNoteCommand,              "Create a new note as a copy of the current note");
+			AddCommand("PinUnpinNote",         vm => vm.PinUnpinNoteCommand,               "Pin the note to the top (or un-pin the note)");
 
 			AddCommand("SaveAndSync",          vm => vm.SaveAndSyncCommand,                "Save current note and synchronize");
 			AddCommand("Resync",               vm => vm.ResyncCommand,                     "Start synchronization with remote");

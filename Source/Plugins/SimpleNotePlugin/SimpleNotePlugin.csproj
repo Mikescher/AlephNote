@@ -6,8 +6,8 @@
     <AssemblyName>SimpleNotePlugin</AssemblyName>
     <PackageId>SimpleNotePlugin</PackageId>
     
-    <AssemblyVersion>1.1.9.0</AssemblyVersion>
-    <FileVersion>1.1.9.0</FileVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
 
     <OutDir>..\..\..\Bin\$(Configuration)\$(TargetFramework)\Plugins\</OutDir>
 

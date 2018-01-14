@@ -36,6 +36,8 @@ namespace AlephNote.Plugins.Filesystem
 		private readonly ObservableCollection<string> _tags = new VoidObservableCollection<string>();
 		public override ObservableCollection<string> Tags { get { return _tags; } }
 
+		public override bool IsPinned { get { return false; } set { /* no */ } }
+
 		private readonly FilesystemConfig _config;
 
 		public FilesystemNote(Guid uid, FilesystemConfig cfg)

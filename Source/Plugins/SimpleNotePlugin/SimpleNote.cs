@@ -24,7 +24,17 @@ namespace AlephNote.Plugins.SimpleNote
 		public string PublicURL { get { return _publicURL; } set { _publicURL = value; OnPropertyChanged(); } }
 
 		private List<string> _systemTags = new List<string>();
-		public List<string> SystemTags { get { return _systemTags; } set { _systemTags = value; OnPropertyChanged(); } }
+		public List<string> SystemTags { get { return _systemTags; } set { _systemTags = value; OnPropertyChanged(); OnPropertyChanged("IsPinned"); } }
+
+		public override bool IsPinned
+		{
+			get { return _systemTags.Contains("pinned"); }
+			set
+			{
+				if (value && ! _systemTags.Contains("pinned")) { _systemTags.Add("pinned"); OnPropertyChanged(); }
+				else if (!value && _systemTags.Contains("pinned")) { _systemTags.Remove("pinned"); OnPropertyChanged(); }
+			}
+		}
 
 		private string _content = "";
 		public string Content { get { return _content; } set { _content = value; OnPropertyChanged(); } }
@@ -147,7 +157,7 @@ namespace AlephNote.Plugins.SimpleNote
 				new XElement("Deleted", _deleted),
 				new XElement("ShareURL", _shareURL),
 				new XElement("PublishURL", _publicURL),
-				new XElement("SystemTags", Tags.Select(p => new XElement("Tag", p)).Cast<object>().ToArray()),
+				new XElement("SystemTags", SystemTags.Select(p => new XElement("STag", p)).Cast<object>().ToArray()),
 				new XElement("Content", XHelper.ConvertToC80Base64(_content)),
 				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
 				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
@@ -170,7 +180,7 @@ namespace AlephNote.Plugins.SimpleNote
 				_deleted = XHelper.GetChildValueBool(input, "Deleted");
 				_shareURL = XHelper.GetChildValueString(input, "ShareURL");
 				_publicURL = XHelper.GetChildValueString(input, "PublishURL");
-				_systemTags = XHelper.GetChildValueStringList(input, "SystemTags", "Tag");
+				_systemTags = XHelper.GetChildValueStringList(input, "SystemTags", "STag");
 				_content = XHelper.GetChildBase64String(input, "Content");
 				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");

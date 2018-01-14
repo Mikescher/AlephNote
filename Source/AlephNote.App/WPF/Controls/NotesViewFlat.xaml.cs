@@ -127,22 +127,13 @@ namespace AlephNote.WPF.Controls
 
 				var source = (ListCollectionView)CollectionViewSource.GetDefaultView(AllNotes);
 				source.Filter = p => SearchFilter((INote)p);
-				if (Settings.NoteSorting != SortingMode.None) source.CustomSort = (IComparer)Settings.GetNoteComparator();
+				source.CustomSort = (IComparer)Settings.GetNoteComparator();
 
 				return source;
 			}
 		}
 
-		public List<INote> NotesViewManual
-		{
-			get
-			{
-				if (Settings.NoteSorting != SortingMode.None)
-					return AllNotes.Where(SearchFilter).OrderBy(x => x, Settings.GetNoteComparator()).ToList();
-				else
-					return AllNotes.Where(SearchFilter).ToList();
-			}
-		}
+		public List<INote> NotesViewManual => AllNotes.Where(SearchFilter).OrderBy(x => x, Settings.GetNoteComparator()).ToList();
 
 		public NotesViewFlat()
 		{

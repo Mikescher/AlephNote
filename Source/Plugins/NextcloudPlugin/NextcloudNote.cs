@@ -31,6 +31,8 @@ namespace AlephNote.Plugins.Nextcloud
 		private DirectoryPath _path = DirectoryPath.Root();
 		public override DirectoryPath Path { get { return _path; } set { _path = value; OnPropertyChanged(); } }
 
+		public override bool IsPinned { get { return false; } set { /* no */ } }
+
 		private int _remoteTimestamp = -1;
 		public int RemoteTimestamp { get { return _remoteTimestamp; } set { _remoteTimestamp = value; OnPropertyChanged(); } }
 

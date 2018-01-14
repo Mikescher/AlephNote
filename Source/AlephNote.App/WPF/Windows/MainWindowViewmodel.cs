@@ -57,6 +57,8 @@ namespace AlephNote.WPF.Windows
 		public ICommand FocusNotesListCommand { get { return new RelayCommand(() => Owner.NotesViewControl.FocusNotesList()); } }
 		public ICommand FocusGlobalSearchCommand { get { return new RelayCommand(() => Owner.FocusGlobalSearch()); } }
 		public ICommand FocusFolderCommand { get { return new RelayCommand(() => Owner.NotesViewControl.FocusFolderList()); } }
+		public ICommand DuplicateNoteCommand { get { return new RelayCommand(DuplicateNote); } }
+		public ICommand PinUnpinNoteCommand { get { return new RelayCommand(PinUnpinNote); } }
 
 		public ICommand ClosingEvent { get { return new RelayCommand<CancelEventArgs>(OnClosing); } }
 		public ICommand CloseEvent { get { return new RelayCommand<EventArgs>(OnClose); } }
@@ -199,12 +201,13 @@ namespace AlephNote.WPF.Windows
 			{
 				var sw = Stopwatch.StartNew();
 
-				var reconnectRepo = false;
-				if (!Settings.ActiveAccount.IsEqual(newSettings.ActiveAccount)) reconnectRepo = true;
-				if (Settings.EmulateHierachicalStructure != newSettings.EmulateHierachicalStructure) reconnectRepo = true;
-				if (Settings.HStructureSeperator != newSettings.HStructureSeperator) reconnectRepo = true;
-				if (Settings.UseHierachicalNoteStructure != newSettings.UseHierachicalNoteStructure) reconnectRepo = true;
-				var refreshNotesView = (Settings.UseHierachicalNoteStructure != newSettings.UseHierachicalNoteStructure);
+				var reconnectRepo = 
+					(!Settings.ActiveAccount.IsEqual(newSettings.ActiveAccount)) ||
+					(Settings.EmulateHierachicalStructure != newSettings.EmulateHierachicalStructure) ||
+					(Settings.HStructureSeperator != newSettings.HStructureSeperator) ||
+					(Settings.UseHierachicalNoteStructure != newSettings.UseHierachicalNoteStructure);
+				var refreshNotesViewTemplate = (Settings.UseHierachicalNoteStructure != newSettings.UseHierachicalNoteStructure);
+				var refreshNotesCtrlView = (Settings.NoteSorting != newSettings.NoteSorting) || (Settings.SortByPinned != newSettings.SortByPinned);
 
 				if (reconnectRepo)
 				{
@@ -233,7 +236,6 @@ namespace AlephNote.WPF.Windows
 					OnExplicitPropertyChanged("Repository");
 
 					SelectedNote = Repository.Notes.FirstOrDefault();
-					OnExplicitPropertyChanged("NotesView");
 				}
 				else
 				{
@@ -253,11 +255,10 @@ namespace AlephNote.WPF.Windows
 					if (registryKey?.GetValue(string.Format(App.APPNAME_REG, Settings.ClientID)) != null) registryKey.DeleteValue(string.Format(App.APPNAME_REG, Settings.ClientID));
 				}
 
-				if (refreshNotesView)
-				{
-					// refresh Template
-					Owner.UpdateNotesViewComponent(Settings);
-				}
+				// refresh Template
+				if (refreshNotesViewTemplate) Owner.UpdateNotesViewComponent(Settings);
+
+				if (refreshNotesCtrlView)  Owner.NotesViewControl.RefreshView();
 
 				Owner.SetupScintilla(Settings);
 				Owner.UpdateShortcuts(Settings);
@@ -345,6 +346,12 @@ namespace AlephNote.WPF.Windows
 			}
 
 			if (Settings.UseHierachicalNoteStructure && e.PropertyName == "Path")
+			{
+				Owner.NotesViewControl.RefreshView();
+				return;
+			}
+
+			if (Settings.SortByPinned && e.PropertyName == "IsPinned")
 			{
 				Owner.NotesViewControl.RefreshView();
 				return;
@@ -961,6 +968,32 @@ namespace AlephNote.WPF.Windows
 			if (!Settings.UseHierachicalNoteStructure) return;
 
 			Owner.ShowMoveFolderPopup();
+		}
+
+		private void DuplicateNote()
+		{
+			if (SelectedNote == null) return;
+
+			if (Owner.Visibility == Visibility.Hidden) ShowMainWindow();
+
+			var title = SelectedNote.Title;
+			var path = SelectedNote.Path;
+			var text = SelectedNote.Text;
+			var tags = SelectedNote.Tags.ToList();
+
+			SelectedNote = Repository.CreateNewNote(path);
+
+			SelectedNote.Title = title;
+			SelectedNote.Text = text;
+			SelectedNote.Tags.SynchronizeCollection(tags);
+		}
+
+		private void PinUnpinNote()
+		{
+			if (SelectedNote == null) return;
+
+			SelectedNote.IsPinned = !SelectedNote.IsPinned;
+
 		}
 	}
 }

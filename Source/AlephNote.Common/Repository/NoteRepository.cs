@@ -199,6 +199,8 @@ namespace AlephNote.Common.Repository
 
 						if (roundtrip.Text != note.Text) throw new Exception("a.Text != b.Text");
 						if (roundtrip.Title != note.Title) throw new Exception("a.Title != b.Title");
+						if (roundtrip.IsPinned != note.IsPinned) throw new Exception("a.IsPinned != b.IsPinned");
+						if (!roundtrip.Path.Equals(note.Path)) throw new Exception("a.Path != b.Path");
 					}
 
 					File.Copy(tempPath, path, true);
