@@ -2,144 +2,117 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using AlephNote.PluginInterface.Objects.AXML;
 
 namespace AlephNote.PluginInterface.Util
 {
 	/// <summary>
 	/// http://stackoverflow.com/a/10366194/1761622
 	/// https://gist.github.com/jbtule/4336842#file-aesthenhmac-cs
+	/// https://github.com/Mikescher/Passpad
 	/// </summary>
 	public static class AESThenHMAC
 	{
-		private static readonly RandomNumberGenerator _random = RandomNumberGenerator.Create();
-
 		//Preconfigured Encryption Parameters
 		private const int BlockBitSize = 128;
 		private const int KeyBitSize = 256;
 
 		//Preconfigured Password Key Derivation Parameters
 		private const int SaltBitSize = 64;
-		private const int Iterations = 10000;
-		private const int MinPasswordLength = 12;
+		private const int Iterations_v1 = 10000;
 
-		/// <summary>
-		/// Helper that generates a random key on each call.
-		/// </summary>
-		/// <returns></returns>
-		public static byte[] NewKey()
+		private const int AES_IV_SIZE = 16;
+		private const int AES_KEY_SIZE = 32;
+
+		private static readonly byte[] AES_SALT =  // same as PassPad
 		{
-			var key = new byte[KeyBitSize / 8];
-			_random.GetBytes(key);
-			return key;
+			0xEF, 0x03, 0x33, 0xC4, 0xEB, 0x4A, 0x06, 0x51,
+			0x01, 0x17, 0xF8, 0x2E, 0xB4, 0x28, 0x60, 0x33,
+			0x06, 0x1E, 0xBC, 0xF2, 0x38, 0x36, 0x62, 0x27,
+			0x24, 0x65, 0x72, 0x06, 0xFE, 0xAD, 0x9C, 0xB6,
+		};
+
+		private static byte[] EncodeBytes(byte[] data, string password)
+		{
+			using (var aes = Aes.Create())
+			{
+				if (aes == null) throw new Exception("AES instantiation failed");
+
+				var key = HashPassword(password, AES_KEY_SIZE);
+				var iv = new byte[AES_IV_SIZE];
+
+				aes.KeySize = KeyBitSize;
+				aes.BlockSize = BlockBitSize;
+				aes.Mode = CipherMode.CBC;
+				aes.Padding = PaddingMode.PKCS7;
+
+				aes.Key = key;
+				aes.IV = iv;
+
+				var encryptor = aes.CreateEncryptor(key, iv);
+				using (var msEncrypt = new MemoryStream())
+				{
+					using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+					using (var swEncrypt = new BinaryWriter(csEncrypt))
+					{
+						swEncrypt.Write(data);
+					}
+
+					return msEncrypt.ToArray();
+				}
+			}
 		}
 
-		/// <summary>
-		/// Simple Encryption (AES) then Authentication (HMAC) for a UTF8 Message.
-		/// </summary>
-		/// <param name="secretMessage">The secret message.</param>
-		/// <param name="cryptKey">The crypt key.</param>
-		/// <param name="authKey">The auth key.</param>
-		/// <param name="nonSecretPayload">(Optional) Non-Secret Payload.</param>
-		/// <returns>
-		/// Encrypted Message
-		/// </returns>
-		/// <exception cref="System.ArgumentException">Secret Message Required!;secretMessage</exception>
-		/// <remarks>
-		/// Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize +  HMac-Tag(32)) * 1.33 Base64
-		/// </remarks>
-		public static string SimpleEncrypt(string secretMessage, byte[] cryptKey, byte[] authKey, byte[] nonSecretPayload = null)
+		private static byte[] DecodeBytes(byte[] data, string password)
 		{
-			if (string.IsNullOrEmpty(secretMessage))
-				throw new ArgumentException("Secret Message Required!", "secretMessage");
+			using (var aes = Aes.Create())
+			{
+				if (aes == null) throw new Exception("AES instantiation failed");
 
-			var plainText = Encoding.UTF8.GetBytes(secretMessage);
-			var cipherText = SimpleEncrypt(plainText, cryptKey, authKey, nonSecretPayload);
-			return Convert.ToBase64String(cipherText);
+				var key = HashPassword(password, AES_KEY_SIZE);
+				var iv = new byte[AES_IV_SIZE];
+
+				aes.KeySize = KeyBitSize;
+				aes.BlockSize = BlockBitSize;
+				aes.Mode = CipherMode.CBC;
+				aes.Padding = PaddingMode.PKCS7;
+
+				aes.Key = key;
+				aes.IV = iv;
+
+				var decryptor = aes.CreateDecryptor(key, iv);
+				using (var msDecrypt = new MemoryStream(data))
+				using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+				{
+					return ReadToEnd(csDecrypt);
+				}
+
+			}
 		}
 
-		/// <summary>
-		/// Simple Authentication (HMAC) then Decryption (AES) for a secrets UTF8 Message.
-		/// </summary>
-		/// <param name="encryptedMessage">The encrypted message.</param>
-		/// <param name="cryptKey">The crypt key.</param>
-		/// <param name="authKey">The auth key.</param>
-		/// <param name="nonSecretPayloadLength">Length of the non secret payload.</param>
-		/// <returns>
-		/// Decrypted Message
-		/// </returns>
-		/// <exception cref="System.ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
-		public static string SimpleDecrypt(string encryptedMessage, byte[] cryptKey, byte[] authKey, int nonSecretPayloadLength = 0)
+		private static byte[] HashPassword(string password, int size)
 		{
-			if (string.IsNullOrWhiteSpace(encryptedMessage))
-				throw new ArgumentException("Encrypted Message Required!", "encryptedMessage");
-
-			var cipherText = Convert.FromBase64String(encryptedMessage);
-			var plainText = SimpleDecrypt(cipherText, cryptKey, authKey, nonSecretPayloadLength);
-			return plainText == null ? null : Encoding.UTF8.GetString(plainText);
+			using (var rfc2898 = new Rfc2898DeriveBytes(Encoding.UTF8.GetBytes(password), AES_SALT, 1))
+			{
+				return rfc2898.GetBytes(size);
+			}
 		}
 
-		/// <summary>
-		/// Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message
-		/// using Keys derived from a Password (PBKDF2).
-		/// </summary>
-		/// <param name="secretMessage">The secret message.</param>
-		/// <param name="password">The password.</param>
-		/// <param name="nonSecretPayload">The non secret payload.</param>
-		/// <returns>
-		/// Encrypted Message
-		/// </returns>
-		/// <exception cref="System.ArgumentException">password</exception>
-		/// <remarks>
-		/// Significantly less secure than using random binary keys.
-		/// Adds additional non secret payload for key generation parameters.
-		/// </remarks>
-		public static string SimpleEncryptWithPassword(string secretMessage, string password, byte[] nonSecretPayload = null)
+		private static byte[] ReadToEnd(Stream stream)
 		{
-			if (string.IsNullOrEmpty(secretMessage))
-				throw new ArgumentException("Secret Message Required!", "secretMessage");
-
-			var plainText = Encoding.UTF8.GetBytes(secretMessage);
-			var cipherText = SimpleEncryptWithPassword(plainText, password, nonSecretPayload);
-			return Convert.ToBase64String(cipherText);
+			byte[] buffer = new byte[32768];
+			using (MemoryStream ms = new MemoryStream())
+			{
+				for (; ; )
+				{
+					int read = stream.Read(buffer, 0, buffer.Length);
+					if (read <= 0)
+						return ms.ToArray();
+					ms.Write(buffer, 0, read);
+				}
+			}
 		}
-
-		/// <summary>
-		/// Simple Authentication (HMAC) and then Descryption (AES) of a UTF8 Message
-		/// using keys derived from a password (PBKDF2). 
-		/// </summary>
-		/// <param name="encryptedMessage">The encrypted message.</param>
-		/// <param name="password">The password.</param>
-		/// <param name="nonSecretPayloadLength">Length of the non secret payload.</param>
-		/// <returns>
-		/// Decrypted Message
-		/// </returns>
-		/// <exception cref="System.ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
-		/// <remarks>
-		/// Significantly less secure than using random binary keys.
-		/// </remarks>
-		public static string SimpleDecryptWithPassword(string encryptedMessage, string password, int nonSecretPayloadLength = 0)
-		{
-			if (string.IsNullOrWhiteSpace(encryptedMessage))
-				throw new ArgumentException("Encrypted Message Required!", "encryptedMessage");
-
-			var cipherText = Convert.FromBase64String(encryptedMessage);
-			var plainText = SimpleDecryptWithPassword(cipherText, password, nonSecretPayloadLength);
-			return plainText == null ? null : Encoding.UTF8.GetString(plainText);
-		}
-
-		/// <summary>
-		/// Simple Encryption(AES) then Authentication (HMAC) for a UTF8 Message.
-		/// </summary>
-		/// <param name="secretMessage">The secret message.</param>
-		/// <param name="cryptKey">The crypt key.</param>
-		/// <param name="authKey">The auth key.</param>
-		/// <param name="nonSecretPayload">(Optional) Non-Secret Payload.</param>
-		/// <returns>
-		/// Encrypted Message
-		/// </returns>
-		/// <remarks>
-		/// Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize +  HMac-Tag(32)) * 1.33 Base64
-		/// </remarks>
+		
 		private static byte[] SimpleEncrypt(byte[] secretMessage, byte[] cryptKey, byte[] authKey, byte[] nonSecretPayload = null)
 		{
 			//User Error Checks
@@ -209,15 +182,7 @@ namespace AlephNote.PluginInterface.Util
 			}
 
 		}
-
-		/// <summary>
-		/// Simple Authentication (HMAC) then Decryption (AES) for a secrets UTF8 Message.
-		/// </summary>
-		/// <param name="encryptedMessage">The encrypted message.</param>
-		/// <param name="cryptKey">The crypt key.</param>
-		/// <param name="authKey">The auth key.</param>
-		/// <param name="nonSecretPayloadLength">Length of the non secret payload.</param>
-		/// <returns>Decrypted Message</returns>
+		
 		private static byte[] SimpleDecrypt(byte[] encryptedMessage, byte[] cryptKey, byte[] authKey, int nonSecretPayloadLength = 0)
 		{
 
@@ -286,114 +251,65 @@ namespace AlephNote.PluginInterface.Util
 				}
 			}
 		}
-
-		/// <summary>
-		/// Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message
-		/// using Keys derived from a Password (PBKDF2)
-		/// </summary>
-		/// <param name="secretMessage">The secret message.</param>
-		/// <param name="password">The password.</param>
-		/// <param name="nonSecretPayload">The non secret payload.</param>
-		/// <returns>
-		/// Encrypted Message
-		/// </returns>
-		/// <exception cref="System.ArgumentException">Must have a password of minimum length;password</exception>
-		/// <remarks>
-		/// Significantly less secure than using random binary keys.
-		/// Adds additional non secret payload for key generation parameters.
-		/// </remarks>
-		public static byte[] SimpleEncryptWithPassword(byte[] secretMessage, string password, byte[] nonSecretPayload = null)
+		
+		public static string SimpleEncryptWithPassword(string secretMessage, string password, AXMLSerializationSettings opt)
 		{
-			nonSecretPayload = nonSecretPayload ?? new byte[] { };
+			if ((opt & AXMLSerializationSettings.UseEncryption) == 0) return secretMessage;
+			if (string.IsNullOrWhiteSpace(secretMessage)) return string.Empty;
 
-			//User Error Checks
-			if (string.IsNullOrWhiteSpace(password) || password.Length < MinPasswordLength)
-				throw new ArgumentException(String.Format("Must have a password of at least {0} characters!", MinPasswordLength), "password");
+			var encbytes = EncodeBytes(Encoding.UTF32.GetBytes(secretMessage), password);
 
-			if (secretMessage == null || secretMessage.Length == 0)
-				throw new ArgumentException("Secret Message Required!", "secretMessage");
-
-			var payload = new byte[((SaltBitSize / 8) * 2) + nonSecretPayload.Length];
-
-			Array.Copy(nonSecretPayload, payload, nonSecretPayload.Length);
-			int payloadIndex = nonSecretPayload.Length;
-
-			byte[] cryptKey;
-			byte[] authKey;
-			//Use Random Salt to prevent pre-generated weak password attacks.
-			using (var generator = new Rfc2898DeriveBytes(password, SaltBitSize / 8, Iterations))
-			{
-				var salt = generator.Salt;
-
-				//Generate Keys
-				cryptKey = generator.GetBytes(KeyBitSize / 8);
-
-				//Create Non Secret Payload
-				Array.Copy(salt, 0, payload, payloadIndex, salt.Length);
-				payloadIndex += salt.Length;
-			}
-
-			//Deriving separate key, might be less efficient than using HKDF, 
-			//but now compatible with RNEncryptor which had a very similar wireformat and requires less code than HKDF.
-			using (var generator = new Rfc2898DeriveBytes(password, SaltBitSize / 8, Iterations))
-			{
-				var salt = generator.Salt;
-
-				//Generate Keys
-				authKey = generator.GetBytes(KeyBitSize / 8);
-
-				//Create Rest of Non Secret Payload
-				Array.Copy(salt, 0, payload, payloadIndex, salt.Length);
-			}
-
-			return SimpleEncrypt(secretMessage, cryptKey, authKey, payload);
+			return ":02:"+Convert.ToBase64String(encbytes);
 		}
-
-		/// <summary>
-		/// Simple Authentication (HMAC) and then Descryption (AES) of a UTF8 Message
-		/// using keys derived from a password (PBKDF2). 
-		/// </summary>
-		/// <param name="encryptedMessage">The encrypted message.</param>
-		/// <param name="password">The password.</param>
-		/// <param name="nonSecretPayloadLength">Length of the non secret payload.</param>
-		/// <returns>
-		/// Decrypted Message
-		/// </returns>
-		/// <exception cref="System.ArgumentException">Must have a password of minimum length;password</exception>
-		/// <remarks>
-		/// Significantly less secure than using random binary keys.
-		/// </remarks>
-		public static byte[] SimpleDecryptWithPassword(byte[] encryptedMessage, string password, int nonSecretPayloadLength = 0)
+		
+		public static string SimpleDecryptWithPassword(string encryptedMessageStr, string password, AXMLSerializationSettings opt)
 		{
-			//User Error Checks
-			if (string.IsNullOrWhiteSpace(password) || password.Length < MinPasswordLength)
-				throw new ArgumentException(String.Format("Must have a password of at least {0} characters!", MinPasswordLength), "password");
+			if ((opt & AXMLSerializationSettings.UseEncryption) == 0) return encryptedMessageStr;
+			if (string.IsNullOrWhiteSpace(encryptedMessageStr)) return string.Empty;
 
-			if (encryptedMessage == null || encryptedMessage.Length == 0)
-				throw new ArgumentException("Encrypted Message Required!", "encryptedMessage");
-
-			var cryptSalt = new byte[SaltBitSize / 8];
-			var authSalt = new byte[SaltBitSize / 8];
-
-			//Grab Salt from Non-Secret Payload
-			Array.Copy(encryptedMessage, nonSecretPayloadLength, cryptSalt, 0, cryptSalt.Length);
-			Array.Copy(encryptedMessage, nonSecretPayloadLength + cryptSalt.Length, authSalt, 0, authSalt.Length);
-
-			byte[] cryptKey;
-			byte[] authKey;
-
-			//Generate crypt key
-			using (var generator = new Rfc2898DeriveBytes(password, cryptSalt, Iterations))
+			if (!encryptedMessageStr.StartsWith(":"))
 			{
-				cryptKey = generator.GetBytes(KeyBitSize / 8);
+				// VERSION 1
+				var encryptedMessage = Convert.FromBase64String(encryptedMessageStr);
+
+				var cryptSalt = new byte[SaltBitSize / 8];
+				var authSalt = new byte[SaltBitSize / 8];
+
+				//Grab Salt from Non-Secret Payload
+				Array.Copy(encryptedMessage, 0, cryptSalt, 0, cryptSalt.Length);
+				Array.Copy(encryptedMessage, 0 + cryptSalt.Length, authSalt, 0, authSalt.Length);
+
+				byte[] cryptKey;
+				byte[] authKey;
+
+				//Generate crypt key
+				using (var generator = new Rfc2898DeriveBytes(password, cryptSalt, Iterations_v1))
+				{
+					cryptKey = generator.GetBytes(KeyBitSize / 8);
+				}
+				//Generate auth key
+				using (var generator = new Rfc2898DeriveBytes(password, authSalt, Iterations_v1))
+				{
+					authKey = generator.GetBytes(KeyBitSize / 8);
+				}
+
+				return Encoding.UTF32.GetString(SimpleDecrypt(encryptedMessage, cryptKey, authKey, cryptSalt.Length + authSalt.Length + 0));
 			}
-			//Generate auth key
-			using (var generator = new Rfc2898DeriveBytes(password, authSalt, Iterations))
+			else if (encryptedMessageStr.StartsWith(":02:"))
 			{
-				authKey = generator.GetBytes(KeyBitSize / 8);
+				// VERSION 2
+				encryptedMessageStr = encryptedMessageStr.Substring(4);
+
+				var encbytes = Convert.FromBase64String(encryptedMessageStr);
+				var rawbytes = DecodeBytes(encbytes, password);
+
+				return Encoding.UTF32.GetString(rawbytes);
+			}
+			else
+			{
+				throw new ArgumentException("Unknown encryption version: " + encryptedMessageStr, nameof(encryptedMessageStr));
 			}
 
-			return SimpleDecrypt(encryptedMessage, cryptKey, authKey, cryptSalt.Length + authSalt.Length + nonSecretPayloadLength);
 		}
 
 	}

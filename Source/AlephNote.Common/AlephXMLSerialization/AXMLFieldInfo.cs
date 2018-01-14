@@ -69,10 +69,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 					break;
 
 				case SettingObjectTypeEnum.EncryptedString:
-					if ((opt & AXMLSerializationSettings.UseEncryption) != 0)
-						resultdata = AlephXMLSerializerHelper.Encrypt((string)objdata);
-					else
-						resultdata = (string)objdata; // Omit encryption
+					resultdata = AlephXMLSerializerHelper.Encrypt((string)objdata, opt);
 					break;
 
 				case SettingObjectTypeEnum.String:
@@ -143,10 +140,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 					return;
 
 				case SettingObjectTypeEnum.EncryptedString:
-					if ((opt & AXMLSerializationSettings.UseEncryption) != 0)
-						PropInfo.SetValue(obj, AlephXMLSerializerHelper.Decrypt(XHelper.GetChildValue(root, PropInfo.Name, AlephXMLSerializerHelper.Encrypt((string)current))));
-					else
-						PropInfo.SetValue(obj, XHelper.GetChildValue(root, PropInfo.Name, (string)current));
+					PropInfo.SetValue(obj, AlephXMLSerializerHelper.Decrypt(XHelper.GetChildValue(root, PropInfo.Name, AlephXMLSerializerHelper.Encrypt((string)current, opt)), opt));
 					return;
 
 				case SettingObjectTypeEnum.String:

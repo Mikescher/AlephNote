@@ -1,24 +1,19 @@
-﻿using System;
-using System.Text;
-using AlephNote.Common.Settings;
+﻿using AlephNote.Common.Settings;
+using AlephNote.PluginInterface.Objects.AXML;
 using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Common.AlephXMLSerialization
 {
 	public static class AlephXMLSerializerHelper
 	{
-		public static string Encrypt(string data)
+		public static string Encrypt(string data, AXMLSerializationSettings opt)
 		{
-			if (string.IsNullOrWhiteSpace(data)) return string.Empty;
-
-			return Convert.ToBase64String(AESThenHMAC.SimpleEncryptWithPassword(Encoding.UTF32.GetBytes(data), AppSettings.ENCRYPTION_KEY));
+			return AESThenHMAC.SimpleEncryptWithPassword(data, AppSettings.ENCRYPTION_KEY, opt);
 		}
 
-		public static string Decrypt(string data)
+		public static string Decrypt(string data, AXMLSerializationSettings opt)
 		{
-			if (string.IsNullOrWhiteSpace(data)) return string.Empty;
-
-			return Encoding.UTF32.GetString(AESThenHMAC.SimpleDecryptWithPassword(Convert.FromBase64String(data), AppSettings.ENCRYPTION_KEY));
+			return AESThenHMAC.SimpleDecryptWithPassword(data, AppSettings.ENCRYPTION_KEY, opt);
 		}
 	}
 }

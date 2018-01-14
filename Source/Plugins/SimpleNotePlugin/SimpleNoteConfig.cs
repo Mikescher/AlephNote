@@ -101,18 +101,12 @@ namespace AlephNote.Plugins.SimpleNote
 
 		private string Encrypt(string data, AXMLSerializationSettings opt)
 		{
-			if ((opt & AXMLSerializationSettings.UseEncryption) == 0) return data;
-
-			if (string.IsNullOrWhiteSpace(data)) return string.Empty;
-			return Convert.ToBase64String(AESThenHMAC.SimpleEncryptWithPassword(Encoding.UTF32.GetBytes(data), ENCRYPTION_KEY));
+			return AESThenHMAC.SimpleEncryptWithPassword(data, ENCRYPTION_KEY, opt);
 		}
 
 		private string Decrypt(string data, AXMLSerializationSettings opt)
 		{
-			if ((opt & AXMLSerializationSettings.UseEncryption) == 0) return data;
-
-			if (string.IsNullOrWhiteSpace(data)) return string.Empty;
-			return Encoding.UTF32.GetString(AESThenHMAC.SimpleDecryptWithPassword(Convert.FromBase64String(data), ENCRYPTION_KEY));
+			return AESThenHMAC.SimpleDecryptWithPassword(data, ENCRYPTION_KEY, opt);
 		}
 
 		public string GetDisplayIdentifier()
