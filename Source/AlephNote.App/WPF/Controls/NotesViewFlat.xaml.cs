@@ -133,6 +133,17 @@ namespace AlephNote.WPF.Controls
 			}
 		}
 
+		public List<INote> NotesViewManual
+		{
+			get
+			{
+				if (Settings.NoteSorting != SortingMode.None)
+					return AllNotes.Where(SearchFilter).OrderBy(x => x, Settings.GetNoteComparator()).ToList();
+				else
+					return AllNotes.Where(SearchFilter).ToList();
+			}
+		}
+
 		public NotesViewFlat()
 		{
 			App.Logger.Trace("NotesViewFlat", ".ctr()");
@@ -226,7 +237,7 @@ namespace AlephNote.WPF.Controls
 
 		public IEnumerable<INote> EnumerateVisibleNotes()
 		{
-			return NotesView.OfType<INote>();
+			return NotesViewManual;
 		}
 
 		public void SetShortcuts(MainWindow mw, List<KeyValuePair<string, ShortcutDefinition>> shortcuts)

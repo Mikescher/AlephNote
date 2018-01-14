@@ -457,7 +457,10 @@ namespace AlephNote.WPF.Windows
 			
 				bool found = false;
 				if (viewmodel.SelectedNote == null) found = true;
-				foreach (var note in Enumerable.Concat(NotesViewControl.EnumerateVisibleNotes(), NotesViewControl.EnumerateVisibleNotes()))
+
+				var visible = NotesViewControl.EnumerateVisibleNotes().ToList();
+
+				foreach (var note in Enumerable.Concat(visible, visible))
 				{
 					if (found)
 					{
