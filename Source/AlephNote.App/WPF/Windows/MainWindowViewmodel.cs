@@ -981,6 +981,11 @@ namespace AlephNote.WPF.Windows
 			var text = SelectedNote.Text;
 			var tags = SelectedNote.Tags.ToList();
 
+			var ntitle = title + " (copy)";
+			int i = 2;
+			while (Repository.Notes.Any(n => n.Title.ToLower() == ntitle.ToLower())) ntitle = title + " (copy-" + (i++) + ")";
+			title = ntitle;
+
 			SelectedNote = Repository.CreateNewNote(path);
 
 			SelectedNote.Title = title;
