@@ -148,7 +148,10 @@ namespace AlephNote.WPF.Controls
 
 		private void OnSelectedNoteChanged()
 		{
-			//
+			if (SelectedNote != null)
+			{
+				NotesList.ScrollIntoView(SelectedNote);
+			}
 		}
 
 		private void OnAllNotesChanged()

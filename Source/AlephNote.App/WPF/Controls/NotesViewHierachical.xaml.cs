@@ -200,6 +200,11 @@ namespace AlephNote.WPF.Controls
 				App.Logger.Trace("NotesViewHierachical", $"OnSelectedNoteChanged :: AllNotesWrapper.IsSelected = true");
 				DisplayItems.AllNotesWrapper.IsSelected = true;
 			}
+
+			if (SelectedNote != null)
+			{
+				HierachicalNotesList.ScrollIntoView(SelectedNote);
+			}
 		}
 
 		private void OnSelectedFolderChanged()
