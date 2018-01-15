@@ -8,6 +8,7 @@
     
     <AssemblyVersion>1.2.3.0</AssemblyVersion>
     <FileVersion>1.2.3.0</FileVersion>
+	  <Version>1.2.3.0</Version>
 
     <OutDir>..\..\..\Bin\$(Configuration)\$(TargetFramework)\Plugins\</OutDir>
 
