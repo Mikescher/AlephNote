@@ -504,7 +504,7 @@ namespace AlephNote.Common.Settings
 			return new KeyValueFlatCustomList<ShortcutDefinition>(new[]
 			{
 				Tuple.Create("NewNote",              new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.N)),       // v1.6.0
-				Tuple.Create("NewNoteFromClipboard", new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.O)),       // v1.6.6
+				Tuple.Create("NewNoteFromTextFile",  new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.O)),       // v1.6.6
 				Tuple.Create("SaveAndSync",          new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.S)),       // v1.6.0
 				Tuple.Create("DocumentSearch",       new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Control, AlephKey.F)),       // v1.6.0
 				Tuple.Create("CloseDocumentSearch",  new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.None,    AlephKey.Escape)),  // v1.6.0
@@ -535,8 +535,8 @@ namespace AlephNote.Common.Settings
 			}
 			if (from < v1_6_6)
 			{
-				log.Info("AppSettings", "(Migration) Insert shortcut for [NewNoteFromClipboard]");
-				Shortcuts = Shortcuts.Concat(Tuple.Create("NewNoteFromClipboard", new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.Control, AlephKey.O)));
+				log.Info("AppSettings", "(Migration) Insert shortcut for [NewNoteFromTextFile]");
+				Shortcuts = Shortcuts.Concat(Tuple.Create("NewNoteFromTextFile", new ShortcutDefinition(AlephShortcutScope.Window, AlephModifierKeys.Control, AlephKey.O)));
 			}
 		}
 	}
