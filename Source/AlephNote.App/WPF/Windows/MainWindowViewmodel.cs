@@ -68,7 +68,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand SettingLineNumbersCommand { get { return new RelayCommand(ChangeSettingLineNumbers); } }
 		public ICommand SettingsWordWrapCommand   { get { return new RelayCommand(ChangeSettingWordWrap); } }
 
-		public ICommand DebugCreateIpsumNotesCommand { get { return new RelayCommand(DebugCreateIpsumNotes); } }
+		public ICommand DebugCreateIpsumNotesCommand { get { return new RelayCommand<string>(DebugCreateIpsumNotes); } }
 		public ICommand DebugSerializeSettingsCommand { get { return new RelayCommand(DebugSerializeSettings); } }
 		public ICommand DebugSerializeNoteCommand { get { return new RelayCommand(DebugSerializeNote); } }
 
@@ -333,7 +333,7 @@ namespace AlephNote.WPF.Windows
 
 		public void OnNoteChanged(NoteChangedEventArgs e)
 		{
-			if (Settings.NoteSorting == SortingMode.ByModificationDate && Owner.NotesViewControl.GetTopNote() != e.Note)
+			if (Settings.NoteSorting == SortingMode.ByModificationDate && !Owner.NotesViewControl.IsTopSortedNote(e.Note))
 			{
 				Owner.NotesViewControl.RefreshView();
 				return;
@@ -777,14 +777,16 @@ namespace AlephNote.WPF.Windows
 			Owner.HideDocSearchBar();
 		}
 
-		private void DebugCreateIpsumNotes()
+		private void DebugCreateIpsumNotes(string sc)
 		{
+			int c = int.Parse(sc);
+
 			var path = Owner.NotesViewControl.GetNewNotesPath();
 
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < c; i++)
 			{
 				string title = CreateLoremIpsum(4 + App.GlobalRandom.Next(5), 16);
-				string text = CreateLoremIpsum((16 + App.GlobalRandom.Next(16)) * (8 + App.GlobalRandom.Next(8)), App.GlobalRandom.Next(8)+8);
+				string text = CreateLoremIpsum((48 + App.GlobalRandom.Next(48)) * (8 + App.GlobalRandom.Next(8)), App.GlobalRandom.Next(8)+8);
 
 				var n = Repository.CreateNewNote(path);
 

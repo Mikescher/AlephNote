@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using AlephNote.PluginInterface;
+﻿using AlephNote.PluginInterface;
 using System.Collections.Generic;
 using AlephNote.Common.Settings.Types;
 using AlephNote.PluginInterface.Util;
@@ -10,6 +9,7 @@ namespace AlephNote.WPF.Controls
 	public interface INotesViewControl
 	{
 		INote GetTopNote();
+		bool IsTopSortedNote(INote n);
 		void RefreshView();
 		bool Contains(INote n);
 		DirectoryPath GetNewNotesPath();

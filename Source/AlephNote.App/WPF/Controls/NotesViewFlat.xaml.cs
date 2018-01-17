@@ -188,6 +188,14 @@ namespace AlephNote.WPF.Controls
 			return NotesList.Items.FirstOrDefault<INote>();
 		}
 
+		public bool IsTopSortedNote(INote n)
+		{
+			if (Settings?.SortByPinned == true)
+				return NotesList.Items.OfType<INote>().FirstOrDefault(p => p.IsPinned == n?.IsPinned) == n;
+			else
+				return NotesList.Items.FirstOrDefault<INote>() == n;
+		}
+
 		public void RefreshView()
 		{
 			App.Logger.Trace("NotesViewFlat", "RefreshView()");

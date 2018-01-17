@@ -356,6 +356,14 @@ namespace AlephNote.WPF.Controls
 			return EnumerateVisibleNotes().FirstOrDefault();
 		}
 
+		public bool IsTopSortedNote(INote n)
+		{
+			if (Settings?.SortByPinned == true)
+				return EnumerateVisibleNotes().FirstOrDefault(p => p.IsPinned == n?.IsPinned) == n;
+			else
+				return EnumerateVisibleNotes().FirstOrDefault() == n;
+		}
+
 		public void RefreshView()
 		{
 			if (AllNotes != null) ResyncDisplayItems(AllNotes);

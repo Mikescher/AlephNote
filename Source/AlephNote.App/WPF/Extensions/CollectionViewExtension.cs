@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace AlephNote.WPF.Extensions
 {
@@ -11,6 +12,12 @@ namespace AlephNote.WPF.Extensions
 				return (T)enumerator.Current;
 			else
 				return default(T);
+		}
+
+		public static IEnumerable<T> OfType<T>(this ICollectionView view)
+		{
+			var enumerator = view.GetEnumerator();
+			while (enumerator.MoveNext()) yield return (T)enumerator.Current;
 		}
 	}
 }

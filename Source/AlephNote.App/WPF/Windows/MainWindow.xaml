@@ -94,7 +94,8 @@
 				<ctrl:AutoActionMenuItem Header="About" AlephAction="ShowAbout" Settings="{Binding Settings}"  />
 			</MenuItem>
 			<MenuItem Header="Debug" Visibility="{Binding DebugMode, Converter={conv:BoolToVisibility}, ConverterParameter=Visible;Collapsed}">
-				<MenuItem Header="Create 10 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" />
+				<MenuItem Header="Create 10 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="10" />
+				<MenuItem Header="Create 100 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="100" />
 				<MenuItem Header="Serialize Settings" Command="{Binding DebugSerializeSettingsCommand}" />
 				<MenuItem Header="Serialize CurrentNote" Command="{Binding DebugSerializeNoteCommand}" />
 			</MenuItem>
