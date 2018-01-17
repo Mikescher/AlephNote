@@ -2,6 +2,7 @@
 using AlephNote.PluginInterface.Impl;
 using AlephNote.PluginInterface.Util;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
 
@@ -42,6 +43,11 @@ namespace AlephNote.Plugins.Nextcloud
 		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()
 		{
 			return new NextcloudData();
+		}
+
+		public override IEnumerable<Tuple<string, string>> CreateHelpTexts()
+		{
+			yield return Tuple.Create("BlankLineBelowTitle", "The nextcloud notes app does not really have the concept of a 'note title'.\nNormally the first line is used as a title/preview.\n\nAlephNote also uses the first line as an title,\nfor better formatting when the note is viewed plain (e.g. in the web app) we insert a blank line between title and content by default.");
 		}
 
 		public override bool HasNativeDirectorySupport()

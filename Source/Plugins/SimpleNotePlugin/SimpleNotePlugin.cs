@@ -50,6 +50,7 @@ namespace AlephNote.Plugins.SimpleNote
 		public override IEnumerable<Tuple<string, string>> CreateHelpTexts()
 		{
 			yield return Tuple.Create("PermanentlyDeleteNotes", "SimpleNote can either 'really' delete notes on the server or only mark them as 'deleted'.\nIf this option is checked locally deleted notes are permanently deleted on the server.");
+			yield return Tuple.Create("BlankLineBelowTitle", "SimpleNote does not really have the concept of a 'note title'.\nNormally the first line is used as a title/preview.\n\nAlephNote also uses the first line as an title,\nfor better formatting when the note is viewed plain (e.g. in SimpleNote web app) we insert a blank line between title and content by default.");
 		}
 
 		public override bool HasNativeDirectorySupport()

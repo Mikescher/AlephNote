@@ -53,7 +53,7 @@ namespace AlephNote.Plugins.Nextcloud
 			yield return DynamicSettingValue.CreateText(ID_USERNAME, "Username", Username);
 			yield return DynamicSettingValue.CreatePassword(ID_PASSWORD, "Password", Password);
 			yield return DynamicSettingValue.CreateText(ID_HOST, "Server address", Host);
-			yield return DynamicSettingValue.CreateCheckbox(ID_BLANKFMT, "Empty line between title and content", BlankLineBelowTitle);
+			yield return DynamicSettingValue.CreateCheckbox(ID_BLANKFMT, "Empty line between title and content", BlankLineBelowTitle, "BlankLineBelowTitle");
 		}
 
 		public void SetProperty(int id, string value)
