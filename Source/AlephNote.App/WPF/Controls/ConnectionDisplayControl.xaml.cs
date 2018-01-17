@@ -114,6 +114,8 @@ namespace AlephNote.WPF.Controls
 		{
 			if (Settings.Accounts.Count > 1) LayoutRoot.Background = Brushes.LightGray;
 			if (Settings.Accounts.Count > 1) OuterBorder.BorderBrush = Brushes.Gray;
+
+			OnExplicitPropertyChanged("ConnectionTooltip");
 		}
 
 		private void UIElement_OnMouseLeave(object sender, MouseEventArgs e)
