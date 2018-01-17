@@ -68,13 +68,13 @@ namespace AlephNote.Plugins.Headless
 		public override void Deserialize(XElement input)
 		{
 			_id = XHelper.GetChildValueGUID(input, "ID");
-			Title = XHelper.GetChildValueString(input, "Title");
-			Text = XHelper.GetChildBase64String(input, "Text");
-			Path = DirectoryPath.Deserialize(XHelper.GetChildrenOrEmpty(input, "Path", "PathComponent"));
-			Tags.Synchronize(XHelper.GetChildValueStringList(input, "Tags", "Tag"));
-			CreationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
-			ModificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
-			IsPinned = XHelper.GetChildValue(input, "IsPinned", false);
+			_title = XHelper.GetChildValueString(input, "Title");
+			_text = XHelper.GetChildBase64String(input, "Text");
+			_path = DirectoryPath.Deserialize(XHelper.GetChildrenOrEmpty(input, "Path", "PathComponent"));
+			_tags.Synchronize(XHelper.GetChildValueStringList(input, "Tags", "Tag"));
+			_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
+			_isPinned = XHelper.GetChildValue(input, "IsPinned", false);
+			_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
 		}
 
 		protected override BasicHierachicalNote CreateClone()
