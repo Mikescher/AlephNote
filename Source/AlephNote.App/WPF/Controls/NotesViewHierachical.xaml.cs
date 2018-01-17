@@ -197,8 +197,20 @@ namespace AlephNote.WPF.Controls
 
 			if (SelectedNote != null && (SelectedFolder == null || !SelectedFolder.AllSubNotes.Contains(SelectedNote)))
 			{
-				App.Logger.Trace("NotesViewHierachical", $"OnSelectedNoteChanged :: AllNotesWrapper.IsSelected = true");
-				DisplayItems.AllNotesWrapper.IsSelected = true;
+				if (DisplayItems.AllNotesViewWrapper != null)
+				{
+					App.Logger.Trace("NotesViewHierachical", $"OnSelectedNoteChanged :: AllNotesWrapper.IsSelected = true");
+					DisplayItems.AllNotesViewWrapper.IsSelected = true;
+				}
+				else
+				{
+					var fldr = DisplayItems.Find(SelectedNote);
+					if (fldr != null)
+					{
+						App.Logger.Trace("NotesViewHierachical", $"OnSelectedNoteChanged :: DisplayItems.Find(SelectedNote).IsSelected = true");
+						fldr.IsSelected = true;
+					}
+				}
 			}
 
 			if (SelectedNote != null)
@@ -264,11 +276,22 @@ namespace AlephNote.WPF.Controls
 				}
 				else
 				{
-					if (!DisplayItems.AllNotesWrapper.IsSelected)
+					if (DisplayItems.AllNotesViewWrapper != null)
 					{
-						App.Logger.Trace("NotesViewHierachical", $"OnSelectedFolderPathChanged :: DisplayItems.AllNotesWrapper.IsSelected = true");
-
-						DisplayItems.AllNotesWrapper.IsSelected = true;
+						if (!DisplayItems.AllNotesViewWrapper.IsSelected)
+						{
+							App.Logger.Trace("NotesViewHierachical", $"OnSelectedFolderPathChanged :: DisplayItems.AllNotesWrapper.IsSelected = true");
+							DisplayItems.AllNotesViewWrapper.IsSelected = true;
+						}
+					}
+					else
+					{
+						var fod = DisplayItems.SubFolder.FirstOrDefault();
+						if (fod != null && !fod.IsSelected)
+						{
+							App.Logger.Trace("NotesViewHierachical", $"OnSelectedFolderPathChanged :: DisplayItems.SubFolder.FirstOrDefault().IsSelected = true");
+							fod.IsSelected = true;
+						}
 					}
 				}
 			}
@@ -308,21 +331,38 @@ namespace AlephNote.WPF.Controls
 			if (AllNotes != null) ResyncDisplayItems(AllNotes);
 		}
 
+		bool IHierachicalWrapperConfig.ShowAllNotesNode  => Settings?.FolderViewShowAllNotesNode ?? false;
+		bool IHierachicalWrapperConfig.ShowEmptyPathNode => Settings?.FolderViewShowEmptyPathNode ?? false;
+
 		private void ResyncDisplayItems(IList<INote> notes)
 		{
 			App.Logger.Trace("NotesViewHierachical", $"ResyncDisplayItems()");
 
-			var root = new HierachicalFolderWrapper("ROOT", this, DirectoryPath.Root(), true, false);
-
-			foreach (var note in notes)
+			HierachicalFolderWrapper root = new HierachicalFolderWrapper("ROOT", this, DirectoryPath.Root(), true, false);
+			if (Settings?.FolderViewShowRootNode == true)
 			{
-				var parent = root;
-
-				foreach (var pathcomp in note.Path.Enumerate())
+				var root2 = root.CreateRootFolder();
+				foreach (var note in notes)
 				{
-					parent = parent.GetOrCreateFolder(pathcomp, out _);
+					var parent = root2;
+					foreach (var pathcomp in note.Path.Enumerate())
+					{
+						parent = parent.GetOrCreateFolder(pathcomp, out _);
+					}
+					parent.Add(note);
 				}
-				parent.Add(note);
+			}
+			else
+			{
+				foreach (var note in notes)
+				{
+					var parent = root;
+					foreach (var pathcomp in note.Path.Enumerate())
+					{
+						parent = parent.GetOrCreateFolder(pathcomp, out _);
+					}
+					parent.Add(note);
+				}
 			}
 
 			DisplayItems.CopyPermanentsTo(root);

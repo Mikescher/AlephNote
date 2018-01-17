@@ -332,6 +332,18 @@ namespace AlephNote.Common.Settings
 		public bool DeepFolderView { get { return _deepFolderView; } set { _deepFolderView = value; OnPropertyChanged(); } }
 		private bool _deepFolderView = true;
 
+		[AlephXMLField]
+		public bool FolderViewShowRootNode { get { return _folderViewShowRootNode; } set { _folderViewShowRootNode = value; OnPropertyChanged(); } }
+		private bool _folderViewShowRootNode = false;
+
+		[AlephXMLField]
+		public bool FolderViewShowEmptyPathNode { get { return _folderViewShowEmptyPathNode; } set { _folderViewShowEmptyPathNode = value; OnPropertyChanged(); } }
+		private bool _folderViewShowEmptyPathNode = false;
+
+		[AlephXMLField]
+		public bool FolderViewShowAllNotesNode { get { return _folderViewAllNotesNode; } set { _folderViewAllNotesNode = value; OnPropertyChanged(); } }
+		private bool _folderViewAllNotesNode = true;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

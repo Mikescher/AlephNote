@@ -68,9 +68,10 @@ namespace AlephNote.WPF.Windows
 		public ICommand SettingLineNumbersCommand { get { return new RelayCommand(ChangeSettingLineNumbers); } }
 		public ICommand SettingsWordWrapCommand   { get { return new RelayCommand(ChangeSettingWordWrap); } }
 
-		public ICommand DebugCreateIpsumNotesCommand { get { return new RelayCommand<string>(DebugCreateIpsumNotes); } }
+		public ICommand DebugCreateIpsumNotesCommand { get { return new RelayCommand<string>(s => { DebugCreateIpsumNotes(int.Parse(s)); }); } }
 		public ICommand DebugSerializeSettingsCommand { get { return new RelayCommand(DebugSerializeSettings); } }
 		public ICommand DebugSerializeNoteCommand { get { return new RelayCommand(DebugSerializeNote); } }
+		public ICommand DebugRefreshViewCommand { get { return new RelayCommand(()=> { Owner.NotesViewControl.RefreshView(); }); } }
 
 		private AppSettings _settings;
 		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); SettingsChanged(); } }
@@ -777,10 +778,8 @@ namespace AlephNote.WPF.Windows
 			Owner.HideDocSearchBar();
 		}
 
-		private void DebugCreateIpsumNotes(string sc)
+		private void DebugCreateIpsumNotes(int c)
 		{
-			int c = int.Parse(sc);
-
 			var path = Owner.NotesViewControl.GetNewNotesPath();
 
 			for (int i = 0; i < c; i++)

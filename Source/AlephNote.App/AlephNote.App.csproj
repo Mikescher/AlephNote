@@ -112,6 +112,7 @@
     <Compile Include="WPF\Controls\TagEditor.xaml.cs">
       <DependentUpon>TagEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Converter\HierachicalWrapperToIcon.cs" />
     <Compile Include="WPF\Converter\StringIsNotWhitespace.cs" />
     <Compile Include="WPF\Converter\PropertyToHelpText.cs" />
     <Compile Include="WPF\Converter\FontNameToFontFamily.cs" />
@@ -393,6 +394,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\star.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\folder_none.png" />
+    <Resource Include="Resources\folder_root.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

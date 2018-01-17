@@ -221,3 +221,17 @@ Automatically put the keyboard focus in the note editor when selecting a note (i
 [DeepFolderView]
 Show the notes of the currently selected folder and all the notes of all subfolders.
 Otherwise only notes directly in the current selected folder are shown
+
+[FolderViewShowRootNode]
+Show the root folder (= notes that are not in any directory) 
+in the folder list in the top right corner.
+
+[FolderViewShowEmptyPathNode]
+Show an additional node "Unsorted notes" in the folder list in the top right corner.
+This node contains all notes that are not in any directory
+(= Notes that live in the root)
+
+
+[FolderViewShowAllNotesNode]
+Show an additional node "All notes" in the folder list in the top right corner.
+This node displays all available notes, regardless of their directory

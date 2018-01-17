@@ -87,8 +87,7 @@
 				<HierarchicalDataTemplate ItemsSource="{Binding SubFolder}" DataType="{x:Type util:HierachicalFolderWrapper}">
 
 					<StackPanel Orientation="Horizontal">
-						<Image Width="16" Height="16" Margin="2" Stretch="Fill" Source="/Resources/folder_all.png" Visibility="{Binding IsAllVisible}"/>
-						<Image Width="16" Height="16" Margin="2" Stretch="Fill" Source="/Resources/folder_any.png" Visibility="{Binding IsNotAllVisible}"/>
+						<Image Width="16" Height="16" Margin="2" Stretch="Fill" Source="{Binding ., Converter={conv:HierachicalWrapperToIcon}}"/>
 						<TextBlock Text="{Binding Header}" />
 					</StackPanel>
 				</HierarchicalDataTemplate>

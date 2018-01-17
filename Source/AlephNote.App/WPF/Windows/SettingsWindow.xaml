@@ -595,6 +595,9 @@
 										<RowDefinition Height="Auto"/>
 										<RowDefinition Height="Auto"/>
 										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
 									</Grid.RowDefinitions>
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="1*" />
@@ -612,6 +615,18 @@
 									<TextBlock     Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Show all notes from all subfolder" />
 									<CheckBox      Grid.Row="2" Grid.Column="1" IsChecked="{Binding Settings.DeepFolderView}" VerticalAlignment="Center"/>
 									<ctrl:PHelpBtn Grid.Row="2" Grid.Column="2" HelpProperty="DeepFolderView" Margin="2,0" VerticalAlignment="Center" />
+
+									<TextBlock     Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Show the root node in the folder list" />
+									<CheckBox      Grid.Row="3" Grid.Column="1" IsChecked="{Binding Settings.FolderViewShowRootNode}" VerticalAlignment="Center"/>
+									<ctrl:PHelpBtn Grid.Row="3" Grid.Column="2" HelpProperty="FolderViewShowRootNode" Margin="2,0" VerticalAlignment="Center" />
+
+									<TextBlock     Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Show the node [Unsorted notes]" />
+									<CheckBox      Grid.Row="4" Grid.Column="1" IsChecked="{Binding Settings.FolderViewShowEmptyPathNode}" VerticalAlignment="Center"/>
+									<ctrl:PHelpBtn Grid.Row="4" Grid.Column="2" HelpProperty="FolderViewShowEmptyPathNode" Margin="2,0" VerticalAlignment="Center" />
+
+									<TextBlock     Grid.Row="5" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Show the node [All notes]" />
+									<CheckBox      Grid.Row="5" Grid.Column="1" IsChecked="{Binding Settings.FolderViewShowAllNotesNode}" VerticalAlignment="Center"/>
+									<ctrl:PHelpBtn Grid.Row="5" Grid.Column="2" HelpProperty="FolderViewShowAllNotesNode" Margin="2,0" VerticalAlignment="Center" />
 								</Grid>
 
 							</Grid>
