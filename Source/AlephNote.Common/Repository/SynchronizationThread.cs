@@ -475,58 +475,30 @@ namespace AlephNote.Common.Repository
 		public void SyncNowAsync()
 		{
 			_log.Info("Sync", "Requesting priorty sync");
-			prioritysync = true;
-			_comChannel.Set();
+			RequestPrioritySync();
 		}
 
 		public void StopAsync()
 		{
-			_log.Info("Sync", "Requesting stop");
-
-			if (isSyncing)
+			using (dispatcher.EnableCustomDispatcher())
 			{
-				_log.Info("Sync", "Requesting stop (early exit due to isSyncing)");
-
-				cancel = true;
-				_comChannel.Set();
-				return;
-			}
-
-			prioritysync = false;
-			cancel = true;
-			_comChannel.Set();
-			for (int i = 0; i < 100; i++)
-			{
-				if (!running)
-				{
-					_log.Info("Sync", "Requesting stop - finished waiting (running=false)");
-					return;
-				}
+				_log.Info("Sync", "Requesting stop");
 
 				if (isSyncing)
 				{
-					_log.Info("Sync", "Requesting stop - abort waiting (isSyncing=true)");
-					cancel = true;
-					_comChannel.Set();
+					_log.Info("Sync", "Requesting stop (early exit due to isSyncing)");
+					RequestCancel();
 
-					for (int j = 0; j < 300; j++)
-					{
-						if (!isSyncing)
-						{
-							_log.Info("Sync", "Requesting sync&stop finished (isSyncing=false)");
-							return;
-						}
-						SleepDoEvents(100);
-					}
-					_log.Error("Sync", "Requesting sync&stop failed after timeout (waiting on isSyncing)");
-					throw new Exception("Background thread timeout after 30sec");
+					WaitForSyncStop(30);
+
+					return;
 				}
 
-				Thread.Sleep(100);
-			}
+				prioritysync = false;
+				RequestCancel();
 
-			_log.Error("Sync", "Requesting stop failed after timeout");
-			throw new Exception("Background thread timeout after 10sec");
+				WaitForStopped(10);
+			}
 		}
 
 		public void SyncNowAndStopAsync()
@@ -538,57 +510,85 @@ namespace AlephNote.Common.Repository
 				if (isSyncing)
 				{
 					_log.Info("Sync", "Requesting sync&stop (early exit due to isSyncing)");
-					cancel = true;
-					_comChannel.Set();
+					RequestCancel();
 
-					for (int j = 0; j < 300; j++)
-					{
-						if (!isSyncing)
-						{
-							_log.Info("Sync", "Requesting sync&stop finished (isSyncing=false)");
-							return;
-						}
-						SleepDoEvents(100);
-					}
-					_log.Error("Sync", "Requesting sync&stop failed after timeout (waiting on isSyncing)");
-					throw new Exception("Background thread timeout after 30sec");
+					WaitForSyncStop(30);
+
+					return;
 				}
 
-				prioritysync = true;
-				_comChannel.Set();
-				for (int i = 0; i < 100; i++)
-				{
-					if (!running)
-					{
-						_log.Info("Sync", "Requesting sync&stop stop waiting (running=false)");
-						return;
-					}
-
-					if (!prioritysync)
-					{
-						_log.Info("Sync", "Requesting sync&stop stop waiting (prioritysync=false)");
-						cancel = true;
-						_comChannel.Set();
-
-						for (int j = 0; j < 300; j++)
-						{
-							if (!isSyncing)
-							{
-								_log.Info("Sync", "Requesting sync&stop finished (isSyncing=false)");
-								return;
-							}
-							SleepDoEvents(100);
-						}
-						_log.Error("Sync", "Requesting sync&stop failed after timeout (waiting on isSyncing)");
-						throw new Exception("Background thread timeout after 30sec");
-					}
-
-					SleepDoEvents(100);
-				}
-
-				_log.Error("Sync", "Requesting sync&stop failed after timeout (waiting on prioritysync)");
-				throw new Exception("Background thread timeout after 10sec");
+				RequestPrioritySync();
+	
+				WaitForStopped(10);
 			}
+		}
+
+		private void WaitForStopped(int seconds)
+		{
+			var _startWait1 = Environment.TickCount;
+			for (;;)
+			{
+				if (!running)
+				{
+					_log.Info("Sync", "Waiting for SyncThread stopping :: finished (running=false)");
+					return;
+				}
+
+				if (isSyncing)
+				{
+					_log.Info("Sync", "Waiting for SyncThread stopping :: currently syncing (isSyncing=true)");
+					RequestCancel();
+
+					WaitForSyncStop(30);
+					_log.Info("Sync", "Waiting for SyncThread stopping :: syncing finished (isSyncing=true)");
+					RequestCancel();
+				}
+
+				SleepDoEvents(10);
+
+				if (Environment.TickCount - _startWait1 > seconds * 1000)
+				{
+					_log.Error("Sync", "Requesting sync&stop failed after timeout (waiting on prioritysync)");
+					throw new Exception("Background thread timeout after "+ seconds + "sec");
+				}
+			}
+		}
+
+		private void WaitForSyncStop(int seconds)
+		{
+			var _startWait2 = Environment.TickCount;
+			for (;;)
+			{
+				if (!isSyncing)
+				{
+					_log.Info("Sync", "Requesting sync&stop finished (isSyncing=false)");
+					return;
+				}
+				if (!running)
+				{
+					_log.Info("Sync", "Requesting sync&stop finished (running=false)");
+					return;
+				}
+				SleepDoEvents(10);
+
+				if (Environment.TickCount - _startWait2 > seconds * 1000)
+				{
+					_log.Error("Sync", "Requesting sync&stop failed after timeout (waiting on isSyncing)");
+					throw new Exception("Background thread timeout after "+ seconds + "sec");
+				}
+			}
+		}
+
+		private void RequestCancel()
+		{
+			cancel = true;
+			_comChannel.Set();
+		}
+
+		private void RequestPrioritySync()
+		{
+			prioritysync = true;
+			_comChannel.Set();
 		}
 
 		public void Kill()
