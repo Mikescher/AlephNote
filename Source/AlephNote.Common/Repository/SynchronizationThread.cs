@@ -487,17 +487,16 @@ namespace AlephNote.Common.Repository
 				if (isSyncing)
 				{
 					_log.Info("Sync", "Requesting stop (early exit due to isSyncing)");
-					RequestCancel();
 
-					WaitForSyncStop(30);
+					RequestCancel();
+					WaitForSyncStop(60);
 
 					return;
 				}
 
 				prioritysync = false;
 				RequestCancel();
-
-				WaitForStopped(10);
+				WaitForStopped(45);
 			}
 		}
 
@@ -510,16 +509,15 @@ namespace AlephNote.Common.Repository
 				if (isSyncing)
 				{
 					_log.Info("Sync", "Requesting sync&stop (early exit due to isSyncing)");
-					RequestCancel();
 
-					WaitForSyncStop(30);
+					RequestCancel();
+					WaitForSyncStop(60);
 
 					return;
 				}
 
 				RequestPrioritySync();
-	
-				WaitForStopped(10);
+				WaitForStopped(60);
 			}
 		}
 
@@ -537,10 +535,12 @@ namespace AlephNote.Common.Repository
 				if (isSyncing)
 				{
 					_log.Info("Sync", "Waiting for SyncThread stopping :: currently syncing (isSyncing=true)");
-					RequestCancel();
 
+					RequestCancel();
 					WaitForSyncStop(30);
+
 					_log.Info("Sync", "Waiting for SyncThread stopping :: syncing finished (isSyncing=true)");
+
 					RequestCancel();
 				}
 
