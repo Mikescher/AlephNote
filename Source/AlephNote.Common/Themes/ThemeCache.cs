@@ -80,7 +80,7 @@ namespace AlephNote.Common.Themes
 
 		private AlephTheme LoadFromFile(string file)
 		{
-			if (Path.GetFileName(file).ToLower() == "default.xml")
+			if (Path.GetFileName(file)?.ToLower() == "default.xml")
 			{
 				var parser = new ThemeParser();
 				parser.Load(file);
@@ -88,7 +88,7 @@ namespace AlephNote.Common.Themes
 				_themeDefaultValues = parser.GetProperties();
 				var t = parser.Generate(_themeDefaultValues);
 
-				LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded theme {t.Name} v{t.Version} from '{file}'");
+				LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded theme {t.Name} v{t.Version} from '{file}'", $"{string.Join("\n", parser.GetProperties().Select(p => $"{p.Key.PadRight(48, ' ')} {p.Value}"))}");
 
 				return t;
 			}
@@ -102,7 +102,7 @@ namespace AlephNote.Common.Themes
 					dparser.Parse();
 					_themeDefaultValues = dparser.GetProperties();
 
-					LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded {_themeDefaultValues.Count} default values from '{dpath}'");
+					LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded {_themeDefaultValues.Count} default values from '{dpath}'", $"{string.Join("\n", dparser.GetProperties().Select(p => $"{p.Key.PadRight(48, ' ')} {p.Value}"))}");
 				}
 
 				var parser = new ThemeParser();
@@ -111,7 +111,7 @@ namespace AlephNote.Common.Themes
 				_themeDefaultValues = parser.GetProperties();
 				var t = parser.Generate(_themeDefaultValues);
 
-				LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded theme {t.Name} v{t.Version} from '{file}'");
+				LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded theme {t.Name} v{t.Version} from '{file}'", $"{string.Join("\n", parser.GetProperties().Select(p => $"{p.Key.PadRight(48, ' ')} {p.Value}"))}");
 
 				return t;
 			}
