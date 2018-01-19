@@ -8,6 +8,8 @@ using System.Windows.Threading;
 using AlephNote.Commandline;
 using AlephNote.Common.Plugins;
 using AlephNote.Impl;
+using AlephNote.Common.Themes;
+using AlephNote.Common.Util;
 
 namespace AlephNote
 {
@@ -27,7 +29,10 @@ namespace AlephNote
 
 		public static CommandLineArguments Args;
 
+		public static readonly ThemeCache Themes = new ThemeCache();
 		public static readonly EventLogger Logger = new EventLogger();
+		public static readonly PluginManager PluginMan = new PluginManager();
+
 		public static bool DebugMode = false;
 
 		public static bool IsUpdateMigration = false;
@@ -38,7 +43,8 @@ namespace AlephNote
 		{
 			DispatcherUnhandledException += AppDispatcherUnhandledException;
 
-			PluginManagerSingleton.Register(new PluginManager());
+			LoggerSingleton.Register(Logger);
+			PluginManagerSingleton.Register(PluginMan);
 
 			Args = new CommandLineArguments(Environment.GetCommandLineArgs(), false);
 

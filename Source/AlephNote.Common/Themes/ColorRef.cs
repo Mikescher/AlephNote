@@ -1,0 +1,97 @@
+﻿using System;
+
+namespace AlephNote.Common.Themes
+{
+	public struct ColorRef
+	{
+		public static readonly ColorRef BLACK        = new ColorRef(0xFF_00_00_00);
+		public static readonly ColorRef HALF_GRAY    = new ColorRef(0xFF_80_80_80);
+		public static readonly ColorRef QUARTER_GRAY = new ColorRef(0xFF_40_40_40);
+		public static readonly ColorRef WHITE        = new ColorRef(0xFF_FF_FF_FF);
+		public static readonly ColorRef MAGENTA      = new ColorRef(0xFF_FF_00_FF);
+
+		private const int ARGBAlphaShift = 0x18;
+		private const int ARGBRedShift   = 0x10;
+		private const int ARGBGreenShift = 0x08;
+		private const int ARGBBlueShift  = 0x00;
+
+		private readonly long value;
+
+		public byte R => (byte)((value >> ARGBRedShift)   & 0xFF);
+		public byte G => (byte)((value >> ARGBGreenShift) & 0xFF);
+		public byte B => (byte)((value >> ARGBBlueShift)  & 0xFF);
+		public byte A => (byte)((value >> ARGBAlphaShift) & 0xFF);
+
+		public long RGBA => value;
+
+		private ColorRef(long value)
+		{
+			this.value = value;
+		}
+
+		public static ColorRef FromArgb(int alpha, int red, int green, int blue)
+		{
+			return new ColorRef(MakeArgb((byte)alpha, (byte)red, (byte)green, (byte)blue));
+		}
+
+		public static ColorRef FromArgb(int red, int green, int blue)
+		{
+			return new ColorRef(MakeArgb(255, (byte)red, (byte)green, (byte)blue));
+		}
+
+		public static ColorRef FromArgb(long argb)
+		{
+			return new ColorRef(argb & 0xFFFFFFFF);
+		}
+
+		public static ColorRef Parse(string ovalue)
+		{
+			var value = ovalue.ToUpper();
+
+			if (value == "TRANSPARENT") return FromArgb(0x00, 0x00, 0x00, 0x00);
+			if (value == "RED")         return FromArgb(0xFF, 0xFF, 0x00, 0x00);
+			if (value == "GREEN")       return FromArgb(0xFF, 0x00, 0xFF, 0x00);
+			if (value == "BLUE")        return FromArgb(0xFF, 0x00, 0x00, 0xFF);
+			if (value == "WHITE")       return FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
+			if (value == "BLACK")       return FromArgb(0xFF, 0x00, 0x00, 0x00);
+
+			if (value.StartsWith("#")) value = value.Substring(1);
+
+			if (value.Length == 3) // #RGB
+			{
+				var r = (byte)Convert.ToUInt32(value[0] + "" + value[0], 16);
+				var g = (byte)Convert.ToUInt32(value[1] + "" + value[1], 16);
+				var b = (byte)Convert.ToUInt32(value[2] + "" + value[2], 16);
+				return FromArgb(r, g, b);
+			}
+			else if (value.Length == 4) // #ARGB
+			{
+				var a = (byte)Convert.ToUInt32(value[0] + "" + value[0], 16);
+				var r = (byte)Convert.ToUInt32(value[1] + "" + value[1], 16);
+				var g = (byte)Convert.ToUInt32(value[2] + "" + value[2], 16);
+				var b = (byte)Convert.ToUInt32(value[3] + "" + value[3], 16);
+				return FromArgb(a, r, g, b);
+			}
+			else if (value.Length == 6) // #RRGGBB
+			{
+				var v = Convert.ToInt64(value, 16) | 0xFF_00_00_00;
+				return FromArgb(v);
+			}
+			else if (value.Length == 8) // #AARRGGBB
+			{
+				var v = Convert.ToInt64(value, 16);
+				return FromArgb(v);
+			}
+			else
+			{
+				throw new Exception("Unknown ColorRef format: " + value);
+			}
+
+		}
+
+		private static long MakeArgb(byte alpha, byte red, byte green, byte blue)
+		{
+			return (long)(unchecked((uint)(red << ARGBRedShift | green << ARGBGreenShift | blue << ARGBBlueShift | alpha << ARGBAlphaShift))) & 0xFFFFFFFF;
+		}
+	}
+}

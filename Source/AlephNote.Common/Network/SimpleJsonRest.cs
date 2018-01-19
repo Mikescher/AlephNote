@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Exceptions;
 using Newtonsoft.Json;
@@ -16,7 +17,6 @@ namespace AlephNote.Common.Network
 
 		private readonly HttpClient _client;
 		private readonly Uri _host;
-		private readonly IAlephLogger _logger;
 
 		private JsonConverter[] _converter = new JsonConverter[0];
 		private StringEscapeHandling _seHandling = StringEscapeHandling.Default;
@@ -24,7 +24,7 @@ namespace AlephNote.Common.Network
 		private Dictionary<string, string> _headers = new Dictionary<string, string>();
 		private HttpResponseMessage _lastResponse = null;
 
-		public SimpleJsonRest(IWebProxy proxy, string host, IAlephLogger log)
+		public SimpleJsonRest(IWebProxy proxy, string host)
 		{
 			if (proxy != null)
 			{
@@ -46,8 +46,6 @@ namespace AlephNote.Common.Network
 			_headers["ContentType"] = "application/json";
 
 			_host = new Uri(host);
-
-			_logger = log;
 		}
 
 		public void Dispose()
@@ -321,7 +319,7 @@ namespace AlephNote.Common.Network
 				{
 					if (allowedStatusCodes.Any(sc => sc == (int)resp.StatusCode))
 					{
-						_logger.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
+						LoggerSingleton.Inst.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
 						_lastResponse = resp;
 
 						return default(TResult);
@@ -368,7 +366,7 @@ namespace AlephNote.Common.Network
 				throw new RestException("Rest call to " + uri.Host + " returned unexpected data :\r\n" + download, e);
 			}
 
-			_logger.Debug("REST",
+			LoggerSingleton.Inst.Debug("REST",
 				string.Format("Calling REST API '{0}' [{1}]", uri, method),
 				string.Format("Send:\r\n{0}\r\n\r\n---------------------\r\n\r\nRecieved:\r\n{1}",
 				CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH),
@@ -401,7 +399,7 @@ namespace AlephNote.Common.Network
 				{
 					if (allowedStatusCodes.Any(sc => sc == (int)resp.StatusCode))
 					{
-						_logger.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
+						LoggerSingleton.Inst.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
 						_lastResponse = resp;
 
 						return;
@@ -426,7 +424,7 @@ namespace AlephNote.Common.Network
 				throw new RestException("Could not communicate with server " + uri.Host, e);
 			}
 
-			_logger.Debug("REST",
+			LoggerSingleton.Inst.Debug("REST",
 				string.Format("Calling REST API '{0}' [{1}]", uri, method),
 				string.Format("Send:\r\n{0}\r\n\r\nRecieved: Nothing",
 				CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH)));
@@ -456,7 +454,7 @@ namespace AlephNote.Common.Network
 				{
 					if (allowedStatusCodes.Any(sc => sc == (int)resp.StatusCode))
 					{
-						_logger.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
+						LoggerSingleton.Inst.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
 						_lastResponse = resp;
 
 						return default(TResult);
@@ -502,8 +500,8 @@ namespace AlephNote.Common.Network
 			{
 				throw new RestException("Rest call to " + uri.Host + " returned unexpected data", "Rest call to " + uri.Host + " returned unexpected data :\r\n" + download, e);
 			}
-			
-			_logger.Debug("REST",
+
+			LoggerSingleton.Inst.Debug("REST",
 				string.Format("Calling REST API '{0}' [{1}]", uri, method),
 				string.Format("Send: Nothing\r\nRecieved:\r\n{0}",
 				CompactJsonFormatter.FormatJSON(download, LOG_FMT_DEPTH)));
@@ -533,7 +531,7 @@ namespace AlephNote.Common.Network
 				{
 					if (allowedStatusCodes.Any(sc => sc == (int)resp.StatusCode))
 					{
-						_logger.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
+						LoggerSingleton.Inst.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
 						_lastResponse = resp;
 
 						return;
@@ -558,7 +556,7 @@ namespace AlephNote.Common.Network
 				throw new RestException("Could not communicate with server " + uri.Host, e);
 			}
 
-			_logger.Debug("REST", string.Format("Calling REST API '{0}' [{1}]", uri, method), "Send: Nothing\r\n\r\nRecieved: Nothing");
+			LoggerSingleton.Inst.Debug("REST", string.Format("Calling REST API '{0}' [{1}]", uri, method), "Send: Nothing\r\n\r\nRecieved: Nothing");
 
 			_lastResponse = resp;
 		}

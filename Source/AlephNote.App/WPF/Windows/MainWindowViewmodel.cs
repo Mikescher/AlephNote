@@ -136,10 +136,10 @@ namespace AlephNote.WPF.Windows
 			_settings = settings;
 			_invSaveSettings = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SaveSettings)), 8 * 1000, 60 * 1000);
 
-			_repository = new NoteRepository(App.PATH_LOCALDB, this, settings, settings.ActiveAccount, App.Logger, dispatcher);
+			_repository = new NoteRepository(App.PATH_LOCALDB, this, settings, settings.ActiveAccount, dispatcher);
 			Repository.Init();
 
-			_scrollCache = Settings.RememberScroll ? ScrollCache.LoadFromFile(App.PATH_SCROLLCACHE, App.Logger) : ScrollCache.CreateEmpty(App.PATH_SCROLLCACHE, App.Logger);
+			_scrollCache = Settings.RememberScroll ? ScrollCache.LoadFromFile(App.PATH_SCROLLCACHE) : ScrollCache.CreateEmpty(App.PATH_SCROLLCACHE);
 
 			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
 
@@ -231,7 +231,7 @@ namespace AlephNote.WPF.Windows
 
 				if (reconnectRepo)
 				{
-					_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.ActiveAccount, App.Logger, dispatcher);
+					_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.ActiveAccount, dispatcher);
 					_repository.Init();
 
 					OnExplicitPropertyChanged("Repository");
@@ -648,7 +648,7 @@ namespace AlephNote.WPF.Windows
 
 				Repository.DeleteLocalData();
 
-				_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.ActiveAccount, App.Logger, dispatcher);
+				_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.ActiveAccount, dispatcher);
 				_repository.Init();
 
 				OnExplicitPropertyChanged("Repository");
@@ -706,7 +706,7 @@ namespace AlephNote.WPF.Windows
 		{
 			try
 			{
-				var ghc = new GithubConnection(App.Logger);
+				var ghc = new GithubConnection();
 				var r = ghc.GetLatestRelease();
 
 				if (r.Item1 > App.APP_VERSION)
@@ -740,7 +740,7 @@ namespace AlephNote.WPF.Windows
 			try
 			{
 				Thread.Sleep(1000);
-				var ghc = new GithubConnection(App.Logger);
+				var ghc = new GithubConnection();
 				var r = ghc.GetLatestRelease();
 
 				if (r.Item1 > App.APP_VERSION)
@@ -759,7 +759,7 @@ namespace AlephNote.WPF.Windows
 			try
 			{
 				Thread.Sleep(3000);
-				var asc = new StatsConnection(Settings, Repository, App.Logger);
+				var asc = new StatsConnection(Settings, Repository);
 				asc.UploadStatistics(App.APP_VERSION);
 			}
 			catch (Exception e)

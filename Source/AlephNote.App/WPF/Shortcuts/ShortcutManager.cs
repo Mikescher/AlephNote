@@ -65,6 +65,8 @@ namespace AlephNote.WPF.Shortcuts
 
 		public static void Execute(MainWindow mw, string key)
 		{
+			App.Logger.Trace("ShortcutManager", $"Execute Action [{key}]");
+
 			if (_actions.TryGetValue(key, out var action))
 			{
 				action.Run(mw);

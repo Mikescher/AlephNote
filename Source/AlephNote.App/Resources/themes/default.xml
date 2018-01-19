@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+============================
+  THEME FILE FOR ALEPHNOTE
+============================
+
+Theme:      AlephNote default theme
+
+Repository: https://github.com/Mikescher/AlephNote
+
+-->
+<theme>
+	<meta>
+		<name>Default</name>
+		<version>1.0</version>
+		<compatibility>1.6.X</compatibility>
+	</meta>
+
+	<ref></ref>
+
+	<data>
+
+		<group name="scintilla">
+
+			<property name="scintilla.background"      value="#FFFFFF"/>
+			<property name="scintilla.whitespacesize"  value="1"/>
+			<property name="scintilla.whitespacecolor" value="#FFC355"/>
+
+			<group name="default">
+				<property name="scintilla.default:foreground" value="#000000"/>
+				<property name="scintilla.default:underline"  value="false"/>
+				<property name="scintilla.default:background" value="transparent"/>
+				<property name="scintilla.default:bold"       value="false"/>
+				<property name="scintilla.default:italic"     value="false"/>
+			</group>
+			
+			<group name="link">
+				<property name="scintilla.link:foreground" value="#0000FF"/>
+				<property name="scintilla.link:underline"  value="true"/>
+				<property name="scintilla.link:background" value="transparent"/>
+				<property name="scintilla.link:bold"       value="false"/>
+				<property name="scintilla.link:italic"     value="false"/>
+			</group>
+			
+			<group name="markdown">
+				<property name="scintilla.markdown.background"             value="#FFFFFF"/>
+
+				<property name="scintilla.markdown.default:foreground"     value="#000000"/>
+				<property name="scintilla.markdown.default:underline"      value="true"/>
+				<property name="scintilla.markdown.default:background"     value="transparent"/>
+				<property name="scintilla.markdown.default:bold"           value="false"/>
+				<property name="scintilla.markdown.default:italic"         value="false"/>
+
+				<property name="scintilla.markdown.emph:foreground"        value="#000000"/>
+				<property name="scintilla.markdown.emph:underline"         value="false"/>
+				<property name="scintilla.markdown.emph:background"        value="transparent"/>
+				<property name="scintilla.markdown.emph:bold"              value="false"/>
+				<property name="scintilla.markdown.emph:italic"            value="true"/>
+
+				<property name="scintilla.markdown.strong_emph:foreground" value="#000000"/>
+				<property name="scintilla.markdown.strong_emph:underline"  value="false"/>
+				<property name="scintilla.markdown.strong_emph:background" value="transparent"/>
+				<property name="scintilla.markdown.strong_emph:bold"       value="true"/>
+				<property name="scintilla.markdown.strong_emph:italic"     value="false"/>
+
+				<property name="scintilla.markdown.header:foreground"      value="#B22222"/>
+				<property name="scintilla.markdown.header:underline"       value="false"/>
+				<property name="scintilla.markdown.header:background"      value="transparent"/>
+				<property name="scintilla.markdown.header:bold"            value="false"/>
+				<property name="scintilla.markdown.header:italic"          value="false"/>
+
+				<property name="scintilla.markdown.code:foreground"        value="#008000"/>
+				<property name="scintilla.markdown.code:underline"         value="false"/>
+				<property name="scintilla.markdown.code:background"        value="transparent"/>
+				<property name="scintilla.markdown.code:bold"              value="false"/>
+				<property name="scintilla.markdown.code:italic"            value="false"/>
+
+				<property name="scintilla.markdown.url:foreground"         value="#0000FF"/>
+				<property name="scintilla.markdown.url:underline"          value="false"/>
+				<property name="scintilla.markdown.url:background"         value="transparent"/>
+				<property name="scintilla.markdown.url:bold"               value="false"/>
+				<property name="scintilla.markdown.url:italic"             value="false"/>
+
+				<property name="scintilla.markdown.list:foreground"        value="#808080"/>
+				<property name="scintilla.markdown.list:underline"         value="false"/>
+				<property name="scintilla.markdown.list:background"        value="transparent"/>
+				<property name="scintilla.markdown.list:bold"              value="false"/>
+				<property name="scintilla.markdown.list:italic"            value="false"/>
+			</group>
+
+			<group name="search">
+				<property name="scintilla.search.local:color"          value="#FF0000"/>
+				<property name="scintilla.search.local:alpha"          value="64"/>
+				<property name="scintilla.search.local:outline_alpha"  value="196"/>
+				<property name="scintilla.search.local:under_text"     value="true"/>
+
+				<property name="scintilla.search.global:color"         value="#006400"/>
+				<property name="scintilla.search.global:alpha"         value="96"/>
+				<property name="scintilla.search.global:outline_alpha" value="196"/>
+				<property name="scintilla.search.global:under_text"    value="true"/>
+			</group>
+			
+		</group>
+
+	</data>
+</theme>

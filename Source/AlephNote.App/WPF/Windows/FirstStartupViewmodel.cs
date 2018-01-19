@@ -8,6 +8,7 @@ using System.Windows;
 using AlephNote.Common.MVVM;
 using AlephNote.Impl;
 using AlephNote.PluginInterface.Util;
+using AlephNote.Common.Util;
 
 namespace AlephNote.WPF.Windows
 {

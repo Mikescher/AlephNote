@@ -22,6 +22,7 @@ using Hardcodet.Wpf.TaskbarNotification;
 using AlephNote.WPF.Converter;
 using Color = System.Drawing.Color;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
+using AlephNote.Common.Themes;
 
 namespace AlephNote.WPF.Windows
 {
@@ -37,8 +38,9 @@ namespace AlephNote.WPF.Windows
 		private readonly GlobalShortcutManager _scManager;
 		private readonly bool _firstLaunch;
 
-		public AppSettings Settings => viewmodel?.Settings;
+		private AlephTheme _currentTheme;
 
+		public AppSettings Settings => viewmodel?.Settings;
 		public MainWindowViewmodel VM => viewmodel;
 
 		public INotesViewControl NotesViewControl { get; private set; }
@@ -48,7 +50,8 @@ namespace AlephNote.WPF.Windows
 			InitializeComponent();
 			Instance = this;
 
-			PluginManager.Inst.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory, App.Logger);
+			PluginManager.Inst.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory);
+			App.Themes.Init(AppDomain.CurrentDomain.BaseDirectory);
 
 			_firstLaunch = false;
 			AppSettings settings;
@@ -59,7 +62,7 @@ namespace AlephNote.WPF.Windows
 					settings = AppSettings.Load(App.PATH_SETTINGS);
 					if (App.IsUpdateMigration)
 					{
-						settings.Migrate(App.UpdateMigrationFrom, App.UpdateMigrationTo, App.Logger);
+						settings.Migrate(App.UpdateMigrationFrom, App.UpdateMigrationTo);
 						settings.Save();
 					}
 				}
@@ -75,6 +78,18 @@ namespace AlephNote.WPF.Windows
 			{
 				ExceptionDialog.Show(null, "Could not load settings", "Could not load settings from " + App.PATH_SETTINGS, e);
 				settings = AppSettings.CreateEmpty(App.PATH_SETTINGS);
+			}
+
+			_currentTheme = App.Themes.GetByFilename(settings.Theme, out var cte);
+			if (_currentTheme == null)
+			{
+				App.Logger.ShowExceptionDialog($"Could not load theme {settings.Theme}", cte);
+				_currentTheme = App.Themes.GetDefault();
+			}
+			else if (!_currentTheme.Compatibility.Includes(App.APP_VERSION))
+			{
+				App.Logger.ShowExceptionDialog($"Could not load theme {settings.Theme}\r\nThe theme does not support the current version of AlephNote ({App.APP_VERSION})", null);
+				_currentTheme = App.Themes.GetDefault();
 			}
 
 			UpdateNotesViewComponent(settings);
@@ -321,6 +336,11 @@ namespace AlephNote.WPF.Windows
 		public void FocusScintillaDelayed(int d = 50)
 		{
 			new Thread(() => { Thread.Sleep(d); System.Windows.Application.Current.Dispatcher.Invoke(FocusScintilla); }).Start();
+		}
+
+		public void ExecuteDelayed(int d, Action a)
+		{
+			new Thread(() => { Thread.Sleep(d); System.Windows.Application.Current.Dispatcher.BeginInvoke(a); }).Start();
 		}
 
 		public void FocusScintilla()

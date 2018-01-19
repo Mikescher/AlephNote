@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using AlephNote.Common.Network;
 using AlephNote.Common.Plugins;
+using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
 
@@ -18,14 +19,14 @@ namespace AlephNote.Impl
 
 		public static IPluginManager Inst => PluginManagerSingleton.Inst;
 
-		public void LoadPlugins(string baseDirectory, IAlephLogger logger)
+		public void LoadPlugins(string baseDirectory)
 		{
 			_provider = new List<IRemotePlugin>();
 
 			var pluginPath = Path.Combine(baseDirectory, @"plugins\");
 			var pluginfiles = Directory.GetFiles(pluginPath, "*.dll");
 
-			BasicRemoteConnection.SimpleJsonRestWrapper = (p, h) => new SimpleJsonRest(p, h, logger);
+			BasicRemoteConnection.SimpleJsonRestWrapper = (p, h) => new SimpleJsonRest(p, h);
 
 			foreach (var path in pluginfiles)
 			{
@@ -35,11 +36,11 @@ namespace AlephNote.Impl
 				}
 				catch (ReflectionTypeLoadException e)
 				{
-					logger.ShowExceptionDialog("Plugin load Error", "Could not load plugin from " + path, e, e.LoaderExceptions);
+					App.Logger.ShowExceptionDialog("Plugin load Error", "Could not load plugin from " + path, e, e.LoaderExceptions);
 				}
 				catch (Exception e)
 				{
-					logger.ShowExceptionDialog("Plugin load Error", "Could not load plugin from " + path, e);
+					App.Logger.ShowExceptionDialog("Plugin load Error", "Could not load plugin from " + path, e);
 				}
 			}
 

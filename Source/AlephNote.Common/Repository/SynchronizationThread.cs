@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using AlephNote.Common.Extensions;
 using AlephNote.Common.Settings.Types;
+using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Exceptions;
 using AlephNote.PluginInterface.Util;
@@ -12,6 +12,8 @@ namespace AlephNote.Common.Repository
 {
 	class SynchronizationThread
 	{
+		private readonly IAlephLogger _log = LoggerSingleton.Inst;
+
 		private readonly NoteRepository repo;
 		private readonly List<ISynchronizationFeedback> listener;
 		private readonly ConflictResolutionStrategy conflictStrategy;
@@ -22,7 +24,6 @@ namespace AlephNote.Common.Repository
 		private Thread thread;
 
 		private readonly IAlephDispatcher dispatcher;
-		private readonly IAlephLogger _log;
 
 		private volatile bool prioritysync = false;
 		private volatile bool cancel = false;
@@ -30,12 +31,11 @@ namespace AlephNote.Common.Repository
 		private volatile bool isSyncing = false;
 
 
-		public SynchronizationThread(NoteRepository repository, ISynchronizationFeedback[] synclistener, ConflictResolutionStrategyConfig strat, IAlephLogger log, IAlephDispatcher disp)
+		public SynchronizationThread(NoteRepository repository, ISynchronizationFeedback[] synclistener, ConflictResolutionStrategyConfig strat, IAlephDispatcher disp)
 		{
 			repo = repository;
 			listener = synclistener.ToList();
 			conflictStrategy = ConflictResolutionStrategyHelper.ToInterfaceType(strat);
-			_log = log;
 			dispatcher = disp;
 			_comChannel = new ManualResetEvent(false);
 		}

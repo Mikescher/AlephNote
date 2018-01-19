@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using AlephNote.Common.Plugins;
+using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Objects;
 using AlephNote.PluginInterface.Objects.AXML;

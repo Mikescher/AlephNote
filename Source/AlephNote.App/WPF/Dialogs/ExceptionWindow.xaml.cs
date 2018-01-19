@@ -24,8 +24,8 @@ namespace AlephNote.WPF.Windows
 		{
 			var dlg = new ExceptionDialog
 			{
-				ErrorMessage = { Text = e.Message },
-				ErrorTrace   = { Text = FormatExecption(e) },
+				ErrorMessage = { Text = e?.Message ?? "Error in ALephNote" },
+				ErrorTrace   = { Text = FormatException(e) ?? FormatStacktrace() },
 				Title        = title,
 			};
 
@@ -45,7 +45,7 @@ namespace AlephNote.WPF.Windows
 			var dlg = new ExceptionDialog
 			{
 				ErrorMessage = { Text = message },
-				ErrorTrace   = { Text = string.Join(split, new List<Exception> {e}.Concat(additionalExceptions).Select(FormatExecption)) },
+				ErrorTrace   = { Text = string.Join(split, new List<Exception> {e}.Concat(additionalExceptions).Select(FormatException)) },
 				Title        = title,
 			};
 			
@@ -57,16 +57,22 @@ namespace AlephNote.WPF.Windows
 			dlg.ShowDialog();
 		}
 
-		private static string FormatExecption(Exception e)
+		private static string FormatException(Exception e)
 		{
 			const string DELIMITER = " ---> ";
+
+			if (e == null) return null;
 
 			var lines = Regex.Split(e.ToString(), @"\r?\n");
 
 			if (lines.Any()) lines[0] = lines[0].Replace(DELIMITER, Environment.NewLine + "    ---> ");
 
 			return string.Join(Environment.NewLine, lines);
+		}
 
+		private static string FormatStacktrace()
+		{
+			return Environment.StackTrace;
 		}
 
 		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
@@ -76,7 +82,7 @@ namespace AlephNote.WPF.Windows
 
 		private void ClickLink(object sender, MouseButtonEventArgs e)
 		{
-			Process.Start(@"https://github.com/Mikescher/CommonNote/issues");
+			Process.Start(@"https://github.com/Mikescher/AlephNote/issues");
 		}
 
 		private void ButtonExportLogfile_OnClick(object sender, RoutedEventArgs e)
