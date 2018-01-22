@@ -8,6 +8,8 @@ using AlephNote.Common.MVVM;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
 using AlephNote.WPF.Shortcuts;
+using System.Collections.Generic;
+using AlephNote.Common.Themes;
 
 namespace AlephNote.WPF.Windows
 {
@@ -24,12 +26,23 @@ namespace AlephNote.WPF.Windows
 		private ObservableShortcutConfig _selectedShortcut;
 		public ObservableShortcutConfig SelectedShortcut { get { return _selectedShortcut; } set { _selectedShortcut = value; OnPropertyChanged(); } }
 
+		public List<AlephTheme> AvailableThemes { get; set; }
+
+		private AlephTheme _selectedTheme;
+		public AlephTheme SelectedTheme { get { return _selectedTheme; } set { _selectedTheme = value; OnPropertyChanged(); } }
+
 		public SettingsWindowViewmodel(MainWindow main, AppSettings data)
 		{
 			mainWindow = main;
 			Settings = data;
 
 			ShortcutList = ShortcutManager.ListObservableShortcuts(data);
+			AvailableThemes = App.Themes.GetAllAvailable();
+
+			SelectedTheme = App.Themes.GetByFilename(Settings.Theme, out _) 
+						 ?? App.Themes.GetByFilename("default.xml", out _)
+						 ?? AvailableThemes.FirstOrDefault()
+						 ?? App.Themes.GetDefault();
 		}
 
 		public void OnBeforeApply()
@@ -39,6 +52,8 @@ namespace AlephNote.WPF.Windows
 				.Select(s => Tuple.Create(s.Identifier, new ShortcutDefinition(s.Scope, s.Modifiers, s.Key)));
 
 			Settings.Shortcuts = new KeyValueFlatCustomList<ShortcutDefinition>(sdata, ShortcutDefinition.DEFAULT);
+
+			Settings.Theme = SelectedTheme.SourceFilename;
 		}
 
 		private void InsertCurrentWindowState()
@@ -70,7 +85,6 @@ namespace AlephNote.WPF.Windows
 				Settings.StartupPositionWidth = (int)mainWindow.Width;
 				Settings.StartupPositionHeight = (int)mainWindow.Height;
 			}
-
 		}
 
 		public void AddAccount(IRemotePlugin p)

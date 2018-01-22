@@ -127,6 +127,7 @@
     <Compile Include="WPF\Dialogs\FolderNameDialog.xaml.cs">
       <DependentUpon>FolderNameDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Extensions\AlephThemeExtension.cs" />
     <Compile Include="WPF\Services\ConditionalControlTemplate.cs" />
     <Compile Include="WPF\Services\MultiControlTemplateService.cs" />
     <Compile Include="WPF\Shortcuts\GlobalShortcutManager.cs" />
@@ -399,24 +400,20 @@
     <Resource Include="Resources\folder_none.png" />
     <Resource Include="Resources\folder_root.png" />
   </ItemGroup>
-	
-	
   <ItemGroup>
-		<ContentWithTargetPath Include="Resources\themes\solarized-dark.xml">
+    <ContentWithTargetPath Include="Resources\themes\solarized-dark.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<TargetPath>Themes\solarized-dark.xml</TargetPath>
+      <TargetPath>Themes\solarized-dark.xml</TargetPath>
     </ContentWithTargetPath>
-		<ContentWithTargetPath Include="Resources\themes\solarized-light.xml">
+    <ContentWithTargetPath Include="Resources\themes\solarized-light.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<TargetPath>Themes\solarized-light.xml</TargetPath>
+      <TargetPath>Themes\solarized-light.xml</TargetPath>
     </ContentWithTargetPath>
-		<ContentWithTargetPath Include="Resources\themes\default.xml">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<TargetPath>Themes\default.xml</TargetPath>
-		</ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\themes\default.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Themes\default.xml</TargetPath>
+    </ContentWithTargetPath>
   </ItemGroup>
-	
-	
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

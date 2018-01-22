@@ -1,19 +1,29 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace AlephNote.Common.Themes
 {
+	[DebuggerDisplay("{Name} v{Version} ({SourceFilename})")]
 	public sealed class AlephTheme
 	{
 		public string Name { get; set; }
 		public Version Version { get; set; }
 		public CompatibilityVersionRange Compatibility { get; set; }
+		public string SourceFilename { get; set; }
 
+		public ColorRef Scintilla_Background                   { get; set; } = ColorRef.HALF_GRAY;
 
-		public ColorRef Scintilla_Background          { get; set; } = ColorRef.QUARTER_GRAY;
-		public int      Scintilla_WhitespaceSize      { get; set; } = 1;
-		public ColorRef Scintilla_WhitespaceColor     { get; set; } = ColorRef.BLACK;
+		public int      Scintilla_WhitespaceSize               { get; set; } = 4;
+		public ColorRef Scintilla_WhitespaceColor              { get; set; } = ColorRef.WHITE;
+		public ColorRef Scintilla_WhitespaceBackground         { get; set; } = ColorRef.BLACK;
 
-		public ColorRef Scintilla_Markdown_Background { get; set; } = ColorRef.MAGENTA;
+		public ColorRef Scintilla_MarginLineNumbersColor       { get; set; } = ColorRef.BLACK;
+		public ColorRef Scintilla_MarginListSymbolsColor       { get; set; } = ColorRef.BLACK;
+
+		public ColorRef Scintilla_CaretForeground              { get; set; } = ColorRef.BLACK;
+		public ColorRef Scintilla_CaretBackground              { get; set; } = ColorRef.BLACK;
+		public int      Scintilla_CaretBackgroundAlpha         { get; set; } = 256;
+		public bool     Scintilla_CaretVisible                 { get; set; } = false;
 
 		public ScintillaStyleSpec Scintilla_Default            { get; set; } = ScintillaStyleSpec.Empty();
 		public ScintillaStyleSpec Scintilla_Link               { get; set; } = ScintillaStyleSpec.Empty();
@@ -22,11 +32,19 @@ namespace AlephNote.Common.Themes
 		public ScintillaStyleSpec Scintilla_MarkdownStrongEmph { get; set; } = ScintillaStyleSpec.Empty();
 		public ScintillaStyleSpec Scintilla_MarkdownHeader     { get; set; } = ScintillaStyleSpec.Empty();
 		public ScintillaStyleSpec Scintilla_MarkdownCode       { get; set; } = ScintillaStyleSpec.Empty();
-		public ScintillaStyleSpec Scintilla_MarkdownUrl        { get; set; } = ScintillaStyleSpec.Empty();
 		public ScintillaStyleSpec Scintilla_MarkdownList       { get; set; } = ScintillaStyleSpec.Empty();
+		public ScintillaStyleSpec Scintilla_MarkdownURL        { get; set; } = ScintillaStyleSpec.Empty();
 
 		public IndicatorSpec      Scintilla_Search_Local       { get; set; } = IndicatorSpec.Empty();
 		public IndicatorSpec      Scintilla_Search_Global      { get; set; } = IndicatorSpec.Empty();
+
+		public AlephTheme(string n, Version v, CompatibilityVersionRange c, string fn)
+		{
+			Name = n;
+			Version = v;
+			Compatibility = c;
+			SourceFilename = fn;
+		}
 	}
 
 	public struct ScintillaStyleSpec

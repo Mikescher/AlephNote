@@ -74,10 +74,6 @@ namespace AlephNote.Common.Settings
 		private string _noteFontFamily = string.Empty;
 
 		[AlephXMLField]
-		public FontModifier NoteFontModifier { get { return _noteFontModifier; } set { _noteFontModifier = value; OnPropertyChanged(); } }
-		private FontModifier _noteFontModifier = FontModifier.Normal;
-
-		[AlephXMLField]
 		public FontSize NoteFontSize { get { return _noteFontSize; } set { _noteFontSize = value; OnPropertyChanged(); } }
 		private FontSize _noteFontSize = FontSize.Size08;
 

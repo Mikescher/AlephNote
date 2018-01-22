@@ -7,6 +7,8 @@ using AlephNote.Common.Settings.Types;
 using System.Text;
 using System.Drawing;
 using AlephNote.Common.Settings;
+using AlephNote.Common.Themes;
+using AlephNote.WPF.Extensions;
 
 namespace AlephNote.WPF.Util
 {
@@ -33,78 +35,95 @@ namespace AlephNote.WPF.Util
 		public const int INDICATOR_INLINE_SEARCH = 8;
 		public const int INDICATOR_GLOBAL_SEARCH = 9;
 
-		public void SetUpStyles(Scintilla sci, AppSettings s)
+		public void SetUpStyles(Scintilla sci, AppSettings s, AlephTheme theme)
 		{
-			sci.Styles[STYLE_DEFAULT].Bold = s.NoteFontModifier == FontModifier.Bold || s.NoteFontModifier == FontModifier.BoldItalic;
-			sci.Styles[STYLE_DEFAULT].Italic = s.NoteFontModifier == FontModifier.Italic || s.NoteFontModifier == FontModifier.BoldItalic;
-			sci.Styles[STYLE_DEFAULT].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_DEFAULT].Font = s.NoteFontFamily;
+			sci.Styles[Style.Default].BackColor = theme.Scintilla_Background.ToDCol();
 
-			sci.Styles[STYLE_URL].Bold = s.NoteFontModifier == FontModifier.Bold || s.NoteFontModifier == FontModifier.BoldItalic;
-			sci.Styles[STYLE_URL].Italic = s.NoteFontModifier == FontModifier.Italic || s.NoteFontModifier == FontModifier.BoldItalic;
-			sci.Styles[STYLE_URL].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_URL].Font = s.NoteFontFamily;
-			sci.Styles[STYLE_URL].ForeColor = Color.Blue;
-			sci.Styles[STYLE_URL].Hotspot = (s.LinkMode != LinkHighlightMode.OnlyHighlight);
-			sci.Styles[STYLE_URL].Underline = true;
+			sci.Styles[STYLE_DEFAULT].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_DEFAULT].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_DEFAULT].Bold      = theme.Scintilla_Default.Bold;
+			sci.Styles[STYLE_DEFAULT].Italic    = theme.Scintilla_Default.Italic;
+			sci.Styles[STYLE_DEFAULT].Underline = theme.Scintilla_Default.Underline;
+			sci.Styles[STYLE_DEFAULT].ForeColor = theme.Scintilla_Default.Foreground.ToDCol();
+			sci.Styles[STYLE_DEFAULT].BackColor = theme.Scintilla_Default.Background.ToDCol();
 
-			sci.Styles[STYLE_MD_DEFAULT].Bold = false;
-			sci.Styles[STYLE_MD_DEFAULT].Italic = false;
-			sci.Styles[STYLE_MD_DEFAULT].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_MD_DEFAULT].Font = s.NoteFontFamily;
+			sci.Styles[STYLE_URL].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_URL].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_URL].Bold      = theme.Scintilla_Link.Bold;
+			sci.Styles[STYLE_URL].Italic    = theme.Scintilla_Link.Italic;
+			sci.Styles[STYLE_URL].Underline = theme.Scintilla_Link.Underline;
+			sci.Styles[STYLE_URL].ForeColor = theme.Scintilla_Link.Foreground.ToDCol();
+			sci.Styles[STYLE_URL].BackColor = theme.Scintilla_Link.Foreground.ToDCol();
+			sci.Styles[STYLE_URL].Hotspot   = (s.LinkMode != LinkHighlightMode.OnlyHighlight);
 
-			sci.Styles[STYLE_MD_BOLD].Bold = true;
-			sci.Styles[STYLE_MD_BOLD].Italic = false;
-			sci.Styles[STYLE_MD_BOLD].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_MD_BOLD].Font = s.NoteFontFamily;
-			//sci.Styles[STYLE_MD_BOLD].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
+			sci.Styles[STYLE_MD_DEFAULT].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_DEFAULT].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_DEFAULT].Bold      = theme.Scintilla_MarkdownDefault.Bold;
+			sci.Styles[STYLE_MD_DEFAULT].Italic    = theme.Scintilla_MarkdownDefault.Italic;
+			sci.Styles[STYLE_MD_DEFAULT].Underline = theme.Scintilla_MarkdownDefault.Underline;
+			sci.Styles[STYLE_MD_DEFAULT].ForeColor = theme.Scintilla_MarkdownDefault.Foreground.ToDCol();
+			sci.Styles[STYLE_MD_DEFAULT].BackColor = theme.Scintilla_MarkdownDefault.Foreground.ToDCol();
 
-			sci.Styles[STYLE_MD_ITALIC].Bold = false;
-			sci.Styles[STYLE_MD_ITALIC].Italic = true;
-			sci.Styles[STYLE_MD_ITALIC].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_MD_ITALIC].Font = s.NoteFontFamily;
-			//sci.Styles[STYLE_MD_ITALIC].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
+			sci.Styles[STYLE_MD_BOLD].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_BOLD].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_BOLD].Bold      = theme.Scintilla_MarkdownStrongEmph.Bold;
+			sci.Styles[STYLE_MD_BOLD].Italic    = theme.Scintilla_MarkdownStrongEmph.Italic;
+			sci.Styles[STYLE_MD_BOLD].Underline = theme.Scintilla_MarkdownStrongEmph.Underline;
+			sci.Styles[STYLE_MD_BOLD].ForeColor = theme.Scintilla_MarkdownStrongEmph.Foreground.ToDCol();
+			sci.Styles[STYLE_MD_BOLD].BackColor = theme.Scintilla_MarkdownStrongEmph.Foreground.ToDCol();
 
-			sci.Styles[STYLE_MD_HEADER].Bold = false;
-			sci.Styles[STYLE_MD_HEADER].Italic = false;
-			sci.Styles[STYLE_MD_HEADER].ForeColor = Color.FromArgb(178, 34, 34);
-			sci.Styles[STYLE_MD_HEADER].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_MD_HEADER].Font = s.NoteFontFamily;
-			//sci.Styles[STYLE_MD_HEADER].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
+			sci.Styles[STYLE_MD_ITALIC].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_ITALIC].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_ITALIC].Bold      = theme.Scintilla_MarkdownEmph.Bold;
+			sci.Styles[STYLE_MD_ITALIC].Italic    = theme.Scintilla_MarkdownEmph.Italic;
+			sci.Styles[STYLE_MD_ITALIC].Underline = theme.Scintilla_MarkdownEmph.Underline;
+			sci.Styles[STYLE_MD_ITALIC].ForeColor = theme.Scintilla_MarkdownEmph.Foreground.ToDCol();
+			sci.Styles[STYLE_MD_ITALIC].BackColor = theme.Scintilla_MarkdownEmph.Foreground.ToDCol();
 
-			sci.Styles[STYLE_MD_CODE].Bold = false;
-			sci.Styles[STYLE_MD_CODE].Italic = false;
-			sci.Styles[STYLE_MD_CODE].ForeColor = Color.FromArgb(0, 128, 0);
-			sci.Styles[STYLE_MD_CODE].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_MD_CODE].Font = s.NoteFontFamily;
-			//sci.Styles[STYLE_MD_CODE].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
+			sci.Styles[STYLE_MD_HEADER].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_HEADER].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_HEADER].Bold      = theme.Scintilla_MarkdownHeader.Bold;
+			sci.Styles[STYLE_MD_HEADER].Italic    = theme.Scintilla_MarkdownHeader.Italic;
+			sci.Styles[STYLE_MD_HEADER].Underline = theme.Scintilla_MarkdownHeader.Underline;
+			sci.Styles[STYLE_MD_HEADER].ForeColor = theme.Scintilla_MarkdownHeader.Foreground.ToDCol();
+			sci.Styles[STYLE_MD_HEADER].BackColor = theme.Scintilla_MarkdownHeader.Foreground.ToDCol();
 
-			sci.Styles[STYLE_MD_URL].Bold = false;
-			sci.Styles[STYLE_MD_URL].Italic = false;
-			sci.Styles[STYLE_MD_URL].ForeColor = Color.FromArgb(0, 0, 255);
-			sci.Styles[STYLE_MD_URL].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_MD_URL].Font = s.NoteFontFamily;
-			//sci.Styles[STYLE_MD_URL].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
+			sci.Styles[STYLE_MD_CODE].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_CODE].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_CODE].Bold      = theme.Scintilla_MarkdownCode.Bold;
+			sci.Styles[STYLE_MD_CODE].Italic    = theme.Scintilla_MarkdownCode.Italic;
+			sci.Styles[STYLE_MD_CODE].Underline = theme.Scintilla_MarkdownCode.Underline;
+			sci.Styles[STYLE_MD_CODE].ForeColor = theme.Scintilla_MarkdownCode.Foreground.ToDCol();
+			sci.Styles[STYLE_MD_CODE].BackColor = theme.Scintilla_MarkdownCode.Foreground.ToDCol();
 
-			sci.Styles[STYLE_MD_LIST].Bold = false;
-			sci.Styles[STYLE_MD_LIST].Italic = false;
-			sci.Styles[STYLE_MD_LIST].ForeColor = Color.FromArgb(128, 128, 128);
-			sci.Styles[STYLE_MD_LIST].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_MD_LIST].Font = s.NoteFontFamily;
-			//sci.Styles[STYLE_MD_LIST].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
+			sci.Styles[STYLE_MD_URL].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_URL].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_URL].Bold      = theme.Scintilla_MarkdownURL.Bold;
+			sci.Styles[STYLE_MD_URL].Italic    = theme.Scintilla_MarkdownURL.Italic;
+			sci.Styles[STYLE_MD_URL].Underline = theme.Scintilla_MarkdownURL.Underline;
+			sci.Styles[STYLE_MD_URL].ForeColor = theme.Scintilla_MarkdownURL.Foreground.ToDCol();
+			sci.Styles[STYLE_MD_URL].BackColor = theme.Scintilla_MarkdownURL.Foreground.ToDCol();
+
+			sci.Styles[STYLE_MD_LIST].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_LIST].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_LIST].Bold      = theme.Scintilla_MarkdownURL.Bold;
+			sci.Styles[STYLE_MD_LIST].Italic    = theme.Scintilla_MarkdownURL.Italic;
+			sci.Styles[STYLE_MD_LIST].Underline = theme.Scintilla_MarkdownURL.Underline;
+			sci.Styles[STYLE_MD_LIST].ForeColor = theme.Scintilla_MarkdownURL.Foreground.ToDCol();
+			sci.Styles[STYLE_MD_LIST].BackColor = theme.Scintilla_MarkdownURL.Foreground.ToDCol();
 
 
-			sci.Indicators[INDICATOR_INLINE_SEARCH].Style = IndicatorStyle.StraightBox;
-			sci.Indicators[INDICATOR_INLINE_SEARCH].Under = true;
-			sci.Indicators[INDICATOR_INLINE_SEARCH].ForeColor = Color.Red;
-			sci.Indicators[INDICATOR_INLINE_SEARCH].OutlineAlpha = 196;
-			sci.Indicators[INDICATOR_INLINE_SEARCH].Alpha = 64;
+			sci.Indicators[INDICATOR_INLINE_SEARCH].Style        = IndicatorStyle.StraightBox;
+			sci.Indicators[INDICATOR_INLINE_SEARCH].Under        = theme.Scintilla_Search_Local.UnderText;
+			sci.Indicators[INDICATOR_INLINE_SEARCH].ForeColor    = theme.Scintilla_Search_Local.Color.ToDCol();
+			sci.Indicators[INDICATOR_INLINE_SEARCH].OutlineAlpha = theme.Scintilla_Search_Local.OutlineAlpha;
+			sci.Indicators[INDICATOR_INLINE_SEARCH].Alpha        = theme.Scintilla_Search_Local.Alpha;
 
-			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Style = IndicatorStyle.StraightBox;
-			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Under = true;
-			sci.Indicators[INDICATOR_GLOBAL_SEARCH].ForeColor = Color.DarkGreen;
-			sci.Indicators[INDICATOR_GLOBAL_SEARCH].OutlineAlpha = 196;
-			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Alpha = 96;
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Style        = IndicatorStyle.StraightBox;
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Under        = theme.Scintilla_Search_Global.UnderText;
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].ForeColor    = theme.Scintilla_Search_Global.Color.ToDCol();
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].OutlineAlpha = theme.Scintilla_Search_Global.OutlineAlpha;
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Alpha        = theme.Scintilla_Search_Global.Alpha;
 		}
 
 		public abstract void Highlight(Scintilla sci, int start, int end, AppSettings s);

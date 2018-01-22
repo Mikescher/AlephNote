@@ -1,14 +1,22 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace AlephNote.Common.Themes
 {
+	[DebuggerDisplay("{DebuggerDisplay,nq}")]
 	public struct ColorRef
 	{
 		public static readonly ColorRef BLACK        = new ColorRef(0xFF_00_00_00);
+		public static readonly ColorRef WHITE        = new ColorRef(0xFF_FF_FF_FF);
+		public static readonly ColorRef RED          = new ColorRef(0xFF_FF_00_00);
+		public static readonly ColorRef GREEN        = new ColorRef(0xFF_00_FF_00);
+		public static readonly ColorRef BLUE         = new ColorRef(0xFF_00_00_FF);
+
 		public static readonly ColorRef HALF_GRAY    = new ColorRef(0xFF_80_80_80);
 		public static readonly ColorRef QUARTER_GRAY = new ColorRef(0xFF_40_40_40);
-		public static readonly ColorRef WHITE        = new ColorRef(0xFF_FF_FF_FF);
+
 		public static readonly ColorRef MAGENTA      = new ColorRef(0xFF_FF_00_FF);
+		public static readonly ColorRef TRANSPARENT  = new ColorRef(0x00_00_00_00);
 
 		private const int ARGBAlphaShift = 0x18;
 		private const int ARGBRedShift   = 0x10;
@@ -22,7 +30,10 @@ namespace AlephNote.Common.Themes
 		public byte B => (byte)((value >> ARGBBlueShift)  & 0xFF);
 		public byte A => (byte)((value >> ARGBAlphaShift) & 0xFF);
 
-		public long RGBA => value;
+		public long ARGB => value;
+		public string DebuggerDisplay => $"{R:X2}_{G:X2}_{B:X2} (Alpha={A:000})";
+
+		public bool IsTransparent => (A == 0);
 
 		private ColorRef(long value)
 		{
@@ -48,12 +59,12 @@ namespace AlephNote.Common.Themes
 		{
 			var value = ovalue.ToUpper();
 
-			if (value == "TRANSPARENT") return FromArgb(0x00, 0x00, 0x00, 0x00);
-			if (value == "RED")         return FromArgb(0xFF, 0xFF, 0x00, 0x00);
-			if (value == "GREEN")       return FromArgb(0xFF, 0x00, 0xFF, 0x00);
-			if (value == "BLUE")        return FromArgb(0xFF, 0x00, 0x00, 0xFF);
-			if (value == "WHITE")       return FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
-			if (value == "BLACK")       return FromArgb(0xFF, 0x00, 0x00, 0x00);
+			if (value == "TRANSPARENT") return TRANSPARENT;
+			if (value == "RED")         return RED;
+			if (value == "GREEN")       return GREEN;
+			if (value == "BLUE")        return BLUE;
+			if (value == "WHITE")       return WHITE;
+			if (value == "BLACK")       return BLACK;
 
 			if (value.StartsWith("#")) value = value.Substring(1);
 

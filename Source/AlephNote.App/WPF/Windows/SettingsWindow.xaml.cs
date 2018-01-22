@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using AlephNote.Common.Settings;
 using AlephNote.Impl;
+using System.Diagnostics;
 
 namespace AlephNote.WPF.Windows
 {
@@ -58,6 +59,11 @@ namespace AlephNote.WPF.Windows
 		private void OnRemAccountClicked(object sender, RoutedEventArgs e)
 		{
 			viewmodel.RemoveAccount();
+		}
+
+		private void Button_OpenThemeFolder_Click(object sender, RoutedEventArgs e)
+		{
+			Process.Start("explorer.exe", '"'+App.Themes.BasePath+'"');
 		}
 	}
 }

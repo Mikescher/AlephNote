@@ -235,8 +235,9 @@ namespace AlephNote.PluginInterface.Util
 				foreach (var f in xf) yield return f;
 			}
 
-			if (nn.Length > 0) foreach (var f in xf) foreach (var rf in XElemList(f, nn)) yield return rf;
-			if (searchMulti) foreach (var f in xf) foreach (var rf in XElemList(f, p)) yield return rf;
+			if (searchMulti)                         foreach (var rf in XElemList(x, nn)) yield return rf; // * = 0
+			if (nn.Length > 0) foreach (var f in xf) foreach (var rf in XElemList(f, nn)) yield return rf; // * = 1
+			if (searchMulti)   foreach (var f in xf) foreach (var rf in XElemList(f, p))  yield return rf; // * = n
 		}
 
 		#endregion

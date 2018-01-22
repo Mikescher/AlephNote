@@ -57,8 +57,25 @@ License:    Copyright (c) 2011 Ethan Schoonover
 
 	<data>
 
-		<property name="scintilla.background"        value="@base3"/>
-		<property name="scintilla.foreground:normal" value="@base00"/>
+		<property name="scintilla.background"                      value="@base3"/>
+		<property name="scintilla.default:foreground"              value="@base00"/>
 
+		<property name="scintilla.caret:background"                value="@base2"/>
+		<property name="scintilla.caret:visible"                   value="true"/>
+
+		<property name="scintilla.whitespace:color"                value="@base1"/>
+		
+		<property name="scintilla.markdown.emph:foreground"        value="@base01"/>
+		<property name="scintilla.markdown.strong_emph:foreground" value="@base01"/>
+		
+		<property name="scintilla.link:foreground"                 value="@blue"/>
+		<property name="scintilla.markdown.header:foreground"      value="@orange"/>
+		<property name="scintilla.markdown.code:foreground"        value="@yellow"/>
+		<property name="scintilla.markdown.list:foreground"        value="@cyan"/>
+		<property name="scintilla.markdown.url:foreground"         value="@blue"/>
+
+		<property name="scintilla.search.local:color"              value="@red"/>
+		<property name="scintilla.search.global:color"             value="@green"/>
+		
 	</data>
 </theme>

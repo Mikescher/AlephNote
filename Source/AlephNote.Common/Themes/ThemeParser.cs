@@ -1,11 +1,25 @@
 ﻿using AlephNote.PluginInterface.Util;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
 namespace AlephNote.Common.Themes
 {
+	/// <summary>
+	/// 
+	///     Valid values:
+	///     
+	///     Boolean   : ['1', '0', 'true', 'false']
+	///     Integer   : /[0-9]+/
+	///     Double    : /[0-9]+(\.[0-9]+)?/
+	///     Color     : ['#RGB', '#RRGGBB', '#ARGB', '#AARRGGBB', 'transparent']
+	///     
+	///     Indirect  : $propname   // lazy resolved
+	///     Const refs: @refname    // early resolved
+	/// 
+	/// </summary>
 	public class ThemeParser
 	{
 		private class ValueRef
@@ -21,17 +35,18 @@ namespace AlephNote.Common.Themes
 		private string _name;
 		private Version _version;
 		private CompatibilityVersionRange _compatibility;
+		private string _filename;
 
 		private Dictionary<string, ValueRef> _references;
 		private Dictionary<string, string> _properties;
-		private Dictionary<string, string> _defaults;
 
 		public void Load(string filepath)
 		{
 			_xdoc = XDocument.Load(filepath);
+			_filename = Path.GetFileName(filepath).ToLower();
 		}
 
-		public void Parse()
+		public void Parse(Dictionary<string, string> baseValues)
 		{
 			_name          = _xdoc.XListSingle("theme", "meta", "name");
 			_version       = Version.Parse(_xdoc.XListSingle("theme", "meta", "version"));
@@ -46,10 +61,10 @@ namespace AlephNote.Common.Themes
 				_references.Add(key.ToLower(), new ValueRef(key, typ, val));
 			}
 
-			_properties = new Dictionary<string, string>();
+			_properties = new Dictionary<string, string>(baseValues);
 			foreach (var prop in _xdoc.XElemList("theme", "data", "*group*", "property@name=~&value=~"))
 			{
-				var name = prop.Attribute("name").Value.ToLower();
+				var name  = prop.Attribute("name").Value.ToLower();
 				var value = prop.Attribute("value").Value;
 
 				if (value.StartsWith("@"))
@@ -66,32 +81,36 @@ namespace AlephNote.Common.Themes
 			}
 		}
 
-		public AlephTheme Generate(Dictionary<string, string> defaults)
+		public AlephTheme Generate()
 		{
-			_defaults = defaults;
-
-			return new AlephTheme
+			return new AlephTheme(_name, _version, _compatibility, _filename)
 			{
-				Name = _name,
-				Version = _version,
-				Compatibility = _compatibility,
+				Scintilla_Background             = GetPropertyColorRef("scintilla.background"),
 
-				Scintilla_Background         = GetPropertyColorRef("scintilla.background"),
-				Scintilla_WhitespaceSize     = GetPropertyInteger("scintilla.whitespacesize"),
-				Scintilla_WhitespaceColor    = GetPropertyColorRef("scintilla.whitespacecolor"),
+				Scintilla_WhitespaceSize         = GetPropertyInteger( "scintilla.whitespace:size"),
+				Scintilla_WhitespaceColor        = GetPropertyColorRef("scintilla.whitespace:color"),
+				Scintilla_WhitespaceBackground   = GetPropertyColorRef("scintilla.whitespace:background"),
 
-				Scintilla_Default            = GetPropertyStyleSpec("scintilla.default"),
-				Scintilla_Link               = GetPropertyStyleSpec("scintilla.link"),
-				Scintilla_MarkdownDefault    = GetPropertyStyleSpec("scintilla.markdown.default"),
-				Scintilla_MarkdownEmph       = GetPropertyStyleSpec("scintilla.markdown.emph"),
-				Scintilla_MarkdownStrongEmph = GetPropertyStyleSpec("scintilla.markdown.strong_emph"),
-				Scintilla_MarkdownHeader     = GetPropertyStyleSpec("scintilla.markdown.header"),
-				Scintilla_MarkdownCode       = GetPropertyStyleSpec("scintilla.markdown.code"),
-				Scintilla_MarkdownUrl        = GetPropertyStyleSpec("scintilla.markdown.url"),
-				Scintilla_MarkdownList       = GetPropertyStyleSpec("scintilla.markdown.list"),
+				Scintilla_MarginLineNumbersColor = GetPropertyColorRef("scintilla.margin.linenumbers:background"),
+				Scintilla_MarginListSymbolsColor = GetPropertyColorRef("scintilla.margin.listsymbols:background"),
 
-				Scintilla_Search_Local       = GetPropertyIndicatorSpec("scintilla.search.local"),
-				Scintilla_Search_Global      = GetPropertyIndicatorSpec("scintilla.search.global"),
+				Scintilla_CaretForeground        = GetPropertyColorRef("scintilla.caret:foreground"),
+				Scintilla_CaretBackground        = GetPropertyColorRef("scintilla.caret:background"),
+				Scintilla_CaretBackgroundAlpha   = GetPropertyInteger( "scintilla.caret:background_alpha"),
+				Scintilla_CaretVisible           = GetPropertyBoolean( "scintilla.caret:visible"),
+
+				Scintilla_Default                = GetPropertyStyleSpec("scintilla.default"),
+				Scintilla_Link                   = GetPropertyStyleSpec("scintilla.link"),
+				Scintilla_MarkdownDefault        = GetPropertyStyleSpec("scintilla.markdown.default"),
+				Scintilla_MarkdownEmph           = GetPropertyStyleSpec("scintilla.markdown.emph"),
+				Scintilla_MarkdownStrongEmph     = GetPropertyStyleSpec("scintilla.markdown.strong_emph"),
+				Scintilla_MarkdownHeader         = GetPropertyStyleSpec("scintilla.markdown.header"),
+				Scintilla_MarkdownCode           = GetPropertyStyleSpec("scintilla.markdown.code"),
+				Scintilla_MarkdownList           = GetPropertyStyleSpec("scintilla.markdown.list"),
+				Scintilla_MarkdownURL            = GetPropertyStyleSpec("scintilla.markdown.url"),
+
+				Scintilla_Search_Local           = GetPropertyIndicatorSpec("scintilla.search.local"),
+				Scintilla_Search_Global          = GetPropertyIndicatorSpec("scintilla.search.global"),
 			};
 		}
 
@@ -99,71 +118,39 @@ namespace AlephNote.Common.Themes
 
 		public static AlephTheme GetDefault()
 		{
-			return new AlephTheme
-			{
-				Name = "DEFAULT_THEME_FALLBACK",
-				Version = new Version(0, 0, 0, 0),
-				Compatibility = CompatibilityVersionRange.Parse("*"),
-			};
+			return new AlephTheme("DEFAULT_THEME_FALLBACK", new Version(0, 0, 0, 0), CompatibilityVersionRange.Parse("*"), "NULL");
 		}
 
 		private ColorRef GetPropertyColorRef(string name)
 		{
-			var prop = GetProperty(name, null);
-			if (prop == null)
-			{
-				if (_defaults.TryGetValue(name.ToLower(), out var v))
-					prop = v;
-				else
-					throw new Exception($"Defaultvalue for property not found '{name}'");
-			}
-
-			return ColorRef.Parse(prop);
+			return ColorRef.Parse(GetProperty(name));
 		}
 
 		private int GetPropertyInteger(string name)
 		{
-			var prop = GetProperty(name, null);
-			if (prop == null)
-			{
-				if (_defaults.TryGetValue(name.ToLower(), out var v))
-					prop = v;
-				else
-					throw new Exception($"Defaultvalue for property not found '{name}'");
-			}
-
-			return int.Parse(prop);
+			return int.Parse(GetProperty(name));
 		}
 
 		private bool GetPropertyBoolean(string name)
 		{
-			var prop = GetProperty(name, null);
-			if (prop == null)
-			{
-				if (_defaults.TryGetValue(name.ToLower(), out var v))
-					prop = v;
-				else
-					throw new Exception($"Defaultvalue for property not found '{name}'");
-			}
-
-			return XElementExtensions.ParseBool(prop);
+			return XElementExtensions.ParseBool(GetProperty(name));
 		}
 
 		private ScintillaStyleSpec GetPropertyStyleSpec(string name)
 		{
 			var specForeground = GetPropertyColorRef(name + ":foreground");
 			var specBackground = GetPropertyColorRef(name + ":background");
-			var specUnderline = GetPropertyBoolean(name + ":underline");
-			var specBold = GetPropertyBoolean(name + ":bold");
-			var specItalic = GetPropertyBoolean(name + ":italic");
+			var specUnderline  = GetPropertyBoolean( name + ":underline");
+			var specBold       = GetPropertyBoolean( name + ":bold");
+			var specItalic     = GetPropertyBoolean( name + ":italic");
 
 			return new ScintillaStyleSpec
 			{
 				Foreground = specForeground,
 				Background = specBackground,
-				Underline = specUnderline,
-				Bold = specBold,
-				Italic = specItalic,
+				Underline  = specUnderline,
+				Bold       = specBold,
+				Italic     = specItalic,
 			};
 		}
 
@@ -183,11 +170,18 @@ namespace AlephNote.Common.Themes
 			};
 		}
 
-		private string GetProperty(string name, string defaultValue)
+		private string GetProperty(string name, int depth=0, string origName=null)
 		{
-			if (_properties.TryGetValue(name.ToLower(), out var v)) return v;
-			return defaultValue;
+			if (depth >= 4) throw new Exception($"Max recursion depth reached for property '{origName}'");
 
+			if (_properties.TryGetValue(name.ToLower(), out var v))
+			{
+				if (v.StartsWith("$")) return GetProperty(v.Substring(1), depth + 1, origName ?? name);
+
+				return v;
+			}
+
+			throw new Exception($"Value for property '{name}' not found");
 		}
 
 	}

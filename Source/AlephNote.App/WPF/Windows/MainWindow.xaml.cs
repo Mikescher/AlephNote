@@ -23,6 +23,7 @@ using AlephNote.WPF.Converter;
 using Color = System.Drawing.Color;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using AlephNote.Common.Themes;
+using AlephNote.WPF.Extensions;
 
 namespace AlephNote.WPF.Windows
 {
@@ -38,10 +39,9 @@ namespace AlephNote.WPF.Windows
 		private readonly GlobalShortcutManager _scManager;
 		private readonly bool _firstLaunch;
 
-		private AlephTheme _currentTheme;
-
 		public AppSettings Settings => viewmodel?.Settings;
 		public MainWindowViewmodel VM => viewmodel;
+		public AlephTheme CurrentTheme => viewmodel?.CurrentTheme ?? App.Themes.GetDefault();
 
 		public INotesViewControl NotesViewControl { get; private set; }
 
@@ -80,16 +80,16 @@ namespace AlephNote.WPF.Windows
 				settings = AppSettings.CreateEmpty(App.PATH_SETTINGS);
 			}
 
-			_currentTheme = App.Themes.GetByFilename(settings.Theme, out var cte);
-			if (_currentTheme == null)
+			var theme = App.Themes.GetByFilename(settings.Theme, out var cte);
+			if (theme == null)
 			{
 				App.Logger.ShowExceptionDialog($"Could not load theme {settings.Theme}", cte);
-				_currentTheme = App.Themes.GetDefault();
+				theme = App.Themes.GetDefault();
 			}
-			else if (!_currentTheme.Compatibility.Includes(App.APP_VERSION))
+			else if (!theme.Compatibility.Includes(App.APP_VERSION))
 			{
 				App.Logger.ShowExceptionDialog($"Could not load theme {settings.Theme}\r\nThe theme does not support the current version of AlephNote ({App.APP_VERSION})", null);
-				_currentTheme = App.Themes.GetDefault();
+				theme = App.Themes.GetDefault();
 			}
 
 			UpdateNotesViewComponent(settings);
@@ -98,7 +98,7 @@ namespace AlephNote.WPF.Windows
 
 			StartupConfigWindow(settings);
 
-			SetupScintilla(settings);
+			SetupScintilla(settings, theme);
 
 			viewmodel = new MainWindowViewmodel(settings, this);
 			DataContext = viewmodel;
@@ -191,16 +191,21 @@ namespace AlephNote.WPF.Windows
 			return _highlighterDefault;
 		}
 
-		public void SetupScintilla(AppSettings s)
+		public void SetupScintilla(AppSettings s, AlephTheme theme)
 		{
 			NoteEdit.Lexer = Lexer.Container;
 
-			NoteEdit.WhitespaceSize = 1;
-			NoteEdit.ViewWhitespace = s.SciShowWhitespace ? WhitespaceMode.VisibleAlways : WhitespaceMode.Invisible;
-			//NoteEdit.SetWhitespaceForeColor(true, Color.FromArgb(255, 165, 0));
-			NoteEdit.SetWhitespaceForeColor(true, Color.FromArgb(255, 195, 85));
+			NoteEdit.CaretForeColor          = theme.Scintilla_CaretForeground.ToDCol();
+			NoteEdit.CaretLineBackColor      = theme.Scintilla_CaretBackground.ToDCol();
+			NoteEdit.CaretLineBackColorAlpha = theme.Scintilla_CaretBackgroundAlpha;
+			NoteEdit.CaretLineVisible        = theme.Scintilla_CaretVisible;
 
-			UpdateMargins(s);
+			NoteEdit.WhitespaceSize = theme.Scintilla_WhitespaceSize;
+			NoteEdit.ViewWhitespace = s.SciShowWhitespace ? WhitespaceMode.VisibleAlways : WhitespaceMode.Invisible;
+			NoteEdit.SetWhitespaceForeColor(!theme.Scintilla_WhitespaceColor.IsTransparent,      theme.Scintilla_WhitespaceColor.ToDCol());
+			NoteEdit.SetWhitespaceBackColor(!theme.Scintilla_WhitespaceBackground.IsTransparent, theme.Scintilla_WhitespaceBackground.ToDCol());
+
+			UpdateMargins(s, theme);
 			NoteEdit.BorderStyle = BorderStyle.FixedSingle;
 
 			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_OFF].DefineRgbaImage(Properties.Resources.ui_off);
@@ -216,7 +221,7 @@ namespace AlephNote.WPF.Windows
 			var fnt = string.IsNullOrWhiteSpace(s.NoteFontFamily) ? FontNameToFontFamily.StrDefaultValue : s.NoteFontFamily;
 			NoteEdit.Font = new Font(fnt, (int)s.NoteFontSize);
 
-			_highlighterDefault.SetUpStyles(NoteEdit, s);
+			_highlighterDefault.SetUpStyles(NoteEdit, s, theme);
 
 			NoteEdit.WrapMode = s.SciWordWrap ? WrapMode.Whitespace : WrapMode.None;
 
@@ -295,7 +300,7 @@ namespace AlephNote.WPF.Windows
 				}
 			}
 
-			UpdateMargins(Settings);
+			UpdateMargins(Settings, CurrentTheme);
 		}
 
 		public void ResetScintillaScrollAndUndo()
@@ -305,7 +310,7 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.EmptyUndoBuffer();
 		}
 
-		public void UpdateMargins(AppSettings s)
+		public void UpdateMargins(AppSettings s, AlephTheme theme)
 		{
 			if (s == null) return;
 
@@ -314,10 +319,12 @@ namespace AlephNote.WPF.Windows
 				(s.ListMode == ListHighlightMode.WithTag && viewmodel?.SelectedNote?.HasTagCasInsensitive(AppSettings.TAG_LIST) == true);
 
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].Width = s.SciLineNumbers ? NoteEdit.TextWidth(ScintillaHighlighter.STYLE_DEFAULT, "5555") : 0;
+			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].BackColor = theme.Scintilla_MarginLineNumbersColor.ToDCol();
 
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].Width = listHighlight ? (NoteEdit.Lines.FirstOrDefault()?.Height ?? 32) : 0;
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].Mask = Marker.MaskAll;
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].Sensitive = true;
+			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].BackColor = theme.Scintilla_MarginListSymbolsColor.ToDCol();
 
 			NoteEdit.Margins[2].Width = 0;
 
@@ -459,7 +466,7 @@ namespace AlephNote.WPF.Windows
 		private void TagEditor_OnChanged(TagEditor source)
 		{
 			ForceNewHighlighting(Settings);
-			UpdateMargins(Settings);
+			UpdateMargins(Settings, CurrentTheme);
 		}
 
 		private void NotesList_Drop(object sender, System.Windows.DragEventArgs e)

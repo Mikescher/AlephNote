@@ -13,7 +13,9 @@ namespace AlephNote.Common.Themes
 		private List<string> _themeFiles; // <path>
 
 		private Dictionary<string, AlephTheme> _cache; // <path, theme>
-		private Dictionary<string, string> _themeDefaultValues;
+		private Dictionary<string, string> _themeDefaultValues; // <name, value>
+
+		public string BasePath => _baseThemePath;
 
 		public void Init(string basePath)
 		{
@@ -70,6 +72,7 @@ namespace AlephNote.Common.Themes
 			return _themeFiles
 				.Select(p => Path.GetFileName(p))
 				.Select(p => GetByFilename(p, out _))
+				.Where(p => p.Compatibility.Includes(LoggerSingleton.Inst.AppVersion))
 				.ToList();
 		}
 
@@ -84,11 +87,11 @@ namespace AlephNote.Common.Themes
 			{
 				var parser = new ThemeParser();
 				parser.Load(file);
-				parser.Parse();
+				parser.Parse(new Dictionary<string, string>());
 				_themeDefaultValues = parser.GetProperties();
-				var t = parser.Generate(_themeDefaultValues);
+				var t = parser.Generate();
 
-				LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded theme {t.Name} v{t.Version} from '{file}'", $"{string.Join("\n", parser.GetProperties().Select(p => $"{p.Key.PadRight(48, ' ')} {p.Value}"))}");
+				LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded (default) theme {t.Name} v{t.Version} from '{file}'", $"{string.Join("\n", parser.GetProperties().Select(p => $"{p.Key.PadRight(48, ' ')} {p.Value}"))}");
 
 				return t;
 			}
@@ -99,7 +102,7 @@ namespace AlephNote.Common.Themes
 					var dpath = Path.Combine(_baseThemePath, "default.xml");
 					var dparser = new ThemeParser();
 					dparser.Load(dpath);
-					dparser.Parse();
+					dparser.Parse(new Dictionary<string, string>());
 					_themeDefaultValues = dparser.GetProperties();
 
 					LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded {_themeDefaultValues.Count} default values from '{dpath}'", $"{string.Join("\n", dparser.GetProperties().Select(p => $"{p.Key.PadRight(48, ' ')} {p.Value}"))}");
@@ -107,16 +110,13 @@ namespace AlephNote.Common.Themes
 
 				var parser = new ThemeParser();
 				parser.Load(file);
-				parser.Parse();
-				_themeDefaultValues = parser.GetProperties();
-				var t = parser.Generate(_themeDefaultValues);
+				parser.Parse(_themeDefaultValues);
+				var t = parser.Generate();
 
 				LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded theme {t.Name} v{t.Version} from '{file}'", $"{string.Join("\n", parser.GetProperties().Select(p => $"{p.Key.PadRight(48, ' ')} {p.Value}"))}");
 
 				return t;
 			}
-
-
 		}
 	}
 }
