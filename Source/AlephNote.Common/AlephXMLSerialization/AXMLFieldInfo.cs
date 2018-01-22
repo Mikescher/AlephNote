@@ -101,7 +101,9 @@ namespace AlephNote.Common.AlephXMLSerialization
 					return x2;
 
 				case SettingObjectTypeEnum.DirectoryPath:
-					return CreateXElem(PropInfo.Name, _objectType, ((DirectoryPath)objdata).Serialize(), opt);
+					var x3= CreateXElem(PropInfo.Name, _objectType, ((DirectoryPath)objdata).Serialize(), opt);
+					x3.Add(new XAttribute("path", ((DirectoryPath)objdata).StrSerialize()));
+					return x3;
 
 				default:
 					throw new ArgumentOutOfRangeException(nameof(objdata), _objectType, null);

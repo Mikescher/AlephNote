@@ -314,7 +314,7 @@ namespace AlephNote.WPF.Controls
 					}
 					else
 					{
-						var fod = DisplayItems.SubFolder.FirstOrDefault();
+						var fod = DisplayItems.SubFolder.FirstOrDefault(p=>!p.IsSpecialNode);
 						if (fod != null && !fod.IsSelected)
 						{
 							App.Logger.TraceExt("NotesViewHierachical",

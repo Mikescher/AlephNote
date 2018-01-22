@@ -81,7 +81,6 @@ namespace AlephNote.WPF.Util
 		public HierachicalEmptyPathViewWrapper(HierachicalFolderWrapper baseWrapper, IHierachicalWrapperConfig cfg) : base("Unsorted notes", cfg, DirectoryPath.Root(), false, false)
 		{
 			_baseWrapper = baseWrapper;
-			IsSelected = true;
 		}
 	}
 
@@ -231,7 +230,7 @@ namespace AlephNote.WPF.Util
 		{
 			foreach (var item in SubFolder)
 			{
-				if (item is HierachicalFlatViewWrapper) continue;
+				if (item.IsSpecialNode) continue;
 				var n = item.Find(note);
 				if (n != null) return null;
 			}
@@ -246,7 +245,7 @@ namespace AlephNote.WPF.Util
 		{
 			foreach (var item in SubFolder)
 			{
-				if (item is HierachicalFlatViewWrapper) continue;
+				if (item.IsSpecialNode) continue;
 				if (item._path.EqualsIgnoreCase(path)) return item;
 				var n = item.Find(path);
 				if (n != null) return n;
