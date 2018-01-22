@@ -9,6 +9,7 @@ using System.Windows.Input;
 using AlephNote.Common.Extensions;
 using AlephNote.Common.Repository;
 using AlephNote.Common.Settings;
+using AlephNote.Common.Themes;
 using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.WPF.Controls
@@ -57,6 +58,19 @@ namespace AlephNote.WPF.Controls
 		{
 			get { return (AppSettings)GetValue(SettingsProperty); }
 			set { SetValue(SettingsProperty, value); }
+		}
+
+		public static readonly DependencyProperty ThemeProperty =
+			DependencyProperty.Register(
+			"Theme",
+			typeof(AlephTheme),
+			typeof(TagEditor),
+			new FrameworkPropertyMetadata(null));
+
+		public AlephTheme Theme
+		{
+			get { return (AlephTheme)GetValue(ThemeProperty); }
+			set { SetValue(ThemeProperty, value); }
 		}
 
 		public string FormattedText

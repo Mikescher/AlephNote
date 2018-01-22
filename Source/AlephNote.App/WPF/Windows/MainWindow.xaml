@@ -24,6 +24,7 @@
 		Loaded="MainWindow_OnLoaded"
 		KeyDown="MainWindow_OnKeyDown"
 		Topmost="{Binding Settings.AlwaysOnTop}"
+		Background="{Binding CurrentTheme.Window_Background, Converter={conv:ColorRefToBrush}}"
 		Title="AlephNote" Height="350" Width="525">
 
 	<Grid x:Name="LayoutRoot">
@@ -38,7 +39,9 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" >
+		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" 
+			  Background="{Binding CurrentTheme.Window_MainMenu_Background, Converter={conv:BrushRefToBrush}}" 
+			  Foreground="{Binding CurrentTheme.Window_MainMenu_Foreground, Converter={conv:ColorRefToBrush}}" >
 			<MenuItem Header="File">
 				<ctrl:AutoActionMenuItem Header="New Note"                  AlephAction="NewNote"              Settings="{Binding Settings}"  />
 				<ctrl:AutoActionMenuItem Header="New Note (from clipboard)" AlephAction="NewNoteFromClipboard" Settings="{Binding Settings}"  />
@@ -172,7 +175,7 @@
 			</Grid.RowDefinitions>
 
 			<TextBox Grid.Row="0" BorderBrush="Transparent" BorderThickness="0"  
-					 Foreground="CornflowerBlue" 
+					 Foreground="{Binding CurrentTheme.Window_NoteTitle_Foreground, Converter={conv:ColorRefToBrush}}" 
 					 FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
 					 FontFamily="{Binding Settings.TitleFontFamily, Converter={conv:FontNameToFontFamily}}" 
 					 FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
@@ -180,18 +183,27 @@
 					 Text="{Binding SelectedNote.Title, UpdateSourceTrigger=PropertyChanged}" >
 				<services:WatermarkService.Watermark>
 					<TextBlock Text="Empty Title..." VerticalAlignment="Center" Padding="6,0"
-					 FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
-					 FontFamily="{Binding Settings.TitleFontFamily, Converter={conv:FontNameToFontFamily}}" 
-					 FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
-					 FontStyle="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontStyle}}" />
+							   FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
+							   FontFamily="{Binding Settings.TitleFontFamily, Converter={conv:FontNameToFontFamily}}" 
+							   FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
+							   FontStyle="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontStyle}}" />
 				</services:WatermarkService.Watermark>
 			</TextBox>
 
-			<ctrl:TagEditor Grid.Row="1" Grid.Column="0" TagSource="{Binding SelectedNote.Tags}" Repository="{Binding Repository}" Settings="{Binding Settings}" Changed="TagEditor_OnChanged"/>
+			<ctrl:TagEditor Grid.Row="1" Grid.Column="0" 
+							TagSource="{Binding SelectedNote.Tags}" 
+							Repository="{Binding Repository}" 
+							Settings="{Binding Settings}" 
+							Theme="{Binding CurrentTheme}" 
+							Changed="TagEditor_OnChanged"/>
 
 			<StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="8,2">
-				<TextBlock Text="*" Foreground="DarkGray" Visibility="{Binding SelectedNote.IsLocalSaved, Converter={conv:BoolToVisibility}, ConverterParameter=Collapsed;Visible}" />
-				<TextBlock Text="{Binding SelectedNote.ModificationDate, Converter={conv:SmartDateTimeToDisplay}}" ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DTOToDisplay}}" Foreground="DarkGray" />
+				<TextBlock Text="*" 
+						   Foreground="{Binding CurrentTheme.Window_ChangeDate_Foreground, Converter={conv:ColorRefToBrush}}" 
+						   Visibility="{Binding SelectedNote.IsLocalSaved, Converter={conv:BoolToVisibility}, ConverterParameter=Collapsed;Visible}" />
+				<TextBlock Text="{Binding SelectedNote.ModificationDate, Converter={conv:SmartDateTimeToDisplay}}" 
+					       ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DTOToDisplay}}" 
+					       Foreground="{Binding CurrentTheme.Window_ChangeDate_Foreground, Converter={conv:ColorRefToBrush}}" />
 			</StackPanel>
 
 			<Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="{Binding Settings.UseHierachicalNoteStructure, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}">

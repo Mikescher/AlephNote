@@ -112,6 +112,8 @@
     <Compile Include="WPF\Controls\TagEditor.xaml.cs">
       <DependentUpon>TagEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Converter\BrushRefToBrush.cs" />
+    <Compile Include="WPF\Converter\ColorRefToBrush.cs" />
     <Compile Include="WPF\Converter\HierachicalWrapperToIcon.cs" />
     <Compile Include="WPF\Converter\StringIsNotWhitespace.cs" />
     <Compile Include="WPF\Converter\PropertyToHelpText.cs" />

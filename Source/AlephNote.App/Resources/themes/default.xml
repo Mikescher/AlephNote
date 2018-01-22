@@ -114,5 +114,14 @@ Repository: https://github.com/Mikescher/AlephNote
 			
 		</group>
 
+		<group name="window">
+			<property name="window.background"          value="#FFFFFF"/>
+			<property name="window.mainmenu:background" value="gradient-v://0.00:#FFFFFF | 0.25:#F6F6F6 | 0.25:#EAE8E8 | 0.80:#DCD9D9 | 1.00:#FFFFFF"/>
+			<property name="window.mainmenu:foreground" value="#000000"/>
+
+			<property name="window.notetitle:foreground"  value="#FF6495ED"/>
+			<property name="window.changedate:foreground" value="#FFA9A9A9"/>
+	</group>
+		
 	</data>
 </theme>

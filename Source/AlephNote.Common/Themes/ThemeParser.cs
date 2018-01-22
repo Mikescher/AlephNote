@@ -15,6 +15,9 @@ namespace AlephNote.Common.Themes
 	///     Integer   : /[0-9]+/
 	///     Double    : /[0-9]+(\.[0-9]+)?/
 	///     Color     : ['#RGB', '#RRGGBB', '#ARGB', '#AARRGGBB', 'transparent']
+	///     Brush     : Color
+	///                 solid://Color
+	///                 gradient://(Double:Color  |  )+
 	///     
 	///     Indirect  : $propname   // lazy resolved
 	///     Const refs: @refname    // early resolved
@@ -85,6 +88,15 @@ namespace AlephNote.Common.Themes
 		{
 			return new AlephTheme(_name, _version, _compatibility, _filename)
 			{
+				Window_Background            = GetPropertyColorRef("window.background"),
+
+				Window_MainMenu_Foreground   = GetPropertyColorRef("window.mainmenu:foreground"),
+				Window_MainMenu_Background   = GetPropertyBrushRef("window.mainmenu:background"),
+
+				Window_NoteTitle_Foreground  = GetPropertyColorRef("window.notetitle:foreground"),
+				Window_ChangeDate_Foreground = GetPropertyColorRef("window.changedate:foreground"),
+
+
 				Scintilla_Background             = GetPropertyColorRef("scintilla.background"),
 
 				Scintilla_WhitespaceSize         = GetPropertyInteger( "scintilla.whitespace:size"),
@@ -124,6 +136,11 @@ namespace AlephNote.Common.Themes
 		private ColorRef GetPropertyColorRef(string name)
 		{
 			return ColorRef.Parse(GetProperty(name));
+		}
+
+		private BrushRef GetPropertyBrushRef(string name)
+		{
+			return BrushRef.Parse(GetProperty(name));
 		}
 
 		private int GetPropertyInteger(string name)

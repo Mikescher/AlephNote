@@ -11,6 +11,14 @@ namespace AlephNote.Common.Themes
 		public CompatibilityVersionRange Compatibility { get; set; }
 		public string SourceFilename { get; set; }
 
+
+		public ColorRef Window_Background                      { get; set; } = ColorRef.MAGENTA;
+		public BrushRef Window_MainMenu_Background             { get; set; } = BrushRef.BLACK;
+		public ColorRef Window_MainMenu_Foreground             { get; set; } = ColorRef.WHITE;
+		public ColorRef Window_NoteTitle_Foreground            { get; set; } = ColorRef.WHITE;
+		public ColorRef Window_ChangeDate_Foreground           { get; set; } = ColorRef.WHITE;
+
+
 		public ColorRef Scintilla_Background                   { get; set; } = ColorRef.HALF_GRAY;
 
 		public int      Scintilla_WhitespaceSize               { get; set; } = 4;

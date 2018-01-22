@@ -78,6 +78,9 @@ License:    Copyright (c) 2011 Ethan Schoonover
 
 		<property name="scintilla.search.local:color"              value="@red"/>
 		<property name="scintilla.search.global:color"             value="@green"/>
+
+		<property name="window.background"                         value="@base2"/>
+		
 		
 	</data>
 </theme>
