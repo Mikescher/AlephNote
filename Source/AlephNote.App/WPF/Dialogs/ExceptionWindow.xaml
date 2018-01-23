@@ -8,7 +8,7 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="1*"/>
-			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto" MinHeight="60"/>
 		</Grid.RowDefinitions>
 
 		<Border Grid.Row="0" Background="Tomato" BorderBrush="DimGray" BorderThickness="1" Margin="10" CornerRadius="10">

@@ -24,6 +24,7 @@ using Color = System.Drawing.Color;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using AlephNote.Common.Themes;
 using AlephNote.WPF.Extensions;
+using AlephNote.Common.Util;
 
 namespace AlephNote.WPF.Windows
 {
@@ -37,68 +38,24 @@ namespace AlephNote.WPF.Windows
 		private readonly ScintillaHighlighter _highlighterMarkdown = new MarkdownHighlighter();
 
 		private readonly GlobalShortcutManager _scManager;
-		private readonly bool _firstLaunch;
 
 		public AppSettings Settings => viewmodel?.Settings;
 		public MainWindowViewmodel VM => viewmodel;
-		public AlephTheme CurrentTheme => viewmodel?.CurrentTheme ?? App.Themes.GetDefault();
 
 		public INotesViewControl NotesViewControl { get; private set; }
 
-		public MainWindow()
+		public MainWindow(AppSettings settings)
 		{
 			InitializeComponent();
 			Instance = this;
-
-			PluginManager.Inst.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory);
-			App.Themes.Init(AppDomain.CurrentDomain.BaseDirectory);
-
-			_firstLaunch = false;
-			AppSettings settings;
-			try
-			{
-				if (File.Exists(App.PATH_SETTINGS))
-				{
-					settings = AppSettings.Load(App.PATH_SETTINGS);
-					if (App.IsUpdateMigration)
-					{
-						settings.Migrate(App.UpdateMigrationFrom, App.UpdateMigrationTo);
-						settings.Save();
-					}
-				}
-				else
-				{
-					settings = AppSettings.CreateEmpty(App.PATH_SETTINGS);
-					settings.Save();
-
-					_firstLaunch = true;
-				}
-			}
-			catch (Exception e)
-			{
-				ExceptionDialog.Show(null, "Could not load settings", "Could not load settings from " + App.PATH_SETTINGS, e);
-				settings = AppSettings.CreateEmpty(App.PATH_SETTINGS);
-			}
-
-			var theme = App.Themes.GetByFilename(settings.Theme, out var cte);
-			if (theme == null)
-			{
-				App.Logger.ShowExceptionDialog($"Could not load theme {settings.Theme}", cte);
-				theme = App.Themes.GetDefault();
-			}
-			else if (!theme.Compatibility.Includes(App.APP_VERSION))
-			{
-				App.Logger.ShowExceptionDialog($"Could not load theme {settings.Theme}\r\nThe theme does not support the current version of AlephNote ({App.APP_VERSION})", null);
-				theme = App.Themes.GetDefault();
-			}
-
+			
 			UpdateNotesViewComponent(settings);
 
 			_scManager = new GlobalShortcutManager(this);
 
 			StartupConfigWindow(settings);
 
-			SetupScintilla(settings, theme);
+			SetupScintilla(settings);
 
 			viewmodel = new MainWindowViewmodel(settings, this);
 			DataContext = viewmodel;
@@ -191,8 +148,10 @@ namespace AlephNote.WPF.Windows
 			return _highlighterDefault;
 		}
 
-		public void SetupScintilla(AppSettings s, AlephTheme theme)
+		public void SetupScintilla(AppSettings s)
 		{
+			var theme = ThemeManager.Inst.CurrentTheme;
+
 			NoteEdit.Lexer = Lexer.Container;
 
 			NoteEdit.CaretForeColor          = theme.Scintilla_CaretForeground.ToDCol();
@@ -205,7 +164,7 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.SetWhitespaceForeColor(!theme.Scintilla_WhitespaceColor.IsTransparent,      theme.Scintilla_WhitespaceColor.ToDCol());
 			NoteEdit.SetWhitespaceBackColor(!theme.Scintilla_WhitespaceBackground.IsTransparent, theme.Scintilla_WhitespaceBackground.ToDCol());
 
-			UpdateMargins(s, theme);
+			UpdateMargins(s);
 			NoteEdit.BorderStyle = BorderStyle.FixedSingle;
 
 			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_OFF].DefineRgbaImage(Properties.Resources.ui_off);
@@ -221,7 +180,7 @@ namespace AlephNote.WPF.Windows
 			var fnt = string.IsNullOrWhiteSpace(s.NoteFontFamily) ? FontNameToFontFamily.StrDefaultValue : s.NoteFontFamily;
 			NoteEdit.Font = new Font(fnt, (int)s.NoteFontSize);
 
-			_highlighterDefault.SetUpStyles(NoteEdit, s, theme);
+			_highlighterDefault.SetUpStyles(NoteEdit, s);
 
 			NoteEdit.WrapMode = s.SciWordWrap ? WrapMode.Whitespace : WrapMode.None;
 
@@ -300,7 +259,7 @@ namespace AlephNote.WPF.Windows
 				}
 			}
 
-			UpdateMargins(Settings, CurrentTheme);
+			UpdateMargins(Settings);
 		}
 
 		public void ResetScintillaScrollAndUndo()
@@ -310,9 +269,11 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.EmptyUndoBuffer();
 		}
 
-		public void UpdateMargins(AppSettings s, AlephTheme theme)
+		public void UpdateMargins(AppSettings s)
 		{
 			if (s == null) return;
+
+			var theme = ThemeManager.Inst.CurrentTheme;
 
 			bool listHighlight = 
 				(s.ListMode == ListHighlightMode.Always) || 
@@ -431,7 +392,7 @@ namespace AlephNote.WPF.Windows
 		{
 			ResetScintillaScrollAndUndo();
 
-			if (_firstLaunch)
+			if (App.IsFirstLaunch)
 			{
 				var fsw = new FirstStartupWindow(this);
 				fsw.ShowDialog();
@@ -456,6 +417,8 @@ namespace AlephNote.WPF.Windows
 		public void MainWindow_OnClosed(EventArgs args)
 		{
 			_scManager.Close();
+
+			App.Current.Shutdown();
 		}
 
 		private void OnHideDoumentSearchBox(object sender, EventArgs e)
@@ -466,7 +429,7 @@ namespace AlephNote.WPF.Windows
 		private void TagEditor_OnChanged(TagEditor source)
 		{
 			ForceNewHighlighting(Settings);
-			UpdateMargins(Settings, CurrentTheme);
+			UpdateMargins(Settings);
 		}
 
 		private void NotesList_Drop(object sender, System.Windows.DragEventArgs e)

@@ -115,13 +115,31 @@ Repository: https://github.com/Mikescher/AlephNote
 		</group>
 
 		<group name="window">
-			<property name="window.background"          value="#FFFFFF"/>
-			<property name="window.mainmenu:background" value="gradient-v://0.00:#FFFFFF | 0.25:#F6F6F6 | 0.25:#EAE8E8 | 0.80:#DCD9D9 | 1.00:#FFFFFF"/>
-			<property name="window.mainmenu:foreground" value="#000000"/>
+			<property name="window.background"            value="#FFFFFF"/>
+			<property name="window.foreground"            value="#000000"/>
+			<property name="window.mainmenu:background"   value="gradient-v://0.00:#FFFFFF | 0.25:#F6F6F6 | 0.25:#EAE8E8 | 0.80:#DCD9D9 | 1.00:#FFFFFF"/>
+			<property name="window.mainmenu:foreground"   value="#000000"/>
 
 			<property name="window.notetitle:foreground"  value="#FF6495ED"/>
 			<property name="window.changedate:foreground" value="#FFA9A9A9"/>
-	</group>
+
+			<group name="tageditor">
+				<property name="window.tageditor.popup:background"            value="#EEEEEE"/>
+				<property name="window.tageditor.popup:bordercolor"           value="#D3D3D3"/>
+				<property name="window.tageditor.popup:foreground"            value="$window.foreground"/>
+
+				<property name="window.tageditor.placeholder"                 value="#888888"/>
+				<property name="window.tageditor.foreground"                  value="$window.foreground"/>
+				
+				<property name="window.tageditor.tag:background"              value="#FFF5EE"/>
+				<property name="window.tageditor.tag:bordercolor_default"     value="#D3D3D3"/>
+				<property name="window.tageditor.tag:bordercolor_highlighted" value="#000000"/>
+				<property name="window.tageditor.tag:foreground"              value="$window.foreground"/>
+			</group>
+
+
+
+		</group>
 		
 	</data>
 </theme>

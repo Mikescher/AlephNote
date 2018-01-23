@@ -47,6 +47,7 @@ License:    Copyright (c) 2011 Ethan Schoonover
 		<valueref key="base01"  type="color">#93A1A1</valueref> <!-- Optional emphasized content                -->
 		<valueref key="base02"  type="color">#EEE8D5</valueref> <!--                                            -->
 		<valueref key="base03"  type="color">#FDF6E3</valueref> <!--                                            -->
+		
 		<valueref key="yellow"  type="color">#B58900</valueref>
 		<valueref key="orange"  type="color">#CB4B16</valueref>
 		<valueref key="red"     type="color">#DC322F</valueref>
@@ -59,28 +60,48 @@ License:    Copyright (c) 2011 Ethan Schoonover
 
 	<data>
 
-		<property name="scintilla.background"                      value="@base3"/>
-		<property name="scintilla.default:foreground"              value="@base00"/>
+		<group name="scintilla">
+			<property name="scintilla.background"                      value="@base3"/>
+			<property name="scintilla.default:foreground"              value="@base00"/>
 
-		<property name="scintilla.caret:background"                value="@base2"/>
-		<property name="scintilla.caret:visible"                   value="true"/>
+			<property name="scintilla.caret:background"                value="@base2"/>
+			<property name="scintilla.caret:visible"                   value="true"/>
 
-		<property name="scintilla.whitespace:color"                value="@base1"/>
+			<property name="scintilla.whitespace:color"                value="@base1"/>
 
-		<property name="scintilla.markdown.emph:foreground"        value="@base01"/>
-		<property name="scintilla.markdown.strong_emph:foreground" value="@base01"/>
+			<property name="scintilla.markdown.emph:foreground"        value="@base01"/>
+			<property name="scintilla.markdown.strong_emph:foreground" value="@base01"/>
 
-		<property name="scintilla.link:foreground"                 value="@blue"/>
-		<property name="scintilla.markdown.header:foreground"      value="@orange"/>
-		<property name="scintilla.markdown.code:foreground"        value="@yellow"/>
-		<property name="scintilla.markdown.list:foreground"        value="@cyan"/>
-		<property name="scintilla.markdown.url:foreground"         value="@blue"/>
+			<property name="scintilla.link:foreground"                 value="@blue"/>
+			<property name="scintilla.markdown.header:foreground"      value="@orange"/>
+			<property name="scintilla.markdown.code:foreground"        value="@yellow"/>
+			<property name="scintilla.markdown.list:foreground"        value="@cyan"/>
+			<property name="scintilla.markdown.url:foreground"         value="@blue"/>
 
-		<property name="scintilla.search.local:color"              value="@red"/>
-		<property name="scintilla.search.global:color"             value="@green"/>
+			<property name="scintilla.search.local:color"              value="@red"/>
+			<property name="scintilla.search.global:color"             value="@green"/>
 
-		<property name="window.background"                         value="@base2"/>
-		
-		
+		</group>
+
+		<group name="window">
+			<property name="window.background"                            value="@base2"/>
+			<property name="window.foreground"                            value="@base01"/>
+			
+			<property name="window.mainmenu:background"                   value="@base1"/>
+			<property name="window.mainmenu:foreground"                   value="@base02"/>
+
+			<property name="window.notetitle:foreground"                  value="@yellow"/>
+			<property name="window.changedate:foreground"                 value="@base00"/>
+
+			<property name="window.tageditor.popup:background"            value="@base01"/>
+			<property name="window.tageditor.popup:bordercolor"           value="@base02"/>
+			<property name="window.tageditor.popup:foreground"            value="@base3"/>
+
+			<property name="window.tageditor.tag:foreground"              value="@base0"/>
+			<property name="window.tageditor.tag:background"              value="@base03"/>
+			<property name="window.tageditor.tag:bordercolor_default"     value="@base0"/>
+			<property name="window.tageditor.tag:bordercolor_highlighted" value="@cyan"/>
+		</group>
+
 	</data>
 </theme>

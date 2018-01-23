@@ -9,6 +9,7 @@ using System.Drawing;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Themes;
 using AlephNote.WPF.Extensions;
+using AlephNote.Common.Util;
 
 namespace AlephNote.WPF.Util
 {
@@ -35,8 +36,10 @@ namespace AlephNote.WPF.Util
 		public const int INDICATOR_INLINE_SEARCH = 8;
 		public const int INDICATOR_GLOBAL_SEARCH = 9;
 
-		public void SetUpStyles(Scintilla sci, AppSettings s, AlephTheme theme)
+		public void SetUpStyles(Scintilla sci, AppSettings s)
 		{
+			var theme = ThemeManager.Inst.CurrentTheme;
+
 			sci.Styles[Style.Default].BackColor = theme.Scintilla_Background.ToDCol();
 
 			sci.Styles[STYLE_DEFAULT].Size      = (int)s.NoteFontSize;

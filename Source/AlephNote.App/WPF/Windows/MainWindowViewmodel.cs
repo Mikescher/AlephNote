@@ -26,6 +26,7 @@ using AlephNote.Impl;
 using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.Dialogs;
 using AlephNote.Common.Themes;
+using AlephNote.Common.Util;
 
 namespace AlephNote.WPF.Windows
 {
@@ -79,9 +80,6 @@ namespace AlephNote.WPF.Windows
 
 		private NoteRepository _repository;
 		public NoteRepository Repository { get { return _repository; } private set { _repository = value; OnPropertyChanged(); } }
-
-		private AlephTheme _currentTheme;
-		public AlephTheme CurrentTheme { get { return _currentTheme; } private set { if (_currentTheme != value) { _currentTheme = value; OnPropertyChanged(); } } }
 
 		private INote _selectedNote;
 		public INote SelectedNote { get { return _selectedNote; } set { if (_selectedNote != value) { _selectedNote = value; OnPropertyChanged(); SelectedNoteChanged(); } } }
@@ -139,8 +137,6 @@ namespace AlephNote.WPF.Windows
 
 			_settings = settings;
 			_invSaveSettings = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SaveSettings)), 8 * 1000, 60 * 1000);
-
-			_currentTheme = App.Themes.GetByFilename(settings.Theme, out _) ?? App.Themes.GetDefault();
 
 			_repository = new NoteRepository(App.PATH_LOCALDB, this, settings, settings.ActiveAccount, dispatcher);
 			Repository.Init();
@@ -236,7 +232,7 @@ namespace AlephNote.WPF.Windows
 				Settings.Save();
 				App.Logger.Trace("Main", $"Settings saved in {sw2.ElapsedMilliseconds}ms");
 
-				CurrentTheme = App.Themes.GetByFilename(Settings.Theme, out _) ?? App.Themes.GetDefault();
+				ThemeManager.Inst.ChangeTheme(Settings.Theme);
 
 				if (reconnectRepo)
 				{
@@ -270,7 +266,7 @@ namespace AlephNote.WPF.Windows
 
 				if (refreshNotesCtrlView)  Owner.NotesViewControl.RefreshView();
 
-				Owner.SetupScintilla(Settings, CurrentTheme);
+				Owner.SetupScintilla(Settings);
 				Owner.UpdateShortcuts(Settings);
 
 				if (refreshNotesTheme)
@@ -307,7 +303,7 @@ namespace AlephNote.WPF.Windows
 			}
 
 			Owner.ResetScintillaScrollAndUndo();
-			if (Settings != null) Owner.UpdateMargins(Settings, CurrentTheme);
+			if (Settings != null) Owner.UpdateMargins(Settings);
 			if (!_preventScintillaFocus && Settings?.AutofocusScintilla == true) Owner.FocusScintillaDelayed();
 
 			if (SelectedNote != null) ScintillaSearcher.Highlight(Owner.NoteEdit, SelectedNote, SearchText);

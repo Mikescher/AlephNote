@@ -233,5 +233,38 @@ namespace AlephNote.PluginInterface.Util
 
 			return true;
 		}
+
+		/// <summary>
+		/// https://stackoverflow.com/a/2837527/1761622
+		/// </summary>
+		public static int IndexOf<T>(this IEnumerable<T> source, T item)
+		{
+			var entry = source.Select((x, i) => new { Value = x, Index = i })
+						.Where(x => object.Equals(x.Value, item))
+						.FirstOrDefault();
+			return entry != null ? entry.Index : -1;
+		}
+
+		/// <summary>
+		/// https://stackoverflow.com/a/2837527/1761622
+		/// </summary>
+		public static void CopyTo<T>(this IEnumerable<T> source, T[] array, int startIndex)
+		{
+			int lowerBound = array.GetLowerBound(0);
+			int upperBound = array.GetUpperBound(0);
+			if (startIndex < lowerBound)
+				throw new ArgumentOutOfRangeException("startIndex", "The start index must be greater than or equal to the array lower bound");
+			if (startIndex > upperBound)
+				throw new ArgumentOutOfRangeException("startIndex", "The start index must be less than or equal to the array upper bound");
+
+			int i = 0;
+			foreach (var item in source)
+			{
+				if (startIndex + i > upperBound)
+					throw new ArgumentException("The array capacity is insufficient to copy all items from the source sequence");
+				array[startIndex + i] = item;
+				i++;
+			}
+		}
 	}
 }

@@ -10,7 +10,9 @@ namespace AlephNote.WPF.Converter
 {
 	class BrushRefToBrush : OneWayConverter<BrushRef, Brush>
 	{
-		protected override Brush Convert(BrushRef value, object parameter)
+		protected override Brush Convert(BrushRef value, object parameter) => Convert(value);
+
+		public static  Brush Convert(BrushRef value)
 		{
 			if (value.BrushType == BrushRefType.Solid)
 			{

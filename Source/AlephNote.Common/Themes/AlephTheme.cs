@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace AlephNote.Common.Themes
@@ -11,13 +12,24 @@ namespace AlephNote.Common.Themes
 		public CompatibilityVersionRange Compatibility { get; set; }
 		public string SourceFilename { get; set; }
 
+		public Dictionary<string, object> AllProperties;
 
 		public ColorRef Window_Background                      { get; set; } = ColorRef.MAGENTA;
+		public ColorRef Window_Foreground                      { get; set; } = ColorRef.RED;
 		public BrushRef Window_MainMenu_Background             { get; set; } = BrushRef.BLACK;
 		public ColorRef Window_MainMenu_Foreground             { get; set; } = ColorRef.WHITE;
 		public ColorRef Window_NoteTitle_Foreground            { get; set; } = ColorRef.WHITE;
 		public ColorRef Window_ChangeDate_Foreground           { get; set; } = ColorRef.WHITE;
 
+		public ColorRef Window_TagEditor_PopupBackground       { get; set; } = ColorRef.WHITE;
+		public ColorRef Window_TagEditor_PopupBorder           { get; set; } = ColorRef.WHITE;
+		public ColorRef Window_TagEditor_PopupForeground       { get; set; } = ColorRef.BLACK;
+		public ColorRef Window_TagEditor_Placeholder           { get; set; } = ColorRef.BLACK;
+		public ColorRef Window_TagEditor_Foregound             { get; set; } = ColorRef.BLACK;
+		public ColorRef Window_TagEditor_TagBackground         { get; set; } = ColorRef.MAGENTA;
+		public ColorRef Window_TagEditor_TagBorderNormal       { get; set; } = ColorRef.BLACK;
+		public ColorRef Window_TagEditor_TagBorderHighlighted  { get; set; } = ColorRef.BLACK;
+		public ColorRef Window_TagEditor_TagForeground         { get; set; } = ColorRef.BLACK;
 
 		public ColorRef Scintilla_Background                   { get; set; } = ColorRef.HALF_GRAY;
 

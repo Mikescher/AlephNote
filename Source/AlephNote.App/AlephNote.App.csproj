@@ -130,6 +130,7 @@
       <DependentUpon>FolderNameDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Extensions\AlephThemeExtension.cs" />
+    <Compile Include="WPF\Extensions\ThemeBindingExtension.cs" />
     <Compile Include="WPF\Services\ConditionalControlTemplate.cs" />
     <Compile Include="WPF\Services\MultiControlTemplateService.cs" />
     <Compile Include="WPF\Shortcuts\GlobalShortcutManager.cs" />

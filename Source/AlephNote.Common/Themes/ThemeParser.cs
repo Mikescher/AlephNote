@@ -43,6 +43,8 @@ namespace AlephNote.Common.Themes
 		private Dictionary<string, ValueRef> _references;
 		private Dictionary<string, string> _properties;
 
+		private Dictionary<string, object> _collectedProperties;
+
 		public void Load(string filepath)
 		{
 			_xdoc = XDocument.Load(filepath);
@@ -86,9 +88,12 @@ namespace AlephNote.Common.Themes
 
 		public AlephTheme Generate()
 		{
-			return new AlephTheme(_name, _version, _compatibility, _filename)
+			_collectedProperties = new Dictionary<string, object>();
+
+			var t = new AlephTheme(_name, _version, _compatibility, _filename)
 			{
 				Window_Background            = GetPropertyColorRef("window.background"),
+				Window_Foreground            = GetPropertyColorRef("window.foreground"),
 
 				Window_MainMenu_Foreground   = GetPropertyColorRef("window.mainmenu:foreground"),
 				Window_MainMenu_Background   = GetPropertyBrushRef("window.mainmenu:background"),
@@ -96,6 +101,17 @@ namespace AlephNote.Common.Themes
 				Window_NoteTitle_Foreground  = GetPropertyColorRef("window.notetitle:foreground"),
 				Window_ChangeDate_Foreground = GetPropertyColorRef("window.changedate:foreground"),
 
+				Window_TagEditor_PopupBackground      = GetPropertyColorRef("window.tageditor.popup:background"),
+				Window_TagEditor_PopupBorder          = GetPropertyColorRef("window.tageditor.popup:bordercolor"),
+				Window_TagEditor_PopupForeground      = GetPropertyColorRef("window.tageditor.popup:foreground"),
+				Window_TagEditor_Placeholder          = GetPropertyColorRef("window.tageditor.placeholder"),
+				Window_TagEditor_Foregound            = GetPropertyColorRef("window.tageditor.foreground"),
+				Window_TagEditor_TagBackground        = GetPropertyColorRef("window.tageditor.tag:background"),
+				Window_TagEditor_TagBorderNormal      = GetPropertyColorRef("window.tageditor.tag:bordercolor_default"),
+				Window_TagEditor_TagBorderHighlighted = GetPropertyColorRef("window.tageditor.tag:bordercolor_highlighted"),
+				Window_TagEditor_TagForeground        = GetPropertyColorRef("window.tageditor.tag:foreground"),
+
+				//-------------------------------------------------------------------------------------
 
 				Scintilla_Background             = GetPropertyColorRef("scintilla.background"),
 
@@ -124,6 +140,10 @@ namespace AlephNote.Common.Themes
 				Scintilla_Search_Local           = GetPropertyIndicatorSpec("scintilla.search.local"),
 				Scintilla_Search_Global          = GetPropertyIndicatorSpec("scintilla.search.global"),
 			};
+
+			t.AllProperties = _collectedProperties;
+
+			return t;
 		}
 
 		public Dictionary<string, string> GetProperties() => _properties;
@@ -135,22 +155,30 @@ namespace AlephNote.Common.Themes
 
 		private ColorRef GetPropertyColorRef(string name)
 		{
-			return ColorRef.Parse(GetProperty(name));
+			var r = ColorRef.Parse(GetProperty(name));
+			_collectedProperties[name] = r;
+			return r;
 		}
 
 		private BrushRef GetPropertyBrushRef(string name)
 		{
-			return BrushRef.Parse(GetProperty(name));
+			var r = BrushRef.Parse(GetProperty(name));
+			_collectedProperties[name] = r;
+			return r;
 		}
 
 		private int GetPropertyInteger(string name)
 		{
-			return int.Parse(GetProperty(name));
+			var r = int.Parse(GetProperty(name));
+			_collectedProperties[name] = r;
+			return r;
 		}
 
 		private bool GetPropertyBoolean(string name)
 		{
-			return XElementExtensions.ParseBool(GetProperty(name));
+			var r = XElementExtensions.ParseBool(GetProperty(name));
+			_collectedProperties[name] = r;
+			return r;
 		}
 
 		private ScintillaStyleSpec GetPropertyStyleSpec(string name)
