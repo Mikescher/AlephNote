@@ -12,51 +12,7 @@ namespace AlephNote.Common.Themes
 		public CompatibilityVersionRange Compatibility { get; set; }
 		public string SourceFilename { get; set; }
 
-		public Dictionary<string, object> AllProperties;
-
-		public ColorRef Window_Background                      { get; set; } = ColorRef.MAGENTA;
-		public ColorRef Window_Foreground                      { get; set; } = ColorRef.RED;
-		public BrushRef Window_MainMenu_Background             { get; set; } = BrushRef.BLACK;
-		public ColorRef Window_MainMenu_Foreground             { get; set; } = ColorRef.WHITE;
-		public ColorRef Window_NoteTitle_Foreground            { get; set; } = ColorRef.WHITE;
-		public ColorRef Window_ChangeDate_Foreground           { get; set; } = ColorRef.WHITE;
-
-		public ColorRef Window_TagEditor_PopupBackground       { get; set; } = ColorRef.WHITE;
-		public ColorRef Window_TagEditor_PopupBorder           { get; set; } = ColorRef.WHITE;
-		public ColorRef Window_TagEditor_PopupForeground       { get; set; } = ColorRef.BLACK;
-		public ColorRef Window_TagEditor_Placeholder           { get; set; } = ColorRef.BLACK;
-		public ColorRef Window_TagEditor_Foregound             { get; set; } = ColorRef.BLACK;
-		public ColorRef Window_TagEditor_TagBackground         { get; set; } = ColorRef.MAGENTA;
-		public ColorRef Window_TagEditor_TagBorderNormal       { get; set; } = ColorRef.BLACK;
-		public ColorRef Window_TagEditor_TagBorderHighlighted  { get; set; } = ColorRef.BLACK;
-		public ColorRef Window_TagEditor_TagForeground         { get; set; } = ColorRef.BLACK;
-
-		public ColorRef Scintilla_Background                   { get; set; } = ColorRef.HALF_GRAY;
-
-		public int      Scintilla_WhitespaceSize               { get; set; } = 4;
-		public ColorRef Scintilla_WhitespaceColor              { get; set; } = ColorRef.WHITE;
-		public ColorRef Scintilla_WhitespaceBackground         { get; set; } = ColorRef.BLACK;
-
-		public ColorRef Scintilla_MarginLineNumbersColor       { get; set; } = ColorRef.BLACK;
-		public ColorRef Scintilla_MarginListSymbolsColor       { get; set; } = ColorRef.BLACK;
-
-		public ColorRef Scintilla_CaretForeground              { get; set; } = ColorRef.BLACK;
-		public ColorRef Scintilla_CaretBackground              { get; set; } = ColorRef.BLACK;
-		public int      Scintilla_CaretBackgroundAlpha         { get; set; } = 256;
-		public bool     Scintilla_CaretVisible                 { get; set; } = false;
-
-		public ScintillaStyleSpec Scintilla_Default            { get; set; } = ScintillaStyleSpec.Empty();
-		public ScintillaStyleSpec Scintilla_Link               { get; set; } = ScintillaStyleSpec.Empty();
-		public ScintillaStyleSpec Scintilla_MarkdownDefault    { get; set; } = ScintillaStyleSpec.Empty();
-		public ScintillaStyleSpec Scintilla_MarkdownEmph       { get; set; } = ScintillaStyleSpec.Empty();
-		public ScintillaStyleSpec Scintilla_MarkdownStrongEmph { get; set; } = ScintillaStyleSpec.Empty();
-		public ScintillaStyleSpec Scintilla_MarkdownHeader     { get; set; } = ScintillaStyleSpec.Empty();
-		public ScintillaStyleSpec Scintilla_MarkdownCode       { get; set; } = ScintillaStyleSpec.Empty();
-		public ScintillaStyleSpec Scintilla_MarkdownList       { get; set; } = ScintillaStyleSpec.Empty();
-		public ScintillaStyleSpec Scintilla_MarkdownURL        { get; set; } = ScintillaStyleSpec.Empty();
-
-		public IndicatorSpec      Scintilla_Search_Local       { get; set; } = IndicatorSpec.Empty();
-		public IndicatorSpec      Scintilla_Search_Global      { get; set; } = IndicatorSpec.Empty();
+		private Dictionary<string, object> AllProperties = new Dictionary<string, object>();
 
 		public AlephTheme(string n, Version v, CompatibilityVersionRange c, string fn)
 		{
@@ -65,45 +21,24 @@ namespace AlephNote.Common.Themes
 			Compatibility = c;
 			SourceFilename = fn;
 		}
-	}
 
-	public struct ScintillaStyleSpec
-	{
-		public ColorRef Foreground { get; set; }
-		public ColorRef Background { get; set; }
-		public bool     Underline  { get; set; }
-		public bool     Bold       { get; set; }
-		public bool     Italic     { get; set; }
+		public void AddProperty(string name, ColorRef prop) => AllProperties.Add(name, prop);
+		public void AddProperty(string name, BrushRef prop) => AllProperties.Add(name, prop);
+		public void AddProperty(string name, int prop)      => AllProperties.Add(name, prop);
+		public void AddProperty(string name, double prop)   => AllProperties.Add(name, prop);
+		public void AddProperty(string name, bool prop)     => AllProperties.Add(name, prop);
 
-		public static ScintillaStyleSpec Empty()
+		public T Get<T>(string name)
 		{
-			return new ScintillaStyleSpec
-			{
-				Foreground = ColorRef.MAGENTA,
-				Background = ColorRef.HALF_GRAY,
-				Underline  = true,
-				Bold       = true,
-				Italic     = true,
-			};
+			var obj = Get(name);
+			if (obj is T result) return result;
+			throw new Exception($"ThemeProperty has wrong type: {name} (Expected: {typeof(T)}, Actual: {obj?.GetType()})");
 		}
-	}
 
-	public struct IndicatorSpec
-	{
-		public ColorRef Color        { get; set; }
-		public int      Alpha        { get; set; }
-		public int      OutlineAlpha { get; set; }
-		public bool     UnderText    { get; set; }
-
-		public static IndicatorSpec Empty()
+		public object Get(string name)
 		{
-			return new IndicatorSpec
-			{
-				Color        = ColorRef.WHITE,
-				Alpha        = 255,
-				OutlineAlpha = 255,
-				UnderText    = true,
-			};
+			if (AllProperties.TryGetValue(name, out var obj)) return obj;
+			throw new Exception($"ThemeProperty not found: {name}");
 		}
 	}
 }

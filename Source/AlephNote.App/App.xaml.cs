@@ -31,8 +31,8 @@ namespace AlephNote
 
 		public static CommandLineArguments Args;
 
-		public static readonly ThemeCache Themes = new ThemeCache();
-		public static readonly EventLogger Logger = new EventLogger();
+		public static readonly ThemeCache    Themes    = new ThemeCache();
+		public static readonly EventLogger   Logger    = new EventLogger();
 		public static readonly PluginManager PluginMan = new PluginManager();
 
 		public static bool DebugMode = false;
@@ -101,8 +101,7 @@ namespace AlephNote
 			}
 
 			ThemeManager.Inst.LoadWithErrorDialog(settings);
-
-			ShutdownMode = ShutdownMode.OnExplicitShutdown;
+			
 			var mw = new MainWindow(settings);
 			mw.Show();
 		}

@@ -103,7 +103,7 @@ namespace AlephNote.WPF.Extensions
 
 			if (ttype.ToLower() == "brush")
 			{
-				if (!ThemeManager.Inst.CurrentTheme.AllProperties.TryGetValue(key, out var obj)) throw new Exception("ThemeKey not found: " + key);
+				var obj = ThemeManager.Inst.CurrentTheme.Get(key);
 
 				if (obj is ColorRef cref) return ColorRefToBrush.Convert(cref);
 				if (obj is BrushRef bref) return BrushRefToBrush.Convert(bref);

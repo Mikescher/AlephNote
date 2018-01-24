@@ -43,8 +43,6 @@ namespace AlephNote.Common.Themes
 		private Dictionary<string, ValueRef> _references;
 		private Dictionary<string, string> _properties;
 
-		private Dictionary<string, object> _collectedProperties;
-
 		public void Load(string filepath)
 		{
 			_xdoc = XDocument.Load(filepath);
@@ -88,60 +86,55 @@ namespace AlephNote.Common.Themes
 
 		public AlephTheme Generate()
 		{
-			_collectedProperties = new Dictionary<string, object>();
+			var t = new AlephTheme(_name, _version, _compatibility, _filename);
 
-			var t = new AlephTheme(_name, _version, _compatibility, _filename)
-			{
-				Window_Background            = GetPropertyColorRef("window.background"),
-				Window_Foreground            = GetPropertyColorRef("window.foreground"),
+			CollectPropertyColorRef(t, "window.background");
+			CollectPropertyColorRef(t, "window.foreground");
 
-				Window_MainMenu_Foreground   = GetPropertyColorRef("window.mainmenu:foreground"),
-				Window_MainMenu_Background   = GetPropertyBrushRef("window.mainmenu:background"),
+			CollectPropertyColorRef(t, "window.mainmenu:foreground");
+			CollectPropertyBrushRef(t, "window.mainmenu:background");
 
-				Window_NoteTitle_Foreground  = GetPropertyColorRef("window.notetitle:foreground"),
-				Window_ChangeDate_Foreground = GetPropertyColorRef("window.changedate:foreground"),
+			CollectPropertyColorRef(t, "window.notetitle:foreground");
+			CollectPropertyColorRef(t, "window.changedate:foreground");
 
-				Window_TagEditor_PopupBackground      = GetPropertyColorRef("window.tageditor.popup:background"),
-				Window_TagEditor_PopupBorder          = GetPropertyColorRef("window.tageditor.popup:bordercolor"),
-				Window_TagEditor_PopupForeground      = GetPropertyColorRef("window.tageditor.popup:foreground"),
-				Window_TagEditor_Placeholder          = GetPropertyColorRef("window.tageditor.placeholder"),
-				Window_TagEditor_Foregound            = GetPropertyColorRef("window.tageditor.foreground"),
-				Window_TagEditor_TagBackground        = GetPropertyColorRef("window.tageditor.tag:background"),
-				Window_TagEditor_TagBorderNormal      = GetPropertyColorRef("window.tageditor.tag:bordercolor_default"),
-				Window_TagEditor_TagBorderHighlighted = GetPropertyColorRef("window.tageditor.tag:bordercolor_highlighted"),
-				Window_TagEditor_TagForeground        = GetPropertyColorRef("window.tageditor.tag:foreground"),
+			CollectPropertyColorRef(t, "window.tageditor.popup:background");
+			CollectPropertyColorRef(t, "window.tageditor.popup:bordercolor");
+			CollectPropertyColorRef(t, "window.tageditor.popup:foreground");
+			CollectPropertyColorRef(t, "window.tageditor.placeholder");
+			CollectPropertyColorRef(t, "window.tageditor.foreground");
+			CollectPropertyColorRef(t, "window.tageditor.tag:background");
+			CollectPropertyColorRef(t, "window.tageditor.tag:bordercolor_default");
+			CollectPropertyColorRef(t, "window.tageditor.tag:bordercolor_highlighted");
+			CollectPropertyColorRef(t, "window.tageditor.tag:foreground");
 
-				//-------------------------------------------------------------------------------------
+			//-------------------------------------------------------------------------------------
 
-				Scintilla_Background             = GetPropertyColorRef("scintilla.background"),
+			CollectPropertyColorRef(t, "scintilla.background");
 
-				Scintilla_WhitespaceSize         = GetPropertyInteger( "scintilla.whitespace:size"),
-				Scintilla_WhitespaceColor        = GetPropertyColorRef("scintilla.whitespace:color"),
-				Scintilla_WhitespaceBackground   = GetPropertyColorRef("scintilla.whitespace:background"),
+			CollectPropertyInteger( t, "scintilla.whitespace:size");
+			CollectPropertyColorRef(t, "scintilla.whitespace:color");
+			CollectPropertyColorRef(t, "scintilla.whitespace:background");
 
-				Scintilla_MarginLineNumbersColor = GetPropertyColorRef("scintilla.margin.linenumbers:background"),
-				Scintilla_MarginListSymbolsColor = GetPropertyColorRef("scintilla.margin.listsymbols:background"),
+			CollectPropertyColorRef(t, "scintilla.margin.linenumbers:background");
+			CollectPropertyColorRef(t, "scintilla.margin.listsymbols:background");
 
-				Scintilla_CaretForeground        = GetPropertyColorRef("scintilla.caret:foreground"),
-				Scintilla_CaretBackground        = GetPropertyColorRef("scintilla.caret:background"),
-				Scintilla_CaretBackgroundAlpha   = GetPropertyInteger( "scintilla.caret:background_alpha"),
-				Scintilla_CaretVisible           = GetPropertyBoolean( "scintilla.caret:visible"),
+			CollectPropertyColorRef(t, "scintilla.caret:foreground");
+			CollectPropertyColorRef(t, "scintilla.caret:background");
+			CollectPropertyInteger( t, "scintilla.caret:background_alpha");
+			CollectPropertyBoolean( t, "scintilla.caret:visible");
 
-				Scintilla_Default                = GetPropertyStyleSpec("scintilla.default"),
-				Scintilla_Link                   = GetPropertyStyleSpec("scintilla.link"),
-				Scintilla_MarkdownDefault        = GetPropertyStyleSpec("scintilla.markdown.default"),
-				Scintilla_MarkdownEmph           = GetPropertyStyleSpec("scintilla.markdown.emph"),
-				Scintilla_MarkdownStrongEmph     = GetPropertyStyleSpec("scintilla.markdown.strong_emph"),
-				Scintilla_MarkdownHeader         = GetPropertyStyleSpec("scintilla.markdown.header"),
-				Scintilla_MarkdownCode           = GetPropertyStyleSpec("scintilla.markdown.code"),
-				Scintilla_MarkdownList           = GetPropertyStyleSpec("scintilla.markdown.list"),
-				Scintilla_MarkdownURL            = GetPropertyStyleSpec("scintilla.markdown.url"),
+			CollectPropertyStyleSpec(t, "scintilla.default");
+			CollectPropertyStyleSpec(t, "scintilla.link");
+			CollectPropertyStyleSpec(t, "scintilla.markdown.default");
+			CollectPropertyStyleSpec(t, "scintilla.markdown.emph");
+			CollectPropertyStyleSpec(t, "scintilla.markdown.strong_emph");
+			CollectPropertyStyleSpec(t, "scintilla.markdown.header");
+			CollectPropertyStyleSpec(t, "scintilla.markdown.code");
+			CollectPropertyStyleSpec(t, "scintilla.markdown.list");
+			CollectPropertyStyleSpec(t, "scintilla.markdown.url");
 
-				Scintilla_Search_Local           = GetPropertyIndicatorSpec("scintilla.search.local"),
-				Scintilla_Search_Global          = GetPropertyIndicatorSpec("scintilla.search.global"),
-			};
-
-			t.AllProperties = _collectedProperties;
+			CollectPropertyIndicatorSpec(t, "scintilla.search.local");
+			CollectPropertyIndicatorSpec(t, "scintilla.search.global");
 
 			return t;
 		}
@@ -153,66 +146,41 @@ namespace AlephNote.Common.Themes
 			return new AlephTheme("DEFAULT_THEME_FALLBACK", new Version(0, 0, 0, 0), CompatibilityVersionRange.Parse("*"), "NULL");
 		}
 
-		private ColorRef GetPropertyColorRef(string name)
+		private void CollectPropertyColorRef(AlephTheme t, string name)
 		{
-			var r = ColorRef.Parse(GetProperty(name));
-			_collectedProperties[name] = r;
-			return r;
+			t.AddProperty(name, ColorRef.Parse(GetProperty(name)));
 		}
 
-		private BrushRef GetPropertyBrushRef(string name)
+		private void CollectPropertyBrushRef(AlephTheme t, string name)
 		{
-			var r = BrushRef.Parse(GetProperty(name));
-			_collectedProperties[name] = r;
-			return r;
+			t.AddProperty(name, BrushRef.Parse(GetProperty(name)));
 		}
 
-		private int GetPropertyInteger(string name)
+		private void CollectPropertyInteger(AlephTheme t, string name)
 		{
-			var r = int.Parse(GetProperty(name));
-			_collectedProperties[name] = r;
-			return r;
+			t.AddProperty(name, int.Parse(GetProperty(name)));
 		}
 
-		private bool GetPropertyBoolean(string name)
+		private void CollectPropertyBoolean(AlephTheme t, string name)
 		{
-			var r = XElementExtensions.ParseBool(GetProperty(name));
-			_collectedProperties[name] = r;
-			return r;
+			t.AddProperty(name, XElementExtensions.ParseBool(GetProperty(name)));
 		}
 
-		private ScintillaStyleSpec GetPropertyStyleSpec(string name)
+		private void CollectPropertyStyleSpec(AlephTheme t, string name)
 		{
-			var specForeground = GetPropertyColorRef(name + ":foreground");
-			var specBackground = GetPropertyColorRef(name + ":background");
-			var specUnderline  = GetPropertyBoolean( name + ":underline");
-			var specBold       = GetPropertyBoolean( name + ":bold");
-			var specItalic     = GetPropertyBoolean( name + ":italic");
-
-			return new ScintillaStyleSpec
-			{
-				Foreground = specForeground,
-				Background = specBackground,
-				Underline  = specUnderline,
-				Bold       = specBold,
-				Italic     = specItalic,
-			};
+			CollectPropertyColorRef(t, name + ":foreground");
+			CollectPropertyColorRef(t, name + ":background");
+			CollectPropertyBoolean( t, name + ":underline");
+			CollectPropertyBoolean( t, name + ":bold");
+			CollectPropertyBoolean( t, name + ":italic");
 		}
 
-		private IndicatorSpec GetPropertyIndicatorSpec(string name)
+		private void CollectPropertyIndicatorSpec(AlephTheme t, string name)
 		{
-			var specColor        = GetPropertyColorRef(name + ":color");
-			var specAlpha        = GetPropertyInteger( name + ":alpha");
-			var specOutlineAlpha = GetPropertyInteger( name + ":outline_alpha");
-			var specUnderText    = GetPropertyBoolean( name + ":under_text");
-
-			return new IndicatorSpec
-			{
-				Color        = specColor,
-				Alpha        = specAlpha,
-				OutlineAlpha = specOutlineAlpha,
-				UnderText    = specUnderText,
-			};
+			CollectPropertyColorRef(t, name + ":color");
+			CollectPropertyInteger( t, name + ":alpha");
+			CollectPropertyInteger( t, name + ":outline_alpha");
+			CollectPropertyBoolean( t, name + ":under_text");
 		}
 
 		private string GetProperty(string name, int depth=0, string origName=null)

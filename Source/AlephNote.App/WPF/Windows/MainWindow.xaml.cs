@@ -154,15 +154,15 @@ namespace AlephNote.WPF.Windows
 
 			NoteEdit.Lexer = Lexer.Container;
 
-			NoteEdit.CaretForeColor          = theme.Scintilla_CaretForeground.ToDCol();
-			NoteEdit.CaretLineBackColor      = theme.Scintilla_CaretBackground.ToDCol();
-			NoteEdit.CaretLineBackColorAlpha = theme.Scintilla_CaretBackgroundAlpha;
-			NoteEdit.CaretLineVisible        = theme.Scintilla_CaretVisible;
+			NoteEdit.CaretForeColor          = theme.Get<ColorRef>("scintilla.caret:foreground").ToDCol();
+			NoteEdit.CaretLineBackColor      = theme.Get<ColorRef>("scintilla.caret:background").ToDCol();
+			NoteEdit.CaretLineBackColorAlpha = theme.Get<int>("scintilla.caret:background_alpha");
+			NoteEdit.CaretLineVisible        = theme.Get<bool>("scintilla.caret:visible");
 
-			NoteEdit.WhitespaceSize = theme.Scintilla_WhitespaceSize;
+			NoteEdit.WhitespaceSize = theme.Get<int>("scintilla.whitespace:size");
 			NoteEdit.ViewWhitespace = s.SciShowWhitespace ? WhitespaceMode.VisibleAlways : WhitespaceMode.Invisible;
-			NoteEdit.SetWhitespaceForeColor(!theme.Scintilla_WhitespaceColor.IsTransparent,      theme.Scintilla_WhitespaceColor.ToDCol());
-			NoteEdit.SetWhitespaceBackColor(!theme.Scintilla_WhitespaceBackground.IsTransparent, theme.Scintilla_WhitespaceBackground.ToDCol());
+			NoteEdit.SetWhitespaceForeColor(!theme.Get<ColorRef>("scintilla.whitespace:color").IsTransparent, theme.Get<ColorRef>("scintilla.whitespace:color").ToDCol());
+			NoteEdit.SetWhitespaceBackColor(!theme.Get<ColorRef>("scintilla.whitespace:background").IsTransparent, theme.Get<ColorRef>("scintilla.whitespace:background").ToDCol());
 
 			UpdateMargins(s);
 			NoteEdit.BorderStyle = BorderStyle.FixedSingle;
@@ -280,12 +280,12 @@ namespace AlephNote.WPF.Windows
 				(s.ListMode == ListHighlightMode.WithTag && viewmodel?.SelectedNote?.HasTagCasInsensitive(AppSettings.TAG_LIST) == true);
 
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].Width = s.SciLineNumbers ? NoteEdit.TextWidth(ScintillaHighlighter.STYLE_DEFAULT, "5555") : 0;
-			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].BackColor = theme.Scintilla_MarginLineNumbersColor.ToDCol();
+			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].BackColor = theme.Get<ColorRef>("scintilla.margin.linenumbers:background").ToDCol();
 
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].Width = listHighlight ? (NoteEdit.Lines.FirstOrDefault()?.Height ?? 32) : 0;
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].Mask = Marker.MaskAll;
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].Sensitive = true;
-			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].BackColor = theme.Scintilla_MarginListSymbolsColor.ToDCol();
+			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].BackColor = theme.Get<ColorRef>("scintilla.margin.listsymbols:background").ToDCol();
 
 			NoteEdit.Margins[2].Width = 0;
 

@@ -1,7 +1,6 @@
 ﻿using AlephNote.WPF.MVVM;
 using System.Windows.Media;
 using AlephNote.Common.Settings;
-using AlephNote.WPF.Windows;
 using AlephNote.Common.Themes;
 using AlephNote.Common.Util;
 
@@ -15,7 +14,7 @@ namespace AlephNote.WPF.Converter
 
 		private static void CreateBrushes(AlephTheme t)
 		{
-			StandardBrush = ColorRefToBrush.Convert(t.Window_TagEditor_TagBorderNormal);
+			StandardBrush = ColorRefToBrush.Convert(t.Get<ColorRef>("window.tageditor.tag:bordercolor_default"));
 
 			HighlightBrush = new DrawingBrush
 			{
@@ -24,7 +23,7 @@ namespace AlephNote.WPF.Converter
 				TileMode = TileMode.Tile,
 				Drawing = new GeometryDrawing
 				{
-					Brush = ColorRefToBrush.Convert(t.Window_TagEditor_TagBorderHighlighted),
+					Brush = ColorRefToBrush.Convert(t.Get<ColorRef>("window.tageditor.tag:bordercolor_highlighted")),
 					Geometry = new GeometryGroup
 					{
 						Children = new GeometryCollection(new Geometry[]
