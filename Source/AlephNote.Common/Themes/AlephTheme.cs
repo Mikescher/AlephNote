@@ -7,6 +7,8 @@ namespace AlephNote.Common.Themes
 	[DebuggerDisplay("{Name} v{Version} ({SourceFilename})")]
 	public sealed class AlephTheme
 	{
+		public readonly bool IsFallback;
+
 		public string Name { get; set; }
 		public Version Version { get; set; }
 		public CompatibilityVersionRange Compatibility { get; set; }
@@ -14,12 +16,14 @@ namespace AlephNote.Common.Themes
 
 		private Dictionary<string, object> AllProperties = new Dictionary<string, object>();
 
-		public AlephTheme(string n, Version v, CompatibilityVersionRange c, string fn)
+		public AlephTheme(string n, Version v, CompatibilityVersionRange c, string fn, bool fb)
 		{
 			Name = n;
 			Version = v;
 			Compatibility = c;
 			SourceFilename = fn;
+
+			IsFallback = fb;
 		}
 
 		public void AddProperty(string name, ColorRef prop) => AllProperties.Add(name, prop);
@@ -30,6 +34,7 @@ namespace AlephNote.Common.Themes
 
 		public T Get<T>(string name)
 		{
+			if (IsFallback) return default(T);
 			var obj = Get(name);
 			if (obj is T result) return result;
 			throw new Exception($"ThemeProperty has wrong type: {name} (Expected: {typeof(T)}, Actual: {obj?.GetType()})");
@@ -37,6 +42,7 @@ namespace AlephNote.Common.Themes
 
 		public object Get(string name)
 		{
+			if (IsFallback) return null;
 			if (AllProperties.TryGetValue(name, out var obj)) return obj;
 			throw new Exception($"ThemeProperty not found: {name}");
 		}

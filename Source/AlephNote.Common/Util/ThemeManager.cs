@@ -62,7 +62,7 @@ namespace AlephNote.Common.Util
 		{
 			CurrentTheme = t;
 
-			foreach (var s in _listener) s.UpdateTargetValue();
+			foreach (var s in _listener) s.OnThemeChanged();
 		}
 
 		public void RegisterSlave(IThemeListener slave)

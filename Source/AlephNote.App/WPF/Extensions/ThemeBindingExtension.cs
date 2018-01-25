@@ -7,6 +7,7 @@ using System.Windows;
 using AlephNote.Common.Util;
 using AlephNote.Common.Themes;
 using AlephNote.WPF.Converter;
+using System.Windows.Media;
 
 namespace AlephNote.WPF.Extensions
 {
@@ -24,13 +25,13 @@ namespace AlephNote.WPF.Extensions
 
 		public ThemeBindingExtension()
 		{
-			ThemeManager.Inst?.RegisterSlave(this);
+			ThemeManager.Inst.RegisterSlave(this);
 		}
 
 		public ThemeBindingExtension(string themekey)
 		{
 			ThemeKey = themekey;
-			ThemeManager.Inst?.RegisterSlave(this);
+			ThemeManager.Inst.RegisterSlave(this);
 		}
 
 		/// <summary>
@@ -68,14 +69,11 @@ namespace AlephNote.WPF.Extensions
 			}
 		}
 
-		public void UpdateTargetValue()
+		public void OnThemeChanged()
 		{
 			foreach (var reference in _targetObjects)
 			{
-				if (reference.IsAlive)
-				{
-					UpdateTargetInternal(reference.Target);
-				}
+				if (reference.IsAlive) UpdateTargetInternal(reference.Target);
 			}
 		}
 
@@ -103,6 +101,8 @@ namespace AlephNote.WPF.Extensions
 
 			if (ttype.ToLower() == "brush")
 			{
+				if (ThemeManager.Inst.CurrentTheme.IsFallback) return new SolidColorBrush(Colors.Magenta);
+
 				var obj = ThemeManager.Inst.CurrentTheme.Get(key);
 
 				if (obj is ColorRef cref) return ColorRefToBrush.Convert(cref);

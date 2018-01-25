@@ -40,10 +40,8 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" 
-			  Background="{ext:ThemeBinding 'window.mainmenu:background', Type='brush'}" 
-			  Foreground="{ext:ThemeBinding 'window.mainmenu:foreground', Type='brush'}" >
-			<MenuItem Header="File">
+		<ctrl:ThemedMainMenu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+			<MenuItem Header="_File">
 				<ctrl:AutoActionMenuItem Header="New Note"                  AlephAction="NewNote"              Settings="{Binding Settings}"  />
 				<ctrl:AutoActionMenuItem Header="New Note (from clipboard)" AlephAction="NewNoteFromClipboard" Settings="{Binding Settings}"  />
 				<ctrl:AutoActionMenuItem Header="New Note (from text file)" AlephAction="NewNoteFromTextFile"  Settings="{Binding Settings}" />
@@ -55,7 +53,7 @@
 				<Separator />
 				<ctrl:AutoActionMenuItem Header="Exit"                      AlephAction="AppExit"              Settings="{Binding Settings}"  />
 			</MenuItem>
-			<MenuItem Header="Edit">
+			<MenuItem Header="_Edit">
 				<ctrl:AutoActionMenuItem Header="Settings" AlephAction="ShowSettings" Settings="{Binding Settings}"  />
 				<Separator />
 				<ctrl:AutoActionMenuItem Header="Synchronize now" AlephAction="Resync" Settings="{Binding Settings}"  />
@@ -87,17 +85,17 @@
 				</MenuItem>
 
 			</MenuItem>
-			<MenuItem Header="View">
+			<MenuItem Header="_View">
 				<ctrl:AutoActionMenuItem Header="Always on Top" AlephAction="ToggleAlwaysOnTop" IsChecked="{Binding Settings.AlwaysOnTop}" Settings="{Binding Settings}"  />
 				<ctrl:AutoActionMenuItem Header="Display Line Numbers" AlephAction="ToggleLineNumbers" IsChecked="{Binding Settings.SciLineNumbers}" Settings="{Binding Settings}"  />
 				<ctrl:AutoActionMenuItem Header="Word Wrap" AlephAction="ToggleWordWrap" IsChecked="{Binding Settings.SciWordWrap}" Settings="{Binding Settings}"  />
 			</MenuItem>
-			<MenuItem Header="Help">
+			<MenuItem Header="_Help">
 				<ctrl:AutoActionMenuItem Header="Check for Updates" AlephAction="CheckForUpdates" Settings="{Binding Settings}"  />
 				<ctrl:AutoActionMenuItem Header="Show Log" AlephAction="ShowLog" Settings="{Binding Settings}"  />
 				<ctrl:AutoActionMenuItem Header="About" AlephAction="ShowAbout" Settings="{Binding Settings}"  />
 			</MenuItem>
-			<MenuItem Header="Debug" Visibility="{Binding DebugMode, Converter={conv:BoolToVisibility}, ConverterParameter=Visible;Collapsed}">
+			<MenuItem Header="_Debug" Visibility="{Binding DebugMode, Converter={conv:BoolToVisibility}, ConverterParameter=Visible;Collapsed}">
 				<MenuItem Header="Create 1 Note (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="1" />
 				<MenuItem Header="Create 10 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="10" />
 				<MenuItem Header="Create 100 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="100" />
@@ -107,7 +105,7 @@
 				<Separator/>
 				<MenuItem Header="NotesViewControl.RefreshView()" Command="{Binding DebugRefreshViewCommand}" />
 			</MenuItem>
-		</Menu>
+		</ctrl:ThemedMainMenu>
 
 		<Grid Margin="1" Grid.Column="0" Grid.Row="1">
 			<Grid.ColumnDefinitions>

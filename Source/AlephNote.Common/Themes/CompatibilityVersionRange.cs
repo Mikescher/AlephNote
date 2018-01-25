@@ -8,6 +8,8 @@ namespace AlephNote.Common.Themes
 {
 	public class CompatibilityVersionRange
 	{
+		public static readonly CompatibilityVersionRange ANY = new CompatibilityVersionRange(new Version(0, 0, 0, 0), new Version(999999, 0, 0, 0));
+
 		public enum CompatibilityVersionRangeType { Greater, Equal }
 
 		public readonly Version Min; // included
@@ -19,11 +21,11 @@ namespace AlephNote.Common.Themes
 			Max = v2;
 		}
 
-		public override string ToString() => $"[{Min}]-[{Max}]";
+		public override string ToString() => $"[{Min?.ToString()??"*"}]-[{Max?.ToString()??"*"}]";
 
 		public bool Includes(Version v)
 		{
-			return v >= Min && v < Max;
+			return v >= Min && (Max == null || v < Max);
 		}
 
 		/// <summary>
@@ -40,8 +42,8 @@ namespace AlephNote.Common.Themes
 
 				if (v == "*")
 				{
-					var min = new Version(0, 0, 0, 0);
-					var max = new Version(999999, 0, 0, 0);
+					Version min = new Version(0, 0, 0, 0);
+					Version max = null;
 					return new CompatibilityVersionRange(min, max);
 				}
 
@@ -70,46 +72,46 @@ namespace AlephNote.Common.Themes
 
 				if (isTilde)
 				{
-					var min = new Version(p0 ?? 0,  p1 ?? 0,    p2 ?? 0, p3 ?? 0);
-					var max = new Version(p0 ?? 0, (p1 ?? 0)+1, 0,       0      );
+					Version min = new Version(p0 ?? 0,  p1 ?? 0,    p2 ?? 0, p3 ?? 0);
+					Version max = new Version(p0 ?? 0, (p1 ?? 0)+1, 0,       0      );
 					return new CompatibilityVersionRange(min, max);
 				}
 				else if (isCaret)
 				{
-					var min = new Version( p0 ?? 0,    p1 ?? 0, p2 ?? 0, p3 ?? 0);
-					var max = new Version((p0 ?? 0)+1, 0,       0,       0      );
+					Version min = new Version( p0 ?? 0,    p1 ?? 0, p2 ?? 0, p3 ?? 0);
+					Version max = new Version((p0 ?? 0)+1, 0,       0,       0      );
 					return new CompatibilityVersionRange(min, max);
 				}
 				else
 				{
 					if (p0 == null)
 					{
-						var min = new Version(0, 0, 0, 0);
-						var max = new Version(999999, 0, 0, 0);
+						Version min = new Version(0, 0, 0, 0);
+						Version max = null;
 						return new CompatibilityVersionRange(min, max);
 					}
 					else if (p1 == null)
 					{
-						var min = new Version(p0.Value, 0, 0, 0);
-						var max = new Version(p0.Value + 1, 0, 0, 0);
+						Version min = new Version(p0.Value, 0, 0, 0);
+						Version max = new Version(p0.Value + 1, 0, 0, 0);
 						return new CompatibilityVersionRange(min, max);
 					}
 					else if (p2 == null)
 					{
-						var min = new Version(p0.Value, p1.Value, 0, 0);
-						var max = new Version(p0.Value, p1.Value + 1, 0, 0);
+						Version min = new Version(p0.Value, p1.Value, 0, 0);
+						Version max = new Version(p0.Value, p1.Value + 1, 0, 0);
 						return new CompatibilityVersionRange(min, max);
 					}
 					else if (p3 == null)
 					{
-						var min = new Version(p0.Value, p1.Value, p2.Value, 0);
-						var max = new Version(p0.Value, p1.Value, p2.Value + 1, 0);
+						Version min = new Version(p0.Value, p1.Value, p2.Value, 0);
+						Version max = new Version(p0.Value, p1.Value, p2.Value + 1, 0);
 						return new CompatibilityVersionRange(min, max);
 					}
 					else
 					{
-						var min = new Version(p0.Value, p1.Value, p2.Value, p3.Value);
-						var max = new Version(p0.Value, p1.Value, p2.Value, p3.Value + 1);
+						Version min = new Version(p0.Value, p1.Value, p2.Value, p3.Value);
+						Version max = new Version(p0.Value, p1.Value, p2.Value, p3.Value + 1);
 						return new CompatibilityVersionRange(min, max);
 					}
 				}

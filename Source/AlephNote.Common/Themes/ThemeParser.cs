@@ -86,13 +86,16 @@ namespace AlephNote.Common.Themes
 
 		public AlephTheme Generate()
 		{
-			var t = new AlephTheme(_name, _version, _compatibility, _filename);
+			var t = new AlephTheme(_name, _version, _compatibility, _filename, false);
 
 			CollectPropertyColorRef(t, "window.background");
 			CollectPropertyColorRef(t, "window.foreground");
 
 			CollectPropertyColorRef(t, "window.mainmenu:foreground");
 			CollectPropertyBrushRef(t, "window.mainmenu:background");
+			CollectPropertyColorRef(t, "window.mainmenu.item:foreground");
+			CollectPropertyBrushRef(t, "window.mainmenu.item:background");
+			CollectPropertyBrushRef(t, "window.mainmenu.seperator:background");
 
 			CollectPropertyColorRef(t, "window.notetitle:foreground");
 			CollectPropertyColorRef(t, "window.changedate:foreground");
@@ -143,7 +146,7 @@ namespace AlephNote.Common.Themes
 
 		public static AlephTheme GetDefault()
 		{
-			return new AlephTheme("DEFAULT_THEME_FALLBACK", new Version(0, 0, 0, 0), CompatibilityVersionRange.Parse("*"), "NULL");
+			return new AlephTheme("DEFAULT_THEME_FALLBACK", new Version(0, 0, 0, 0), CompatibilityVersionRange.ANY, "NULL", true);
 		}
 
 		private void CollectPropertyColorRef(AlephTheme t, string name)
