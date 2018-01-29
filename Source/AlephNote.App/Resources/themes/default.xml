@@ -123,10 +123,11 @@ Repository: https://github.com/Mikescher/AlephNote
 				<property name="window.mainmenu:background"   value="gradient-v://0.00:#FFFFFF | 0.25:#F6F6F6 | 0.25:#EAE8E8 | 0.80:#DCD9D9 | 1.00:#FFFFFF"/>
 				<property name="window.mainmenu:foreground"   value="#000000"/>
 
-				<property name="window.mainmenu.item.background:left"  value="#FFF1F1F1"/>
-				<property name="window.mainmenu.item.background:sep1"  value="#FFE2E3E3"/>
-				<property name="window.mainmenu.item.background:sep2"  value="#FFFFFFFF"/>
-				<property name="window.mainmenu.item.background:right" value="asd"/>
+				<property name="window.mainmenu.item.background:base"   value="#F5F5F5"/>
+				<property name="window.mainmenu.item.background:left"   value="#F1F1F1"/>
+				<property name="window.mainmenu.item.background:sep1"   value="#E2E3E3"/>
+				<property name="window.mainmenu.item.background:sep2"   value="#FFFFFF"/>
+				<property name="window.mainmenu.item.background:border" value="#959595"/>
 			</group>
 
 			<property name="window.notetitle:foreground"  value="#FF6495ED"/>

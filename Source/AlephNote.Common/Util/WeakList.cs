@@ -91,7 +91,7 @@ namespace AlephNote.Common.Util
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			return _innerList.Select(x => x.Target).GetEnumerator();
+			return _innerList.Select(x => x.Target).Where(p=>p!=null).GetEnumerator();
 		}
 
 		#endregion

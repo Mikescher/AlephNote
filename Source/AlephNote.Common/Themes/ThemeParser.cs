@@ -93,9 +93,11 @@ namespace AlephNote.Common.Themes
 
 			CollectPropertyColorRef(t, "window.mainmenu:foreground");
 			CollectPropertyBrushRef(t, "window.mainmenu:background");
-			CollectPropertyColorRef(t, "window.mainmenu.item:foreground");
-			CollectPropertyBrushRef(t, "window.mainmenu.item:background");
-			CollectPropertyBrushRef(t, "window.mainmenu.seperator:background");
+			CollectPropertyColorRef(t, "window.mainmenu.item.background:base");
+			CollectPropertyColorRef(t, "window.mainmenu.item.background:left");
+			CollectPropertyColorRef(t, "window.mainmenu.item.background:sep1");
+			CollectPropertyColorRef(t, "window.mainmenu.item.background:sep2");
+			CollectPropertyColorRef(t, "window.mainmenu.item.background:border");
 
 			CollectPropertyColorRef(t, "window.notetitle:foreground");
 			CollectPropertyColorRef(t, "window.changedate:foreground");
