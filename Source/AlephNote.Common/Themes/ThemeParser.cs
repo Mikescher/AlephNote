@@ -89,15 +89,8 @@ namespace AlephNote.Common.Themes
 			var t = new AlephTheme(_name, _version, _compatibility, _filename, false);
 
 			CollectPropertyColorRef(t, "window.background");
-			CollectPropertyColorRef(t, "window.foreground");
 
-			CollectPropertyColorRef(t, "window.mainmenu:foreground");
-			CollectPropertyBrushRef(t, "window.mainmenu:background");
-			CollectPropertyColorRef(t, "window.mainmenu.item.background:base");
-			CollectPropertyColorRef(t, "window.mainmenu.item.background:left");
-			CollectPropertyColorRef(t, "window.mainmenu.item.background:sep1");
-			CollectPropertyColorRef(t, "window.mainmenu.item.background:sep2");
-			CollectPropertyColorRef(t, "window.mainmenu.item.background:border");
+			CollectPropertyColorRef(t, "window.foreground");
 
 			CollectPropertyColorRef(t, "window.notetitle:foreground");
 			CollectPropertyColorRef(t, "window.changedate:foreground");
@@ -112,9 +105,38 @@ namespace AlephNote.Common.Themes
 			CollectPropertyColorRef(t, "window.tageditor.tag:bordercolor_highlighted");
 			CollectPropertyColorRef(t, "window.tageditor.tag:foreground");
 
-			//-------------------------------------------------------------------------------------
+			CollectPropertyColorRef(t, "window.pathdisplay:foregroud");
+			CollectPropertyColorRef(t, "window.pathdisplay.element:foregroud");
+			CollectPropertyColorRef(t, "window.pathdisplay.element:background");
+			CollectPropertyColorRef(t, "window.pathdisplay.element:background_hover");
+			CollectPropertyColorRef(t, "window.pathdisplay.element:border");
+			CollectPropertyColorRef(t, "window.pathdisplay.button:foreground");
+			CollectPropertyBrushRef(t, "window.pathdisplay.button:background");
+			CollectPropertyColorRef(t, "window.pathdisplay.button:border");
+			CollectPropertyColorRef(t, "window.pathdisplay.popup:background");
+			CollectPropertyColorRef(t, "window.pathdisplay.popup.text:foreground");
+			CollectPropertyColorRef(t, "window.pathdisplay.popup.list:foreground");
+			CollectPropertyColorRef(t, "window.pathdisplay.popup.list:background");
+			CollectPropertyColorRef(t, "window.pathdisplay.popup.button:foreground");
+			CollectPropertyColorRef(t, "window.pathdisplay.popup.button:background");
+			CollectPropertyColorRef(t, "window.pathdisplay.popup.button:border");
 
-			CollectPropertyColorRef(t, "scintilla.background");
+            CollectPropertyBrushRef(t, "window.inlinesearch:background");
+            CollectPropertyBrushRef(t, "window.inlinesearch:foreground");
+            CollectPropertyColorRef(t, "window.inlinesearch.textbox:background");
+			CollectPropertyColorRef(t, "window.inlinesearch.textbox:foreground");
+            CollectPropertyColorRef(t, "window.inlinesearch.btnSearch:background");
+			CollectPropertyColorRef(t, "window.inlinesearch.btnSearch:foreground");
+            CollectPropertyColorRef(t, "window.inlinesearch.btnCaseIns:background");
+			CollectPropertyColorRef(t, "window.inlinesearch.btnCaseIns:foreground");
+            CollectPropertyColorRef(t, "window.inlinesearch.btnWholeWord:background");
+			CollectPropertyColorRef(t, "window.inlinesearch.btnWholeWord:foreground");
+            CollectPropertyColorRef(t, "window.inlinesearch.btnRegex:background");
+			CollectPropertyColorRef(t, "window.inlinesearch.btnRegex:foreground");
+
+            //-------------------------------------------------------------------------------------
+
+            CollectPropertyColorRef(t, "scintilla.background");
 
 			CollectPropertyInteger( t, "scintilla.whitespace:size");
 			CollectPropertyColorRef(t, "scintilla.whitespace:color");

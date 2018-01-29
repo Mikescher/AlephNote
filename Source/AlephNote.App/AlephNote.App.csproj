@@ -113,7 +113,6 @@
     <Compile Include="WPF\Controls\TagEditor.xaml.cs">
       <DependentUpon>TagEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WPF\Controls\ThemedMainMenu.cs" />
     <Compile Include="WPF\Converter\BrushRefToBrush.cs" />
     <Compile Include="WPF\Converter\ColorRefToBrush.cs" />
     <Compile Include="WPF\Converter\HierachicalWrapperToIcon.cs" />
@@ -281,10 +280,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WPF\Dictionaries\MenuStyleDict.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="WPF\Windows\AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -413,6 +408,7 @@
     <ContentWithTargetPath Include="Resources\themes\solarized-dark.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Themes\solarized-dark.xml</TargetPath>
+      <SubType>Designer</SubType>
     </ContentWithTargetPath>
     <ContentWithTargetPath Include="Resources\themes\solarized-light.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -421,6 +417,7 @@
     <ContentWithTargetPath Include="Resources\themes\default.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Themes\default.xml</TargetPath>
+      <SubType>Designer</SubType>
     </ContentWithTargetPath>
   </ItemGroup>
   <ItemGroup />

@@ -11,8 +11,6 @@ namespace AlephNote.Common.Util
 	{
 		private List<WeakReference<T>> _innerList = new List<WeakReference<T>>();
 
-		#region IList<T> Members
-
 		public int IndexOf(T item)
 		{
 			return _innerList.Select(wr => wr.Target).IndexOf(item);
@@ -30,19 +28,9 @@ namespace AlephNote.Common.Util
 
 		public T this[int index]
 		{
-			get
-			{
-				return _innerList[index].Target;
-			}
-			set
-			{
-				_innerList[index] = new WeakReference<T>(value);
-			}
+			get => _innerList[index].Target;
+			set => _innerList[index] = new WeakReference<T>(value);
 		}
-
-		#endregion
-
-		#region ICollection<T> Members
 
 		public void Add(T item)
 		{
@@ -64,15 +52,9 @@ namespace AlephNote.Common.Util
 			_innerList.Select(wr => wr.Target).CopyTo(array, arrayIndex);
 		}
 
-		public int Count
-		{
-			get { return _innerList.Count; }
-		}
+		public int Count => _innerList.Count;
 
-		public bool IsReadOnly
-		{
-			get { return false; }
-		}
+		public bool IsReadOnly => false;
 
 		public bool Remove(T item)
 		{
@@ -84,26 +66,15 @@ namespace AlephNote.Common.Util
 			}
 			return false;
 		}
-
-		#endregion
-
-		#region IEnumerable<T> Members
-
 		public IEnumerator<T> GetEnumerator()
 		{
 			return _innerList.Select(x => x.Target).Where(p=>p!=null).GetEnumerator();
 		}
 
-		#endregion
-
-		#region IEnumerable Members
-
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
 			return this.GetEnumerator();
 		}
-
-		#endregion
 
 		public void Purge()
 		{

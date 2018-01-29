@@ -40,7 +40,7 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<ctrl:ThemedMainMenu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
 			<MenuItem Header="_File">
 				<ctrl:AutoActionMenuItem Header="New Note"                  AlephAction="NewNote"              Settings="{Binding Settings}"  />
 				<ctrl:AutoActionMenuItem Header="New Note (from clipboard)" AlephAction="NewNoteFromClipboard" Settings="{Binding Settings}"  />
@@ -105,7 +105,7 @@
 				<Separator/>
 				<MenuItem Header="NotesViewControl.RefreshView()" Command="{Binding DebugRefreshViewCommand}" />
 			</MenuItem>
-		</ctrl:ThemedMainMenu>
+		</Menu>
 
 		<Grid Margin="1" Grid.Column="0" Grid.Row="1">
 			<Grid.ColumnDefinitions>
@@ -220,38 +220,54 @@
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
 							<StackPanel Orientation="Horizontal">
-								<Border CornerRadius="4" BorderThickness="1" BorderBrush="LightGray" Padding="4,1" Margin="0,0,5,0">
+                                <Border CornerRadius="4" BorderThickness="1" BorderBrush="{ext:ThemeBinding 'window.pathdisplay.element:border', Type='brush'}" Padding="4,1" Margin="0,0,5,0">
 									<Border.Style>
 										<Style TargetType="{x:Type Border}">
-											<Setter Property="Background" Value="White"/>
+                                            <Setter Property="Background" Value="{ext:ThemeBinding 'window.pathdisplay.element:background', Type='brush'}"/>
 											<Style.Triggers>
 												<Trigger Property="IsMouseOver" Value="True">
-													<Setter Property="Background" Value="Linen"/>
+                                                    <Setter Property="Background" Value="{ext:ThemeBinding 'window.pathdisplay.element:background_hover', Type='brush'}"/>
 												</Trigger>
 											</Style.Triggers>
 										</Style>
 									</Border.Style>
-									<TextBlock Text="{Binding .}"/>
+                                    <TextBlock Text="{Binding .}" Foreground="{ext:ThemeBinding 'window.pathdisplay.element:foregroud', Type='brush'}"/>
 								</Border>
-								<TextBlock Text="/" Margin="0,0,5,0"/>
+                                <TextBlock Text="/" Margin="0,0,5,0" Foreground="{ext:ThemeBinding 'window.pathdisplay:foregroud', Type='brush'}"/>
 							</StackPanel>
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
 
-				<Button Grid.Column="1" Content="..." Margin="2,0" MinWidth="30" VerticalAlignment="Center" Background="White" Command="{Binding ChangePathCommand}" />
-				<Popup Grid.Column="1" StaysOpen="False" Placement="Right" x:Name="FolderPopup">
-					<Grid Background="Beige">
+				<Button Grid.Column="1" Content="..." Margin="2,0" MinWidth="30" VerticalAlignment="Center" 
+                        Foreground="{ext:ThemeBinding 'window.pathdisplay.button:foreground', Type='brush'}" 
+                        Background="{ext:ThemeBinding 'window.pathdisplay.button:background', Type='brush'}" 
+                        BorderBrush="{ext:ThemeBinding 'window.pathdisplay.button:border', Type='brush'}" 
+                        Command="{Binding ChangePathCommand}" />
+
+                <Popup Grid.Column="1" StaysOpen="False" Placement="Right" x:Name="FolderPopup">
+                    <Grid Background="{ext:ThemeBinding 'window.pathdisplay.popup:background', Type='brush'}">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
 
-						<TextBlock  Grid.Row="0" Text="Move Note" FontWeight="Bold" HorizontalAlignment="Center" FontSize="16" />
-						<ListView   Grid.Row="1" x:Name="FolderPopupListView" DisplayMemberPath="Formatted" MaxHeight="200" Margin="2" />
+						<TextBlock  Grid.Row="0" 
+                                    Text="Move Note" FontWeight="Bold" HorizontalAlignment="Center" FontSize="16" 
+                                    Foreground="{ext:ThemeBinding 'window.pathdisplay.popup.text:foreground', Type='brush'}"/>
+
+                        <ListView   Grid.Row="1" x:Name="FolderPopupListView" 
+                                    Foreground="{ext:ThemeBinding 'window.pathdisplay.popup.list:foreground', Type='brush'}"
+                                    Background="{ext:ThemeBinding 'window.pathdisplay.popup.list:background', Type='brush'}"
+                                    DisplayMemberPath="Formatted" MaxHeight="200" Margin="2" />
+                        
 						<StackPanel Grid.Row="2">
-							<Button Content="Move" MinWidth="200" FontWeight="Bold" Click="ButtonMoveFolder_OnClick" HorizontalAlignment="Right" Margin="2" />
+                            <Button Content="Move" MinWidth="200" FontWeight="Bold" Click="ButtonMoveFolder_OnClick" 
+                                    Foreground="{ext:ThemeBinding  'window.pathdisplay.popup.button:foreground', Type='brush'}" 
+                                    Background="{ext:ThemeBinding  'window.pathdisplay.popup.button:background', Type='brush'}" 
+                                    BorderBrush="{ext:ThemeBinding 'window.pathdisplay.popup.button:border', Type='brush'}" 
+                                    HorizontalAlignment="Right" Margin="2" />
 						</StackPanel>
 					</Grid>
 				</Popup>

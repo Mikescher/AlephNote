@@ -2,7 +2,7 @@
 <!--
 
 ============================
-  THEME FILE FOR ALEPHNOTE
+	THEME FILE FOR ALEPHNOTE
 ============================
 
 Theme:      Solarized Dark
@@ -12,21 +12,21 @@ Source:     http://ethanschoonover.com/solarized
 Repository: https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized
 
 License:    Copyright (c) 2011 Ethan Schoonover
-            Permission is hereby granted, free of charge, to any person obtaining a copy
-            of this software and associated documentation files (the "Software"), to deal
-            in the Software without restriction, including without limitation the rights
-            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-            copies of the Software, and to permit persons to whom the Software is
-            furnished to do so, subject to the following conditions:
-            The above copyright notice and this permission notice shall be included in
-            all copies or substantial portions of the Software.
-            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-            THE SOFTWARE.
+						Permission is hereby granted, free of charge, to any person obtaining a copy
+						of this software and associated documentation files (the "Software"), to deal
+						in the Software without restriction, including without limitation the rights
+						to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+						copies of the Software, and to permit persons to whom the Software is
+						furnished to do so, subject to the following conditions:
+						The above copyright notice and this permission notice shall be included in
+						all copies or substantial portions of the Software.
+						THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+						IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+						FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+						AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+						LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+						OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+						THE SOFTWARE.
 
 -->
 <theme>
@@ -104,15 +104,37 @@ License:    Copyright (c) 2011 Ethan Schoonover
 			<property name="window.tageditor.popup:bordercolor"           value="@base02"/>
 			<property name="window.tageditor.popup:foreground"            value="@base3"/>
 
-			<property name="window.tageditor.tag:foreground"              value="@base0"/>
-			<property name="window.tageditor.tag:background"              value="@base03"/>
-			<property name="window.mainmenu.item.background:left"         value="@base03"/>
-			<property name="window.mainmenu.item.background:sep1"         value="#888"/>
-			<property name="window.mainmenu.item.background:sep2"         value="#AAA"/>
-			<property name="window.mainmenu.item.background:right"        value="#F00"/>
-	
+			<property name="window.tageditor.tag:foreground"              value="$window.foreground"/>
+			<property name="window.tageditor.tag:background"              value="$window.background"/>
+			<property name="window.tageditor.tag:bordercolor_default"     value="@violet"/>
+			<property name="window.tageditor.tag:bordercolor_highlighted" value="@violet"/>
+
 			<property name="window.tageditor.tag:bordercolor_default"     value="@base0"/>
 			<property name="window.tageditor.tag:bordercolor_highlighted" value="@cyan"/>
+
+			<property name="window.pathdisplay.element:background_hover"  value="@base1"/>
+			<property name="window.pathdisplay.element:border"            value="@green"/>
+			<property name="window.pathdisplay.button:background"         value="@base3"/>
+			<property name="window.pathdisplay.button:foreground"         value="@base00"/>
+			<property name="window.pathdisplay.button:border"             value="@base00"/>
+
+			<property name="window.pathdisplay.popup:background"          value="@base3"/>
+			<property name="window.pathdisplay.popup.text:foreground"     value="@base00"/>
+			<property name="window.pathdisplay.popup.list:foreground"     value="@base2"/>
+			<property name="window.pathdisplay.popup.list:background"     value="@base01"/>
+			<property name="window.pathdisplay.popup.button:foreground"   value="@base3"/>
+			<property name="window.pathdisplay.popup.button:background"   value="@base00"/>
+			<property name="window.pathdisplay.popup.button:border"       value="@base00"/>
+
+			<property name="window.inlinesearch:background"               value="@base2"/>
+      <property name="window.inlinesearch:foreground"               value="@base01"/>
+			<property name="window.inlinesearch.textbox:background"       value="@base3"/>
+			<property name="window.inlinesearch.textbox:foreground"       value="@base00"/>
+			<property name="window.inlinesearch.btnSearch:foreground"     value="@base01"/>
+			<property name="window.inlinesearch.btnCaseIns:foreground"    value="@base01"/>
+			<property name="window.inlinesearch.btnWholeWord:foreground"  value="@base01"/>
+			<property name="window.inlinesearch.btnRegex:foreground"      value="@base01"/>
+			
 		</group>
 
 	</data>

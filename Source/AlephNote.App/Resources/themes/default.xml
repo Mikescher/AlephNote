@@ -2,7 +2,7 @@
 <!--
 
 ============================
-  THEME FILE FOR ALEPHNOTE
+	THEME FILE FOR ALEPHNOTE  
 ============================
 
 Theme:      AlephNote default theme
@@ -58,7 +58,7 @@ Repository: https://github.com/Mikescher/AlephNote
 
 			<group name="markdown">
 				<property name="scintilla.markdown.default:foreground"     value="$scintilla.default:foreground"/>
-				<property name="scintilla.markdown.default:underline"      value="true"/>
+				<property name="scintilla.markdown.default:underline"      value="false"/>
 				<property name="scintilla.markdown.default:background"     value="$scintilla.background"/>
 				<property name="scintilla.markdown.default:bold"           value="false"/>
 				<property name="scintilla.markdown.default:italic"         value="false"/>
@@ -115,20 +115,9 @@ Repository: https://github.com/Mikescher/AlephNote
 		</group>
 
 		<group name="window">
+			
 			<property name="window.background"            value="#FFFFFF"/>
 			<property name="window.foreground"            value="#000000"/>
-
-
-			<group name="mainmenu">
-				<property name="window.mainmenu:background"   value="gradient-v://0.00:#FFFFFF | 0.25:#F6F6F6 | 0.25:#EAE8E8 | 0.80:#DCD9D9 | 1.00:#FFFFFF"/>
-				<property name="window.mainmenu:foreground"   value="#000000"/>
-
-				<property name="window.mainmenu.item.background:base"   value="#F5F5F5"/>
-				<property name="window.mainmenu.item.background:left"   value="#F1F1F1"/>
-				<property name="window.mainmenu.item.background:sep1"   value="#E2E3E3"/>
-				<property name="window.mainmenu.item.background:sep2"   value="#FFFFFF"/>
-				<property name="window.mainmenu.item.background:border" value="#959595"/>
-			</group>
 
 			<property name="window.notetitle:foreground"  value="#FF6495ED"/>
 			<property name="window.changedate:foreground" value="#FFA9A9A9"/>
@@ -140,14 +129,48 @@ Repository: https://github.com/Mikescher/AlephNote
 
 				<property name="window.tageditor.placeholder"                 value="#888888"/>
 				<property name="window.tageditor.foreground"                  value="$window.foreground"/>
-				
+
 				<property name="window.tageditor.tag:background"              value="#FFF5EE"/>
 				<property name="window.tageditor.tag:bordercolor_default"     value="#D3D3D3"/>
 				<property name="window.tageditor.tag:bordercolor_highlighted" value="#000000"/>
 				<property name="window.tageditor.tag:foreground"              value="$window.foreground"/>
 			</group>
 
+			<group name="pathdisplay">
+				<property name="window.pathdisplay:foregroud"                 value="$window.foreground"/>
 
+				<property name="window.pathdisplay.element:foregroud"         value="$window.foreground"/>
+				<property name="window.pathdisplay.element:background"        value="$window.background"/>
+				<property name="window.pathdisplay.element:background_hover"  value="#FAF0E6"/>
+				<property name="window.pathdisplay.element:border"            value="#D3D3D3"/>
+
+				<property name="window.pathdisplay.button:foreground"         value="#000000"/>
+				<property name="window.pathdisplay.button:background"         value="#FFFFFF"/>
+				<property name="window.pathdisplay.button:border"             value="#707070"/>
+
+				<property name="window.pathdisplay.popup:background"          value="#F5F5DC"/>
+				<property name="window.pathdisplay.popup.text:foreground"     value="$window.foreground"/>
+				<property name="window.pathdisplay.popup.list:foreground"     value="$window.foreground"/>
+				<property name="window.pathdisplay.popup.list:background"     value="$window.background"/>
+				<property name="window.pathdisplay.popup.button:foreground"   value="#000000"/>
+				<property name="window.pathdisplay.popup.button:background"   value="#FFFFFF"/>
+				<property name="window.pathdisplay.popup.button:border"       value="#F5F5DC"/>
+			</group>
+
+			<group name="inlinesearch">
+				<property name="window.inlinesearch:background"               value="#DCDCDC"/>
+				<property name="window.inlinesearch:foreground"               value="#000000"/>
+				<property name="window.inlinesearch.textbox:background"       value="#FFFFFF"/>
+				<property name="window.inlinesearch.textbox:foreground"       value="#000000"/>
+				<property name="window.inlinesearch.btnSearch:background"     value="transparent"/>
+				<property name="window.inlinesearch.btnSearch:foreground"     value="#000000"/>
+				<property name="window.inlinesearch.btnCaseIns:background"    value="transparent"/>
+				<property name="window.inlinesearch.btnCaseIns:foreground"    value="#000000"/>
+				<property name="window.inlinesearch.btnWholeWord:background"  value="transparent"/>
+				<property name="window.inlinesearch.btnWholeWord:foreground"  value="#000000"/>
+				<property name="window.inlinesearch.btnRegex:background"      value="transparent"/>
+				<property name="window.inlinesearch.btnRegex:foreground"      value="#000000"/>
+			</group>
 
 		</group>
 		
