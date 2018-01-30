@@ -418,20 +418,23 @@ namespace AlephNote.WPF.Controls
 
 		private void OnSearchTextChanged()
 		{
-			App.Logger.TraceExt("NotesViewHierachical", 
-				"OnSearchTextChanged",
-				Tuple.Create("SearchText", SearchText));
-
-			if (AllNotes != null) ResyncDisplayItems(AllNotes);
-			SelectedFolder?.TriggerAllSubNotesChanged();
-
-			if (SelectedFolderPath != null && !SelectedFolder.IsSpecialNode_AllNotes && !SelectedFolder.AllSubNotes.Any() && DisplayItems.AllNotesViewWrapper != null)
+			using (MainWindow.Instance.PreventScintillaFocus())
 			{
 				App.Logger.TraceExt("NotesViewHierachical",
-					"OnSearchTextChanged (2)",
-					Tuple.Create("SelectedFolderPath", SelectedFolderPath?.Formatted));
+					"OnSearchTextChanged",
+					Tuple.Create("SearchText", SearchText));
 
-				SelectedFolder = DisplayItems.AllNotesViewWrapper;
+				if (AllNotes != null) ResyncDisplayItems(AllNotes);
+				SelectedFolder?.TriggerAllSubNotesChanged();
+
+				if (SelectedFolderPath != null && !SelectedFolder.IsSpecialNode_AllNotes && !SelectedFolder.AllSubNotes.Any() && DisplayItems.AllNotesViewWrapper != null)
+				{
+					App.Logger.TraceExt("NotesViewHierachical",
+						"OnSearchTextChanged (2)",
+						Tuple.Create("SelectedFolderPath", SelectedFolderPath?.Formatted));
+
+					SelectedFolder = DisplayItems.AllNotesViewWrapper;
+				}
 			}
 		}
 

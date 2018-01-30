@@ -409,6 +409,11 @@ namespace AlephNote.WPF.Windows
 			DocumentSearchBar.Show();
 		}
 
+		public IDisposable PreventScintillaFocus()
+		{
+			return VM.PreventScintillaFocusLock.Set();
+		}
+
 		public void HideDocSearchBar()
 		{
 			DocumentSearchBar.Hide();

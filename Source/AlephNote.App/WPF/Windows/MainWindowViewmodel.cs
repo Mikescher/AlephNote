@@ -126,7 +126,7 @@ namespace AlephNote.WPF.Windows
 		private readonly SimpleParamStringParser _spsParser = new SimpleParamStringParser();
 		private readonly ScrollCache _scrollCache;
 
-		private bool _preventScintillaFocus = false;
+		public readonly StackingBool PreventScintillaFocusLock = new StackingBool();
 		private bool _forceClose = false;
 
 		public readonly MainWindow Owner;
@@ -304,7 +304,7 @@ namespace AlephNote.WPF.Windows
 
 			Owner.ResetScintillaScrollAndUndo();
 			if (Settings != null) Owner.UpdateMargins(Settings);
-			if (!_preventScintillaFocus && Settings?.AutofocusScintilla == true) Owner.FocusScintillaDelayed();
+			if (!PreventScintillaFocusLock.Value && Settings?.AutofocusScintilla == true) Owner.FocusScintillaDelayed();
 
 			if (SelectedNote != null) ScintillaSearcher.Highlight(Owner.NoteEdit, SelectedNote, SearchText);
 
@@ -679,29 +679,23 @@ namespace AlephNote.WPF.Windows
 		{
 			var sn = SelectedNote;
 
-			_preventScintillaFocus = true;
+			using (PreventScintillaFocusLock.Set())
 			{
 				Owner.NotesViewControl.RefreshView();
-				if (Owner.NotesViewControl.Contains(sn)) 
+				if (Owner.NotesViewControl.Contains(sn))
 					SelectedNote = sn;
 				else
 					SelectedNote = Owner.NotesViewControl.GetTopNote();
 			}
-			_preventScintillaFocus = false;
 
 			if (SelectedNote != null) ScintillaSearcher.Highlight(Owner.NoteEdit, SelectedNote, SearchText);
 		}
 
 		public void SetSelectedNoteWithoutFocus(INote n)
 		{
-			try
+			using (PreventScintillaFocusLock.Set())
 			{
-				_preventScintillaFocus = true;
 				SelectedNote = n;
-			}
-			finally
-			{
-				_preventScintillaFocus = false;
 			}
 		}
 
