@@ -58,14 +58,7 @@ namespace AlephNote.Common.Themes
 		public static ColorRef Parse(string ovalue)
 		{
 			var value = ovalue.ToUpper();
-
-			if (value == "TRANSPARENT") return TRANSPARENT;
-			if (value == "RED")         return RED;
-			if (value == "GREEN")       return GREEN;
-			if (value == "BLUE")        return BLUE;
-			if (value == "WHITE")       return WHITE;
-			if (value == "BLACK")       return BLACK;
-
+			
 			if (value.StartsWith("#")) value = value.Substring(1);
 
 			if (value.Length == 3) // #RGB

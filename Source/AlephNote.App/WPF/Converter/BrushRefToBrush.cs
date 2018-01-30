@@ -17,25 +17,31 @@ namespace AlephNote.WPF.Converter
 			if (value.BrushType == BrushRefType.Solid)
 			{
 				var c = value.GradientSteps.First().Item2;
-				return new SolidColorBrush(Color.FromArgb(c.A, c.R, c.G, c.B));
+				var b = new SolidColorBrush(Color.FromArgb(c.A, c.R, c.G, c.B));
+				b.Freeze();
+				return b;
 			}
 			else if (value.BrushType == BrushRefType.Gradient_Vertical)
 			{
-				return new LinearGradientBrush()
+				var b = new LinearGradientBrush()
 				{
 					StartPoint = new Point(0, 0),
 					EndPoint   = new Point(0, 1),
 					GradientStops = new GradientStopCollection(value.GradientSteps.Select(p => new GradientStop(p.Item2.ToWCol(), p.Item1))),
 				};
+				b.Freeze();
+				return b;
 			}
 			else if (value.BrushType == BrushRefType.Gradient_Horizontal)
 			{
-				return new LinearGradientBrush()
+				var b = new LinearGradientBrush()
 				{
 					StartPoint = new Point(0, 0),
 					EndPoint   = new Point(1, 0),
 					GradientStops = new GradientStopCollection(value.GradientSteps.Select(p => new GradientStop(p.Item2.ToWCol(), p.Item1))),
 				};
+				b.Freeze();
+				return b;
 			}
 			else
 			{

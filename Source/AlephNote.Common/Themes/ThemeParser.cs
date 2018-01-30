@@ -88,59 +88,67 @@ namespace AlephNote.Common.Themes
 		{
 			var t = new AlephTheme(_name, _version, _compatibility, _filename, false);
 
-			CollectPropertyColorRef(t, "window.background");
+			CollectPropertyBrushRef(t, "window.background");
 
-			CollectPropertyColorRef(t, "window.foreground");
+			CollectPropertyBrushRef(t, "window.foreground");
 
-			CollectPropertyColorRef(t, "window.notetitle:foreground");
-			CollectPropertyColorRef(t, "window.changedate:foreground");
+			CollectPropertyBrushRef(t, "window.notetitle:foreground");
+			CollectPropertyBrushRef(t, "window.changedate:foreground");
 
-			CollectPropertyColorRef(t, "window.tageditor.popup:background");
-			CollectPropertyColorRef(t, "window.tageditor.popup:bordercolor");
-			CollectPropertyColorRef(t, "window.tageditor.popup:foreground");
-			CollectPropertyColorRef(t, "window.tageditor.placeholder");
-			CollectPropertyColorRef(t, "window.tageditor.foreground");
-			CollectPropertyColorRef(t, "window.tageditor.tag:background");
-			CollectPropertyColorRef(t, "window.tageditor.tag:bordercolor_default");
-			CollectPropertyColorRef(t, "window.tageditor.tag:bordercolor_highlighted");
-			CollectPropertyColorRef(t, "window.tageditor.tag:foreground");
+			CollectPropertyBrushRef(t, "window.tageditor.popup:background");
+			CollectPropertyBrushRef(t, "window.tageditor.popup:bordercolor");
+			CollectPropertyBrushRef(t, "window.tageditor.popup:foreground");
+			CollectPropertyBrushRef(t, "window.tageditor.placeholder");
+			CollectPropertyBrushRef(t, "window.tageditor.foreground");
+			CollectPropertyBrushRef(t, "window.tageditor.tag:background");
+			CollectPropertyBrushRef(t, "window.tageditor.tag:bordercolor_default");
+			CollectPropertyBrushRef(t, "window.tageditor.tag:bordercolor_highlighted");
+			CollectPropertyBrushRef(t, "window.tageditor.tag:foreground");
 
-			CollectPropertyColorRef(t, "window.pathdisplay:foregroud");
-			CollectPropertyColorRef(t, "window.pathdisplay.element:foregroud");
-			CollectPropertyColorRef(t, "window.pathdisplay.element:background");
-			CollectPropertyColorRef(t, "window.pathdisplay.element:background_hover");
-			CollectPropertyColorRef(t, "window.pathdisplay.element:border");
-			CollectPropertyColorRef(t, "window.pathdisplay.button:foreground");
+			CollectPropertyBrushRef(t, "window.pathdisplay:foregroud");
+			CollectPropertyBrushRef(t, "window.pathdisplay.element:foregroud");
+			CollectPropertyBrushRef(t, "window.pathdisplay.element:background");
+			CollectPropertyBrushRef(t, "window.pathdisplay.element:background_hover");
+			CollectPropertyBrushRef(t, "window.pathdisplay.element:border");
+			CollectPropertyBrushRef(t, "window.pathdisplay.button:foreground");
 			CollectPropertyBrushRef(t, "window.pathdisplay.button:background");
-			CollectPropertyColorRef(t, "window.pathdisplay.button:border");
-			CollectPropertyColorRef(t, "window.pathdisplay.popup:background");
-			CollectPropertyColorRef(t, "window.pathdisplay.popup.text:foreground");
-			CollectPropertyColorRef(t, "window.pathdisplay.popup.list:foreground");
-			CollectPropertyColorRef(t, "window.pathdisplay.popup.list:background");
-			CollectPropertyColorRef(t, "window.pathdisplay.popup.button:foreground");
-			CollectPropertyColorRef(t, "window.pathdisplay.popup.button:background");
-			CollectPropertyColorRef(t, "window.pathdisplay.popup.button:border");
+			CollectPropertyBrushRef(t, "window.pathdisplay.button:border");
+			CollectPropertyBrushRef(t, "window.pathdisplay.popup:background");
+			CollectPropertyBrushRef(t, "window.pathdisplay.popup.text:foreground");
+			CollectPropertyBrushRef(t, "window.pathdisplay.popup.list:foreground");
+			CollectPropertyBrushRef(t, "window.pathdisplay.popup.list:background");
+			CollectPropertyBrushRef(t, "window.pathdisplay.popup.button:foreground");
+			CollectPropertyBrushRef(t, "window.pathdisplay.popup.button:background");
+			CollectPropertyBrushRef(t, "window.pathdisplay.popup.button:border");
 
-            CollectPropertyBrushRef(t, "window.inlinesearch:background");
-            CollectPropertyBrushRef(t, "window.inlinesearch:foreground");
-            CollectPropertyColorRef(t, "window.inlinesearch.textbox:background");
-			CollectPropertyColorRef(t, "window.inlinesearch.textbox:foreground");
-            CollectPropertyColorRef(t, "window.inlinesearch.btnSearch:background");
-			CollectPropertyColorRef(t, "window.inlinesearch.btnSearch:foreground");
-            CollectPropertyColorRef(t, "window.inlinesearch.btnCaseIns:background");
-			CollectPropertyColorRef(t, "window.inlinesearch.btnCaseIns:foreground");
-            CollectPropertyColorRef(t, "window.inlinesearch.btnWholeWord:background");
-			CollectPropertyColorRef(t, "window.inlinesearch.btnWholeWord:foreground");
-            CollectPropertyColorRef(t, "window.inlinesearch.btnRegex:background");
-			CollectPropertyColorRef(t, "window.inlinesearch.btnRegex:foreground");
+			CollectPropertyBrushRef(t, "window.inlinesearch:background");
+			CollectPropertyBrushRef(t, "window.inlinesearch:foreground");
+			CollectPropertyBrushRef(t, "window.inlinesearch.textbox:background");
+			CollectPropertyBrushRef(t, "window.inlinesearch.textbox:foreground");
+			CollectPropertyBrushRef(t, "window.inlinesearch.btnSearch:background");
+			CollectPropertyBrushRef(t, "window.inlinesearch.btnSearch:foreground");
+			CollectPropertyBrushRef(t, "window.inlinesearch.btnCaseIns:background");
+			CollectPropertyBrushRef(t, "window.inlinesearch.btnCaseIns:foreground");
+			CollectPropertyBrushRef(t, "window.inlinesearch.btnWholeWord:background");
+			CollectPropertyBrushRef(t, "window.inlinesearch.btnWholeWord:foreground");
+			CollectPropertyBrushRef(t, "window.inlinesearch.btnRegex:background");
+			CollectPropertyBrushRef(t, "window.inlinesearch.btnRegex:foreground");
 
-			CollectPropertyColorRef(t, "window.globalsearch.input:foreground");
-			CollectPropertyColorRef(t, "window.globalsearch.input:background");
-			CollectPropertyColorRef(t, "window.globalsearch.input:border");
-			CollectPropertyColorRef(t, "window.globalsearch.placeholder:foreground");
-			CollectPropertyColorRef(t, "window.globalsearch.button:foreground");
-			CollectPropertyColorRef(t, "window.globalsearch.button:background");
-			CollectPropertyColorRef(t, "window.globalsearch.button:border");
+			CollectPropertyBrushRef(t, "window.globalsearch.input:foreground");
+			CollectPropertyBrushRef(t, "window.globalsearch.input:background");
+			CollectPropertyBrushRef(t, "window.globalsearch.input:border");
+			CollectPropertyBrushRef(t, "window.globalsearch.placeholder:foreground");
+			CollectPropertyBrushRef(t, "window.globalsearch.button:foreground");
+			CollectPropertyBrushRef(t, "window.globalsearch.button:background");
+			CollectPropertyBrushRef(t, "window.globalsearch.button:border");
+
+			CollectPropertyBrushRef(t, "window.notesview.flat:background");
+			CollectPropertyBrushRef(t, "window.notesview.flat:foreground");
+			CollectPropertyBrushRef(t, "window.notesview.flat.selected:background");
+			CollectPropertyBrushRef(t, "window.notesview.flat.datetime1:foreground");
+			CollectPropertyBrushRef(t, "window.notesview.flat.datetime2:foreground");
+			CollectPropertyBrushRef(t, "window.notesview.flat.preview:foreground");
+			CollectPropertyBrushRef(t, "window.notesview.flat.separator");
 
 			//-------------------------------------------------------------------------------------
 

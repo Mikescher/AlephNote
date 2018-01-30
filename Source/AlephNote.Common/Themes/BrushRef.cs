@@ -51,6 +51,7 @@ namespace AlephNote.Common.Themes
 		public static BrushRef Parse(string ovalue)
 		{
 			var value = ovalue.ToLower();
+			
 			if (value.StartsWith("#"))
 			{
 				return CreateSolid(ColorRef.Parse(value));

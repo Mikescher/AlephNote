@@ -141,7 +141,15 @@ License:    Copyright (c) 2011 Ethan Schoonover
 			<property name="window.globalsearch.placeholder:foreground"   value="@base1"/>
 			<property name="window.globalsearch.button:background"        value="$window.background"/>
 			<property name="window.globalsearch.button:border"            value="$window.foreground"/>
-			
+
+			<property name="window.notesview.flat:background"           value="@base3"/>
+			<property name="window.notesview.flat:foreground"           value="@base00"/>
+			<property name="window.notesview.flat.selected:background"  value="@base2"/>
+			<property name="window.notesview.flat.datetime1:foreground" value="@green"/>
+			<property name="window.notesview.flat.datetime2:foreground" value="@green"/>
+			<property name="window.notesview.flat.preview:foreground"   value="@base1"/>
+			<property name="window.notesview.flat.separator"            value="@base2"/>
+
 		</group>
 
 	</data>

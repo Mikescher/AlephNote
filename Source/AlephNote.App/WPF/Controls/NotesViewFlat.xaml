@@ -9,6 +9,7 @@
 			 xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
 			 xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
 			 xmlns:settings="clr-namespace:AlephNote.Common.Settings.Types;assembly=AlephNote.Common"
+			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="150">
 	<UserControl.Resources>
@@ -25,8 +26,7 @@
 						</Border>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsSelected" Value="true">
-								<Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}"/>
-								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+								<Setter Property="Background" TargetName="Bd" Value="{ext:ThemeBinding 'window.notesview.flat.selected:background', Type='brush'}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -45,6 +45,8 @@
 					  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					  ScrollViewer.CanContentScroll="{Binding Settings.SmoothScrollNotesView, Converter={conv:NegateBool}}"
 					  SelectionMode="Single"
+					  Background="{ext:ThemeBinding 'window.notesview.flat:background', Type='brush'}"
+					  Foreground="{ext:ThemeBinding 'window.notesview.flat:foreground', Type='brush'}"
 					  ItemsSource="{Binding NotesView}" 
 					  SelectedValue="{Binding SelectedNote}"
 					  FontSize="{Binding Settings.ListFontSize, Converter={conv:FontSizeToInt}}" 
@@ -73,7 +75,10 @@
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
 							<Image Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
-							<TextBlock Grid.Column="1" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+							<TextBlock Grid.Column="1" 
+									   Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" 
+									   Foreground="{ext:ThemeBinding 'window.notesview.flat:foreground', Type='brush'}"
+									   TextTrimming="CharacterEllipsis" />
 						</Grid>
 					</DataTemplate>
 				</services:ConditionalDataTemplate>
@@ -87,9 +92,18 @@
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="3" />
 							</Grid.ColumnDefinitions>
-							<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
-							<TextBlock Grid.Column="1" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-							<TextBlock Grid.Column="2" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" VerticalAlignment="Center" Foreground="DimGray" >
+							<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" 
+									   Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
+
+							<TextBlock Grid.Column="1" 
+									   Foreground="{ext:ThemeBinding 'window.notesview.flat:foreground', Type='brush'}"
+									   Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" 
+									   TextTrimming="CharacterEllipsis" />
+
+							<TextBlock Grid.Column="2" 
+									   Foreground="{ext:ThemeBinding 'window.notesview.flat.datetime1:foreground', Type='brush'}"
+									   Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" 
+									   VerticalAlignment="Center">
 								<TextBlock.LayoutTransform>
 									<ScaleTransform ScaleX="0.9" ScaleY="0.9" />
 								</TextBlock.LayoutTransform>
@@ -114,21 +128,37 @@
 									<ColumnDefinition Width="Auto"/>
 									<ColumnDefinition Width="*"/>
 								</Grid.ColumnDefinitions>
-								<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
-								<TextBlock Grid.Column="1" FontWeight="Bold" FontStyle="Normal" Foreground="Black" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+								<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" 
+										   Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
+
+								<TextBlock Grid.Column="1" FontWeight="Bold" FontStyle="Normal" 
+										   Foreground="{ext:ThemeBinding 'window.notesview.flat:foreground', Type='brush'}" 
+										   Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" 
+										   TextTrimming="CharacterEllipsis" />
 							</Grid>
 
 							<TextBlock Grid.Row="1" TextWrapping="NoWrap">
-								<Run Foreground="Brown" FontWeight="Normal" FontStyle="Normal" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
-								<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
+								<Run FontWeight="Normal" FontStyle="Normal" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.flat.datetime2:foreground', Type='brush'}" 
+									 Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
+								<Run FontWeight="Normal" FontStyle="Normal" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.flat.preview:foreground', Type='brush'}" 
+									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
 							</TextBlock>
 							<TextBlock Grid.Row="2" TextWrapping="NoWrap">
-								<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=1, Mode=OneWay}" />
+								<Run FontWeight="Normal" FontStyle="Normal" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.flat.preview:foreground', Type='brush'}" 
+									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=1, Mode=OneWay}" />
 							</TextBlock>
 							<TextBlock Grid.Row="3" TextWrapping="NoWrap">
-								<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=2, Mode=OneWay}" />
+								<Run FontWeight="Normal" FontStyle="Normal" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.flat.preview:foreground', Type='brush'}" 
+									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=2, Mode=OneWay}" />
 							</TextBlock>
-							<Separator Grid.Row="4" Background="Snow" Margin="6,7,6,7" />
+							<Separator Grid.Row="4" 
+									   Background="{ext:ThemeBinding 'window.notesview.flat.separator', Type='brush'}" 
+									   Foreground="{ext:ThemeBinding 'window.notesview.flat.separator', Type='brush'}" 
+									   Margin="6,7,6,7" />
 						</Grid>
 					</DataTemplate>
 				</services:ConditionalDataTemplate>
@@ -147,15 +177,25 @@
 									<ColumnDefinition Width="Auto"/>
 									<ColumnDefinition Width="*"/>
 								</Grid.ColumnDefinitions>
-								<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
-								<TextBlock Grid.Column="1" FontWeight="Bold" FontStyle="Normal" Foreground="Black" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+								<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" 
+										   Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
+								<TextBlock Grid.Column="1" FontWeight="Bold" FontStyle="Normal"
+										   Foreground="{ext:ThemeBinding 'window.notesview.flat:foreground', Type='brush'}" 
+										   Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
 							</Grid>
 
 							<TextBlock Grid.Row="1" TextWrapping="NoWrap">
-								<Run Foreground="Brown" FontWeight="Normal" FontStyle="Normal" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
-								<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
+								<Run FontWeight="Normal" FontStyle="Normal" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.flat.datetime2:foreground', Type='brush'}" 
+									 Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
+								<Run FontWeight="Normal" FontStyle="Normal" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.flat.preview:foreground', Type='brush'}" 
+									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
 							</TextBlock>
-							<Separator Grid.Row="2" Background="Snow" Margin="6,7,6,7" />
+							<Separator Grid.Row="2" 
+									   Background="{ext:ThemeBinding 'window.notesview.flat.separator', Type='brush'}" 
+									   Foreground="{ext:ThemeBinding 'window.notesview.flat.separator', Type='brush'}" 
+									   Margin="6,7,6,7" />
 						</Grid>
 					</DataTemplate>
 				</services:ConditionalDataTemplate>

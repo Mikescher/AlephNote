@@ -14,7 +14,7 @@ namespace AlephNote.WPF.Converter
 
 		private static void CreateBrushes(AlephTheme t)
 		{
-			StandardBrush = ColorRefToBrush.Convert(t.Get<ColorRef>("window.tageditor.tag:bordercolor_default"));
+			StandardBrush = BrushRefToBrush.Convert(t.Get<BrushRef>("window.tageditor.tag:bordercolor_default"));
 
 			HighlightBrush = new DrawingBrush
 			{
@@ -23,7 +23,7 @@ namespace AlephNote.WPF.Converter
 				TileMode = TileMode.Tile,
 				Drawing = new GeometryDrawing
 				{
-					Brush = ColorRefToBrush.Convert(t.Get<ColorRef>("window.tageditor.tag:bordercolor_highlighted")),
+					Brush = BrushRefToBrush.Convert(t.Get<BrushRef>("window.tageditor.tag:bordercolor_highlighted")),
 					Geometry = new GeometryGroup
 					{
 						Children = new GeometryCollection(new Geometry[]
