@@ -569,34 +569,6 @@ namespace AlephNote.WPF.Windows
 			NotesViewControl = (INotesViewControl) ctrl;
 		}
 
-		public void ShowMoveFolderPopup()
-		{
-			if (VM.SelectedNote == null) return;
-
-			FolderPopupListView.Items.Clear();
-
-			foreach (var folder in NotesViewControl.ListFolder()) FolderPopupListView.Items.Add(folder);
-
-			FolderPopupListView.SelectedItem = VM.SelectedNote.Path;
-
-			FolderPopup.IsOpen = true;
-		}
-
-		private void ButtonMoveFolder_OnClick(object sender, RoutedEventArgs e)
-		{
-			if (VM.SelectedNote == null) return;
-
-			var newPath = FolderPopupListView.SelectedItem as DirectoryPath;
-			if (newPath == null) return;
-
-			if (VM.SelectedNote.Path.EqualsWithCase(newPath)) return;
-
-			VM.SelectedNote.Path = newPath;
-			VM.SelectedFolderPath = newPath;
-
-			FolderPopup.IsOpen = false;
-		}
-
 		private void NoteEdit_OnMouseWheel(object sender, MouseEventArgs e)
 		{
 			if (Settings?.FixScintillaScrollMessages != true) return;

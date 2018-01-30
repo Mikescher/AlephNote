@@ -106,6 +106,9 @@
     <Compile Include="WPF\Controls\NotesViewHierachical.xaml.cs">
       <DependentUpon>NotesViewHierachical.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Controls\PathEditor.xaml.cs">
+      <DependentUpon>PathEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Controls\PHelpBtn.xaml.cs">
       <DependentUpon>PHelpBtn.xaml</DependentUpon>
     </Compile>
@@ -261,6 +264,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WPF\Controls\PathBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Controls\PathEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

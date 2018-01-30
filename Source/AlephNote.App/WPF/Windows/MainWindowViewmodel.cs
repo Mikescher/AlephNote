@@ -53,7 +53,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand FullResyncCommand { get { return new RelayCommand(FullResync); } }
 		public ICommand ManuallyCheckForUpdatesCommand { get { return new RelayCommand(ManuallyCheckForUpdates); } }
 		public ICommand InsertSnippetCommand { get { return new RelayCommand<string>(InsertSnippet); } }
-		public ICommand ChangePathCommand { get { return new RelayCommand(ChangePath); } }
+		public ICommand ChangePathCommand { get { return new RelayCommand(() => Owner.PathEditor.ChangePath()); } }
 		public ICommand HideCommand { get { return new RelayCommand(() => Owner.Hide()); } }
 		public ICommand FocusScintillaCommand { get { return new RelayCommand(() => Owner.FocusScintilla()); } }
 		public ICommand FocusNotesListCommand { get { return new RelayCommand(() => Owner.NotesViewControl.FocusNotesList()); } }
@@ -971,14 +971,6 @@ namespace AlephNote.WPF.Windows
 			Owner.NoteEdit.ReplaceSelection(snip);
 
 			Owner.FocusScintilla();
-		}
-
-		private void ChangePath()
-		{
-			if (SelectedNote == null) return;
-			if (!Settings.UseHierachicalNoteStructure) return;
-
-			Owner.ShowMoveFolderPopup();
 		}
 
 		private void DuplicateNote()
