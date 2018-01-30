@@ -139,6 +139,7 @@ Repository: https://github.com/Mikescher/AlephNote
 			
 			<property name="window.background"            value="@White"/>
 			<property name="window.foreground"            value="@Black"/>
+			<property name="window.splitter"              value="#F0F0F0"/>
 
 			<property name="window.notetitle:foreground"  value="@CornflowerBlue"/>
 			<property name="window.changedate:foreground" value="@DarkGray"/>

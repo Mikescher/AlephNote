@@ -173,7 +173,9 @@
 
 		</Grid>
 
-		<GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Width="3" Focusable="False" />
+		<GridSplitter Grid.Row="1" Grid.Column="1" 
+					  Background="{ext:ThemeBinding 'window.splitter', Type='brush'}"
+					  HorizontalAlignment="Stretch" Width="3" Focusable="False" />
 
 		<Grid Grid.Column="2" Margin="1" Grid.Row="1" Visibility="{Binding SelectedNote, Converter={conv:IsNullToVisibility}, ConverterParameter=Hidden;Visible}" >
 			<Grid.ColumnDefinitions>

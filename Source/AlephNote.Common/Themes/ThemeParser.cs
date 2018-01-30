@@ -89,8 +89,8 @@ namespace AlephNote.Common.Themes
 			var t = new AlephTheme(_name, _version, _compatibility, _filename, false);
 
 			CollectPropertyBrushRef(t, "window.background");
-
 			CollectPropertyBrushRef(t, "window.foreground");
+			CollectPropertyBrushRef(t, "window.splitter");
 
 			CollectPropertyBrushRef(t, "window.notetitle:foreground");
 			CollectPropertyBrushRef(t, "window.changedate:foreground");
