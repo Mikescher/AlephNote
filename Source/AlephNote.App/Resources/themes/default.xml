@@ -172,6 +172,16 @@ Repository: https://github.com/Mikescher/AlephNote
 				<property name="window.inlinesearch.btnRegex:foreground"      value="#000000"/>
 			</group>
 
+      <group name="globalsearch">
+        <property name="window.globalsearch.input:foreground"         value="#000000"/>
+        <property name="window.globalsearch.input:background"         value="#FFFFFF"/>
+        <property name="window.globalsearch.input:border"             value="#E3E9EF"/>
+        <property name="window.globalsearch.placeholder:foreground"   value="#888888"/>
+        <property name="window.globalsearch.button:foreground"        value="#000000"/>
+        <property name="window.globalsearch.button:background"        value="#FFFFFF"/>
+        <property name="window.globalsearch.button:border"            value="#000000"/>
+      </group>
+
 		</group>
 		
 	</data>

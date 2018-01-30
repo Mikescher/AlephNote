@@ -74,13 +74,13 @@ namespace AlephNote.WPF.Controls
 		public static readonly DependencyProperty SelectedFolderProperty =
 			DependencyProperty.Register(
 				"SelectedFolder",
-				typeof(HierachicalFolderWrapper),
+				typeof(HierachicalWrapper_Folder),
 				typeof(NotesViewHierachical),
 				new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (obj, args) => { ((NotesViewHierachical)obj).OnSelectedFolderChanged(); }));
 
-		public HierachicalFolderWrapper SelectedFolder
+		public HierachicalWrapper_Folder SelectedFolder
 		{
-			get { return (HierachicalFolderWrapper)GetValue(SelectedFolderProperty); }
+			get { return (HierachicalWrapper_Folder)GetValue(SelectedFolderProperty); }
 			set { SetValue(SelectedFolderProperty, value); }
 		}
 
@@ -151,8 +151,8 @@ namespace AlephNote.WPF.Controls
 				}
 			} }
 
-		private HierachicalFolderWrapper _displayItems;
-		public HierachicalFolderWrapper DisplayItems { get { return _displayItems; } }
+		private HierachicalWrapper_Folder _displayItems;
+		public HierachicalWrapper_Folder DisplayItems { get { return _displayItems; } }
 
 		#endregion
 
@@ -170,7 +170,7 @@ namespace AlephNote.WPF.Controls
 		{
 			App.Logger.Trace("NotesViewHierachical", ".ctr()");
 
-			_displayItems = new HierachicalFolderWrapper("ROOT", this, DirectoryPath.Root(), true, false);
+			_displayItems = new HierachicalWrapper_Folder("ROOT", this, DirectoryPath.Root(), true, false);
 			InitializeComponent();
 			RootGrid.DataContext = this;
 		}
@@ -255,7 +255,7 @@ namespace AlephNote.WPF.Controls
 				}).Start();
 			}
 
-			var p = SelectedFolder?.GetNewNotePath() ?? DirectoryPath.Root();
+			var p = SelectedFolder?.GetInternalPath() ?? DirectoryPath.Root();
 
 			if (!p.EqualsIgnoreCase(SelectedFolderPath))
 			{
@@ -276,11 +276,7 @@ namespace AlephNote.WPF.Controls
 			if (SelectedFolderPath == null) return;
 			if (DisplayItems == null) return;
 
-			var f = DisplayItems.Find(SelectedFolderPath);
-
-			if (SelectedFolderPath.IsRoot() && SelectedFolder?.IsSpecialNode_AllNotes == true && DisplayItems.AllNotesViewWrapper != null)
-				f = DisplayItems.AllNotesViewWrapper;
-
+			var f = DisplayItems.Find(SelectedFolderPath, true);
 
 			if (f != null)
 			{
@@ -295,13 +291,13 @@ namespace AlephNote.WPF.Controls
 			}
 			else
 			{
-				if (AllNotes == null && !SelectedFolderPath.IsRoot() && !SelectedFolderPath.EqualsIgnoreCase(SelectedFolder?.GetNewNotePath()))
+				if (AllNotes == null && !SelectedFolderPath.IsRoot() && !SelectedFolderPath.EqualsIgnoreCase(SelectedFolder?.GetInternalPath()))
 				{
 					App.Logger.TraceExt("NotesViewHierachical", "OnSelectedFolderPathChanged (2)",
 						Tuple.Create("SelectedFolder", SelectedFolder?.Header));
 
 					_initFolderPath = SelectedFolderPath;
-					SelectedFolderPath = SelectedFolder?.GetNewNotePath() ?? DirectoryPath.Root();
+					SelectedFolderPath = SelectedFolder?.GetInternalPath() ?? DirectoryPath.Root();
 				}
 				else
 				{
@@ -376,7 +372,7 @@ namespace AlephNote.WPF.Controls
 		{
 			App.Logger.Trace("NotesViewHierachical", "ResyncDisplayItems", string.Join("\n", notes.Select(n => $"{n.GetUniqueName()}  {n.Title}")));
 
-			HierachicalFolderWrapper root = new HierachicalFolderWrapper("ROOT", this, DirectoryPath.Root(), true, false);
+			HierachicalWrapper_Folder root = new HierachicalWrapper_Folder("ROOT", this, DirectoryPath.Root(), true, false);
 			if (Settings?.FolderViewShowRootNode == true)
 			{
 				var root2 = root.CreateRootFolder();
@@ -407,7 +403,7 @@ namespace AlephNote.WPF.Controls
 			root.Sort();
 			root.FinalizeCollection(Settings?.DeepFolderView ?? false);
 
-			DisplayItems.Sync(root, new HierachicalFolderWrapper[0]);
+			DisplayItems.Sync(root, new HierachicalWrapper_Folder[0]);
 		}
 
 		public bool SearchFilter(INote note)
@@ -437,7 +433,6 @@ namespace AlephNote.WPF.Controls
 
 				SelectedFolder = DisplayItems.AllNotesViewWrapper;
 			}
-
 		}
 
 		public INote GetTopNote()
@@ -553,9 +548,9 @@ namespace AlephNote.WPF.Controls
 		{
 			App.Logger.TraceExt("NotesViewHierachical", 
 				"TreeView_SelectedItemChanged",
-				Tuple.Create("FolderTreeView.SelectedItem", (FolderTreeView.SelectedItem as HierachicalFolderWrapper)?.Header));
+				Tuple.Create("FolderTreeView.SelectedItem", (FolderTreeView.SelectedItem as HierachicalWrapper_Folder)?.Header));
 
-			SelectedFolder = FolderTreeView.SelectedItem as HierachicalFolderWrapper;
+			SelectedFolder = FolderTreeView.SelectedItem as HierachicalWrapper_Folder;
 		}
 
 		private void HierachicalNotesList_KeyDown(object sender, KeyEventArgs e)

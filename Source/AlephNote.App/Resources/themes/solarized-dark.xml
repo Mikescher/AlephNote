@@ -127,13 +127,20 @@ License:    Copyright (c) 2011 Ethan Schoonover
 			<property name="window.pathdisplay.popup.button:border"       value="@base00"/>
 
 			<property name="window.inlinesearch:background"               value="@base2"/>
-      <property name="window.inlinesearch:foreground"               value="@base01"/>
+			<property name="window.inlinesearch:foreground"               value="@base01"/>
 			<property name="window.inlinesearch.textbox:background"       value="@base3"/>
 			<property name="window.inlinesearch.textbox:foreground"       value="@base00"/>
 			<property name="window.inlinesearch.btnSearch:foreground"     value="@base01"/>
 			<property name="window.inlinesearch.btnCaseIns:foreground"    value="@base01"/>
 			<property name="window.inlinesearch.btnWholeWord:foreground"  value="@base01"/>
 			<property name="window.inlinesearch.btnRegex:foreground"      value="@base01"/>
+
+			<property name="window.globalsearch.input:foreground"         value="$scintilla.default:foreground"/>
+			<property name="window.globalsearch.input:background"         value="$scintilla.background"/>
+			<property name="window.globalsearch.input:border"             value="$window.foreground"/>
+			<property name="window.globalsearch.placeholder:foreground"   value="@base1"/>
+			<property name="window.globalsearch.button:background"        value="$window.background"/>
+			<property name="window.globalsearch.button:border"            value="$window.foreground"/>
 			
 		</group>
 

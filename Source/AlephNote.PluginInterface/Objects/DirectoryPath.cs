@@ -22,6 +22,7 @@ namespace AlephNote.PluginInterface.Util
 
 		public static DirectoryPath Root() => ROOT;
 		public static DirectoryPath Create(IEnumerable<string> path) => new DirectoryPath(path);
+		public static DirectoryPath Create(params string[] path) => new DirectoryPath(path);
 
 		public IEnumerable<string> Enumerate() => _path;
 		public int Length => _path.Count;

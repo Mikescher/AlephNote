@@ -532,7 +532,7 @@ namespace AlephNote.WPF.Windows
 			{
 				var fp = SelectedFolderPath;
 
-				if (fp == null || fp.IsRoot()) return;
+				if (fp == null || HierachicalBaseWrapper.IsSpecial(fp)) return;
 
 				var delNotes = Repository.Notes.Where(n => n.Path.IsPathOrSubPath(fp)).ToList();
 
@@ -563,7 +563,10 @@ namespace AlephNote.WPF.Windows
 			var foldercomponent = fnd.FolderName;
 			if (string.IsNullOrWhiteSpace(foldercomponent)) return;
 
-			var path = SelectedFolderPath.SubDir(foldercomponent);
+			var currentPath = SelectedFolderPath;
+			if (currentPath == null || HierachicalBaseWrapper.IsSpecial(currentPath)) currentPath = DirectoryPath.Root();
+
+			var path = currentPath.SubDir(foldercomponent);
 
 			Owner.NotesViewControl.AddFolder(path);
 		}
@@ -587,7 +590,7 @@ namespace AlephNote.WPF.Windows
 			try
 			{
 				var oldPath = SelectedFolderPath;
-				if (oldPath.IsRoot()) return;
+				if (HierachicalBaseWrapper.IsSpecial(oldPath)) return;
 
 				var fnd = new FolderNameDialog { DialogText = "Insert the new name for the folder", FolderName = oldPath.GetLastComponent(), Owner = Owner};
 

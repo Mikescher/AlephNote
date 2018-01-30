@@ -134,9 +134,17 @@ namespace AlephNote.Common.Themes
             CollectPropertyColorRef(t, "window.inlinesearch.btnRegex:background");
 			CollectPropertyColorRef(t, "window.inlinesearch.btnRegex:foreground");
 
-            //-------------------------------------------------------------------------------------
+			CollectPropertyColorRef(t, "window.globalsearch.input:foreground");
+			CollectPropertyColorRef(t, "window.globalsearch.input:background");
+			CollectPropertyColorRef(t, "window.globalsearch.input:border");
+			CollectPropertyColorRef(t, "window.globalsearch.placeholder:foreground");
+			CollectPropertyColorRef(t, "window.globalsearch.button:foreground");
+			CollectPropertyColorRef(t, "window.globalsearch.button:background");
+			CollectPropertyColorRef(t, "window.globalsearch.button:border");
 
-            CollectPropertyColorRef(t, "scintilla.background");
+			//-------------------------------------------------------------------------------------
+
+			CollectPropertyColorRef(t, "scintilla.background");
 
 			CollectPropertyInteger( t, "scintilla.whitespace:size");
 			CollectPropertyColorRef(t, "scintilla.whitespace:color");

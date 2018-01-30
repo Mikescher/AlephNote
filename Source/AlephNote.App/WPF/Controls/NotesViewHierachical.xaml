@@ -84,7 +84,7 @@
 			</TreeView.ContextMenu>
 			
 			<TreeView.ItemTemplate>
-				<HierarchicalDataTemplate ItemsSource="{Binding SubFolder}" DataType="{x:Type util:HierachicalFolderWrapper}">
+				<HierarchicalDataTemplate ItemsSource="{Binding SubFolder}" DataType="{x:Type util:HierachicalWrapper_Folder}">
 
 					<StackPanel Orientation="Horizontal">
 						<Image Width="16" Height="16" Margin="2" Stretch="Fill" Source="{Binding ., Converter={conv:HierachicalWrapperToIcon}}"/>

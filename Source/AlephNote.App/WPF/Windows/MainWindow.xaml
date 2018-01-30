@@ -117,14 +117,28 @@
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
 
-			<controls:ClickSelectTextBox Grid.Row="0" Margin="0,2" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" x:Name="GlobalSearchBar">
+			<controls:ClickSelectTextBox 
+				Grid.Row="0" Margin="0,2" 
+				Foreground="{ext:ThemeBinding 'window.globalsearch.input:foreground', Type='brush'}" 
+				Background="{ext:ThemeBinding 'window.globalsearch.input:background', Type='brush'}" 
+				BorderBrush="{ext:ThemeBinding 'window.globalsearch.input:border', Type='brush'}" 
+				Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" x:Name="GlobalSearchBar">
 				<services:WatermarkService.Watermark>
-					<TextBlock Text="Search" Padding="5,0"/>
+					<TextBlock 
+						Foreground="{ext:ThemeBinding 'window.globalsearch.placeholder:foreground', Type='brush'}"
+						Background="Transparent"
+						Text="Search" 
+						Padding="5,0"/>
 				</services:WatermarkService.Watermark>
 			</controls:ClickSelectTextBox>
 
-			<Button Grid.Row="0" Grid.Column="1" Margin="2" BorderThickness="0" Padding="0" FontWeight="Bold" Command="{Binding CreateNewNoteCommand}">
-				<Image Source="/Resources/plus.png" />
+			<Button Grid.Row="0" Grid.Column="1" Margin="2" BorderThickness="0" Padding="0" FontWeight="Bold" 
+					Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
+					Foreground="{ext:ThemeBinding 'window.globalsearch.button:foreground', Type='brush'}" 
+					Background="{ext:ThemeBinding 'window.globalsearch.button:background', Type='brush'}" 
+					BorderBrush="{ext:ThemeBinding 'window.globalsearch.button:border', Type='brush'}" 
+					Command="{Binding CreateNewNoteCommand}">
+				<Image Source="/Resources/plus.png" Margin="2" />
 			</Button>
 
 			<ContentControl Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"  x:Name="NotesViewCtrlWrapper">
@@ -201,15 +215,15 @@
 						   Foreground="{ext:ThemeBinding 'window.changedate:foreground', Type='brush'}" 
 						   Visibility="{Binding SelectedNote.IsLocalSaved, Converter={conv:BoolToVisibility}, ConverterParameter=Collapsed;Visible}" />
 				<TextBlock Text="{Binding SelectedNote.ModificationDate, Converter={conv:SmartDateTimeToDisplay}}" 
-					       ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DTOToDisplay}}" 
-					       Foreground="{ext:ThemeBinding 'window.changedate:foreground', Type='brush'}" />
+						   ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DTOToDisplay}}" 
+						   Foreground="{ext:ThemeBinding 'window.changedate:foreground', Type='brush'}" />
 			</StackPanel>
 
-            <ctrl:PathEditor Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="PathEditor"
-                             Visibility="{Binding Settings.UseHierachicalNoteStructure, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}"
-                             Settings="{Binding Settings}"
-                             SelectedNote="{Binding SelectedNote}"
-                             SelectedFolderPath="{Binding SelectedFolderPath}" />
+			<ctrl:PathEditor Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="PathEditor"
+							 Visibility="{Binding Settings.UseHierachicalNoteStructure, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}"
+							 Settings="{Binding Settings}"
+							 SelectedNote="{Binding SelectedNote}"
+							 SelectedFolderPath="{Binding SelectedFolderPath}" />
 
 			<Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
 				<Grid.RowDefinitions>
