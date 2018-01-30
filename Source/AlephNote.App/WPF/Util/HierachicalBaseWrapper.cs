@@ -33,8 +33,10 @@ namespace AlephNote.WPF.Util
 		public abstract string IconSource { get; }
 		public abstract int Order { get; }
 		public abstract bool IsSpecialNode { get; }
+        public abstract bool IsSpecialNode_AllNotes { get; }
+        public abstract bool IsSpecialNode_UnsortedNotes { get; }
 
-		public abstract void Sync(HierachicalBaseWrapper aother, HierachicalFolderWrapper[] parents);
+        public abstract void Sync(HierachicalBaseWrapper aother, HierachicalFolderWrapper[] parents);
 	}
 
 	public class HierachicalFlatViewWrapper : HierachicalFolderWrapper
@@ -44,8 +46,10 @@ namespace AlephNote.WPF.Util
 		public override string IconSource => "/Resources/folder_all.png";
 		public override int Order => -2;
 		public override bool IsSpecialNode => true;
+		public override bool IsSpecialNode_AllNotes => true;
+		public override bool IsSpecialNode_UnsortedNotes => false;
 
-		public override void Sync(HierachicalBaseWrapper aother, HierachicalFolderWrapper[] parents)
+        public override void Sync(HierachicalBaseWrapper aother, HierachicalFolderWrapper[] parents)
 		{
 			var other = (HierachicalFlatViewWrapper)aother;
 
@@ -68,8 +72,10 @@ namespace AlephNote.WPF.Util
 		public override string IconSource => "/Resources/folder_none.png";
 		public override int Order => -1;
 		public override bool IsSpecialNode => true;
+        public override bool IsSpecialNode_AllNotes => false;
+        public override bool IsSpecialNode_UnsortedNotes => true;
 
-		public override void Sync(HierachicalBaseWrapper aother, HierachicalFolderWrapper[] parents)
+        public override void Sync(HierachicalBaseWrapper aother, HierachicalFolderWrapper[] parents)
 		{
 			var other = (HierachicalEmptyPathViewWrapper)aother;
 
@@ -96,8 +102,10 @@ namespace AlephNote.WPF.Util
 		public override string IconSource => _path.IsRoot() ? "/Resources/folder_root.png" : "/Resources/folder_any.png";
 		public override int Order => 0;
 		public override bool IsSpecialNode => false;
+        public override bool IsSpecialNode_AllNotes => false;
+        public override bool IsSpecialNode_UnsortedNotes => false;
 
-		public HierachicalFlatViewWrapper AllNotesViewWrapper;
+        public HierachicalFlatViewWrapper AllNotesViewWrapper;
 		public HierachicalEmptyPathViewWrapper EmptyPathViewWrapper;
 
 		private ObservableCollection<HierachicalFolderWrapper> _subFolders = new ObservableCollection<HierachicalFolderWrapper>();

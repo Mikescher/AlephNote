@@ -278,6 +278,10 @@ namespace AlephNote.WPF.Controls
 
 			var f = DisplayItems.Find(SelectedFolderPath);
 
+			if (SelectedFolderPath.IsRoot() && SelectedFolder?.IsSpecialNode_AllNotes == true && DisplayItems.AllNotesViewWrapper != null)
+				f = DisplayItems.AllNotesViewWrapper;
+
+
 			if (f != null)
 			{
 				if (!f.IsSelected)
@@ -423,8 +427,17 @@ namespace AlephNote.WPF.Controls
 				Tuple.Create("SearchText", SearchText));
 
 			if (AllNotes != null) ResyncDisplayItems(AllNotes);
-
 			SelectedFolder?.TriggerAllSubNotesChanged();
+
+			if (SelectedFolderPath != null && !SelectedFolder.IsSpecialNode_AllNotes && !SelectedFolder.AllSubNotes.Any() && DisplayItems.AllNotesViewWrapper != null)
+			{
+				App.Logger.TraceExt("NotesViewHierachical",
+					"OnSearchTextChanged (2)",
+					Tuple.Create("SelectedFolderPath", SelectedFolderPath?.Formatted));
+
+				SelectedFolder = DisplayItems.AllNotesViewWrapper;
+			}
+
 		}
 
 		public INote GetTopNote()
