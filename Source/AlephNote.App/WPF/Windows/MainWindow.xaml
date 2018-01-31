@@ -40,29 +40,32 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+		<Menu Grid.Row="0" Grid.Column="0" 
+			  Background="{ext:ThemeBinding 'window.menubar:background'}"
+			  Foreground="{ext:ThemeBinding 'window.menubar:foreground'}"
+			  Grid.ColumnSpan="3">
 			<MenuItem Header="_File">
-				<ctrl:AutoActionMenuItem Header="New Note"                  AlephAction="NewNote"              Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="New Note (from clipboard)" AlephAction="NewNoteFromClipboard" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="New Note (from text file)" AlephAction="NewNoteFromTextFile"  Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="New Note"                  AlephAction="NewNote"              Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="New Note (from clipboard)" AlephAction="NewNoteFromClipboard" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="New Note (from text file)" AlephAction="NewNoteFromTextFile"  Settings="{Binding Settings}" />
 				<Separator />
-				<ctrl:AutoActionMenuItem Header="Duplicate Note"            AlephAction="DuplicateNote"        Settings="{Binding Settings}" />
-				<ctrl:AutoActionMenuItem Header="Pin / Unpin Note"          AlephAction="PinUnpinNote"         Settings="{Binding Settings}" />
-				<ctrl:AutoActionMenuItem Header="Export Note"               AlephAction="ExportNote"           Settings="{Binding Settings}" />
-				<ctrl:AutoActionMenuItem Header="Delete Note"               AlephAction="DeleteNote"           Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Duplicate Note"            AlephAction="DuplicateNote"        Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Pin / Unpin Note"          AlephAction="PinUnpinNote"         Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Export Note"               AlephAction="ExportNote"           Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Delete Note"               AlephAction="DeleteNote"           Settings="{Binding Settings}" />
 				<Separator />
 				<ctrl:AutoActionMenuItem Header="Exit"                      AlephAction="AppExit"              Settings="{Binding Settings}"  />
 			</MenuItem>
 			<MenuItem Header="_Edit">
-				<ctrl:AutoActionMenuItem Header="Settings" AlephAction="ShowSettings" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Settings" AlephAction="ShowSettings" Settings="{Binding Settings}"  />
 				<Separator />
-				<ctrl:AutoActionMenuItem Header="Synchronize now" AlephAction="Resync" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="Delete local data and sync new" AlephAction="FullResync" Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Synchronize now" AlephAction="Resync" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Delete local data and sync new" AlephAction="FullResync" Settings="{Binding Settings}" />
 				<Separator />
-				<MenuItem Header="Insert Snippet" UsesItemContainerTemplate="True" ItemsSource="{Binding Settings.Snippets, Converter={conv:SnippetsToSnippetSource}}" >
+				<MenuItem Foreground="Black" Header="Insert Snippet" UsesItemContainerTemplate="True" ItemsSource="{Binding Settings.Snippets, Converter={conv:SnippetsToSnippetSource}}" >
 					<MenuItem.Resources>
 						<ItemContainerTemplate DataType="{x:Type conv:SnippetElem}">
-							<ctrl:AutoActionMenuItem />
+							<ctrl:AutoActionMenuItem Foreground="Black" />
 						</ItemContainerTemplate>
 					</MenuItem.Resources>
 
@@ -78,7 +81,7 @@
 					<MenuItem.ItemContainerTemplateSelector>
 						<util:MenuItemContainerTemplateSelector>
 							<DataTemplate>
-								<ctrl:AutoActionMenuItem />
+								<ctrl:AutoActionMenuItem Foreground="Black" />
 							</DataTemplate>
 						</util:MenuItemContainerTemplateSelector>
 					</MenuItem.ItemContainerTemplateSelector>
@@ -86,24 +89,24 @@
 
 			</MenuItem>
 			<MenuItem Header="_View">
-				<ctrl:AutoActionMenuItem Header="Always on Top" AlephAction="ToggleAlwaysOnTop" IsChecked="{Binding Settings.AlwaysOnTop}" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="Display Line Numbers" AlephAction="ToggleLineNumbers" IsChecked="{Binding Settings.SciLineNumbers}" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="Word Wrap" AlephAction="ToggleWordWrap" IsChecked="{Binding Settings.SciWordWrap}" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Always on Top" AlephAction="ToggleAlwaysOnTop" IsChecked="{Binding Settings.AlwaysOnTop}" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Display Line Numbers" AlephAction="ToggleLineNumbers" IsChecked="{Binding Settings.SciLineNumbers}" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Word Wrap" AlephAction="ToggleWordWrap" IsChecked="{Binding Settings.SciWordWrap}" Settings="{Binding Settings}"  />
 			</MenuItem>
 			<MenuItem Header="_Help">
-				<ctrl:AutoActionMenuItem Header="Check for Updates" AlephAction="CheckForUpdates" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="Show Log" AlephAction="ShowLog" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="About" AlephAction="ShowAbout" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Check for Updates" AlephAction="CheckForUpdates" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Show Log" AlephAction="ShowLog" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="About" AlephAction="ShowAbout" Settings="{Binding Settings}"  />
 			</MenuItem>
 			<MenuItem Header="_Debug" Visibility="{Binding DebugMode, Converter={conv:BoolToVisibility}, ConverterParameter=Visible;Collapsed}">
-				<MenuItem Header="Create 1 Note (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="1" />
-				<MenuItem Header="Create 10 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="10" />
-				<MenuItem Header="Create 100 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="100" />
+				<MenuItem Foreground="Black" Header="Create 1 Note (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="1" />
+				<MenuItem Foreground="Black" Header="Create 10 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="10" />
+				<MenuItem Foreground="Black" Header="Create 100 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="100" />
 				<Separator/>
-				<MenuItem Header="Serialize Settings" Command="{Binding DebugSerializeSettingsCommand}" />
-				<MenuItem Header="Serialize CurrentNote" Command="{Binding DebugSerializeNoteCommand}" />
+				<MenuItem Foreground="Black" Header="Serialize Settings" Command="{Binding DebugSerializeSettingsCommand}" />
+				<MenuItem Foreground="Black" Header="Serialize CurrentNote" Command="{Binding DebugSerializeNoteCommand}" />
 				<Separator/>
-				<MenuItem Header="NotesViewControl.RefreshView()" Command="{Binding DebugRefreshViewCommand}" />
+				<MenuItem Foreground="Black" Header="NotesViewControl.RefreshView()" Command="{Binding DebugRefreshViewCommand}" />
 			</MenuItem>
 		</Menu>
 

@@ -144,6 +144,11 @@ Repository: https://github.com/Mikescher/AlephNote
 			<property name="window.notetitle:foreground"  value="@CornflowerBlue"/>
 			<property name="window.changedate:foreground" value="@DarkGray"/>
 
+			<group name="menubar">
+				<property name="window.menubar:background"           value="gradient-v://0.25:#FFF6F6F6|0.25:#FFEAE8E8|0.80:#FFDCD9D9|1.00:#FFFFFFFF"/>
+				<property name="window.menubar:foreground"           value="@black"/>
+			</group>
+			
 			<group name="tageditor">
 				<property name="window.tageditor.popup:background"            value="#EEEEEE"/>
 				<property name="window.tageditor.popup:bordercolor"           value="@LightGray"/>
@@ -216,6 +221,7 @@ Repository: https://github.com/Mikescher/AlephNote
 					<property name="window.notesview.flat:background"           value="@White"/>
 					<property name="window.notesview.flat:foreground"           value="@Black"/>
 					<property name="window.notesview.flat.selected:background"  value="#B9D1EA"/>
+					<property name="window.notesview.flat.selected:foreground"  value="@Black"/>
 					<property name="window.notesview.flat.datetime1:foreground" value="@DimGray"/>
 					<property name="window.notesview.flat.datetime2:foreground" value="@Brown"/>
 					<property name="window.notesview.flat.preview:foreground"   value="@DarkGray"/>
@@ -226,6 +232,7 @@ Repository: https://github.com/Mikescher/AlephNote
 					<property name="window.notesview.hierachical.list:background"           value="$window.notesview.flat:background"/>
 					<property name="window.notesview.hierachical.list:foreground"           value="$window.notesview.flat:foreground"/>
 					<property name="window.notesview.hierachical.list.selected:background"  value="$window.notesview.flat.selected:background"/>
+					<property name="window.notesview.hierachical.list.selected:foreground"  value="$window.notesview.flat.selected:foreground"/>
 					<property name="window.notesview.hierachical.list.datetime1:foreground" value="$window.notesview.flat.datetime1:foreground"/>
 					<property name="window.notesview.hierachical.list.datetime2:foreground" value="$window.notesview.flat.datetime2:foreground"/>
 					<property name="window.notesview.hierachical.list.preview:foreground"   value="$window.notesview.flat.preview:foreground"/>

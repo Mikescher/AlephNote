@@ -95,6 +95,9 @@ namespace AlephNote.Common.Themes
 			CollectPropertyBrushRef(t, "window.notetitle:foreground");
 			CollectPropertyBrushRef(t, "window.changedate:foreground");
 
+			CollectPropertyBrushRef(t, "window.menubar:background");
+			CollectPropertyBrushRef(t, "window.menubar:foreground");
+
 			CollectPropertyBrushRef(t, "window.tageditor.popup:background");
 			CollectPropertyBrushRef(t, "window.tageditor.popup:bordercolor");
 			CollectPropertyBrushRef(t, "window.tageditor.popup:foreground");
@@ -145,6 +148,7 @@ namespace AlephNote.Common.Themes
 			CollectPropertyBrushRef(t, "window.notesview.flat:background");
 			CollectPropertyBrushRef(t, "window.notesview.flat:foreground");
 			CollectPropertyBrushRef(t, "window.notesview.flat.selected:background");
+			CollectPropertyBrushRef(t, "window.notesview.flat.selected:foreground");
 			CollectPropertyBrushRef(t, "window.notesview.flat.datetime1:foreground");
 			CollectPropertyBrushRef(t, "window.notesview.flat.datetime2:foreground");
 			CollectPropertyBrushRef(t, "window.notesview.flat.preview:foreground");
@@ -153,6 +157,7 @@ namespace AlephNote.Common.Themes
 			CollectPropertyBrushRef(t, "window.notesview.hierachical.list:background");
 			CollectPropertyBrushRef(t, "window.notesview.hierachical.list:foreground");
 			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.selected:background");
+			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.selected:foreground");
 			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.datetime1:foreground");
 			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.datetime2:foreground");
 			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.preview:foreground");

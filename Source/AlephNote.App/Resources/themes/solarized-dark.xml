@@ -108,6 +108,9 @@ License:    Copyright (c) 2011 Ethan Schoonover
 			<property name="window.notetitle:foreground"                  value="@yellow"/>
 			<property name="window.changedate:foreground"                 value="@base00"/>
 
+			<property name="window.menubar:background"                    value="@base3"/>
+			<property name="window.menubar:foreground"                    value="@base00"/>
+
 			<property name="window.tageditor.popup:background"            value="@base01"/>
 			<property name="window.tageditor.popup:bordercolor"           value="@base02"/>
 			<property name="window.tageditor.popup:foreground"            value="@base3"/>
@@ -153,13 +156,14 @@ License:    Copyright (c) 2011 Ethan Schoonover
 			<property name="window.notesview.flat:background"           value="@base3"/>
 			<property name="window.notesview.flat:foreground"           value="@base00"/>
 			<property name="window.notesview.flat.selected:background"  value="@base2"/>
+			<property name="window.notesview.flat.selected:foreground"  value="@yellow"/>
 			<property name="window.notesview.flat.datetime1:foreground" value="@green"/>
 			<property name="window.notesview.flat.datetime2:foreground" value="@green"/>
 			<property name="window.notesview.flat.preview:foreground"   value="@base1"/>
 			<property name="window.notesview.flat.separator"            value="@base2"/>
 
 			<property name="window.notesview.hierachical.tree.selected:background"  value="$window.notesview.flat.selected:background"/>
-			<property name="window.notesview.hierachical.tree.selected:foreground"  value="$window.notesview.flat:foreground"/>
+			<property name="window.notesview.hierachical.tree.selected:foreground"  value="$window.notesview.flat.selected:foreground"/>
 			<property name="window.notesview.hierachical.tree:foreground"           value="$window.notesview.flat:foreground"/>
 
 			<property name="window.statusbar:background"           value="@base3"/>
