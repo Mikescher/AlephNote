@@ -45,6 +45,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand AddSubFolderCommand { get { return new RelayCommand(AddSubFolder); } }
 		public ICommand RenameFolderCommand { get { return new RelayCommand(RenameFolder); } }
 		public ICommand ExitCommand { get { return new RelayCommand(Exit); } }
+		public ICommand RestartCommand { get { return new RelayCommand(Restart); } }
 		public ICommand ShowAboutCommand { get { return new RelayCommand(ShowAbout); } }
 		public ICommand ShowLogCommand { get { return new RelayCommand(ShowLog); } }
 		public ICommand SaveAndSyncCommand { get { return new RelayCommand(SaveAndSync); } }
@@ -271,7 +272,20 @@ namespace AlephNote.WPF.Windows
 
 				if (refreshNotesTheme)
 				{
-					//TODO
+					var result = MessageBox.Show(Owner,
+						"To apply the changed theme you need to restart AlephNote.\r\nDou you want to restart AlephNote now?",
+						"Restart AlephNote to apply changes!",
+						MessageBoxButton.YesNo,
+						MessageBoxImage.Warning);
+
+					if (result == MessageBoxResult.Yes)
+					{
+						new Thread(() => 
+						{
+							Thread.Sleep(500);
+							Application.Current.Dispatcher.BeginInvoke(new Action(() => { Restart(); }));
+						}).Start();
+					}
 				}
 
 				SearchText = string.Empty;
@@ -623,6 +637,19 @@ namespace AlephNote.WPF.Windows
 		{
 			_forceClose = true;
 			Owner.Close();
+		}
+
+		public void Restart()
+		{
+			_forceClose = true;
+			Owner.Close();
+
+			ProcessStartInfo Info = new ProcessStartInfo();
+			Info.Arguments = "/C ping 127.0.0.1 -n 3 && \"" + Environment.GetCommandLineArgs()[0] + "\"";
+			Info.WindowStyle = ProcessWindowStyle.Hidden;
+			Info.CreateNoWindow = true;
+			Info.FileName = "cmd.exe";
+			Process.Start(Info);
 		}
 
 		private void ShowAbout()

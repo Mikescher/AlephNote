@@ -50,6 +50,7 @@ namespace AlephNote.WPF.Shortcuts
 			AddCommand("ShowAbout",            vm => vm.ShowAboutCommand,                  "Show the about window");
 			AddCommand("ShowLog",              vm => vm.ShowLogCommand,                    "Show the log window");
 			AddCommand("AppExit",              vm => vm.ExitCommand,                       "Close the application");
+			AddCommand("AppRestart",           vm => vm.RestartCommand,                    "Restart the application");
 			AddCommand("AppHide",              vm => vm.HideCommand,                       "Hide main window");
 			AddCommand("FocusEditor",          vm => vm.FocusScintillaCommand,             "Select the note editor");
 			AddCommand("FocusNotesList",       vm => vm.FocusNotesListCommand,             "Select the note list");

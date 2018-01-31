@@ -72,6 +72,7 @@ namespace AlephNote.Common.Themes
 			return _themeFiles
 				.Select(p => Path.GetFileName(p))
 				.Select(p => GetByFilename(p, out _))
+				.Where(p => p != null)
 				.Where(p => p.Compatibility.Includes(LoggerSingleton.Inst.AppVersion))
 				.ToList();
 		}
