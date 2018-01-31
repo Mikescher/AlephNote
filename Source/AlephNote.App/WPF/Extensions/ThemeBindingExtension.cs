@@ -17,8 +17,6 @@ namespace AlephNote.WPF.Extensions
 	{
 		public string ThemeKey { get; set; }
 
-		public string Type { get; set; }
-
 		private readonly List<WeakReference> _targetObjects = new List<WeakReference>();
 
 		private object _targetProperty;
@@ -49,7 +47,7 @@ namespace AlephNote.WPF.Extensions
 			//
 			if (_targetProperty != null)
 			{
-				result = GetValue(ThemeKey, Type);
+				result = GetValue(ThemeKey);
 			}
 			return result;
 		}
@@ -84,33 +82,29 @@ namespace AlephNote.WPF.Extensions
 				var dependencyObject = target as DependencyObject;
 				if (dependencyObject != null)
 				{
-					dependencyObject.SetValue(_targetProperty as DependencyProperty, GetValue(ThemeKey, Type));
+					dependencyObject.SetValue(_targetProperty as DependencyProperty, GetValue(ThemeKey));
 				}
 			}
 			else if (_targetProperty is PropertyInfo)
 			{
-				(_targetProperty as PropertyInfo).SetValue(target, GetValue(ThemeKey, Type), null);
+				(_targetProperty as PropertyInfo).SetValue(target, GetValue(ThemeKey), null);
 			}
 		}
 
-		private static object GetValue(string key, string ttype)
+		private static object GetValue(string key)
 		{
 #if DEBUG
 			if (Application.Current.MainWindow == null) return null; // designmode
 #endif
 
-			if (ttype.ToLower() == "brush")
-			{
-				if (ThemeManager.Inst.CurrentTheme.IsFallback) return new SolidColorBrush(Colors.Magenta);
+			if (ThemeManager.Inst.CurrentTheme.IsFallback) return new SolidColorBrush(Colors.Magenta);
 
-				var obj = ThemeManager.Inst.CurrentTheme.Get(key);
+			var obj = ThemeManager.Inst.CurrentTheme.Get(key);
 
-				if (obj is ColorRef cref) return ColorRefToBrush.Convert(cref);
-				if (obj is BrushRef bref) return BrushRefToBrush.Convert(bref);
+			if (obj is ColorRef cref) return ColorRefToBrush.Convert(cref);
+			if (obj is BrushRef bref) return BrushRefToBrush.Convert(bref);
 
-				throw new Exception($"Cannot convert {obj?.GetType()} to 'brush'");
-			}
-			throw new Exception($"Unknown targettype: {ttype}");
+			throw new Exception($"Cannot convert {obj?.GetType()} to 'brush'");
 		}
 
 		/// <summary>

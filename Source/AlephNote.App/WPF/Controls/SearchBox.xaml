@@ -9,7 +9,7 @@
 			 mc:Ignorable="d" 
 			 d:DesignHeight="28" d:DesignWidth="500">
 
-	<Grid Background="{ext:ThemeBinding 'window.inlinesearch:background', Type='brush'}" x:Name="MainGrid" MinWidth="100">
+	<Grid Background="{ext:ThemeBinding 'window.inlinesearch:background'}" x:Name="MainGrid" MinWidth="100">
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"/>
@@ -29,31 +29,31 @@
 				</Grid.ColumnDefinitions>
 
 				<controls:ClickSelectTextBox Margin="4" Grid.Column="0" 
-											 Background="{ext:ThemeBinding 'window.inlinesearch.textbox:background', Type='brush'}"
-											 Foreground="{ext:ThemeBinding 'window.inlinesearch.textbox:foreground', Type='brush'}"
+											 Background="{ext:ThemeBinding 'window.inlinesearch.textbox:background'}"
+											 Foreground="{ext:ThemeBinding 'window.inlinesearch.textbox:foreground'}"
 											 x:Name="MainTextBox" BorderThickness="0" KeyDown="OnKeyDown" 
 											 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
 				<Button Margin="2" Grid.Column="2" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
-						Background="{ext:ThemeBinding 'window.inlinesearch.btnSearch:background', Type='brush'}"
-						Foreground="{ext:ThemeBinding 'window.inlinesearch.btnSearch:foreground', Type='brush'}"
+						Background="{ext:ThemeBinding 'window.inlinesearch.btnSearch:background'}"
+						Foreground="{ext:ThemeBinding 'window.inlinesearch.btnSearch:foreground'}"
 						Content="&#x2794;" Click="OnSearch" />
 
                 <Button Margin="2" Grid.Column="3" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
-						Background="{ext:ThemeBinding 'window.inlinesearch.btnCaseIns:background', Type='brush'}"
-						Foreground="{ext:ThemeBinding 'window.inlinesearch.btnCaseIns:foreground', Type='brush'}"
+						Background="{ext:ThemeBinding 'window.inlinesearch.btnCaseIns:background'}"
+						Foreground="{ext:ThemeBinding 'window.inlinesearch.btnCaseIns:foreground'}"
 						Content="Aa" FontWeight="{Binding CaseSensitive, Converter={conv:BoolToFontWeight}}" 
 						Click="OnClickCaseSensitive" />
 
                 <Button Margin="2" Grid.Column="4" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
-						Background="{ext:ThemeBinding 'window.inlinesearch.btnWholeWord:background', Type='brush'}"
-						Foreground="{ext:ThemeBinding 'window.inlinesearch.btnWholeWord:foreground', Type='brush'}"
+						Background="{ext:ThemeBinding 'window.inlinesearch.btnWholeWord:background'}"
+						Foreground="{ext:ThemeBinding 'window.inlinesearch.btnWholeWord:foreground'}"
 						Content="|W|" FontWeight="{Binding WholeWord, Converter={conv:BoolToFontWeight}}" 
 						Click="OnClickWholeWord"/>
 
                 <Button Margin="2" Grid.Column="5" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
-						Background="{ext:ThemeBinding 'window.inlinesearch.btnRegex:background', Type='brush'}"
-						Foreground="{ext:ThemeBinding 'window.inlinesearch.btnRegex:foreground', Type='brush'}"
+						Background="{ext:ThemeBinding 'window.inlinesearch.btnRegex:background'}"
+						Foreground="{ext:ThemeBinding 'window.inlinesearch.btnRegex:foreground'}"
 						Content="Regex" FontWeight="{Binding Regex, Converter={conv:BoolToFontWeight}}"
 						Click="OnClickCaseRegex"/>
 
@@ -62,7 +62,7 @@
 			<Grid Grid.Column="1">
 
                 <Button Margin="0,2,2,0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
-						Foreground="{ext:ThemeBinding 'window.inlinesearch:foreground', Type='brush'}"
+						Foreground="{ext:ThemeBinding 'window.inlinesearch:foreground'}"
 						Content="x" FontWeight="Bold" Padding="2,0" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
 						Click="OnCloseBox" />
 
