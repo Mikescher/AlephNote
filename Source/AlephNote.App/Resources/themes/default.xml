@@ -223,7 +223,20 @@ Repository: https://github.com/Mikescher/AlephNote
 				</group>
 				
 				<group name="hierachical">
-					<!-- TODO -->
+					<property name="window.notesview.hierachical.list:background"           value="$window.notesview.flat:background"/>
+					<property name="window.notesview.hierachical.list:foreground"           value="$window.notesview.flat:foreground"/>
+					<property name="window.notesview.hierachical.list.selected:background"  value="$window.notesview.flat.selected:background"/>
+					<property name="window.notesview.hierachical.list.datetime1:foreground" value="$window.notesview.flat.datetime1:foreground"/>
+					<property name="window.notesview.hierachical.list.datetime2:foreground" value="$window.notesview.flat.datetime2:foreground"/>
+					<property name="window.notesview.hierachical.list.preview:foreground"   value="$window.notesview.flat.preview:foreground"/>
+					<property name="window.notesview.hierachical.list.separator"            value="$window.notesview.flat.separator"/>
+					
+					<property name="window.notesview.hierachical.splitter"                  value="$window.splitter"/>
+
+					<property name="window.notesview.hierachical.tree:background"           value="$window.notesview.flat:background"/>
+					<property name="window.notesview.hierachical.tree:foreground"           value="$window.notesview.flat:foreground"/>
+					<property name="window.notesview.hierachical.tree.selected:background"  value="#3399FF"/>
+					<property name="window.notesview.hierachical.tree.selected:foreground"  value="@Black"/>
 				</group>
 			</group>
 

@@ -17,6 +17,8 @@ namespace AlephNote.WPF.Extensions
 	{
 		public string ThemeKey { get; set; }
 
+		public string Convert { get; set; } = "";
+
 		private readonly List<WeakReference> _targetObjects = new List<WeakReference>();
 
 		private object _targetProperty;
@@ -47,7 +49,7 @@ namespace AlephNote.WPF.Extensions
 			//
 			if (_targetProperty != null)
 			{
-				result = GetValue(ThemeKey);
+				result = GetValue(ThemeKey, Convert);
 			}
 			return result;
 		}
@@ -82,16 +84,16 @@ namespace AlephNote.WPF.Extensions
 				var dependencyObject = target as DependencyObject;
 				if (dependencyObject != null)
 				{
-					dependencyObject.SetValue(_targetProperty as DependencyProperty, GetValue(ThemeKey));
+					dependencyObject.SetValue(_targetProperty as DependencyProperty, GetValue(ThemeKey, Convert));
 				}
 			}
 			else if (_targetProperty is PropertyInfo)
 			{
-				(_targetProperty as PropertyInfo).SetValue(target, GetValue(ThemeKey), null);
+				(_targetProperty as PropertyInfo).SetValue(target, GetValue(ThemeKey, Convert), null);
 			}
 		}
 
-		private static object GetValue(string key)
+		private static object GetValue(string key, string converter)
 		{
 #if DEBUG
 			if (Application.Current.MainWindow == null) return null; // designmode
@@ -101,10 +103,25 @@ namespace AlephNote.WPF.Extensions
 
 			var obj = ThemeManager.Inst.CurrentTheme.Get(key);
 
-			if (obj is ColorRef cref) return ColorRefToBrush.Convert(cref);
-			if (obj is BrushRef bref) return BrushRefToBrush.Convert(bref);
+			if (string.IsNullOrWhiteSpace(converter))
+			{
+				if (obj is ColorRef cref) return ColorRefToBrush.Convert(cref);
+				if (obj is BrushRef bref) return BrushRefToBrush.Convert(bref);
 
-			throw new Exception($"Cannot convert {obj?.GetType()} to 'brush'");
+				throw new Exception($"Cannot convert {obj?.GetType()} to 'brush'");
+			}
+			else if (converter.Equals("ToColor", StringComparison.InvariantCultureIgnoreCase))
+			{
+				if (obj is ColorRef cref) return cref.ToWCol();
+				if (obj is BrushRef bref) return bref.GradientSteps.First().Item2.ToWCol();
+
+				throw new Exception($"Cannot convert {obj?.GetType()} to 'color'");
+			}
+			else
+			{
+				throw new Exception($"Unknown converter {converter}");
+			}
+
 		}
 
 		/// <summary>

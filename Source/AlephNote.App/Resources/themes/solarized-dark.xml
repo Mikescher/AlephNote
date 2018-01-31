@@ -158,6 +158,10 @@ License:    Copyright (c) 2011 Ethan Schoonover
 			<property name="window.notesview.flat.preview:foreground"   value="@base1"/>
 			<property name="window.notesview.flat.separator"            value="@base2"/>
 
+			<property name="window.notesview.hierachical.tree.selected:background"  value="$window.notesview.flat.selected:background"/>
+			<property name="window.notesview.hierachical.tree.selected:foreground"  value="$window.notesview.flat:foreground"/>
+			<property name="window.notesview.hierachical.tree:foreground"           value="$window.notesview.flat:foreground"/>
+			
 		</group>
 
 	</data>

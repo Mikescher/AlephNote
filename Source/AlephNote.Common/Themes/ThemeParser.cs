@@ -150,6 +150,19 @@ namespace AlephNote.Common.Themes
 			CollectPropertyBrushRef(t, "window.notesview.flat.preview:foreground");
 			CollectPropertyBrushRef(t, "window.notesview.flat.separator");
 
+			CollectPropertyBrushRef(t, "window.notesview.hierachical.list:background");
+			CollectPropertyBrushRef(t, "window.notesview.hierachical.list:foreground");
+			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.selected:background");
+			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.datetime1:foreground");
+			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.datetime2:foreground");
+			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.preview:foreground");
+			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.separator");
+			CollectPropertyBrushRef(t, "window.notesview.hierachical.splitter");
+			CollectPropertyBrushRef(t, "window.notesview.hierachical.tree:background");
+			CollectPropertyBrushRef(t, "window.notesview.hierachical.tree:foreground");
+			CollectPropertyBrushRef(t, "window.notesview.hierachical.tree.selected:background");
+			CollectPropertyBrushRef(t, "window.notesview.hierachical.tree.selected:foreground");
+
 			//-------------------------------------------------------------------------------------
 
 			CollectPropertyColorRef(t, "scintilla.background");

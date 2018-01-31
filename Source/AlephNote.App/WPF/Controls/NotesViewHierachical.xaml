@@ -9,14 +9,13 @@
 			 xmlns:services="clr-namespace:AlephNote.WPF.Services"
 			 xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
 			 xmlns:settings="clr-namespace:AlephNote.Common.Settings.Types;assembly=AlephNote.Common"
+			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="150">
-	
+
 	<UserControl.Resources>
 		<Style TargetType="{x:Type ListViewItem}">
 			<Setter Property="Background" Value="Transparent"/>
-			<!--<Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>-->
-			<!--<Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>-->
 			<Setter Property="Padding" Value="2,0,0,0"/>
 			<Setter Property="Template">
 				<Setter.Value>
@@ -26,8 +25,7 @@
 						</Border>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsSelected" Value="true">
-								<Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}"/>
-								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+								<Setter Property="Background" TargetName="Bd" Value="{ext:ThemeBinding 'window.notesview.hierachical.list.selected:background'}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -36,6 +34,7 @@
 		</Style>
 	</UserControl.Resources>
 
+
 	<Grid x:Name="RootGrid" d:DataContext="{d:DesignInstance self:NotesViewHierachical}" >
 		
 		<Grid.RowDefinitions>
@@ -43,8 +42,10 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"  MinHeight="20" />
 		</Grid.RowDefinitions>
-		
+
 		<TreeView x:Name="FolderTreeView" Grid.Row="0"
+				  Background="{ext:ThemeBinding 'window.notesview.hierachical.tree:background'}"
+				  Foreground="{ext:ThemeBinding 'window.notesview.hierachical.tree:foreground'}"
 				  ItemsSource="{Binding DisplayItems.SubFolder}"
 				  FontSize="{Binding Settings.ListFontSize, Converter={conv:FontSizeToInt}}" 
 				  FontFamily="{Binding Settings.ListFontFamily, Converter={conv:FontNameToFontFamily}}" 
@@ -71,9 +72,9 @@
 					
 				</Style>
 
-				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}" />
-				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
-				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:background', Convert='ToColor'}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:foreground', Convert='ToColor'}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:foreground', Convert='ToColor'}" />
 				
 			</TreeView.Resources>
 
@@ -88,14 +89,16 @@
 
 					<StackPanel Orientation="Horizontal">
 						<Image Width="16" Height="16" Margin="2" Stretch="Fill" Source="{Binding ., Converter={conv:HierachicalWrapperToIcon}}"/>
-						<TextBlock Text="{Binding Header}" />
+						<TextBlock Text="{Binding Header}" Foreground="{ext:ThemeBinding 'window.notesview.hierachical.tree:foreground'}" />
 					</StackPanel>
 				</HierarchicalDataTemplate>
 			</TreeView.ItemTemplate>
 			
 		</TreeView>
 
-		<GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="3" Focusable="False"/>
+		<GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="3" 
+					  Background="{ext:ThemeBinding 'window.notesview.hierachical.splitter'}"
+					  Focusable="False"/>
 
 		<ListView x:Name="HierachicalNotesList" Grid.Row="2"
 					  AllowDrop="True"
@@ -106,6 +109,8 @@
 					  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					  ScrollViewer.CanContentScroll="{Binding Settings.SmoothScrollNotesView, Converter={conv:NegateBool}}"
 					  SelectionMode="Single"
+					  Background="{ext:ThemeBinding 'window.notesview.hierachical.list:background'}"
+					  Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list:foreground'}"
 					  ItemsSource="{Binding SelectedFolder.AllSubNotes}" 
 					  SelectedValue="{Binding SelectedNote}"
 					  FontSize="{Binding Settings.ListFontSize, Converter={conv:FontSizeToInt}}" 
@@ -123,12 +128,6 @@
 				</ContextMenu>
 			</ListView.ContextMenu>
 
-			<ListBox.ItemContainerStyle>
-				<Style TargetType="ListBoxItem">
-					<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-				</Style>
-			</ListBox.ItemContainerStyle>
-
 			<!-- ReSharper disable Xaml.RedundantResource -->
 			<services:MultiDataTemplateService.MultiDataTemplate>
 
@@ -140,7 +139,10 @@
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
 							<Image Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
-							<TextBlock Grid.Column="1" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+							<TextBlock Grid.Column="1" 
+									   Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" 
+									   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list:foreground'}"
+									   TextTrimming="CharacterEllipsis" />
 						</Grid>
 					</DataTemplate>
 				</services:ConditionalDataTemplate>
@@ -154,9 +156,18 @@
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="3" />
 							</Grid.ColumnDefinitions>
-							<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
-							<TextBlock Grid.Column="1" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-							<TextBlock Grid.Column="2" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" VerticalAlignment="Center" Foreground="DimGray" >
+							<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" 
+									   Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
+
+							<TextBlock Grid.Column="1" 
+									   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list:foreground'}"
+									   Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" 
+									   TextTrimming="CharacterEllipsis" />
+
+							<TextBlock Grid.Column="2" 
+									   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.datetime1:foreground'}"
+									   Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" 
+									   VerticalAlignment="Center">
 								<TextBlock.LayoutTransform>
 									<ScaleTransform ScaleX="0.9" ScaleY="0.9" />
 								</TextBlock.LayoutTransform>
@@ -181,21 +192,37 @@
 									<ColumnDefinition Width="Auto"/>
 									<ColumnDefinition Width="*"/>
 								</Grid.ColumnDefinitions>
-								<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
-								<TextBlock Grid.Column="1" FontWeight="Bold" FontStyle="Normal" Foreground="Black" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+								<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" 
+										   Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
+
+								<TextBlock Grid.Column="1" FontWeight="Bold" FontStyle="Normal" 
+										   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list:foreground'}" 
+										   Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" 
+										   TextTrimming="CharacterEllipsis" />
 							</Grid>
 
 							<TextBlock Grid.Row="1" TextWrapping="NoWrap">
-								<Run Foreground="Brown" FontWeight="Normal" FontStyle="Normal" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
-								<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
+								<Run FontWeight="Normal" FontStyle="Normal" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.datetime2:foreground'}" 
+									 Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
+								<Run FontWeight="Normal" FontStyle="Normal" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.preview:foreground'}" 
+									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
 							</TextBlock>
 							<TextBlock Grid.Row="2" TextWrapping="NoWrap">
-								<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=1, Mode=OneWay}" />
+								<Run FontWeight="Normal" FontStyle="Normal" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.preview:foreground'}" 
+									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=1, Mode=OneWay}" />
 							</TextBlock>
 							<TextBlock Grid.Row="3" TextWrapping="NoWrap">
-								<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=2, Mode=OneWay}" />
+								<Run FontWeight="Normal" FontStyle="Normal" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.preview:foreground'}" 
+									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=2, Mode=OneWay}" />
 							</TextBlock>
-							<Separator Grid.Row="4" Background="Snow" Margin="6,7,6,7" />
+							<Separator Grid.Row="4" 
+									   Background="{ext:ThemeBinding 'window.notesview.hierachical.list.separator'}" 
+									   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.separator'}" 
+									   Margin="6,7,6,7" />
 						</Grid>
 					</DataTemplate>
 				</services:ConditionalDataTemplate>
@@ -214,25 +241,34 @@
 									<ColumnDefinition Width="Auto"/>
 									<ColumnDefinition Width="*"/>
 								</Grid.ColumnDefinitions>
-								<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
-								<TextBlock Grid.Column="1" FontWeight="Bold" FontStyle="Normal" Foreground="Black" Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+								<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" 
+										   Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
+								<TextBlock Grid.Column="1" FontWeight="Bold" FontStyle="Normal"
+										   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list:foreground'}" 
+										   Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
 							</Grid>
 
 							<TextBlock Grid.Row="1" TextWrapping="NoWrap">
-								<Run Foreground="Brown" FontWeight="Normal" FontStyle="Normal" Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
-								<Run Foreground="DarkGray" FontWeight="Normal" FontStyle="Normal" Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
+								<Run FontWeight="Normal" FontStyle="Normal" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.datetime2:foreground'}" 
+									 Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
+								<Run FontWeight="Normal" FontStyle="Normal" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.preview:foreground'}" 
+									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
 							</TextBlock>
-							<Separator Grid.Row="2" Background="Snow" Margin="6,7,6,7" />
+							<Separator Grid.Row="2" 
+									   Background="{ext:ThemeBinding 'window.notesview.hierachical.list.separator'}" 
+									   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.separator'}" 
+									   Margin="6,7,6,7" />
 						</Grid>
 					</DataTemplate>
 				</services:ConditionalDataTemplate>
-				
+
 			</services:MultiDataTemplateService.MultiDataTemplate>
 			<!-- ReSharper restore Xaml.RedundantResource -->
 
+
 		</ListView>
-
-
 
 	</Grid>
 </UserControl>
