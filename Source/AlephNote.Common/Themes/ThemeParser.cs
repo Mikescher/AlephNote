@@ -163,6 +163,12 @@ namespace AlephNote.Common.Themes
 			CollectPropertyBrushRef(t, "window.notesview.hierachical.tree.selected:background");
 			CollectPropertyBrushRef(t, "window.notesview.hierachical.tree.selected:foreground");
 
+			CollectPropertyBrushRef(t, "window.statusbar:background");
+			CollectPropertyBrushRef(t, "window.statusbar:foreground");
+			CollectPropertyBrushRef(t, "window.statusbar.btnReload:foreground");
+			CollectPropertyBrushRef(t, "window.statusbar.btnReload:background");
+			CollectPropertyBrushRef(t, "window.statusbar.btnReload:border");
+
 			//-------------------------------------------------------------------------------------
 
 			CollectPropertyColorRef(t, "scintilla.background");

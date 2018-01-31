@@ -200,14 +200,14 @@ Repository: https://github.com/Mikescher/AlephNote
 			</group>
 
 			<group name="globalsearch">
-				<property name="window.globalsearch.input:foreground"         value="@Black"/>
 				<property name="window.globalsearch.input:background"         value="@White"/>
+				<property name="window.globalsearch.input:foreground"         value="@Black"/>
 				<property name="window.globalsearch.input:border"             value="#E3E9EF"/>
 				
 				<property name="window.globalsearch.placeholder:foreground"   value="#888888"/>
 				
-				<property name="window.globalsearch.button:foreground"        value="@Black"/>
 				<property name="window.globalsearch.button:background"        value="@White"/>
+				<property name="window.globalsearch.button:foreground"        value="@Black"/>
 				<property name="window.globalsearch.button:border"            value="@Black"/>
 			</group>
 
@@ -240,6 +240,15 @@ Repository: https://github.com/Mikescher/AlephNote
 				</group>
 			</group>
 
+			<group name="statusbar">
+				<property name="window.statusbar:background"           value="#F1EDED"/>
+				<property name="window.statusbar:foreground"           value="#000000"/>
+
+				<property name="window.statusbar.btnReload:background" value="@Transparent"/>
+				<property name="window.statusbar.btnReload:foreground" value="@Black"/>
+				<property name="window.statusbar.btnReload:border"     value="@Black"/>
+			</group>
+			
 		</group>
 		
 	</data>

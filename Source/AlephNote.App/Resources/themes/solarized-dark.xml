@@ -161,7 +161,12 @@ License:    Copyright (c) 2011 Ethan Schoonover
 			<property name="window.notesview.hierachical.tree.selected:background"  value="$window.notesview.flat.selected:background"/>
 			<property name="window.notesview.hierachical.tree.selected:foreground"  value="$window.notesview.flat:foreground"/>
 			<property name="window.notesview.hierachical.tree:foreground"           value="$window.notesview.flat:foreground"/>
-			
+
+			<property name="window.statusbar:background"           value="@base3"/>
+			<property name="window.statusbar:foreground"           value="@base00"/>
+			<property name="window.statusbar.btnReload:background" value="@base2"/>
+			<property name="window.statusbar.btnReload:foreground" value="@base01"/>
+			<property name="window.statusbar.btnReload:border"     value="@base01"/>
 		</group>
 
 	</data>

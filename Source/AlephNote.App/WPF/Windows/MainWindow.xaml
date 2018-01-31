@@ -253,7 +253,10 @@
 
 		</Grid>
 
-		<StatusBar Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
+		<StatusBar Grid.Column="0" Grid.Row="2"
+				   Background="{ext:ThemeBinding 'window.statusbar:background'}"
+				   Foreground="{ext:ThemeBinding 'window.statusbar:foreground'}"
+				   Grid.ColumnSpan="3">
 			<StatusBar.Resources>
 				<Style TargetType="StatusBarItem">
 					<Setter Property="FontSize" Value="10" />
@@ -262,7 +265,12 @@
 
 			<StatusBarItem  Content="Last Synchronized: " />
 			<StatusBarItem Content="{Binding LastSynchronizedText}" />
-			<Button ToolTip="Synchronize Now" Padding="0" BorderThickness="0" Height="14" Command="{Binding ResyncCommand}"  >
+			<Button ToolTip="Synchronize Now" Padding="0" BorderThickness="0" Height="14" 
+					Background="{ext:ThemeBinding 'window.statusbar.btnReload:background'}"
+					Foreground="{ext:ThemeBinding 'window.statusbar.btnReload:foreground'}"
+					BorderBrush="{ext:ThemeBinding 'window.statusbar.btnReload:border'}"
+					Command="{Binding ResyncCommand}" 
+					Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"   >
 				<Image Source="/Resources/refresh.png" />
 			</Button>
 			<Separator Margin="5,2" Foreground="Beige" />
