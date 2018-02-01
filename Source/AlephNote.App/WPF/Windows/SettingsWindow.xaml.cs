@@ -30,14 +30,20 @@ namespace AlephNote.WPF.Windows
 
 		private void OnOKClicked(object sender, RoutedEventArgs e)
 		{
+			Close();
+
 			viewmodel.OnBeforeApply();
 			if (!viewmodel.Settings.IsEqual(ownerVM.Settings)) ownerVM.ChangeSettings(viewmodel.Settings);
-			Close();
 		}
 
 		private void OnCancelClicked(object sender, RoutedEventArgs e)
 		{
 			Close();
+		}
+
+		private void DialogWindow_Closed(object sender, System.EventArgs e)
+		{
+			viewmodel.OnBeforeClose();
 		}
 
 		private void OnAddAccountClicked(object sender, RoutedEventArgs e)

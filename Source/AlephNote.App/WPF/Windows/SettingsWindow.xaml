@@ -12,6 +12,7 @@
 		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance windows:SettingsWindowViewmodel}"
 		WindowStartupLocation="CenterOwner"
+		Closed="DialogWindow_Closed"
 		Icon="/Resources/IconMain.png"
 		Title="AlephNote - Configuration" MinHeight="300" MinWidth="300" Height="650" Width="535">
 	<Window.Resources>
