@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+============================
+  THEME FILE FOR ALEPHNOTE
+============================
+
+Theme:      Monokai Neo
+
+Source:     https://github.com/skylerlee/monokai-neo-syntax
+
+Repository: https://github.com/skylerlee/monokai-neo-syntax/blob/master/styles/colors.less
+
+License:    Copyright (c) 2017 Skyler Lee
+            Permission is hereby granted, free of charge, to any person obtaining a copy
+            of this software and associated documentation files (the "Software"), to deal
+            in the Software without restriction, including without limitation the rights
+            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+            copies of the Software, and to permit persons to whom the Software is
+            furnished to do so, subject to the following conditions:
+            The above copyright notice and this permission notice shall be included in
+            all copies or substantial portions of the Software.
+            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+            THE SOFTWARE.
+
+-->
+<theme>
+	<meta>
+		<name>Monokai Neo</name>
+		<version>1.0</version>
+		<compatibility>*</compatibility>
+	</meta>
+
+	<ref>
+		<valueref key="MK_VeryLightGray"  type="color">#F9F5DD</valueref>
+		<valueref key="MK_LightGray"      type="color">#716A60</valueref>
+		<valueref key="MK_Gray"           type="color">#434046</valueref>
+		<valueref key="MK_SlightDarkGray" type="color">#3C393E</valueref>
+		<valueref key="MK_DarkGray"       type="color">#363338</valueref>
+		<valueref key="MK_VeryDarkGray"   type="color">#242424</valueref>
+
+		<valueref key="MK_Red"            type="color">#FF5794</valueref>
+		<valueref key="MK_Brown"          type="color">#CC8D66</valueref>
+		<valueref key="MK_Orange"         type="color">#FAA23D</valueref>
+		<valueref key="MK_Yellow"         type="color">#E6DB7A</valueref>
+		<valueref key="MK_Green"          type="color">#B2E64C</valueref>
+		<valueref key="MK_Cyan"           type="color">#66CCE1</valueref>
+		<valueref key="MK_Blue"           type="color">#5596F1</valueref>
+		<valueref key="MK_Purple"         type="color">#AA7DFC</valueref>
+
+
+		<!--// Other constants -->
+
+		<valueref key="Transparent"    type="color">#00000000</valueref>
+		<valueref key="Black"          type="color">#000000</valueref>
+		<valueref key="White"          type="color">#FFFFFF</valueref>
+	</ref>
+
+	<data>
+
+	</data>
+</theme>
