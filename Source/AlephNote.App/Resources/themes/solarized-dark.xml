@@ -95,6 +95,10 @@ License:    Copyright (c) 2011 Ethan Schoonover
 
 			<property name="scintilla.search.local:color"                 value="@red"/>
 			<property name="scintilla.search.global:color"                value="@green"/>
+
+			<property name="scintilla.margin.numbers:foreground"          value="@base2"/>
+			<property name="scintilla.margin.numbers:background"          value="@base00"/>
+			<property name="scintilla.margin.symbols:background"          value="@base1"/>
 		</group>
 
 		<group name="window">

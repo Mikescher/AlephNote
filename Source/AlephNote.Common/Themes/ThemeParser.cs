@@ -208,6 +208,9 @@ namespace AlephNote.Common.Themes
 			CollectPropertyStyleSpec(t, "scintilla.markdown.list");
 			CollectPropertyStyleSpec(t, "scintilla.markdown.url");
 
+			CollectPropertyStyleSpec(t, "scintilla.margin.numbers");
+			CollectPropertyColorRef(t,  "scintilla.margin.symbols:background");
+
 			CollectPropertyIndicatorSpec(t, "scintilla.search.local");
 			CollectPropertyIndicatorSpec(t, "scintilla.search.global");
 

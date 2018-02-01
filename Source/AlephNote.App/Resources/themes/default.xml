@@ -132,6 +132,16 @@ Repository: https://github.com/Mikescher/AlephNote
 				<property name="scintilla.search.global:outline_alpha" value="196"/>
 				<property name="scintilla.search.global:under_text"    value="true"/>
 			</group>
+
+			<group name="margin">
+				<property name="scintilla.margin.numbers:foreground" value="$scintilla.default:foreground"/>
+				<property name="scintilla.margin.numbers:underline"  value="false"/>
+				<property name="scintilla.margin.numbers:background" value="#F0F0F0"/>
+				<property name="scintilla.margin.numbers:bold"       value="false"/>
+				<property name="scintilla.margin.numbers:italic"     value="false"/>
+
+				<property name="scintilla.margin.symbols:background" value="@Transparent"/>
+			</group>
 			
 		</group>
 

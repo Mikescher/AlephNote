@@ -75,7 +75,7 @@ namespace AlephNote
 			Logger.DebugEnabled = DebugMode;
 			
 			PluginManager.Inst.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory);
-			App.Themes.Init(AppDomain.CurrentDomain.BaseDirectory);
+			App.Themes.Init(Args.GetStringDefault("themes", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "themes")));
 
 			AppSettings settings;
 			try

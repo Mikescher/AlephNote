@@ -127,6 +127,17 @@ namespace AlephNote.WPF.Util
 			sci.Indicators[INDICATOR_GLOBAL_SEARCH].ForeColor    = theme.Get<ColorRef>("scintilla.search.global:color").ToDCol();
 			sci.Indicators[INDICATOR_GLOBAL_SEARCH].OutlineAlpha = theme.Get<int>(     "scintilla.search.global:outline_alpha");
 			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Alpha        = theme.Get<int>(     "scintilla.search.global:alpha");
+
+			sci.Styles[Style.LineNumber].Bold               = theme.Get<bool>("scintilla.margin.numbers:bold");
+			sci.Styles[Style.LineNumber].Italic             = theme.Get<bool>("scintilla.margin.numbers:italic");
+			sci.Styles[Style.LineNumber].Underline          = theme.Get<bool>("scintilla.margin.numbers:underline");
+			sci.Styles[Style.LineNumber].ForeColor          = theme.Get<ColorRef>("scintilla.margin.numbers:foreground").ToDCol();
+			sci.Styles[Style.LineNumber].BackColor          = theme.Get<ColorRef>("scintilla.margin.numbers:background").ToDCol();
+			sci.Margins[STYLE_MARGIN_LINENUMBERS].BackColor = theme.Get<ColorRef>("scintilla.margin.numbers:background").ToDCol();
+
+			sci.Margins[STYLE_MARGIN_LISTSYMBOLS].BackColor = theme.Get<ColorRef>("scintilla.margin.symbols:background").ToDCol();
+			sci.SetFoldMarginColor(!theme.Get<ColorRef>("scintilla.margin.symbols:background").IsTransparent, theme.Get<ColorRef>("scintilla.margin.symbols:background").ToDCol());
+			sci.SetFoldMarginHighlightColor(!theme.Get<ColorRef>("scintilla.margin.symbols:background").IsTransparent, theme.Get<ColorRef>("scintilla.margin.symbols:background").ToDCol());
 		}
 
 		public abstract void Highlight(Scintilla sci, int start, int end, AppSettings s);

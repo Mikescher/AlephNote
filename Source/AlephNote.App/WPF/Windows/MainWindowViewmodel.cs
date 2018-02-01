@@ -842,22 +842,22 @@ namespace AlephNote.WPF.Windows
 
 		private void ChangeSettingAlwaysOnTop()
 		{
-			Settings.AlwaysOnTop = !Settings.AlwaysOnTop;
-
-			ChangeSettings(Settings);
+			var ns = Settings.Clone();
+			ns.AlwaysOnTop = !ns.AlwaysOnTop;
+			ChangeSettings(ns);
 		}
 		
 		private void ChangeSettingLineNumbers()
 		{
-			Settings.SciLineNumbers = !Settings.SciLineNumbers;
-
-			ChangeSettings(Settings);
+			var ns = Settings.Clone();
+			ns.SciLineNumbers = !ns.SciLineNumbers;
+			ChangeSettings(ns);
 		}
 
 		private void ChangeSettingWordWrap()
 		{
+			var ns = Settings.Clone();
 			Settings.SciWordWrap = !Settings.SciWordWrap;
-
 			ChangeSettings(Settings);
 		}
 
@@ -870,9 +870,9 @@ namespace AlephNote.WPF.Windows
 
 			idx = (idx + 1) % themes.Count;
 
-			Settings.Theme = themes[idx].SourceFilename;
-
-			ChangeSettings(Settings);
+			var ns = Settings.Clone();
+			ns.Theme = themes[idx].SourceFilename;
+			ChangeSettings(ns);
 		}
 
 		public void OnNewNoteDrop(IDataObject data)

@@ -19,7 +19,7 @@ namespace AlephNote.Common.Themes
 
 		public void Init(string basePath)
 		{
-			_baseThemePath = Path.Combine(basePath, "themes");
+			_baseThemePath = basePath;
 			_cache = new Dictionary<string, AlephTheme>();
 
 			if (!Directory.Exists(_baseThemePath))
