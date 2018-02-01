@@ -39,13 +39,21 @@ namespace AlephNote.Common.Themes
 		private Version _version;
 		private CompatibilityVersionRange _compatibility;
 		private string _filename;
+		private string _source;
 
 		private Dictionary<string, ValueRef> _references;
 		private Dictionary<string, string> _properties;
 
+		public void LoadFromString(string content, string filename)
+		{
+			_xdoc = XDocument.Parse(_source = content);
+			_filename = filename.ToLower();
+		}
+
 		public void Load(string filepath)
 		{
-			_xdoc = XDocument.Load(filepath);
+			_source = File.ReadAllText(filepath);
+			_xdoc = XDocument.Parse(_source);
 			_filename = Path.GetFileName(filepath).ToLower();
 		}
 
@@ -86,7 +94,7 @@ namespace AlephNote.Common.Themes
 
 		public AlephTheme Generate()
 		{
-			var t = new AlephTheme(_name, _version, _compatibility, _filename, false);
+			var t = new AlephTheme(_name, _version, _compatibility, _filename, _source, false);
 
 			CollectPropertyBrushRef(t, "window.background");
 			CollectPropertyBrushRef(t, "window.foreground");
@@ -210,7 +218,7 @@ namespace AlephNote.Common.Themes
 
 		public static AlephTheme GetDefault()
 		{
-			return new AlephTheme("DEFAULT_THEME_FALLBACK", new Version(0, 0, 0, 0), CompatibilityVersionRange.ANY, "NULL", true);
+			return new AlephTheme("DEFAULT_THEME_FALLBACK", new Version(0, 0, 0, 0), CompatibilityVersionRange.ANY, "NULL", "<!-- fallback -->", true);
 		}
 
 		private void CollectPropertyColorRef(AlephTheme t, string name)

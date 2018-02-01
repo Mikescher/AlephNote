@@ -13,15 +13,17 @@ namespace AlephNote.Common.Themes
 		public Version Version { get; set; }
 		public CompatibilityVersionRange Compatibility { get; set; }
 		public string SourceFilename { get; set; }
+		public string Source { get; set; }
 
 		private Dictionary<string, object> AllProperties = new Dictionary<string, object>();
 
-		public AlephTheme(string n, Version v, CompatibilityVersionRange c, string fn, bool fb)
+		public AlephTheme(string n, Version v, CompatibilityVersionRange c, string fn, string src, bool fb)
 		{
 			Name = n;
 			Version = v;
 			Compatibility = c;
 			SourceFilename = fn;
+			Source = src;
 
 			IsFallback = fb;
 		}

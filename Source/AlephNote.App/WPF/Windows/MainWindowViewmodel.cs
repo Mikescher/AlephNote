@@ -30,7 +30,7 @@ using AlephNote.Common.Util;
 
 namespace AlephNote.WPF.Windows
 {
-	public class MainWindowViewmodel : ObservableObject, ISynchronizationFeedback
+	public class MainWindowViewmodel : ObservableObject, ISynchronizationFeedback, IThemeListener
 	{
 		public ICommand SettingsCommand { get { return new RelayCommand(ShowSettings); } }
 		public ICommand CreateNewNoteCommand { get { return new RelayCommand(CreateNote);} }
@@ -76,6 +76,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand DebugSerializeSettingsCommand { get { return new RelayCommand(DebugSerializeSettings); } }
 		public ICommand DebugSerializeNoteCommand { get { return new RelayCommand(DebugSerializeNote); } }
 		public ICommand DebugRefreshViewCommand { get { return new RelayCommand(()=> { Owner.NotesViewControl.RefreshView(); }); } }
+		public ICommand DebugShowThemeEditorCommand { get { return new RelayCommand(DebugShowThemeEditor); } }
 
 		private AppSettings _settings;
 		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); SettingsChanged(); } }
@@ -122,6 +123,8 @@ namespace AlephNote.WPF.Windows
 		}
 
 		public string FullVersion { get { return "AlephNote v" + App.APP_VERSION; } }
+
+		bool IThemeListener.IsTargetAlive => true;
 
 		private readonly SynchronizationDispatcher dispatcher = new SynchronizationDispatcher();
 		private readonly DelayedCombiningInvoker _invSaveSettings;
@@ -175,6 +178,8 @@ namespace AlephNote.WPF.Windows
 #endif
 
 			SettingsChanged();
+
+			ThemeManager.Inst.RegisterSlave(this);
 		}
 
 		private void ShowSettings()
@@ -234,7 +239,7 @@ namespace AlephNote.WPF.Windows
 				Settings.Save();
 				App.Logger.Trace("Main", $"Settings saved in {sw2.ElapsedMilliseconds}ms");
 
-				ThemeManager.Inst.ChangeTheme(Settings.Theme);
+				if (refreshNotesTheme) ThemeManager.Inst.ChangeTheme(Settings.Theme);
 
 				if (reconnectRepo)
 				{
@@ -270,11 +275,6 @@ namespace AlephNote.WPF.Windows
 
 				Owner.SetupScintilla(Settings);
 				Owner.UpdateShortcuts(Settings);
-
-				if (refreshNotesTheme)
-				{
-					// aok
-				}
 
 				SearchText = string.Empty;
 
@@ -558,11 +558,7 @@ namespace AlephNote.WPF.Windows
 
 		private void AddSubFolder()
 		{
-			var fnd = new FolderNameDialog {DialogText = "Insert the name for the new subfolder", Owner = Owner };
-
-			if (fnd.ShowDialog() != true) return;
-
-			var foldercomponent = fnd.FolderName;
+			if (!GenericInputDialog.ShowInputDialog(Owner, "Insert the name for the new subfolder", "Folder name", "", out var foldercomponent)) return;
 			if (string.IsNullOrWhiteSpace(foldercomponent)) return;
 
 			var currentPath = SelectedFolderPath;
@@ -575,11 +571,7 @@ namespace AlephNote.WPF.Windows
 
 		private void AddRootFolder()
 		{
-			var fnd = new FolderNameDialog { DialogText = "Insert the name for the new folder", Owner = Owner };
-
-			if (fnd.ShowDialog() != true) return;
-
-			var foldercomponent = fnd.FolderName;
+			if (!GenericInputDialog.ShowInputDialog(Owner, "Insert the name for the new folder", "Folder name", "", out var foldercomponent)) return;
 			if (string.IsNullOrWhiteSpace(foldercomponent)) return;
 
 			var path = DirectoryPath.Create(Enumerable.Repeat(foldercomponent, 1));
@@ -594,11 +586,9 @@ namespace AlephNote.WPF.Windows
 				var oldPath = SelectedFolderPath;
 				if (HierachicalBaseWrapper.IsSpecial(oldPath)) return;
 
-				var fnd = new FolderNameDialog { DialogText = "Insert the new name for the folder", FolderName = oldPath.GetLastComponent(), Owner = Owner};
+				if (!GenericInputDialog.ShowInputDialog(Owner, "Insert the name for the folder", "Folder name", oldPath.GetLastComponent(), out var newFolderName)) return;
 
-				if (fnd.ShowDialog() != true) return;
-
-				var newPath = oldPath.ParentPath().SubDir(fnd.FolderName);
+				var newPath = oldPath.ParentPath().SubDir(newFolderName);
 
 				if (newPath.EqualsWithCase(oldPath)) return;
 
@@ -830,6 +820,12 @@ namespace AlephNote.WPF.Windows
 			DebugTextWindow.Show(Owner, XHelper.ConvertToStringFormatted(Repository.SerializeNote(SelectedNote)), "XHelper.ConvertToStringFormatted(Repository.SerializeNote(SelectedNote))");
 		}
 
+		private void DebugShowThemeEditor()
+		{
+			var w = new ThemeEditor() { Owner = Owner };
+			w.Show();
+		}
+
 		private string CreateLoremIpsum(int len, int linelen)
 		{
 			var words = Regex.Split(Properties.Resources.LoremIpsum, @"\r?\n");
@@ -1027,6 +1023,11 @@ namespace AlephNote.WPF.Windows
 			if (SelectedNote == null) return;
 
 			SelectedNote.IsPinned = !SelectedNote.IsPinned;
+		}
+
+		public void OnThemeChanged()
+		{
+			Owner.SetupScintilla(Settings);
 		}
 	}
 }
