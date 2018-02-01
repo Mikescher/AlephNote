@@ -8,6 +8,8 @@ using AlephNote.Common.Util;
 using AlephNote.Common.Themes;
 using AlephNote.WPF.Converter;
 using System.Windows.Media;
+using System.ComponentModel;
+using System.Windows.Data;
 
 namespace AlephNote.WPF.Extensions
 {
@@ -15,22 +17,68 @@ namespace AlephNote.WPF.Extensions
 	[ContentProperty("ThemeKey")]
 	public class ThemeBindingExtension : MarkupExtension, IThemeListener
 	{
+		private class ThemeBindingProxy : INotifyPropertyChanged
+		{
+			public readonly string Key;
+			public readonly string Convert;
+
+			public object Value => ThemeBindingExtension.GetValue(Key, Convert);
+
+			public ThemeBindingProxy(string k, string c) { Key = k; Convert = c; }
+
+			public event PropertyChangedEventHandler PropertyChanged;
+
+			public void TriggerChange()
+			{
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Value"));
+			}
+		}
+
+		/// <summary>
+		/// Key in theme.xml file
+		/// </summary>
 		public string ThemeKey { get; set; }
 
+		/// <summary>
+		/// optionally convert theme resource
+		/// Supported:
+		///  - "ToColor"
+		/// </summary>
 		public string Convert { get; set; } = "";
 
+		/// <summary>
+		/// [TRUE]
+		/// Return value direct and update via dependencyObject.SetValue
+		/// Is faster than proxy variant but does not work in Styles and Resources
+		/// 
+		/// [FALSE]
+		/// Return Binding to ThemeBindingProxy object and update via INotifyPropertyChanged
+		/// Is slower than normal but works everywhere
+		/// 
+		/// </summary>
+		public bool Proxy { get; set; } = false;
+
+		private static readonly Dictionary<string, ThemeBindingProxy> _proxies = new Dictionary<string, ThemeBindingProxy>();
 		private readonly List<WeakReference> _targetObjects = new List<WeakReference>();
 
 		private object _targetProperty;
 
 		public ThemeBindingExtension()
 		{
+#if DEBUG
+			if (Application.Current.MainWindow == null) return; // designmode
+#endif
 			ThemeManager.Inst.RegisterSlave(this);
 		}
 
 		public ThemeBindingExtension(string themekey)
 		{
 			ThemeKey = themekey;
+
+#if DEBUG
+			if (Application.Current.MainWindow == null) return; // designmode
+#endif
+
 			ThemeManager.Inst.RegisterSlave(this);
 		}
 
@@ -42,16 +90,21 @@ namespace AlephNote.WPF.Extensions
 		public override object ProvideValue(IServiceProvider serviceProvider)
 		{
 			RegisterTarget(serviceProvider);
-			object result = this;
 
-			// when used in a template the _targetProperty may be null - in this case
-			// return this
-			//
-			if (_targetProperty != null)
+			// when used in a template the _targetProperty may be null - in this case return this
+			if (_targetProperty == null) return this;
+
+			if (Proxy)
 			{
-				result = GetValue(ThemeKey, Convert);
+				var p = GetProxy(ThemeKey, Convert);
+				var binding = new Binding("Value") { Source = p };
+				return binding.ProvideValue(serviceProvider);
 			}
-			return result;
+			else
+			{
+				return GetValue(ThemeKey, Convert);
+			}
+
 		}
 		
 		protected virtual void RegisterTarget(IServiceProvider serviceProvider)
@@ -71,9 +124,16 @@ namespace AlephNote.WPF.Extensions
 
 		public void OnThemeChanged()
 		{
-			foreach (var reference in _targetObjects)
+			if (Proxy)
 			{
-				if (reference.IsAlive) UpdateTargetInternal(reference.Target);
+				foreach (var proxy in _proxies.Values) proxy.TriggerChange();
+			}
+			else
+			{
+				foreach (var reference in _targetObjects)
+				{
+					if (reference.IsAlive) UpdateTargetInternal(reference.Target);
+				}
 			}
 		}
 
@@ -91,6 +151,17 @@ namespace AlephNote.WPF.Extensions
 			{
 				(_targetProperty as PropertyInfo).SetValue(target, GetValue(ThemeKey, Convert), null);
 			}
+		}
+
+		private static ThemeBindingProxy GetProxy(string key, string convert)
+		{
+			var dictKey = key + "@@@" + convert + ";";
+
+			if (_proxies.TryGetValue(dictKey, out var proxy)) return proxy;
+
+			proxy = new ThemeBindingProxy(key, convert);
+			_proxies[dictKey] = proxy;
+			return proxy;
 		}
 
 		private static object GetValue(string key, string converter)

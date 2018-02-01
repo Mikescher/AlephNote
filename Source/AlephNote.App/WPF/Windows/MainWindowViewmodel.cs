@@ -67,9 +67,10 @@ namespace AlephNote.WPF.Windows
 		public ICommand CloseEvent { get { return new RelayCommand<EventArgs>(OnClose); } }
 		public ICommand StateChangedEvent { get { return new RelayCommand<EventArgs>(OnStateChanged); } }
 
-		public ICommand SettingAlwaysOnTopCommand { get { return new RelayCommand(ChangeSettingAlwaysOnTop); } }
-		public ICommand SettingLineNumbersCommand { get { return new RelayCommand(ChangeSettingLineNumbers); } }
-		public ICommand SettingsWordWrapCommand   { get { return new RelayCommand(ChangeSettingWordWrap); } }
+		public ICommand SettingAlwaysOnTopCommand  { get { return new RelayCommand(ChangeSettingAlwaysOnTop); } }
+		public ICommand SettingLineNumbersCommand  { get { return new RelayCommand(ChangeSettingLineNumbers); } }
+		public ICommand SettingsWordWrapCommand    { get { return new RelayCommand(ChangeSettingWordWrap); } }
+		public ICommand SettingsRotateThemeCommand { get { return new RelayCommand(ChangeSettingTheme); } }
 
 		public ICommand DebugCreateIpsumNotesCommand { get { return new RelayCommand<string>(s => { DebugCreateIpsumNotes(int.Parse(s)); }); } }
 		public ICommand DebugSerializeSettingsCommand { get { return new RelayCommand(DebugSerializeSettings); } }
@@ -272,20 +273,7 @@ namespace AlephNote.WPF.Windows
 
 				if (refreshNotesTheme)
 				{
-					var result = MessageBox.Show(Owner,
-						"To apply the changed theme you need to restart AlephNote.\r\nDou you want to restart AlephNote now?",
-						"Restart AlephNote to apply changes!",
-						MessageBoxButton.YesNo,
-						MessageBoxImage.Warning);
-
-					if (result == MessageBoxResult.Yes)
-					{
-						new Thread(() => 
-						{
-							Thread.Sleep(500);
-							Application.Current.Dispatcher.BeginInvoke(new Action(() => { Restart(); }));
-						}).Start();
-					}
+					// aok
 				}
 
 				SearchText = string.Empty;
@@ -877,6 +865,20 @@ namespace AlephNote.WPF.Windows
 			ChangeSettings(Settings);
 		}
 
+		private void ChangeSettingTheme()
+		{
+			var themes = ThemeManager.Inst.Cache.GetAllAvailable();
+
+			var idx = themes.IndexOf(ThemeManager.Inst.CurrentTheme);
+			if (idx < 0) return;
+
+			idx = (idx + 1) % themes.Count;
+
+			Settings.Theme = themes[idx].SourceFilename;
+
+			ChangeSettings(Settings);
+		}
+
 		public void OnNewNoteDrop(IDataObject data)
 		{
 			try
@@ -1025,7 +1027,6 @@ namespace AlephNote.WPF.Windows
 			if (SelectedNote == null) return;
 
 			SelectedNote.IsPinned = !SelectedNote.IsPinned;
-
 		}
 	}
 }

@@ -28,7 +28,7 @@ namespace AlephNote.Common.Util
 
 		public AlephTheme CurrentTheme { get; private set; }
 
-		private WeakList<IThemeListener> _listener = new WeakList<IThemeListener>();
+		private List<IThemeListener> _listener = new List<IThemeListener>();
 
 		private ThemeManager(ThemeCache c)
 		{
@@ -62,7 +62,8 @@ namespace AlephNote.Common.Util
 		{
 			CurrentTheme = t;
 
-			foreach (var s in _listener) s.OnThemeChanged();
+			_listener.RemoveAll(l => !l.IsTargetAlive);
+			foreach (var s in _listener.Where(l => l.IsTargetAlive)) s.OnThemeChanged();
 		}
 
 		public void RegisterSlave(IThemeListener slave)

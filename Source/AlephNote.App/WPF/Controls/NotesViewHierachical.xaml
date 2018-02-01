@@ -25,8 +25,8 @@
 						</Border>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsSelected" Value="true">
-								<Setter Property="Background" TargetName="Bd" Value="{ext:ThemeBinding 'window.notesview.hierachical.list.selected:background'}"/>
-								<Setter Property="Foreground"                 Value="{ext:ThemeBinding 'window.notesview.hierachical.list.selected:foreground'}"/>
+								<Setter Property="Background" TargetName="Bd" Value="{ext:ThemeBinding 'window.notesview.hierachical.list.selected:background', Proxy=true}"/>
+								<Setter Property="Foreground"                 Value="{ext:ThemeBinding 'window.notesview.hierachical.list.selected:foreground', Proxy=true}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -73,10 +73,10 @@
 					
 				</Style>
 
-				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"     Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:background', Convert='ToColor'}" />
-				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:foreground', Convert='ToColor'}" />
-				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"                      Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:background', Convert='ToColor'}" />
-				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"                  Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:foreground', Convert='ToColor'}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"     Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:background', Convert='ToColor', Proxy=true}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:foreground', Convert='ToColor', Proxy=true}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"                      Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:background', Convert='ToColor', Proxy=true}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"                  Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:foreground', Convert='ToColor', Proxy=true}" />
 				
 			</TreeView.Resources>
 

@@ -18,7 +18,6 @@ namespace AlephNote.WPF.Converter
 			{
 				var c = value.GradientSteps.First().Item2;
 				var b = new SolidColorBrush(Color.FromArgb(c.A, c.R, c.G, c.B));
-				b.Freeze();
 				return b;
 			}
 			else if (value.BrushType == BrushRefType.Gradient_Vertical)
@@ -29,7 +28,6 @@ namespace AlephNote.WPF.Converter
 					EndPoint   = new Point(0, 1),
 					GradientStops = new GradientStopCollection(value.GradientSteps.Select(p => new GradientStop(p.Item2.ToWCol(), p.Item1))),
 				};
-				b.Freeze();
 				return b;
 			}
 			else if (value.BrushType == BrushRefType.Gradient_Horizontal)
@@ -40,7 +38,6 @@ namespace AlephNote.WPF.Converter
 					EndPoint   = new Point(1, 0),
 					GradientStops = new GradientStopCollection(value.GradientSteps.Select(p => new GradientStop(p.Item2.ToWCol(), p.Item1))),
 				};
-				b.Freeze();
 				return b;
 			}
 			else

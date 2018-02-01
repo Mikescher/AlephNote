@@ -12,6 +12,8 @@ using AlephNote.Common.Themes;
 using AlephNote.Common.Util;
 using AlephNote.Common.Settings;
 using System.Windows;
+using System.Globalization;
+using System.Threading;
 
 namespace AlephNote
 {
@@ -52,6 +54,7 @@ namespace AlephNote
 		private void Application_Startup(object sender, StartupEventArgs suea)
 		{
 			DispatcherUnhandledException += AppDispatcherUnhandledException;
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
 			LoggerSingleton.Register(Logger);
 			PluginManagerSingleton.Register(PluginMan);

@@ -3,5 +3,6 @@
 	public interface IThemeListener
 	{
 		void OnThemeChanged();
+		bool IsTargetAlive { get; }
 	}
 }

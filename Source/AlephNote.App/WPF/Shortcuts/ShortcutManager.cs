@@ -60,8 +60,9 @@ namespace AlephNote.WPF.Shortcuts
 			AddCommand("CheckForUpdates",      vm => vm.ManuallyCheckForUpdatesCommand,    "Manually check for new updates");
 
 			AddCommand("ToggleAlwaysOnTop",    vm => vm.SettingAlwaysOnTopCommand,         "Change the option 'Always on top'");
-			AddCommand("ToggleLineNumbers",    vm => vm.SettingLineNumbersCommand,         "Change the option 'Show line numbers'");
+			AddCommand("ToggleLineNumbers",    vm => vm.SettingLineNumbersCommand,         "Change the option 'Show line numbers'"); 
 			AddCommand("ToggleWordWrap",       vm => vm.SettingsWordWrapCommand,           "Change the option 'Word Wrap'");
+			AddCommand("RotateTheme",          vm => vm.SettingsRotateThemeCommand,        "Change the current theme to the next available");
 		}
 
 		public static void Execute(MainWindow mw, string key)

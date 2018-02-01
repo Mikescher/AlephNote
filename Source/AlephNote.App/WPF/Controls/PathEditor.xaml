@@ -28,10 +28,10 @@
 						<Border CornerRadius="4" BorderThickness="1" BorderBrush="{ext:ThemeBinding 'window.pathdisplay.element:border'}" Padding="4,1" Margin="0,0,5,0">
 							<Border.Style>
 								<Style TargetType="{x:Type Border}">
-									<Setter Property="Background" Value="{ext:ThemeBinding 'window.pathdisplay.element:background'}"/>
+									<Setter Property="Background" Value="{ext:ThemeBinding 'window.pathdisplay.element:background', Proxy=true}"/>
 									<Style.Triggers>
 										<Trigger Property="IsMouseOver" Value="True">
-											<Setter Property="Background" Value="{ext:ThemeBinding 'window.pathdisplay.element:background_hover'}"/>
+											<Setter Property="Background" Value="{ext:ThemeBinding 'window.pathdisplay.element:background_hover', Proxy=true}"/>
 										</Trigger>
 									</Style.Triggers>
 								</Style>
