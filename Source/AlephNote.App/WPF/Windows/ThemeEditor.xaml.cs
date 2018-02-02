@@ -1,4 +1,5 @@
 ﻿using ScintillaNET;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -52,11 +53,42 @@ namespace AlephNote.WPF.Windows
 
 		private void DataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
+			DataGridRow row = ItemsControl.ContainerFromElement((DataGrid)sender, e.OriginalSource as DependencyObject) as DataGridRow;
+			if (row == null) return;
+
 			var item = (sender as DataGrid)?.SelectedItem as ThemeEditorViewmodel.ThemeEditorDV;
 
 			if (item == null) return;
 
-			SourceEdit.InsertText(SourceEdit.CurrentPosition, $"\r\n\t\t<property name=\"{item.Key}\" value=\"{item.Default}\"/>");
+			var line = SourceEdit.LineFromPosition(SourceEdit.CurrentPosition);
+
+			string sep = " ";
+			string ind = "\t\t";
+			for (int i = line; i >= 0; i--)
+			{
+				var txt = SourceEdit.Lines[i].Text.ToLower();
+				if (txt.Trim().StartsWith("<property "))
+				{
+					var match = Regex.Match(txt, @"^(?<ind>\s+)<property\s+name=""(?<nam>[^""]+)""(?<sep>\s+)value=.*$");
+					if (match.Success)
+					{
+						var seplen = match.Groups["nam"].Value.Length + match.Groups["sep"].Value.Length - item.Key.Length;
+						if (seplen < 1) seplen = 1;
+
+						sep = new string(' ', seplen);
+						ind = match.Groups["ind"].Value;
+					}
+
+					break;
+				}
+			}
+
+			var str = $"\r\n{ind}<property name=\"{item.Key}\"{sep}value=\"{item.Default}\" />";
+
+			SourceEdit.InsertText(SourceEdit.CurrentPosition, str);
+			SourceEdit.CurrentPosition += str.Length;
+			SourceEdit.SelectionStart = SourceEdit.CurrentPosition;
+			SourceEdit.SelectionEnd   = SourceEdit.CurrentPosition;
 		}
 	}
 }

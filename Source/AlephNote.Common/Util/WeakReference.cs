@@ -4,14 +4,14 @@ using System.Runtime.Serialization;
 namespace AlephNote.Common.Util
 {
 	[Serializable]
-	public class WeakReference<T> : WeakReference
+	public class TypedWeakReference<T> : WeakReference
 	{
-		public WeakReference(T target)
+		public TypedWeakReference(T target)
 			: base(target)
 		{
 		}
 
-		public WeakReference(T target, bool trackResurrection) : base(target, trackResurrection)
+		public TypedWeakReference(T target, bool trackResurrection) : base(target, trackResurrection)
 		{
 		}
 		

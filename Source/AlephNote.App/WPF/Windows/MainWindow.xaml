@@ -138,10 +138,11 @@
 				</services:WatermarkService.Watermark>
 			</controls:ClickSelectTextBox>
 
-			<Button Grid.Row="0" Grid.Column="1" Margin="2" BorderThickness="0" Padding="0" FontWeight="Bold" 
+			<Button Grid.Row="0" Grid.Column="1" Margin="2" Padding="0" FontWeight="Bold" 
 					Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
 					Foreground="{ext:ThemeBinding 'window.globalsearch.button:foreground'}" 
 					Background="{ext:ThemeBinding 'window.globalsearch.button:background'}" 
+					BorderThickness="{ext:ThemeBinding 'window.globalsearch.button:border_thickness'}"
 					BorderBrush="{ext:ThemeBinding 'window.globalsearch.button:border'}" 
 					Command="{Binding CreateNewNoteCommand}">
 				<Image Source="/Resources/plus.png" Margin="2" />

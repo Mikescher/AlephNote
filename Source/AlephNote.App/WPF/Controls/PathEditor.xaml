@@ -28,10 +28,10 @@
 						<Border CornerRadius="4" BorderThickness="1" BorderBrush="{ext:ThemeBinding 'window.pathdisplay.element:border'}" Padding="4,1" Margin="0,0,5,0">
 							<Border.Style>
 								<Style TargetType="{x:Type Border}">
-									<Setter Property="Background" Value="{ext:ThemeBinding 'window.pathdisplay.element:background', Proxy=true}"/>
+									<Setter Property="Background" Value="{ext:ThemeBinding 'window.pathdisplay.element:background'}"/>
 									<Style.Triggers>
 										<Trigger Property="IsMouseOver" Value="True">
-											<Setter Property="Background" Value="{ext:ThemeBinding 'window.pathdisplay.element:background_hover', Proxy=true}"/>
+											<Setter Property="Background" Value="{ext:ThemeBinding 'window.pathdisplay.element:background_hover'}"/>
 										</Trigger>
 									</Style.Triggers>
 								</Style>
@@ -71,8 +71,8 @@
 											</Border>
 											<ControlTemplate.Triggers>
 												<Trigger Property="IsSelected" Value="true">
-													<Setter Property="Background" TargetName="Bd" Value="{ext:ThemeBinding 'window.pathdisplay.popup.list.selected:background', Proxy=true}"/>
-													<Setter Property="Foreground"                 Value="{ext:ThemeBinding 'window.pathdisplay.popup.list.selected:foreground', Proxy=true}"/>
+													<Setter Property="Background" TargetName="Bd" Value="{ext:ThemeBinding 'window.pathdisplay.popup.list.selected:background'}"/>
+													<Setter Property="Foreground"                 Value="{ext:ThemeBinding 'window.pathdisplay.popup.list.selected:foreground'}"/>
 												</Trigger>
 											</ControlTemplate.Triggers>
 										</ControlTemplate>

@@ -69,8 +69,19 @@ namespace AlephNote.Common.Themes
 			{
 				var key = vr.Attribute("key").Value;
 				var typ = vr.Attribute("type").Value;
-				var val = vr.Value;
-				_references.Add(key.ToLower(), new ValueRef(key, typ, val));
+				var value = vr.Value;
+
+				if (value.StartsWith("@"))
+				{
+					value = value.Substring(1);
+
+					if (_references.TryGetValue(value.ToLower(), out var vref))
+						value = vref.Value;
+					else
+						throw new Exception($"Reference not found: '{value}'");
+				}
+
+				_references.Add(key.ToLower(), new ValueRef(key, typ, value));
 			}
 
 			_properties = new Dictionary<string, string>(baseValues);
@@ -99,30 +110,30 @@ namespace AlephNote.Common.Themes
 
 			foreach (var propdef in AlephTheme.THEME_PROPERTIES)
 			{
-				switch (propdef.Value)
+				switch (propdef.Item2)
 				{
 					case AlephTheme.AlephThemePropType.Color:
-						t.AddProperty(propdef.Key, ColorRef.Parse(GetProperty(propdef.Key)));
+						t.AddProperty(propdef.Item1, ColorRef.Parse(GetProperty(propdef.Item1)));
 						break;
 
 					case AlephTheme.AlephThemePropType.Brush:
-						t.AddProperty(propdef.Key, BrushRef.Parse(GetProperty(propdef.Key)));
+						t.AddProperty(propdef.Item1, BrushRef.Parse(GetProperty(propdef.Item1)));
 						break;
 
 					case AlephTheme.AlephThemePropType.Thickness:
-						t.AddProperty(propdef.Key, ThicknessRef.Parse(GetProperty(propdef.Key)));
+						t.AddProperty(propdef.Item1, ThicknessRef.Parse(GetProperty(propdef.Item1)));
 						break;
 
 					case AlephTheme.AlephThemePropType.Integer:
-						t.AddProperty(propdef.Key, int.Parse(GetProperty(propdef.Key)));
+						t.AddProperty(propdef.Item1, int.Parse(GetProperty(propdef.Item1)));
 						break;
 
 					case AlephTheme.AlephThemePropType.Double:
-						t.AddProperty(propdef.Key, double.Parse(GetProperty(propdef.Key), NumberStyles.Float, CultureInfo.InvariantCulture));
+						t.AddProperty(propdef.Item1, double.Parse(GetProperty(propdef.Item1), NumberStyles.Float, CultureInfo.InvariantCulture));
 						break;
 
 					case AlephTheme.AlephThemePropType.Boolean:
-						t.AddProperty(propdef.Key, XElementExtensions.ParseBool(GetProperty(propdef.Key)));
+						t.AddProperty(propdef.Item1, XElementExtensions.ParseBool(GetProperty(propdef.Item1)));
 						break;
 
 					default:
@@ -143,30 +154,30 @@ namespace AlephNote.Common.Themes
 
 			foreach (var propdef in AlephTheme.THEME_PROPERTIES)
 			{
-				switch (propdef.Value)
+				switch (propdef.Item2)
 				{
 					case AlephTheme.AlephThemePropType.Color:
-						t.AddProperty(propdef.Key, ColorRef.GetRandom(r));
+						t.AddProperty(propdef.Item1, ColorRef.GetRandom(r));
 						break;
 
 					case AlephTheme.AlephThemePropType.Brush:
-						t.AddProperty(propdef.Key, BrushRef.CreateSolid(ColorRef.GetRandom(r)));
+						t.AddProperty(propdef.Item1, BrushRef.CreateSolid(ColorRef.GetRandom(r)));
 						break;
 
 					case AlephTheme.AlephThemePropType.Thickness:
-						t.AddProperty(propdef.Key, ThicknessRef.Create(r.Next(16), r.Next(16), r.Next(16), r.Next(16)));
+						t.AddProperty(propdef.Item1, ThicknessRef.Create(r.Next(16), r.Next(16), r.Next(16), r.Next(16)));
 						break;
 
 					case AlephTheme.AlephThemePropType.Integer:
-						t.AddProperty(propdef.Key, r.Next(16));
+						t.AddProperty(propdef.Item1, r.Next(16));
 						break;
 
 					case AlephTheme.AlephThemePropType.Double:
-						t.AddProperty(propdef.Key, r.NextDouble()*16);
+						t.AddProperty(propdef.Item1, r.NextDouble()*16);
 						break;
 
 					case AlephTheme.AlephThemePropType.Boolean:
-						t.AddProperty(propdef.Key, r.Next()%2 == 0);
+						t.AddProperty(propdef.Item1, r.Next()%2 == 0);
 						break;
 
 					default:

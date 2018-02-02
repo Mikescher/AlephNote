@@ -56,7 +56,7 @@ namespace AlephNote.WPF.Extensions
 		/// Is slower than normal but works everywhere
 		/// 
 		/// </summary>
-		public bool Proxy { get; set; } = false;
+		public bool Proxy { get; set; } = true;
 
 		private static readonly Dictionary<string, ThemeBindingProxy> _proxies = new Dictionary<string, ThemeBindingProxy>();
 		private readonly List<WeakReference> _targetObjects = new List<WeakReference>();
@@ -126,7 +126,8 @@ namespace AlephNote.WPF.Extensions
 		{
 			if (Proxy)
 			{
-				foreach (var proxy in _proxies.Values) proxy.TriggerChange();
+				var dictKey = ThemeKey + "@@@" + Convert + ";";
+				if (_proxies.TryGetValue(dictKey, out var v)) v.TriggerChange();
 			}
 			else
 			{
@@ -209,6 +210,8 @@ namespace AlephNote.WPF.Extensions
 		{
 			get
 			{
+				if (Proxy) return true;
+
 				// for normal elements the _targetObjects.Count will always be 1
 				// for templates the Count may be zero if this method is called
 				// in the middle of window elaboration after the template has been

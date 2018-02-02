@@ -36,34 +36,47 @@
 
 			<DataGrid Grid.Row="0" ItemsSource="{Binding DefaultValues}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" MouseDoubleClick="DataGrid_MouseDoubleClick">
 				<DataGrid.Columns>
+					
 					<DataGridTemplateColumn Header="Key" Width="220">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
-								<TextBlock Text="{Binding Key}" Foreground="{Binding Changed, Converter={conv:BoolToColor}, ConverterParameter='Black;Gray'}" />
+								<TextBlock Text="{Binding Key}" 
+										   FontFamily="Courier New"
+										   Foreground="{Binding Changed, Converter={conv:BoolToColor}, ConverterParameter='Black;Gray'}" />
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
+					
 					<DataGridTemplateColumn Header="Typ" Width="60">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
-								<TextBlock Text="{Binding TypeStr}" Foreground="{Binding Changed, Converter={conv:BoolToColor}, ConverterParameter='Black;Gray'}" />
+								<TextBlock Text="{Binding TypeStr}" 
+										   FontFamily="Courier New"
+										   Foreground="{Binding Changed, Converter={conv:BoolToColor}, ConverterParameter='Black;Gray'}" />
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
+					
 					<DataGridTemplateColumn Header="Default" Width="120">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
-								<TextBlock Text="{Binding Default}" Foreground="{Binding Changed, Converter={conv:BoolToColor}, ConverterParameter='Black;Gray'}" />
+								<TextBlock Text="{Binding Default}" 
+										   FontFamily="Courier New"
+										   Foreground="{Binding Changed, Converter={conv:BoolToColor}, ConverterParameter='Black;Gray'}" />
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
+					
 					<DataGridTemplateColumn Header="Value" Width="70">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
-								<TextBlock Text="{Binding Value}" Foreground="{Binding Changed, Converter={conv:BoolToColor}, ConverterParameter='Black;Gray'}" />
+								<TextBlock Text="{Binding Value}" 
+										   FontFamily="Courier New"
+										   Foreground="{Binding Changed, Converter={conv:BoolToColor}, ConverterParameter='Black;Gray'}" />
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
+					
 				</DataGrid.Columns>
 			</DataGrid>
 

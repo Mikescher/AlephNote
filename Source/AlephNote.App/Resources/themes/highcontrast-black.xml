@@ -24,6 +24,81 @@ Repository: https://github.com/Mikescher/AlephNote
 	</ref>
 
 	<data>
+		<property name="scintilla.background"                        value="@Secondary"/>
+		<property name="scintilla.default:foreground"                value="@Primary"/>
+		<property name="scintilla.link:foreground"                   value="@Primary"/>
+		<property name="scintilla.markdown.default:foreground"       value="@Primary"/>
+		<property name="scintilla.markdown.code:foreground"          value="@Primary"/>
+		<property name="scintilla.markdown.code:italic"              value="TRUE"/>
+		<property name="scintilla.markdown.emph:foreground"          value="@Primary"/>
+		<property name="scintilla.markdown.emph:bold"                value="TRUE"/>
+		<property name="scintilla.markdown.header:foreground"        value="@Primary"/>
+		<property name="scintilla.markdown.header:bold"              value="TRUE"/>
+		<property name="scintilla.markdown.list:foreground"          value="@Primary"/>
+		<property name="scintilla.markdown.strong_emph:foreground"   value="@Primary"/>
+		<property name="scintilla.markdown.strong_emph:bold"         value="TRUE"/>
+		<property name="scintilla.markdown.url:foreground"           value="@Primary"/>
+		<property name="scintilla.markdown.url:italic"               value="TRUE"/>
 
+		<property name="scintilla.margin.numbers:background"         value="@Secondary"/>
+		<property name="scintilla.margin.numbers:foreground"         value="@Primary"/>
+		<property name="scintilla.margin.symbols:background"         value="@Secondary"/>
+		<property name="scintilla.margin.symbols:foreground"         value="@Primary"/>
+
+		<property name="scintilla.search.local:color"                value="@Primary"/>
+		<property name="scintilla.search.global:color"               value="@Primary"/>
+
+		<property name="scintilla.whitespace:color"                   value="@Primary"/>
+
+
+
+		<property name="window.background"                            value="@Secondary"/>
+		<property name="window.foreground"                            value="@Primary"/>
+		<property name="window.changedate:foreground"                 value="@Primary"/>
+
+		<property name="window.globalsearch.button:background"        value="@Secondary"/>
+		<property name="window.globalsearch.button:border"            value="@Primary"/>
+		<property name="window.globalsearch.button:border_thickness"  value="1"/>
+		<property name="window.globalsearch.button:foreground"        value="@Primary"/>
+
+		<property name="window.menubar:background"                    value="@Secondary"/>
+		<property name="window.menubar:foreground"                    value="@Primary"/>
+
+		<property name="window.tageditor.placeholder"                 value="@Primary" />
+		<property name="window.tageditor.tag:background"              value="@Secondary" />
+		<property name="window.tageditor.tag:bordercolor_default"     value="@Primary" />
+		<property name="window.tageditor.tag:bordercolor_highlighted" value="@Primary" />
+
+		<property name="window.tageditor.popup:background"            value="@Secondary" />
+		<property name="window.tageditor.popup:bordercolor"           value="@Primary" />
+
+		<property name="window.pathdisplay.element:background_hover"       value="@Secondary" />
+		<property name="window.pathdisplay.element:border"                 value="@Primary" />
+		<property name="window.pathdisplay.button:foreground"              value="@Primary" />
+		<property name="window.pathdisplay.button:background"              value="@Secondary" />
+		<property name="window.pathdisplay.button:border"                  value="@Primary" />
+		<property name="window.pathdisplay.popup:background"               value="@Secondary" />
+		<property name="window.pathdisplay.popup:border"                   value="@Primary" />
+		<property name="window.pathdisplay.popup:border_thickness"         value="1" />
+		<property name="window.pathdisplay.popup.list.selected:background" value="@Primary" />
+		<property name="window.pathdisplay.popup.list.selected:foreground" value="@Secondary" />
+		<property name="window.pathdisplay.popup.button:foreground"        value="@Primary" />
+		<property name="window.pathdisplay.popup.button:background"        value="@Secondary" />
+		<property name="window.pathdisplay.popup.button:border"            value="@Primary" />
+
+		<property name="window.inlinesearch:background"                    value="@Secondary" />
+		<property name="window.inlinesearch:foreground"                    value="@Primary" />
+
+		<property name="window.inlinesearch.textbox:foreground"            value="@Secondary" />
+		<property name="window.inlinesearch.textbox:background"            value="@Primary" />
+		<property name="window.inlinesearch.btnSearch:foreground"          value="@Primary" />
+		<property name="window.inlinesearch.btnCaseIns:foreground"         value="@Primary" />
+		<property name="window.inlinesearch.btnWholeWord:foreground"       value="@Primary" />
+		<property name="window.inlinesearch.btnRegex:foreground"           value="@Primary" />
+
+		<property name="window.globalsearch.input:foreground"              value="@Secondary" />
+		<property name="window.globalsearch.input:background"              value="@Primary" />
+		<property name="window.globalsearch.input:border"                  value="@Primary" />
+		<property name="window.globalsearch.placeholder:foreground"        value="@Primary" />
 	</data>
 </theme>

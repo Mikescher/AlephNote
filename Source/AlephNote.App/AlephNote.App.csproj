@@ -134,6 +134,7 @@
     <Compile Include="WPF\Dialogs\GenericInputDialog.xaml.cs">
       <DependentUpon>GenericInputDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Extensions\ThemeSlaveBinding.cs" />
     <Compile Include="WPF\Windows\ThemeEditor.xaml.cs">
       <DependentUpon>ThemeEditor.xaml</DependentUpon>
     </Compile>
@@ -440,6 +441,16 @@
     <ContentWithTargetPath Include="Resources\themes\monokai-neo.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Themes\monokai-neo.xml</TargetPath>
+      <SubType>Designer</SubType>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\themes\highcontrast-white.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Themes\highcontrast-white.xml</TargetPath>
+      <SubType>Designer</SubType>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\themes\highcontrast-black.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Themes\highcontrast-black.xml</TargetPath>
       <SubType>Designer</SubType>
     </ContentWithTargetPath>
   </ItemGroup>

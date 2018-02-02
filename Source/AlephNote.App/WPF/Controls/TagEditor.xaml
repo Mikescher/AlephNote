@@ -15,7 +15,7 @@
 				<Border VerticalAlignment="Center" 
 						Background="{ext:ThemeBinding 'window.tageditor.tag:background'}" 
 						BorderThickness="1" 
-						BorderBrush="{Binding ., Converter={conv:TagToBorderBrush}}" 
+						BorderBrush="{ext:ThemeSlaveBinding {Binding ., Converter={conv:TagToBorderBrush}}}" 
 						Margin="-4,1,8,1" Padding="1">
 					
 					<TextBlock 
@@ -65,8 +65,8 @@
 				<ListView x:Name="AutocompleteContent" Focusable="False" Background="{ext:ThemeBinding 'window.tageditor.popup:background'}" SelectionChanged="AutocompleteContent_Selected">
 					<ListView.ItemContainerStyle>
 						<Style TargetType="{x:Type ListViewItem}">
-							<Setter Property="BorderBrush" Value="{ext:ThemeBinding 'window.tageditor.popup:bordercolor', Proxy=True}" />
-							<Setter Property="Foreground" Value="{ext:ThemeBinding 'window.tageditor.popup:foreground', Proxy=True}" />
+							<Setter Property="BorderBrush" Value="{ext:ThemeBinding 'window.tageditor.popup:bordercolor'}" />
+							<Setter Property="Foreground" Value="{ext:ThemeBinding 'window.tageditor.popup:foreground'}" />
 							<Setter Property="Background" Value="Transparent" />
 							<Setter Property="BorderThickness" Value="0,0,0,1" />
 						</Style>

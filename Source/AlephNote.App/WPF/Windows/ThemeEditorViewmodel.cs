@@ -85,17 +85,18 @@ namespace AlephNote.WPF.Windows
 				if (at == ThemeManager.Inst.CurrentTheme) _selectedEntry = newEntry;
 			}
 
+			var dprop = ThemeManager.Inst.Cache.GetDefaultParserProperties();
 			var def = ThemeManager.Inst.Cache.GetByFilename("default.xml", out _);
 
-			foreach (var prop in ThemeManager.Inst.Cache.GetDefaultParserProperties())
+			foreach (var prop in AlephTheme.THEME_PROPERTIES)
 			{
 				DefaultValues.Add(new ThemeEditorDV()
 				{
-					Key = prop.Key,
-					Default = prop.Value,
-					TypeStr = prop.Value.GetType().Name,
-					Value   = SelectedEntry?.Parsed?.GetStrRepr(prop.Key),
-					Changed = SelectedEntry?.Parsed?.GetStrRepr(prop.Key) != def?.GetStrRepr(prop.Key)
+					Key     = prop.Item1,
+					Default = dprop[prop.Item1.ToLower()],
+					TypeStr = prop.Item2.ToString(),
+					Value   = SelectedEntry?.Parsed?.GetStrRepr(prop.Item1),
+					Changed = SelectedEntry?.Parsed?.GetStrRepr(prop.Item1) != def?.GetStrRepr(prop.Item1)
 				});
 			}
 		}

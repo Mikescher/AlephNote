@@ -9,7 +9,7 @@ namespace AlephNote.Common.Util
 	/// </summary>
 	public class WeakList<T> : IList<T>
 	{
-		private List<WeakReference<T>> _innerList = new List<WeakReference<T>>();
+		private List<TypedWeakReference<T>> _innerList = new List<TypedWeakReference<T>>();
 
 		public int IndexOf(T item)
 		{
@@ -18,7 +18,7 @@ namespace AlephNote.Common.Util
 
 		public void Insert(int index, T item)
 		{
-			_innerList.Insert(index, new WeakReference<T>(item));
+			_innerList.Insert(index, new TypedWeakReference<T>(item));
 		}
 
 		public void RemoveAt(int index)
@@ -29,12 +29,12 @@ namespace AlephNote.Common.Util
 		public T this[int index]
 		{
 			get => _innerList[index].Target;
-			set => _innerList[index] = new WeakReference<T>(value);
+			set => _innerList[index] = new TypedWeakReference<T>(value);
 		}
 
 		public void Add(T item)
 		{
-			_innerList.Add(new WeakReference<T>(item));
+			_innerList.Add(new TypedWeakReference<T>(item));
 		}
 
 		public void Clear()
