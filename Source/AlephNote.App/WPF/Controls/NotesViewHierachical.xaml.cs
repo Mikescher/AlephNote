@@ -375,7 +375,7 @@ namespace AlephNote.WPF.Controls
 			HierachicalWrapper_Folder root = new HierachicalWrapper_Folder("ROOT", this, DirectoryPath.Root(), true, false);
 			if (Settings?.FolderViewShowRootNode == true)
 			{
-				var root2 = root.CreateRootFolder();
+				var root2 = root.GetOrCreateRootFolder();
 				foreach (var note in notes)
 				{
 					var parent = root2;
@@ -468,6 +468,8 @@ namespace AlephNote.WPF.Controls
 				Tuple.Create("folder", folder.Formatted));
 
 			var curr = DisplayItems;
+
+			if (Settings?.FolderViewShowRootNode == true) curr = DisplayItems.GetOrCreateRootFolder();
 
 			foreach (var comp in folder.Enumerate())
 			{

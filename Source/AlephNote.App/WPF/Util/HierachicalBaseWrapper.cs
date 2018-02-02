@@ -119,13 +119,14 @@ namespace AlephNote.WPF.Util
 
 		public override string IconSource => _path.IsRoot() ? "/Resources/folder_root.png" : "/Resources/folder_any.png";
 		public override int Order => 0;
-		public override bool IsSpecialNode => false;
-		public override bool IsSpecialNode_AllNotes => false;
+		public override bool IsSpecialNode               => false;
+		public override bool IsSpecialNode_AllNotes      => false;
 		public override bool IsSpecialNode_UnsortedNotes => false;
-		public override bool IsSpecialNode_RootFolder => _path.IsRoot();
+		public override bool IsSpecialNode_RootFolder    => _path.IsRoot();
 
-		public HierachicalWrapper_AllNotes AllNotesViewWrapper;
-		public HierachicalWrapper_UnsortedNotes EmptyPathViewWrapper;
+		public HierachicalWrapper_AllNotes      AllNotesViewWrapper;   // [All Notes]
+		public HierachicalWrapper_UnsortedNotes EmptyPathViewWrapper;  // [Unsorted Notes]
+		public HierachicalWrapper_Folder        RootFolderViewWrapper; // [My Notes]
 
 		private ObservableCollection<HierachicalWrapper_Folder> _subFolders = new ObservableCollection<HierachicalWrapper_Folder>();
 		public ObservableCollection<HierachicalWrapper_Folder> SubFolder { get { return _subFolders; } }
@@ -173,11 +174,12 @@ namespace AlephNote.WPF.Util
 			return i;
 		}
 
-		public HierachicalWrapper_Folder CreateRootFolder()
+		public HierachicalWrapper_Folder GetOrCreateRootFolder()
 		{
-			var i = new HierachicalWrapper_Folder("[My Notes]", _config, DP_ROOTFOLDER, false, false);
-			SubFolder.Add(i);
-			return i;
+			if (RootFolderViewWrapper != null) return RootFolderViewWrapper;
+			RootFolderViewWrapper = new HierachicalWrapper_Folder("[My Notes]", _config, DP_ROOTFOLDER, false, false);
+			SubFolder.Add(RootFolderViewWrapper);
+			return RootFolderViewWrapper;
 		}
 
 		public void TriggerAllSubNotesChanged()
@@ -199,15 +201,28 @@ namespace AlephNote.WPF.Util
 
 			var me = this;
 
-			bool FCompare(HierachicalWrapper_Folder a, HierachicalWrapper_Folder b) => a.Header.ToLower() == b.Header.ToLower();
+			bool FCompare(HierachicalWrapper_Folder a, HierachicalWrapper_Folder b)
+			{
+				return a.Header.ToLower() == b.Header.ToLower();
+			}
+
 			HierachicalWrapper_Folder FCopy(HierachicalWrapper_Folder a)
 			{
-				if (a.GetType() == typeof(HierachicalWrapper_Folder))        return new HierachicalWrapper_Folder(a.Header, _config, a._path, a._isRoot, a.Permanent);
-				if (a.GetType() == typeof(HierachicalWrapper_UnsortedNotes)) return me.EmptyPathViewWrapper = new HierachicalWrapper_UnsortedNotes(me, _config);
-				if (a.GetType() == typeof(HierachicalWrapper_AllNotes))      return me.AllNotesViewWrapper  = new HierachicalWrapper_AllNotes(me, _config);
+				if (a.GetType() == typeof(HierachicalWrapper_Folder) && a.IsSpecialNode_RootFolder)
+					return me.RootFolderViewWrapper = new HierachicalWrapper_Folder(a.Header, _config, a._path, a._isRoot, a.Permanent);
 
+				if (a.GetType() == typeof(HierachicalWrapper_Folder))
+					return new HierachicalWrapper_Folder(a.Header, _config, a._path, a._isRoot, a.Permanent);
+
+				if (a.GetType() == typeof(HierachicalWrapper_UnsortedNotes))
+					return me.EmptyPathViewWrapper = new HierachicalWrapper_UnsortedNotes(me, _config);
+
+				if (a.GetType() == typeof(HierachicalWrapper_AllNotes))
+					return me.AllNotesViewWrapper  = new HierachicalWrapper_AllNotes(me, _config);
+				
 				throw new NotSupportedException(a.GetType().ToString());
 			}
+
 			SubFolder.SynchronizeCollection(other.SubFolder, FCompare, FCopy);
 			Debug.Assert(SubFolder.Count == other.SubFolder.Count);
 
