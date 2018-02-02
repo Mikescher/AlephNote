@@ -20,6 +20,7 @@ Repository: https://github.com/Mikescher/AlephNote
 	<ref>
 		<valueref key="Transparent"    type="color">#00000000</valueref>
 		<valueref key="Secondary"      type="color">#000000</valueref>
+		<valueref key="Secondary2"     type="color">#444444</valueref>
 		<valueref key="Primary"        type="color">#FFFFFF</valueref>
 	</ref>
 
@@ -54,12 +55,17 @@ Repository: https://github.com/Mikescher/AlephNote
 
 		<property name="window.background"                            value="@Secondary"/>
 		<property name="window.foreground"                            value="@Primary"/>
+		<property name="window.splitter"                              value="@Secondary" />
 		<property name="window.changedate:foreground"                 value="@Primary"/>
 
 		<property name="window.globalsearch.button:background"        value="@Secondary"/>
 		<property name="window.globalsearch.button:border"            value="@Primary"/>
 		<property name="window.globalsearch.button:border_thickness"  value="1"/>
 		<property name="window.globalsearch.button:foreground"        value="@Primary"/>
+		<property name="window.globalsearch.input:foreground"         value="@Primary" />
+		<property name="window.globalsearch.input:background"         value="@Secondary" />
+		<property name="window.globalsearch.input:border"             value="@Primary" />
+		<property name="window.globalsearch.placeholder:foreground"   value="@Primary" />
 
 		<property name="window.menubar:background"                    value="@Secondary"/>
 		<property name="window.menubar:foreground"                    value="@Primary"/>
@@ -96,9 +102,22 @@ Repository: https://github.com/Mikescher/AlephNote
 		<property name="window.inlinesearch.btnWholeWord:foreground"       value="@Primary" />
 		<property name="window.inlinesearch.btnRegex:foreground"           value="@Primary" />
 
-		<property name="window.globalsearch.input:foreground"              value="@Secondary" />
-		<property name="window.globalsearch.input:background"              value="@Primary" />
-		<property name="window.globalsearch.input:border"                  value="@Primary" />
-		<property name="window.globalsearch.placeholder:foreground"        value="@Primary" />
+		<property name="window.notesview.flat:background"                  value="@Secondary" />
+		<property name="window.notesview.flat:foreground"                  value="@Primary" />
+		<property name="window.notesview.flat.selected:background"         value="@Secondary2" />
+		<property name="window.notesview.flat.selected:foreground"         value="@Primary" />
+		<property name="window.notesview.flat.datetime1:foreground"        value="@Primary" />
+		<property name="window.notesview.flat.datetime2:foreground"        value="@Primary" />
+		<property name="window.notesview.flat.preview:foreground"          value="@Primary" />
+		<property name="window.notesview.flat.separator"                   value="@Primary" />
+
+		<property name="window.notesview.hierachical.splitter"                 value="@Secondary" />
+		<property name="window.notesview.hierachical.tree.selected:background" value="@Secondary2" />
+		<property name="window.notesview.hierachical.tree.selected:foreground" value="@Primary" />
+
+		<property name="window.statusbar:background"                       value="@Secondary" />
+		<property name="window.statusbar:foreground"                       value="@Primary" />
+		<property name="window.statusbar.btnReload:foreground"             value="@Primary" />
+		<property name="window.statusbar.btnReload:border"                 value="@Primary" />
 	</data>
 </theme>

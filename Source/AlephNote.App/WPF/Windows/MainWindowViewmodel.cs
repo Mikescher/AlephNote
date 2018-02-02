@@ -18,6 +18,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using AlephNote.Common.MVVM;
 using AlephNote.Common.Operations;
 using AlephNote.Common.Settings;
@@ -78,6 +79,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand DebugRefreshViewCommand { get { return new RelayCommand(()=> { Owner.NotesViewControl.RefreshView(); }); } }
 		public ICommand DebugShowThemeEditorCommand { get { return new RelayCommand(DebugShowThemeEditor); } }
 		public ICommand DebugShowDefaultThemeCommand { get { return new RelayCommand(DebugShowDefaultTheme); } }
+		public ICommand DebugDiscoThemeCommand { get { return new RelayCommand(DebugDiscoTheme); } }
 
 		private AppSettings _settings;
 		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); SettingsChanged(); } }
@@ -830,6 +832,16 @@ namespace AlephNote.WPF.Windows
 		private void DebugShowDefaultTheme()
 		{
 			ThemeManager.Inst.ChangeTheme(ThemeManager.Inst.Cache.GetFallback());
+		}
+
+		private void DebugDiscoTheme()
+		{
+			var tmr = new DispatcherTimer(TimeSpan.FromSeconds(0.05), DispatcherPriority.Normal, (a, e) =>
+			{
+				ThemeManager.Inst.ChangeTheme(ThemeManager.Inst.Cache.GetFallback());
+			}, Application.Current.Dispatcher);
+
+			tmr.Start();
 		}
 
 		private string CreateLoremIpsum(int len, int linelen)
