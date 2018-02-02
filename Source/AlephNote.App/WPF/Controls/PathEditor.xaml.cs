@@ -2,6 +2,7 @@
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.MVVM;
+using AlephNote.WPF.Util;
 using AlephNote.WPF.Windows;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,35 +26,35 @@ namespace AlephNote.WPF.Controls
 		{
 			get { return (AppSettings)GetValue(SettingsProperty); }
 			set { SetValue(SettingsProperty, value); }
-        }
+		}
 
-        public static readonly DependencyProperty SelectedNoteProperty =
-            DependencyProperty.Register(
-            "SelectedNote",
-            typeof(INote),
-            typeof(PathEditor),
-            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+		public static readonly DependencyProperty SelectedNoteProperty =
+			DependencyProperty.Register(
+			"SelectedNote",
+			typeof(INote),
+			typeof(PathEditor),
+			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-        public INote SelectedNote
-        {
-            get { return (INote)GetValue(SelectedNoteProperty); }
-            set { SetValue(SelectedNoteProperty, value); }
-        }
+		public INote SelectedNote
+		{
+			get { return (INote)GetValue(SelectedNoteProperty); }
+			set { SetValue(SelectedNoteProperty, value); }
+		}
 
-        public static readonly DependencyProperty SelectedFolderPathProperty =
-            DependencyProperty.Register(
-            "SelectedFolderPath",
-            typeof(DirectoryPath),
-            typeof(PathEditor),
-            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+		public static readonly DependencyProperty SelectedFolderPathProperty =
+			DependencyProperty.Register(
+			"SelectedFolderPath",
+			typeof(DirectoryPath),
+			typeof(PathEditor),
+			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-        public DirectoryPath SelectedFolderPath
-        {
-            get { return (DirectoryPath)GetValue(SelectedFolderPathProperty); }
-            set { SetValue(SelectedFolderPathProperty, value); }
-        }
+		public DirectoryPath SelectedFolderPath
+		{
+			get { return (DirectoryPath)GetValue(SelectedFolderPathProperty); }
+			set { SetValue(SelectedFolderPathProperty, value); }
+		}
 
-        public ICommand ChangePathCommand { get { return new RelayCommand(ChangePath); } }
+		public ICommand ChangePathCommand { get { return new RelayCommand(ChangePath); } }
 
 		public PathEditor()
 		{
@@ -69,26 +70,30 @@ namespace AlephNote.WPF.Controls
 
 			FolderPopupListView.Items.Clear();
 
-			foreach (var folder in MainWindow.Instance.NotesViewControl.ListFolder()) FolderPopupListView.Items.Add(folder);
+			foreach (var folder in MainWindow.Instance.NotesViewControl.ListFolder())
+			{
+				if (HierachicalBaseWrapper.IsSpecial(folder) && ! folder.IsRoot()) continue;
+				FolderPopupListView.Items.Add(folder);
+			}
 
 			FolderPopupListView.SelectedItem = SelectedNote.Path;
 
 			FolderPopup.IsOpen = true;
-        }
+		}
 
-        private void ButtonMoveFolder_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (SelectedNote == null) return;
+		private void ButtonMoveFolder_OnClick(object sender, RoutedEventArgs e)
+		{
+			if (SelectedNote == null) return;
 
-            var newPath = FolderPopupListView.SelectedItem as DirectoryPath;
-            if (newPath == null) return;
+			var newPath = FolderPopupListView.SelectedItem as DirectoryPath;
+			if (newPath == null) return;
 
-            if (SelectedNote.Path.EqualsWithCase(newPath)) return;
+			if (SelectedNote.Path.EqualsWithCase(newPath)) return;
 
-            SelectedNote.Path = newPath;
-            SelectedFolderPath = newPath;
+			SelectedNote.Path = newPath;
+			SelectedFolderPath = newPath;
 
-            FolderPopup.IsOpen = false;
-        }
-    }
+			FolderPopup.IsOpen = false;
+		}
+	}
 }

@@ -77,6 +77,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand DebugSerializeNoteCommand { get { return new RelayCommand(DebugSerializeNote); } }
 		public ICommand DebugRefreshViewCommand { get { return new RelayCommand(()=> { Owner.NotesViewControl.RefreshView(); }); } }
 		public ICommand DebugShowThemeEditorCommand { get { return new RelayCommand(DebugShowThemeEditor); } }
+		public ICommand DebugShowDefaultThemeCommand { get { return new RelayCommand(DebugShowDefaultTheme); } }
 
 		private AppSettings _settings;
 		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); SettingsChanged(); } }
@@ -201,7 +202,7 @@ namespace AlephNote.WPF.Windows
 			}
 			catch (Exception e)
 			{
-				ExceptionDialog.Show(Owner, "Cannot create note", e);
+				ExceptionDialog.Show(Owner, "Cannot create note", e, string.Empty);
 			}
 		}
 
@@ -229,7 +230,7 @@ namespace AlephNote.WPF.Windows
 					catch (Exception e)
 					{
 						App.Logger.Error("Main", "Shutting down current connection failed", e);
-						ExceptionDialog.Show(Owner, "Shutting down current connection failed.\r\nConnection will be forcefully aborted", e);
+						ExceptionDialog.Show(Owner, "Shutting down current connection failed.\r\nConnection will be forcefully aborted", e, string.Empty);
 						_repository.KillThread();
 					}
 				}
@@ -283,7 +284,7 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				App.Logger.Error("Main", "Apply Settings failed", e);
-				ExceptionDialog.Show(Owner, "Apply Settings failed.\r\nSettings and Local notes could be in an invalid state.\r\nContinue with caution.", e);
+				ExceptionDialog.Show(Owner, "Apply Settings failed.\r\nSettings and Local notes could be in an invalid state.\r\nContinue with caution.", e, string.Empty);
 			}
 		}
 
@@ -455,7 +456,7 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				App.Logger.Error("Main", "Shutting down connection failed", e);
-				ExceptionDialog.Show(Owner, "Shutting down connection failed.\r\nConnection will be forcefully aborted.", e);
+				ExceptionDialog.Show(Owner, "Shutting down connection failed.\r\nConnection will be forcefully aborted.", e, string.Empty);
 				_repository.KillThread();
 			}
 
@@ -504,7 +505,7 @@ namespace AlephNote.WPF.Windows
 				catch (Exception e)
 				{
 					App.Logger.Error("Main", "Could not write to file", e);
-					ExceptionDialog.Show(Owner, "Could not write to file", e);
+					ExceptionDialog.Show(Owner, "Could not write to file", e, string.Empty);
 				}
 			}
 		}
@@ -524,7 +525,7 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				App.Logger.Error("Main", "Could not delete note", e);
-				ExceptionDialog.Show(Owner, "Could not delete note", e);
+				ExceptionDialog.Show(Owner, "Could not delete note", e, string.Empty);
 			}
 		}
 
@@ -552,7 +553,7 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				App.Logger.Error("Main", "Could not delete folder", e);
-				ExceptionDialog.Show(Owner, "Could not delete folder", e);
+				ExceptionDialog.Show(Owner, "Could not delete folder", e, string.Empty);
 			}
 		}
 
@@ -607,7 +608,7 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				App.Logger.Error("Main", "Could not rename folder", e);
-				ExceptionDialog.Show(Owner, "Could not rename folder", e);
+				ExceptionDialog.Show(Owner, "Could not rename folder", e, string.Empty);
 			}
 		}
 
@@ -650,7 +651,7 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				App.Logger.Error("Main", "Synchronization failed", e);
-				ExceptionDialog.Show(Owner, "Synchronization failed", e);
+				ExceptionDialog.Show(Owner, "Synchronization failed", e, string.Empty);
 			}
 		}
 
@@ -676,7 +677,7 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				App.Logger.Error("Main", "Full Synchronization failed", e);
-				ExceptionDialog.Show(Owner, "Full Synchronization failed", e);
+				ExceptionDialog.Show(Owner, "Full Synchronization failed", e, string.Empty);
 			}
 		}
 
@@ -824,6 +825,11 @@ namespace AlephNote.WPF.Windows
 		{
 			var w = new ThemeEditor() { Owner = Owner };
 			w.Show();
+		}
+
+		private void DebugShowDefaultTheme()
+		{
+			ThemeManager.Inst.ChangeTheme(ThemeManager.Inst.Cache.GetFallback());
 		}
 
 		private string CreateLoremIpsum(int len, int linelen)

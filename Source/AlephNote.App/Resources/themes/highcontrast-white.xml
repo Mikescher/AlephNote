@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+============================
+  THEME FILE FOR ALEPHNOTE
+============================
+
+Theme:      High Contrast (White)
+
+Repository: https://github.com/Mikescher/AlephNote
+
+-->
+<theme>
+	<meta>
+		<name>High Contrast (White)</name>
+		<version>1.0</version>
+		<compatibility>*</compatibility>
+	</meta>
+
+	<ref>
+		<valueref key="Transparent"    type="color">#00000000</valueref>
+		<valueref key="Secondary"      type="color">#000000</valueref>
+		<valueref key="Primary"        type="color">#FFFFFF</valueref>
+	</ref>
+
+	<data>
+
+	</data>
+</theme>

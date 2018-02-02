@@ -20,15 +20,20 @@ namespace AlephNote.WPF.Windows
 			InitializeComponent();
 		}
 
-		public static void Show(Window owner, string title, Exception e)
+		public static void Show(Window owner, string title, Exception e, string additionalInfo)
 		{
 			var dlg = new ExceptionDialog
 			{
-				ErrorMessage = { Text = e?.Message ?? "Error in ALephNote" },
-				ErrorTrace   = { Text = FormatException(e) ?? FormatStacktrace() },
+				ErrorMessage =
+				{
+					Text = e?.Message ?? "Error in AlephNote"
+				},
+				ErrorTrace   =
+				{
+					Text = (FormatException(e, additionalInfo) ?? FormatStacktrace(additionalInfo))
+				},
 				Title        = title,
 			};
-
 
 			if (owner != null && owner.IsLoaded)
 				dlg.Owner = owner;
@@ -44,8 +49,14 @@ namespace AlephNote.WPF.Windows
 
 			var dlg = new ExceptionDialog
 			{
-				ErrorMessage = { Text = message },
-				ErrorTrace   = { Text = string.Join(split, new List<Exception> {e}.Concat(additionalExceptions).Select(FormatException)) },
+				ErrorMessage =
+				{
+					Text = message
+				},
+				ErrorTrace   =
+				{
+					Text = string.Join(split, new List<Exception> {e}.Concat(additionalExceptions).Select(ex => FormatException(ex, "")))
+				},
 				Title        = title,
 			};
 			
@@ -57,22 +68,38 @@ namespace AlephNote.WPF.Windows
 			dlg.ShowDialog();
 		}
 
-		private static string FormatException(Exception e)
+		private static string FormatException(Exception e, string suffix)
 		{
 			const string DELIMITER = " ---> ";
 
 			if (e == null) return null;
 
-			var lines = Regex.Split(e.ToString(), @"\r?\n");
+			var lines = Regex.Split(e.ToString(), @"\r?\n").ToList();
 
 			if (lines.Any()) lines[0] = lines[0].Replace(DELIMITER, Environment.NewLine + "    ---> ");
+
+			if (!string.IsNullOrWhiteSpace(suffix))
+			{
+				lines.Add("");
+				lines.Add("-----------------------");
+				lines.Add("");
+				lines.Add(suffix);
+			}
 
 			return string.Join(Environment.NewLine, lines);
 		}
 
-		private static string FormatStacktrace()
+		private static string FormatStacktrace(string suffix)
 		{
-			return Environment.StackTrace;
+			var trace = Environment.StackTrace;
+			if (!string.IsNullOrWhiteSpace(suffix))
+			{
+				trace += "\r\n";
+				trace += "\r\n-----------------------";
+				trace += "\r\n";
+				trace += "\r\n" + suffix;
+			}
+			return trace;
 		}
 
 		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)

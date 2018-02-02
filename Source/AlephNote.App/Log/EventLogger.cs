@@ -82,9 +82,14 @@ namespace AlephNote.Log
 			Log(new LogEvent(LogEventType.Error, src, text, e.ToString()));
 		}
 
+		public void ShowExceptionDialog(string title, Exception e, string additionalInfo)
+		{
+			ExceptionDialog.Show(null, title, e, additionalInfo);
+		}
+
 		public void ShowExceptionDialog(string title, Exception e)
 		{
-			ExceptionDialog.Show(null, title, e);
+			ExceptionDialog.Show(null, title, e, "");
 		}
 
 		public void ShowExceptionDialog(string title, string message, Exception e, params Exception[] additionalExceptions)

@@ -100,6 +100,7 @@
 			</MenuItem>
 			<MenuItem Header="_Debug" Visibility="{Binding DebugMode, Converter={conv:BoolToVisibility}, ConverterParameter=Visible;Collapsed}">
 				<MenuItem Foreground="Black" Header="Show interactive theme editor" Command="{Binding DebugShowThemeEditorCommand}" />
+				<MenuItem Foreground="Black" Header="Remove theme" Command="{Binding DebugShowDefaultThemeCommand}" />
 				<Separator/>
 				<MenuItem Foreground="Black" Header="Create 1 Note (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="1" />
 				<MenuItem Foreground="Black" Header="Create 10 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="10" />

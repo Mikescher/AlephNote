@@ -185,13 +185,17 @@ Repository: https://github.com/Mikescher/AlephNote
 				<property name="window.pathdisplay.button:background"         value="@White"/>
 				<property name="window.pathdisplay.button:border"             value="#707070"/>
 
-				<property name="window.pathdisplay.popup:background"          value="@Beige"/>
-				<property name="window.pathdisplay.popup.text:foreground"     value="$window.foreground"/>
-				<property name="window.pathdisplay.popup.list:foreground"     value="$window.foreground"/>
-				<property name="window.pathdisplay.popup.list:background"     value="$window.background"/>
-				<property name="window.pathdisplay.popup.button:foreground"   value="@Black"/>
-				<property name="window.pathdisplay.popup.button:background"   value="@White"/>
-				<property name="window.pathdisplay.popup.button:border"       value="@Beige"/>
+				<property name="window.pathdisplay.popup:background"               value="@Beige"/>
+				<property name="window.pathdisplay.popup:border"                   value="$window.pathdisplay.popup:background"/>
+				<property name="window.pathdisplay.popup:border_thickness"         value="0"/>
+				<property name="window.pathdisplay.popup.text:foreground"          value="$window.foreground"/>
+				<property name="window.pathdisplay.popup.list:foreground"          value="$window.foreground"/>
+				<property name="window.pathdisplay.popup.list:background"          value="$window.background"/>
+				<property name="window.pathdisplay.popup.list.selected:foreground" value="$window.pathdisplay.popup.list:foreground"/>
+				<property name="window.pathdisplay.popup.list.selected:background" value="#B9D1EA"/>
+				<property name="window.pathdisplay.popup.button:foreground"        value="@Black"/>
+				<property name="window.pathdisplay.popup.button:background"        value="@White"/>
+				<property name="window.pathdisplay.popup.button:border"            value="@Beige"/>
 			</group>
 
 			<group name="inlinesearch">

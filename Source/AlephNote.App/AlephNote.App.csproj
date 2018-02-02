@@ -116,6 +116,7 @@
     <Compile Include="WPF\Controls\TagEditor.xaml.cs">
       <DependentUpon>TagEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Converter\BoolToColor.cs" />
     <Compile Include="WPF\Converter\BrushRefToBrush.cs" />
     <Compile Include="WPF\Converter\ColorRefToBrush.cs" />
     <Compile Include="WPF\Converter\HierachicalWrapperToIcon.cs" />
@@ -436,11 +437,11 @@
       <TargetPath>Themes\default.xml</TargetPath>
       <SubType>Designer</SubType>
     </ContentWithTargetPath>
-		<ContentWithTargetPath Include="Resources\themes\monokai-neo.xml" >
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<TargetPath>Themes\monokai-neo.xml</TargetPath>
-			<SubType>Designer</SubType>
-		</ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\themes\monokai-neo.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Themes\monokai-neo.xml</TargetPath>
+      <SubType>Designer</SubType>
+    </ContentWithTargetPath>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

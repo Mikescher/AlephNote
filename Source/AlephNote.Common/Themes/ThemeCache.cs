@@ -48,10 +48,10 @@ namespace AlephNote.Common.Themes
 
 			try
 			{
+				if (_cache.TryGetValue(fn.ToLower(), out var cachedtheme)) return cachedtheme;
+
 				var file = _filesInBasePath.FirstOrDefault(p => Path.GetFileName(p).ToLower() == fn.ToLower());
 				if (file == null) return null;
-
-				if (_cache.TryGetValue(fn.ToLower(), out var cachedtheme)) return cachedtheme;
 
 				var atheme = LoadFromFile(file);
 
@@ -78,9 +78,9 @@ namespace AlephNote.Common.Themes
 				.ToList();
 		}
 
-		public AlephTheme GetDefault()
+		public AlephTheme GetFallback()
 		{
-			return ThemeParser.GetDefault();
+			return ThemeParser.GetFallback();
 		}
 
 		public Dictionary<string, string> GetDefaultParserProperties()

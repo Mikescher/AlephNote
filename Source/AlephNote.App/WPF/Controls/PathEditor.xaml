@@ -3,7 +3,7 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:local="clr-namespace:AlephNote.WPF.Controls"
+			 xmlns:self="clr-namespace:AlephNote.WPF.Controls"
 			 xmlns:conv="clr-namespace:AlephNote.WPF.Converter"
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 			 mc:Ignorable="d" 
@@ -52,31 +52,54 @@
 						Command="{Binding ChangePathCommand}" />
 
 		<Popup Grid.Column="1" StaysOpen="False" Placement="Right" x:Name="FolderPopup">
-			<Grid Background="{ext:ThemeBinding 'window.pathdisplay.popup:background'}">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
+			<Border BorderThickness="{ext:ThemeBinding 'window.pathdisplay.popup:border_thickness'}" BorderBrush="{ext:ThemeBinding 'window.pathdisplay.popup:border'}">
+				<Grid Background="{ext:ThemeBinding 'window.pathdisplay.popup:background'}">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Grid.Resources>
+							<Style TargetType="{x:Type ListViewItem}">
+								<Setter Property="Background" Value="Transparent"/>
+								<Setter Property="Padding" Value="2,0,0,0"/>
+								<Setter Property="Template">
+									<Setter.Value>
+										<ControlTemplate TargetType="{x:Type ListViewItem}">
+											<Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+												<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+											</Border>
+											<ControlTemplate.Triggers>
+												<Trigger Property="IsSelected" Value="true">
+													<Setter Property="Background" TargetName="Bd" Value="{ext:ThemeBinding 'window.pathdisplay.popup.list.selected:background', Proxy=true}"/>
+													<Setter Property="Foreground"                 Value="{ext:ThemeBinding 'window.pathdisplay.popup.list.selected:foreground', Proxy=true}"/>
+												</Trigger>
+											</ControlTemplate.Triggers>
+										</ControlTemplate>
+									</Setter.Value>
+								</Setter>
+							</Style>
+					</Grid.Resources>
 
-				<TextBlock  Grid.Row="0" 
+					<TextBlock  Grid.Row="0" 
 									Text="Move Note" FontWeight="Bold" HorizontalAlignment="Center" FontSize="16" 
 									Foreground="{ext:ThemeBinding 'window.pathdisplay.popup.text:foreground'}"/>
 
-				<ListView   Grid.Row="1" x:Name="FolderPopupListView" 
+					<ListView   Grid.Row="1" x:Name="FolderPopupListView" 
 									Foreground="{ext:ThemeBinding 'window.pathdisplay.popup.list:foreground'}"
 									Background="{ext:ThemeBinding 'window.pathdisplay.popup.list:background'}"
 									DisplayMemberPath="Formatted" MaxHeight="200" Margin="2" />
 
-				<StackPanel Grid.Row="2">
-					<Button Content="Move" MinWidth="200" FontWeight="Bold" Click="ButtonMoveFolder_OnClick" 
+					<StackPanel Grid.Row="2">
+						<Button Content="Move" MinWidth="200" FontWeight="Bold" Click="ButtonMoveFolder_OnClick" 
 									Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
 									Foreground="{ext:ThemeBinding  'window.pathdisplay.popup.button:foreground'}" 
 									Background="{ext:ThemeBinding  'window.pathdisplay.popup.button:background'}" 
 									BorderBrush="{ext:ThemeBinding 'window.pathdisplay.popup.button:border'}" 
-									HorizontalAlignment="Right" Margin="2" />
-				</StackPanel>
-			</Grid>
+									HorizontalAlignment="Center" Margin="2" />
+					</StackPanel>
+				</Grid>
+			</Border>
 		</Popup>
 
 	</Grid>

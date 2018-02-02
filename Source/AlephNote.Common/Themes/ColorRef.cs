@@ -40,6 +40,12 @@ namespace AlephNote.Common.Themes
 			this.value = value;
 		}
 
+		public override string ToString()
+		{
+			if (A==255) return $"#{R:X2}{G:X2}{B:X2}";
+			return $"#{A:X2}{R:X2}{G:X2}{B:X2}";
+		}
+
 		public static ColorRef FromArgb(int alpha, int red, int green, int blue)
 		{
 			return new ColorRef(MakeArgb((byte)alpha, (byte)red, (byte)green, (byte)blue));
@@ -96,6 +102,11 @@ namespace AlephNote.Common.Themes
 		private static long MakeArgb(byte alpha, byte red, byte green, byte blue)
 		{
 			return (long)(unchecked((uint)(red << ARGBRedShift | green << ARGBGreenShift | blue << ARGBBlueShift | alpha << ARGBAlphaShift))) & 0xFFFFFFFF;
+		}
+
+		public static ColorRef GetRandom(Random r)
+		{
+			return ColorRef.FromArgb(r.Next(255), r.Next(255), r.Next(255));
 		}
 	}
 }

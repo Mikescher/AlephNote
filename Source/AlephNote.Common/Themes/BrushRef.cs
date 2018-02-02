@@ -33,6 +33,21 @@ namespace AlephNote.Common.Themes
 			_steps = steps;
 		}
 
+		public override string ToString()
+		{
+			switch (BrushType)
+			{
+				case BrushRefType.Solid:
+					return _steps[0].Item2.ToString();
+				case BrushRefType.Gradient_Horizontal:
+					return "gradient-h://" + string.Join("|", _steps.Select(s => $"{s.Item1.ToString(CultureInfo.InvariantCulture)}:{s.Item2.ToString()}"));
+				case BrushRefType.Gradient_Vertical:
+					return "gradient-v://" + string.Join("|", _steps.Select(s => $"{s.Item1.ToString(CultureInfo.InvariantCulture)}:{s.Item2.ToString()}"));
+				default:
+					return "?";
+			}
+		}
+
 		public static BrushRef CreateSolid(ColorRef col)
 		{
 			return new BrushRef(BrushRefType.Solid, new List<Tuple<double, ColorRef>> { Tuple.Create(0.0, col), Tuple.Create(0.0, col) });

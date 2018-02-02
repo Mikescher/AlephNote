@@ -33,7 +33,7 @@ namespace AlephNote.Common.Util
 		private ThemeManager(ThemeCache c)
 		{
 			Cache = c;
-			CurrentTheme = c.GetDefault();
+			CurrentTheme = c.GetFallback();
 		}
 
 		public void LoadWithErrorDialog(AppSettings settings)
@@ -42,12 +42,12 @@ namespace AlephNote.Common.Util
 			if (theme == null)
 			{
 				LoggerSingleton.Inst.ShowExceptionDialog($"Could not load theme {settings.Theme}", cte);
-				theme = Cache.GetDefault();
+				theme = Cache.GetFallback();
 			}
 			else if (!theme.Compatibility.Includes(LoggerSingleton.Inst.AppVersion))
 			{
 				LoggerSingleton.Inst.ShowExceptionDialog($"Could not load theme {settings.Theme}\r\nThe theme does not support the current version of AlephNote ({LoggerSingleton.Inst.AppVersion})", null);
-				theme = Cache.GetDefault();
+				theme = Cache.GetFallback();
 			}
 
 			ChangeTheme(theme);
@@ -55,7 +55,7 @@ namespace AlephNote.Common.Util
 
 		public void ChangeTheme(string xmlname)
 		{
-			ChangeTheme(Cache.GetByFilename(xmlname, out _) ?? Cache.GetDefault());
+			ChangeTheme(Cache.GetByFilename(xmlname, out _) ?? Cache.GetFallback());
 		}
 
 		public void ChangeTheme(AlephTheme t)

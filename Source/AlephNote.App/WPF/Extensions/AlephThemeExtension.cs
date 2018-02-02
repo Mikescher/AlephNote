@@ -25,5 +25,10 @@ namespace AlephNote.WPF.Extensions
 		{
 			return BrushRefToBrush.Convert(cref);
 		}
+
+		public static System.Windows.Thickness ToWThickness(this ThicknessRef tref)
+		{
+			return new System.Windows.Thickness(tref.Left, tref.Top, tref.Right, tref.Bottom);
+		}
 	}
 }

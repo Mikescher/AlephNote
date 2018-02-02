@@ -24,8 +24,8 @@
 						</Border>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsSelected" Value="true">
-								<Setter Property="Background" TargetName="Bd" Value="{ext:ThemeBinding 'window.notesview.flat.selected:background'}"/>
-								<Setter Property="Foreground"                 Value="{ext:ThemeBinding 'window.notesview.flat.selected:foreground'}"/>
+								<Setter Property="Background" TargetName="Bd" Value="{ext:ThemeBinding 'window.notesview.flat.selected:background', Proxy=true}"/>
+								<Setter Property="Foreground"                 Value="{ext:ThemeBinding 'window.notesview.flat.selected:foreground', Proxy=true}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>

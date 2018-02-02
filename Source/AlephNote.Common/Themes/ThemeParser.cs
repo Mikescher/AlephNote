@@ -1,6 +1,7 @@
 ﻿using AlephNote.PluginInterface.Util;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -96,171 +97,86 @@ namespace AlephNote.Common.Themes
 		{
 			var t = new AlephTheme(_name, _version, _compatibility, _filename, _source, false);
 
-			CollectPropertyBrushRef(t, "window.background");
-			CollectPropertyBrushRef(t, "window.foreground");
-			CollectPropertyBrushRef(t, "window.splitter");
+			foreach (var propdef in AlephTheme.THEME_PROPERTIES)
+			{
+				switch (propdef.Value)
+				{
+					case AlephTheme.AlephThemePropType.Color:
+						t.AddProperty(propdef.Key, ColorRef.Parse(GetProperty(propdef.Key)));
+						break;
 
-			CollectPropertyBrushRef(t, "window.notetitle:foreground");
-			CollectPropertyBrushRef(t, "window.changedate:foreground");
+					case AlephTheme.AlephThemePropType.Brush:
+						t.AddProperty(propdef.Key, BrushRef.Parse(GetProperty(propdef.Key)));
+						break;
 
-			CollectPropertyBrushRef(t, "window.menubar:background");
-			CollectPropertyBrushRef(t, "window.menubar:foreground");
+					case AlephTheme.AlephThemePropType.Thickness:
+						t.AddProperty(propdef.Key, ThicknessRef.Parse(GetProperty(propdef.Key)));
+						break;
 
-			CollectPropertyBrushRef(t, "window.tageditor.popup:background");
-			CollectPropertyBrushRef(t, "window.tageditor.popup:bordercolor");
-			CollectPropertyBrushRef(t, "window.tageditor.popup:foreground");
-			CollectPropertyBrushRef(t, "window.tageditor.placeholder");
-			CollectPropertyBrushRef(t, "window.tageditor.foreground");
-			CollectPropertyBrushRef(t, "window.tageditor.tag:background");
-			CollectPropertyBrushRef(t, "window.tageditor.tag:bordercolor_default");
-			CollectPropertyBrushRef(t, "window.tageditor.tag:bordercolor_highlighted");
-			CollectPropertyBrushRef(t, "window.tageditor.tag:foreground");
+					case AlephTheme.AlephThemePropType.Integer:
+						t.AddProperty(propdef.Key, int.Parse(GetProperty(propdef.Key)));
+						break;
 
-			CollectPropertyBrushRef(t, "window.pathdisplay:foregroud");
-			CollectPropertyBrushRef(t, "window.pathdisplay.element:foregroud");
-			CollectPropertyBrushRef(t, "window.pathdisplay.element:background");
-			CollectPropertyBrushRef(t, "window.pathdisplay.element:background_hover");
-			CollectPropertyBrushRef(t, "window.pathdisplay.element:border");
-			CollectPropertyBrushRef(t, "window.pathdisplay.button:foreground");
-			CollectPropertyBrushRef(t, "window.pathdisplay.button:background");
-			CollectPropertyBrushRef(t, "window.pathdisplay.button:border");
-			CollectPropertyBrushRef(t, "window.pathdisplay.popup:background");
-			CollectPropertyBrushRef(t, "window.pathdisplay.popup.text:foreground");
-			CollectPropertyBrushRef(t, "window.pathdisplay.popup.list:foreground");
-			CollectPropertyBrushRef(t, "window.pathdisplay.popup.list:background");
-			CollectPropertyBrushRef(t, "window.pathdisplay.popup.button:foreground");
-			CollectPropertyBrushRef(t, "window.pathdisplay.popup.button:background");
-			CollectPropertyBrushRef(t, "window.pathdisplay.popup.button:border");
+					case AlephTheme.AlephThemePropType.Double:
+						t.AddProperty(propdef.Key, double.Parse(GetProperty(propdef.Key), NumberStyles.Float, CultureInfo.InvariantCulture));
+						break;
 
-			CollectPropertyBrushRef(t, "window.inlinesearch:background");
-			CollectPropertyBrushRef(t, "window.inlinesearch:foreground");
-			CollectPropertyBrushRef(t, "window.inlinesearch.textbox:background");
-			CollectPropertyBrushRef(t, "window.inlinesearch.textbox:foreground");
-			CollectPropertyBrushRef(t, "window.inlinesearch.btnSearch:background");
-			CollectPropertyBrushRef(t, "window.inlinesearch.btnSearch:foreground");
-			CollectPropertyBrushRef(t, "window.inlinesearch.btnCaseIns:background");
-			CollectPropertyBrushRef(t, "window.inlinesearch.btnCaseIns:foreground");
-			CollectPropertyBrushRef(t, "window.inlinesearch.btnWholeWord:background");
-			CollectPropertyBrushRef(t, "window.inlinesearch.btnWholeWord:foreground");
-			CollectPropertyBrushRef(t, "window.inlinesearch.btnRegex:background");
-			CollectPropertyBrushRef(t, "window.inlinesearch.btnRegex:foreground");
+					case AlephTheme.AlephThemePropType.Boolean:
+						t.AddProperty(propdef.Key, XElementExtensions.ParseBool(GetProperty(propdef.Key)));
+						break;
 
-			CollectPropertyBrushRef(t, "window.globalsearch.input:foreground");
-			CollectPropertyBrushRef(t, "window.globalsearch.input:background");
-			CollectPropertyBrushRef(t, "window.globalsearch.input:border");
-			CollectPropertyBrushRef(t, "window.globalsearch.placeholder:foreground");
-			CollectPropertyBrushRef(t, "window.globalsearch.button:foreground");
-			CollectPropertyBrushRef(t, "window.globalsearch.button:background");
-			CollectPropertyBrushRef(t, "window.globalsearch.button:border");
-
-			CollectPropertyBrushRef(t, "window.notesview.flat:background");
-			CollectPropertyBrushRef(t, "window.notesview.flat:foreground");
-			CollectPropertyBrushRef(t, "window.notesview.flat.selected:background");
-			CollectPropertyBrushRef(t, "window.notesview.flat.selected:foreground");
-			CollectPropertyBrushRef(t, "window.notesview.flat.datetime1:foreground");
-			CollectPropertyBrushRef(t, "window.notesview.flat.datetime2:foreground");
-			CollectPropertyBrushRef(t, "window.notesview.flat.preview:foreground");
-			CollectPropertyBrushRef(t, "window.notesview.flat.separator");
-
-			CollectPropertyBrushRef(t, "window.notesview.hierachical.list:background");
-			CollectPropertyBrushRef(t, "window.notesview.hierachical.list:foreground");
-			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.selected:background");
-			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.selected:foreground");
-			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.datetime1:foreground");
-			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.datetime2:foreground");
-			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.preview:foreground");
-			CollectPropertyBrushRef(t, "window.notesview.hierachical.list.separator");
-			CollectPropertyBrushRef(t, "window.notesview.hierachical.splitter");
-			CollectPropertyBrushRef(t, "window.notesview.hierachical.tree:background");
-			CollectPropertyBrushRef(t, "window.notesview.hierachical.tree:foreground");
-			CollectPropertyBrushRef(t, "window.notesview.hierachical.tree.selected:background");
-			CollectPropertyBrushRef(t, "window.notesview.hierachical.tree.selected:foreground");
-
-			CollectPropertyBrushRef(t, "window.statusbar:background");
-			CollectPropertyBrushRef(t, "window.statusbar:foreground");
-			CollectPropertyBrushRef(t, "window.statusbar.btnReload:foreground");
-			CollectPropertyBrushRef(t, "window.statusbar.btnReload:background");
-			CollectPropertyBrushRef(t, "window.statusbar.btnReload:border");
-
-			//-------------------------------------------------------------------------------------
-
-			CollectPropertyColorRef(t, "scintilla.background");
-
-			CollectPropertyInteger( t, "scintilla.whitespace:size");
-			CollectPropertyColorRef(t, "scintilla.whitespace:color");
-			CollectPropertyColorRef(t, "scintilla.whitespace:background");
-
-			CollectPropertyColorRef(t, "scintilla.margin.linenumbers:background");
-			CollectPropertyColorRef(t, "scintilla.margin.listsymbols:background");
-
-			CollectPropertyColorRef(t, "scintilla.caret:foreground");
-			CollectPropertyColorRef(t, "scintilla.caret:background");
-			CollectPropertyInteger( t, "scintilla.caret:background_alpha");
-			CollectPropertyBoolean( t, "scintilla.caret:visible");
-
-			CollectPropertyStyleSpec(t, "scintilla.default");
-			CollectPropertyStyleSpec(t, "scintilla.link");
-			CollectPropertyStyleSpec(t, "scintilla.markdown.default");
-			CollectPropertyStyleSpec(t, "scintilla.markdown.emph");
-			CollectPropertyStyleSpec(t, "scintilla.markdown.strong_emph");
-			CollectPropertyStyleSpec(t, "scintilla.markdown.header");
-			CollectPropertyStyleSpec(t, "scintilla.markdown.code");
-			CollectPropertyStyleSpec(t, "scintilla.markdown.list");
-			CollectPropertyStyleSpec(t, "scintilla.markdown.url");
-
-			CollectPropertyStyleSpec(t, "scintilla.margin.numbers");
-			CollectPropertyColorRef(t,  "scintilla.margin.symbols:background");
-
-			CollectPropertyIndicatorSpec(t, "scintilla.search.local");
-			CollectPropertyIndicatorSpec(t, "scintilla.search.global");
-
+					default:
+						throw new NotSupportedException();
+				}
+			}
+			
 			return t;
 		}
 
 		public Dictionary<string, string> GetProperties() => _properties;
 
-		public static AlephTheme GetDefault()
+		public static AlephTheme GetFallback()
 		{
-			return new AlephTheme("DEFAULT_THEME_FALLBACK", new Version(0, 0, 0, 0), CompatibilityVersionRange.ANY, "NULL", "<!-- fallback -->", true);
-		}
+			var t = new AlephTheme("DEFAULT_THEME_FALLBACK", new Version(0, 0, 0, 0), CompatibilityVersionRange.ANY, "NULL", "<!-- fallback -->", true);
 
-		private void CollectPropertyColorRef(AlephTheme t, string name)
-		{
-			t.AddProperty(name, ColorRef.Parse(GetProperty(name)));
-		}
+			var r = new Random();
 
-		private void CollectPropertyBrushRef(AlephTheme t, string name)
-		{
-			t.AddProperty(name, BrushRef.Parse(GetProperty(name)));
-		}
+			foreach (var propdef in AlephTheme.THEME_PROPERTIES)
+			{
+				switch (propdef.Value)
+				{
+					case AlephTheme.AlephThemePropType.Color:
+						t.AddProperty(propdef.Key, ColorRef.GetRandom(r));
+						break;
 
-		private void CollectPropertyInteger(AlephTheme t, string name)
-		{
-			t.AddProperty(name, int.Parse(GetProperty(name)));
-		}
+					case AlephTheme.AlephThemePropType.Brush:
+						t.AddProperty(propdef.Key, BrushRef.CreateSolid(ColorRef.GetRandom(r)));
+						break;
 
-		private void CollectPropertyBoolean(AlephTheme t, string name)
-		{
-			t.AddProperty(name, XElementExtensions.ParseBool(GetProperty(name)));
-		}
+					case AlephTheme.AlephThemePropType.Thickness:
+						t.AddProperty(propdef.Key, ThicknessRef.Create(r.Next(16), r.Next(16), r.Next(16), r.Next(16)));
+						break;
 
-		private void CollectPropertyStyleSpec(AlephTheme t, string name)
-		{
-			CollectPropertyColorRef(t, name + ":foreground");
-			CollectPropertyColorRef(t, name + ":background");
-			CollectPropertyBoolean( t, name + ":underline");
-			CollectPropertyBoolean( t, name + ":bold");
-			CollectPropertyBoolean( t, name + ":italic");
-		}
+					case AlephTheme.AlephThemePropType.Integer:
+						t.AddProperty(propdef.Key, r.Next(16));
+						break;
 
-		private void CollectPropertyIndicatorSpec(AlephTheme t, string name)
-		{
-			CollectPropertyColorRef(t, name + ":color");
-			CollectPropertyInteger( t, name + ":alpha");
-			CollectPropertyInteger( t, name + ":outline_alpha");
-			CollectPropertyBoolean( t, name + ":under_text");
-		}
+					case AlephTheme.AlephThemePropType.Double:
+						t.AddProperty(propdef.Key, r.NextDouble()*16);
+						break;
 
+					case AlephTheme.AlephThemePropType.Boolean:
+						t.AddProperty(propdef.Key, r.Next()%2 == 0);
+						break;
+
+					default:
+						throw new NotSupportedException();
+				}
+			}
+
+			return t;
+		}
+		
 		private string GetProperty(string name, int depth=0, string origName=null)
 		{
 			if (depth >= 4) throw new Exception($"Max recursion depth reached for property '{origName}'");

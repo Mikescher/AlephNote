@@ -139,17 +139,25 @@ namespace AlephNote.WPF.Extensions
 
 		protected virtual void UpdateTargetInternal(object target)
 		{
-			if (_targetProperty is DependencyProperty)
+			try
 			{
-				var dependencyObject = target as DependencyObject;
-				if (dependencyObject != null)
+				if (_targetProperty is DependencyProperty)
 				{
-					dependencyObject.SetValue(_targetProperty as DependencyProperty, GetValue(ThemeKey, Convert));
+					var dependencyObject = target as DependencyObject;
+					if (dependencyObject != null)
+					{
+						dependencyObject.SetValue(_targetProperty as DependencyProperty, GetValue(ThemeKey, Convert));
+					}
+				}
+				else if (_targetProperty is PropertyInfo)
+				{
+					(_targetProperty as PropertyInfo).SetValue(target, GetValue(ThemeKey, Convert), null);
 				}
 			}
-			else if (_targetProperty is PropertyInfo)
+			catch (Exception e)
 			{
-				(_targetProperty as PropertyInfo).SetValue(target, GetValue(ThemeKey, Convert), null);
+				App.Logger.Error("ThemeBinding", $"UpdateTargetInternal failed for '{ThemeKey}':'{Convert}'", e);
+				App.Logger.ShowExceptionDialog("Update theme failed", e, $"UpdateTargetInternal failed for '{ThemeKey}':'{Convert}'");
 			}
 		}
 
@@ -170,23 +178,22 @@ namespace AlephNote.WPF.Extensions
 			if (Application.Current.MainWindow == null) return null; // designmode
 #endif
 
-			if (ThemeManager.Inst.CurrentTheme.IsFallback) return new SolidColorBrush(Colors.Magenta);
-
 			var obj = ThemeManager.Inst.CurrentTheme.Get(key);
 
 			if (string.IsNullOrWhiteSpace(converter))
 			{
 				if (obj is ColorRef cref) return ColorRefToBrush.Convert(cref);
 				if (obj is BrushRef bref) return BrushRefToBrush.Convert(bref);
+				if (obj is ThicknessRef tref) return tref.ToWThickness();
 
 				throw new Exception($"Cannot convert {obj?.GetType()} to 'brush'");
 			}
 			else if (converter.Equals("ToColor", StringComparison.InvariantCultureIgnoreCase))
 			{
-				if (obj is ColorRef cref) return cref.ToWCol();
-				if (obj is BrushRef bref) return bref.GradientSteps.First().Item2.ToWCol();
+				if (obj is ColorRef cref)     return cref.ToWCol();
+				if (obj is BrushRef bref)     return bref.GradientSteps.First().Item2.ToWCol();
 
-				throw new Exception($"Cannot convert {obj?.GetType()} to 'color'");
+				throw new Exception($"Cannot convert {obj?.GetType()} with '{converter}'");
 			}
 			else
 			{

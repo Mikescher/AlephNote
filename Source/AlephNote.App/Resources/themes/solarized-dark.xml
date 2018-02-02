@@ -37,24 +37,16 @@ License:    Copyright (c) 2011 Ethan Schoonover
 	</meta>
 
 	<ref>
-		<!--// base** values are switched around to keep same names as in solarized-light -->
+		<!--// base** values (switched around to keep same names as in solarized-light) -->
 
-		<valueref key="base3"   type="color">#002B36</valueref>
-		<!-- Background                                 -->
-		<valueref key="base2"   type="color">#073642</valueref>
-		<!-- Background highlights                      -->
-		<valueref key="base1"   type="color">#586E75</valueref>
-		<!-- Comments / secondary content               -->
-		<valueref key="base0"   type="color">#657B83</valueref>
-		<!--                                            -->
-		<valueref key="base00"  type="color">#839496</valueref>
-		<!-- Body text / Default code / Primary content -->
-		<valueref key="base01"  type="color">#93A1A1</valueref>
-		<!-- Optional emphasized content                -->
-		<valueref key="base02"  type="color">#EEE8D5</valueref>
-		<!--                                            -->
-		<valueref key="base03"  type="color">#FDF6E3</valueref>
-		<!--                                            -->
+		<valueref key="base3"   type="color">#002B36</valueref> <!-- Background                                 -->
+		<valueref key="base2"   type="color">#073642</valueref> <!-- Background highlights                      -->
+		<valueref key="base1"   type="color">#586E75</valueref> <!-- Comments / secondary content               -->
+		<valueref key="base0"   type="color">#657B83</valueref> <!--                                            -->
+		<valueref key="base00"  type="color">#839496</valueref> <!-- Body text / Default code / Primary content -->
+		<valueref key="base01"  type="color">#93A1A1</valueref> <!-- Optional emphasized content                -->
+		<valueref key="base02"  type="color">#EEE8D5</valueref> <!--                                            -->
+		<valueref key="base03"  type="color">#FDF6E3</valueref> <!--                                            -->
 
 		<valueref key="yellow"  type="color">#B58900</valueref>
 		<valueref key="orange"  type="color">#CB4B16</valueref>
@@ -133,13 +125,16 @@ License:    Copyright (c) 2011 Ethan Schoonover
 			<property name="window.pathdisplay.button:foreground"         value="@base00"/>
 			<property name="window.pathdisplay.button:border"             value="@base00"/>
 
-			<property name="window.pathdisplay.popup:background"          value="@base3"/>
-			<property name="window.pathdisplay.popup.text:foreground"     value="@base00"/>
-			<property name="window.pathdisplay.popup.list:foreground"     value="@base2"/>
-			<property name="window.pathdisplay.popup.list:background"     value="@base01"/>
-			<property name="window.pathdisplay.popup.button:foreground"   value="@base3"/>
-			<property name="window.pathdisplay.popup.button:background"   value="@base00"/>
-			<property name="window.pathdisplay.popup.button:border"       value="@base00"/>
+			<property name="window.pathdisplay.popup:background"               value="@base3"/>
+			<property name="window.pathdisplay.popup:border"                   value="@base00"/>
+			<property name="window.pathdisplay.popup:border_thickness"         value="2"/>
+			<property name="window.pathdisplay.popup.text:foreground"          value="@base00"/>
+			<property name="window.pathdisplay.popup.list:foreground"          value="@base2"/>
+			<property name="window.pathdisplay.popup.list:background"          value="@base01"/>
+			<property name="window.pathdisplay.popup.list.selected:background" value="@Orange"/>
+			<property name="window.pathdisplay.popup.button:foreground"        value="@base3"/>
+			<property name="window.pathdisplay.popup.button:background"        value="@base00"/>
+			<property name="window.pathdisplay.popup.button:border"            value="@base00"/>
 
 			<property name="window.inlinesearch:background"               value="@base2"/>
 			<property name="window.inlinesearch:foreground"               value="@base01"/>

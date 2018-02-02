@@ -46,7 +46,7 @@ namespace AlephNote.WPF.Windows
 			_selectedTheme = App.Themes.GetByFilename(Settings.Theme, out _) 
 						  ?? App.Themes.GetByFilename("default.xml", out _)
 						  ?? AvailableThemes.FirstOrDefault()
-						  ?? App.Themes.GetDefault();
+						  ?? App.Themes.GetFallback();
 		}
 
 		public void OnBeforeClose()

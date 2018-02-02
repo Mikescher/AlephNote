@@ -1,5 +1,6 @@
 ﻿using ScintillaNET;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace AlephNote.WPF.Windows
 {
@@ -47,6 +48,15 @@ namespace AlephNote.WPF.Windows
 			SourceEdit.Styles[ScintillaNET.Style.Xml.XmlEnd].Weight              = 700;
 			SourceEdit.Styles[ScintillaNET.Style.Xml.CData].ForeColor            = System.Drawing.Color.Orange;
 
+		}
+
+		private void DataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			var item = (sender as DataGrid)?.SelectedItem as ThemeEditorViewmodel.ThemeEditorDV;
+
+			if (item == null) return;
+
+			SourceEdit.InsertText(SourceEdit.CurrentPosition, $"\r\n\t\t<property name=\"{item.Key}\" value=\"{item.Default}\"/>");
 		}
 	}
 }

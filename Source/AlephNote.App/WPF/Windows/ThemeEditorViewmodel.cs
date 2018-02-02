@@ -28,12 +28,33 @@ namespace AlephNote.WPF.Windows
 
 			private string _sourceFilename = "";
 			public string SourceFilename { get { return _sourceFilename; } set { if (_sourceFilename != value) { _sourceFilename = value; OnPropertyChanged(); } } }
+
+			public AlephTheme Parsed = null;
+		}
+
+		public class ThemeEditorDV : ObservableObject
+		{
+			private string _key = "";
+			public string Key { get { return _key; } set { if (_key != value) { _key = value; OnPropertyChanged(); } } }
+
+			private string _default = "";
+			public string Default { get { return _default; } set { if (_default != value) { _default = value; OnPropertyChanged(); } } }
+
+			private string _value = "";
+			public string Value { get { return _value; } set { if (_value != value) { _value = value; OnPropertyChanged(); } } }
+
+			private string _typestr = "";
+			public string TypeStr { get { return _typestr; } set { if (_typestr != value) { _typestr = value; OnPropertyChanged(); } } }
+
+			private bool _changed = false;
+			public bool Changed { get { return _changed; } set { if (_changed != value) { _changed = value; OnPropertyChanged(); } } }
 		}
 
 		public ObservableCollection<ThemeEditorEntry> Entries { get; set; } = new ObservableCollection<ThemeEditorEntry>();
-
+		public ObservableCollection<ThemeEditorDV> DefaultValues { get; set; } = new ObservableCollection<ThemeEditorDV>();
+		
 		private ThemeEditorEntry _selectedEntry = null;
-		public ThemeEditorEntry SelectedEntry { get { return _selectedEntry; } set { if (_selectedEntry != value) { _selectedEntry = value; OnPropertyChanged(); } } }
+		public ThemeEditorEntry SelectedEntry { get { return _selectedEntry; } set { if (_selectedEntry != value) { _selectedEntry = value; OnPropertyChanged(); PreviewCurrent(); } } }
 
 		private string _errorText = "";
 		public string ErrorText { get { return _errorText; } set { if (_errorText != value) { _errorText = value; OnPropertyChanged(); } } }
@@ -58,9 +79,24 @@ namespace AlephNote.WPF.Windows
 					Name = at.Name,
 					Source = at.Source,
 					OriginalSource = at.Source,
+					Parsed = at,
 				};
 				Entries.Add(newEntry);
-				if (at == ThemeManager.Inst.CurrentTheme) SelectedEntry = newEntry;
+				if (at == ThemeManager.Inst.CurrentTheme) _selectedEntry = newEntry;
+			}
+
+			var def = ThemeManager.Inst.Cache.GetByFilename("default.xml", out _);
+
+			foreach (var prop in ThemeManager.Inst.Cache.GetDefaultParserProperties())
+			{
+				DefaultValues.Add(new ThemeEditorDV()
+				{
+					Key = prop.Key,
+					Default = prop.Value,
+					TypeStr = prop.Value.GetType().Name,
+					Value   = SelectedEntry?.Parsed?.GetStrRepr(prop.Key),
+					Changed = SelectedEntry?.Parsed?.GetStrRepr(prop.Key) != def?.GetStrRepr(prop.Key)
+				});
 			}
 		}
 
@@ -80,6 +116,8 @@ namespace AlephNote.WPF.Windows
 
 			File.WriteAllText(Path.Combine(ThemeManager.Inst.Cache.BasePath, SelectedEntry.SourceFilename), SelectedEntry.Source, Encoding.UTF8);
 			SelectedEntry.OriginalSource = SelectedEntry.Source;
+
+			UpdateSelected();
 		}
 
 		private void ReloadCurrent()
@@ -88,6 +126,8 @@ namespace AlephNote.WPF.Windows
 			if (SelectedEntry == null) return;
 
 			SelectedEntry.OriginalSource = SelectedEntry.Source = File.ReadAllText(Path.Combine(ThemeManager.Inst.Cache.BasePath, SelectedEntry.SourceFilename));
+
+			UpdateSelected();
 		}
 
 		private void PreviewCurrent()
@@ -105,6 +145,8 @@ namespace AlephNote.WPF.Windows
 				ThemeManager.Inst.Cache.ReplaceTheme(theme);
 
 				ThemeManager.Inst.ChangeTheme(theme.SourceFilename);
+
+				UpdateSelected();
 			}
 			catch (Exception e)
 			{
@@ -132,6 +174,32 @@ namespace AlephNote.WPF.Windows
 
 				Entries.Add(newEntry);
 				SelectedEntry = newEntry;
+			}
+			catch (Exception e)
+			{
+				ErrorText = e.ToString();
+			}
+		}
+
+		private void UpdateSelected()
+		{
+			if (SelectedEntry == null) return;
+			try
+			{
+				var def = ThemeManager.Inst.Cache.GetByFilename("default.xml", out _);
+
+				var parser = new ThemeParser();
+				parser.LoadFromString(SelectedEntry.Source, SelectedEntry.SourceFilename);
+				parser.Parse(ThemeManager.Inst.Cache.GetDefaultParserProperties());
+				var theme = parser.Generate();
+
+				SelectedEntry.Name = theme.Name;
+
+				foreach (var dv in DefaultValues)
+				{
+					dv.Value   = theme.GetStrRepr(dv.Key);
+					dv.Changed = theme.GetStrRepr(dv.Key) != def?.GetStrRepr(dv.Key);
+				}
 			}
 			catch (Exception e)
 			{
