@@ -592,6 +592,38 @@ namespace AlephNote.WPF.Controls
 				treeViewItem.Focus();
 				e.Handled = true;
 			}
+
+			if (treeViewItem != null)
+			{
+				// click on item
+
+				var cms = new ContextMenu
+				{
+					Items =
+					{
+						new AutoActionMenuItem{ Header="Add subfolder", AlephAction="AddSubFolder", ParentAnchor=ParentAnchor},
+						new AutoActionMenuItem{ Header="Rename folder", AlephAction="RenameFolder", ParentAnchor=ParentAnchor},
+						new Separator(),
+						new AutoActionMenuItem{ Header="Delete folder", AlephAction="DeleteFolder", ParentAnchor=ParentAnchor},
+					}
+				};
+				FolderTreeView.ContextMenu = null;
+				WPFHelper.ExecDelayed(100, () => { FolderTreeView.ContextMenu = cms; cms.IsOpen = true; });
+			}
+			else
+			{
+				// click on free space
+
+				var cms = new ContextMenu
+				{
+					Items =
+					{
+						new AutoActionMenuItem{ Header="Add subfolder", AlephAction="AddSubFolder", ParentAnchor=ParentAnchor},
+					}
+				};
+				FolderTreeView.ContextMenu = cms;
+				cms.IsOpen = true;
+			}
 		}
 
 		public void FocusNotesList()
@@ -616,6 +648,46 @@ namespace AlephNote.WPF.Controls
 
 			FolderTreeView.Focus();
 			Keyboard.Focus(FolderTreeView);
+		}
+
+		private void NotesList_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+		{
+			ListViewItem lvi = WPFHelper.VisualLVUpwardSearch(e.OriginalSource as DependencyObject);
+
+			if (lvi != null)
+			{
+				// click on item
+
+				var cms = new ContextMenu
+				{
+					Items =
+					{
+						new AutoActionMenuItem{ Header="Export",      AlephAction="ExportNote",    ParentAnchor=ParentAnchor},
+						new AutoActionMenuItem{ Header="Duplicate",   AlephAction="DuplicateNote", ParentAnchor=ParentAnchor},
+						new AutoActionMenuItem{ Header="Pin / Unpin", AlephAction="PinUnpinNote",  ParentAnchor=ParentAnchor},
+						new Separator(),
+						new AutoActionMenuItem{ Header="Delete",      AlephAction="DeleteNote",    ParentAnchor=ParentAnchor},
+					}
+				};
+				HierachicalNotesList.ContextMenu = null;
+				WPFHelper.ExecDelayed(100, () => { HierachicalNotesList.ContextMenu = cms; cms.IsOpen = true; });
+			}
+			else
+			{
+				// click on free space
+
+				var cms = new ContextMenu
+				{
+					Items =
+					{
+						new AutoActionMenuItem{ Header="New Note",                  AlephAction="NewNote",              ParentAnchor=ParentAnchor},
+						new AutoActionMenuItem{ Header="New Note (from clipboard)", AlephAction="NewNoteFromClipboard", ParentAnchor=ParentAnchor},
+						new AutoActionMenuItem{ Header="New Note (from text file)", AlephAction="NewNoteFromTextFile",  ParentAnchor=ParentAnchor},
+					}
+				};
+				HierachicalNotesList.ContextMenu = cms;
+				cms.IsOpen = true;
+			}
 		}
 	}
 }

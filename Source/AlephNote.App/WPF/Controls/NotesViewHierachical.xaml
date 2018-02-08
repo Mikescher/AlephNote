@@ -60,17 +60,6 @@
 				<Style TargetType="{x:Type TreeViewItem}">
 					<Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}" />
 					<Setter Property="IsExpanded" Value="{Binding Path=IsExpanded, Mode=TwoWay}" />
-
-					<Setter Property="ContextMenu">
-						<Setter.Value>
-							<ContextMenu>
-								<self:AutoActionMenuItem Header="Rename folder" AlephAction="RenameFolder" ParentAnchor="{Binding ParentAnchor}" />
-								<self:AutoActionMenuItem Header="Delete folder" AlephAction="DeleteFolder" ParentAnchor="{Binding ParentAnchor}" />
-								<self:AutoActionMenuItem Header="Add subfolder" AlephAction="AddSubFolder" ParentAnchor="{Binding ParentAnchor}" />
-							</ContextMenu>
-						</Setter.Value>
-					</Setter>
-					
 				</Style>
 
 				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"     Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:background', Convert='ToColor'}" />
@@ -80,12 +69,6 @@
 				
 			</TreeView.Resources>
 
-			<TreeView.ContextMenu>
-				<ContextMenu>
-					<self:AutoActionMenuItem Header="Add folder" AlephAction="AddFolder" ParentAnchor="{Binding ParentAnchor}" />
-				</ContextMenu>
-			</TreeView.ContextMenu>
-			
 			<TreeView.ItemTemplate>
 				<HierarchicalDataTemplate ItemsSource="{Binding SubFolder}" DataType="{x:Type util:HierachicalWrapper_Folder}">
 
@@ -115,20 +98,11 @@
 					  Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list:foreground'}"
 					  ItemsSource="{Binding SelectedFolder.AllSubNotes}" 
 					  SelectedValue="{Binding SelectedNote}"
+					  MouseRightButtonUp="NotesList_MouseRightButtonUp"
 					  FontSize="{Binding Settings.ListFontSize, Converter={conv:FontSizeToInt}}" 
 					  FontFamily="{Binding Settings.ListFontFamily, Converter={conv:FontNameToFontFamily}}" 
 					  FontWeight="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontWeight}}" 
 					  FontStyle="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontStyle}}">
-
-			<ListView.ContextMenu>
-				<ContextMenu>
-					<self:AutoActionMenuItem Header="Export"      AlephAction="ExportNote"    ParentAnchor="{Binding ParentAnchor}" />
-					<self:AutoActionMenuItem Header="Duplicate"   AlephAction="DuplicateNote" ParentAnchor="{Binding ParentAnchor}" />
-					<self:AutoActionMenuItem Header="Pin / Unpin" AlephAction="PinUnpinNote"  ParentAnchor="{Binding ParentAnchor}" />
-					<Separator />
-					<self:AutoActionMenuItem Header="Delete"      AlephAction="DeleteNote"    ParentAnchor="{Binding ParentAnchor}" />
-				</ContextMenu>
-			</ListView.ContextMenu>
 
 			<!-- ReSharper disable Xaml.RedundantResource -->
 			<services:MultiDataTemplateService.MultiDataTemplate>

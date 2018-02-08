@@ -262,8 +262,6 @@
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 				
-				<Image Grid.Row="0" Source="/Resources/plus.png" Margin="2" VerticalAlignment="Top" HorizontalAlignment="Right" />
-				
 				<WindowsFormsHost Grid.Row="0" x:Name="NoteEditHost">
 					<WindowsFormsHost.Child>
 						<scinet:Scintilla x:Name="NoteEdit" AllowDrop="True"

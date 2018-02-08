@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -63,6 +64,16 @@ namespace AlephNote.WPF.Util
 				if (result != null) return result;
 			}
 			return null;
+		}
+
+		public static void ExecDelayed(int ms, Action a)
+		{
+			new Thread(() => 
+			{
+				Thread.Sleep(ms);
+				Application.Current?.Dispatcher.BeginInvoke(a);
+			}).Start();
+
 		}
 	}
 }

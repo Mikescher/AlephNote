@@ -286,9 +286,9 @@ namespace AlephNote.WPF.Controls
 
 		private void NotesList_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
 		{
-			ListViewItem treeViewItem = WPFHelper.VisualLVUpwardSearch(e.OriginalSource as DependencyObject);
+			ListViewItem lvi = WPFHelper.VisualLVUpwardSearch(e.OriginalSource as DependencyObject);
 
-			if (treeViewItem != null)
+			if (lvi != null)
 			{
 				// click on item
 
@@ -304,8 +304,7 @@ namespace AlephNote.WPF.Controls
 					}
 				};
 				NotesList.ContextMenu = null;
-				new Thread(() => { Thread.Sleep(50); Dispatcher.BeginInvoke(new Action(() => { NotesList.ContextMenu = cms; cms.IsOpen = true; })); }).Start();
-				
+				WPFHelper.ExecDelayed(50, () => { NotesList.ContextMenu = cms; cms.IsOpen = true; });
 			}
 			else
 			{
@@ -323,8 +322,6 @@ namespace AlephNote.WPF.Controls
 				NotesList.ContextMenu = cms;
 				cms.IsOpen = true;
 			}
-
-
 		}
 	}
 }
