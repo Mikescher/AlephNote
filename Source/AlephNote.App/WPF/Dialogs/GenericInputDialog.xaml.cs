@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 
 namespace AlephNote.WPF.Dialogs
 {
-	public partial class FolderNameDialog : INotifyPropertyChanged
+	public partial class GenericInputDialog : INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanged
 
@@ -23,7 +24,7 @@ namespace AlephNote.WPF.Dialogs
 		private string _dialogText = "";
 		public string DialogText { get { return _dialogText; } set { _dialogText = value; OnPropertyChanged(); } }
 
-		public FolderNameDialog()
+		private GenericInputDialog()
 		{
 			InitializeComponent();
 			RootGrid.DataContext = this;
@@ -31,12 +32,28 @@ namespace AlephNote.WPF.Dialogs
 			Keyboard.Focus(TBox);
 		}
 
-		private void Button_OK_Click(object sender, System.Windows.RoutedEventArgs e)
+		public static bool ShowInputDialog(Window owner, string text, string title, string initial, out string result)
+		{
+			var id = new GenericInputDialog();
+			id.Title = title;
+			id.DialogText = text;
+			if (owner != null) id.Owner = owner;
+			if (initial != null) id.FolderName = initial;
+
+			var r = id.ShowDialog();
+
+			if (r == true) { result = id.FolderName; return true; }
+
+			result = null;
+			return false;
+		}
+
+		private void Button_OK_Click(object sender, RoutedEventArgs e)
 		{
 			DialogResult = true;
 		}
 
-		private void Button_Cancel_Click(object sender, System.Windows.RoutedEventArgs e)
+		private void Button_Cancel_Click(object sender, RoutedEventArgs e)
 		{
 			DialogResult = false;
 		}

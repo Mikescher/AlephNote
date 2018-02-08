@@ -10,37 +10,48 @@ namespace AlephNote.WPF.Shortcuts
 {
 	public static class ShortcutManager
 	{
-		private enum ActionType { Internal=1, FromSnippet=2 }
+		[Flags]
+		public enum ActionModifier { None=0, Disabled=1, AccessControl=2, DebugOnly=4, FromSnippet=8}
 
 		private class AlephAction
 		{
-			public readonly ActionType AType;
-			public readonly Action<MainWindow> Run;
+			private readonly Func<AlephAction, MainWindow, bool> _run;
 			public readonly string Description;
+			public readonly ActionModifier Modifier;
 
-			public AlephAction(ActionType t, Action<MainWindow> e, string d) { AType = t; Run = e; Description = d; }
+			public AlephAction(Func<AlephAction, MainWindow, bool> e, string d, ActionModifier m) { _run = e; Description = d; Modifier = m; }
+
+			public bool Run(MainWindow w)
+			{
+				if (Modifier.HasFlag(ActionModifier.Disabled)) return false;
+				if (Modifier.HasFlag(ActionModifier.DebugOnly) && !App.DebugMode) return false;
+				if (Modifier.HasFlag(ActionModifier.AccessControl) && w.Settings.IsReadOnlyMode) return false;
+
+				return _run(this, w);
+			}
+
 		}
 
 		private static readonly Dictionary<string, AlephAction> _actions = new Dictionary<string, AlephAction>();
 
 		static ShortcutManager()
 		{
-			AddCommand("NewNote",              vm => vm.CreateNewNoteCommand,              "Create a new note"); 
-			AddCommand("NewNoteFromClipboard", vm => vm.CreateNewNoteFromClipboardCommand, "Create a new note from current clipboard content");
-			AddCommand("NewNoteFromTextFile",  vm => vm.CreateNewNoteFromTextfileCommand,  "Create a new note from a file");
+			AddCommand("NewNote",              vm => vm.CreateNewNoteCommand,              "Create a new note",                                        ActionModifier.AccessControl); 
+			AddCommand("NewNoteFromClipboard", vm => vm.CreateNewNoteFromClipboardCommand, "Create a new note from current clipboard content",         ActionModifier.AccessControl);
+			AddCommand("NewNoteFromTextFile",  vm => vm.CreateNewNoteFromTextfileCommand,  "Create a new note from a file",                            ActionModifier.AccessControl);
 			AddCommand("ExportNote",           vm => vm.ExportCommand,                     "Export the current note");
-			AddCommand("DeleteNote",           vm => vm.DeleteCommand,                     "Delete the current note");
-			AddCommand("DeleteFolder",         vm => vm.DeleteFolderCommand,               "Delete the current selected folder");
-			AddCommand("AddSubFolder",         vm => vm.AddSubFolderCommand,               "Add a new sub folder under the currently selected folder");
-			AddCommand("AddFolder",            vm => vm.AddFolderCommand,                  "Add a new folder");
-			AddCommand("RenameFolder",         vm => vm.RenameFolderCommand,               "Rename currently selected folder");
-			AddCommand("ChangeNotePath",       vm => vm.ChangePathCommand,                 "Change the path of the currently selected note");
-			AddCommand("DuplicateNote",        vm => vm.DuplicateNoteCommand,              "Create a new note as a copy of the current note");
-			AddCommand("PinUnpinNote",         vm => vm.PinUnpinNoteCommand,               "Pin the note to the top (or un-pin the note)");
+			AddCommand("DeleteNote",           vm => vm.DeleteCommand,                     "Delete the current note",                                  ActionModifier.AccessControl);
+			AddCommand("DeleteFolder",         vm => vm.DeleteFolderCommand,               "Delete the current selected folder",                       ActionModifier.AccessControl);
+			AddCommand("AddSubFolder",         vm => vm.AddSubFolderCommand,               "Add a new sub folder under the currently selected folder", ActionModifier.AccessControl);
+			AddCommand("AddFolder",            vm => vm.AddFolderCommand,                  "Add a new folder",                                         ActionModifier.AccessControl);
+			AddCommand("RenameFolder",         vm => vm.RenameFolderCommand,               "Rename currently selected folder",                         ActionModifier.AccessControl);
+			AddCommand("ChangeNotePath",       vm => vm.ChangePathCommand,                 "Change the path of the currently selected note",           ActionModifier.AccessControl);
+			AddCommand("DuplicateNote",        vm => vm.DuplicateNoteCommand,              "Create a new note as a copy of the current note",          ActionModifier.AccessControl);
+			AddCommand("PinUnpinNote",         vm => vm.PinUnpinNoteCommand,               "Pin the note to the top (or un-pin the note)",             ActionModifier.AccessControl);
 
 			AddCommand("SaveAndSync",          vm => vm.SaveAndSyncCommand,                "Save current note and synchronize");
 			AddCommand("Resync",               vm => vm.ResyncCommand,                     "Start synchronization with remote");
-			AddCommand("FullResync",           vm => vm.FullResyncCommand,                 "Delete local data and do a full resync");
+			AddCommand("FullResync",           vm => vm.FullResyncCommand,                 "Delete local data and do a full resync",                   ActionModifier.AccessControl);
 
 			AddCommand("DocumentSearch",       vm => vm.DocumentSearchCommand,             "Search in current note");
 			AddCommand("CloseDocumentSearch",  vm => vm.CloseDocumentSearchCommand,        "Close inline search panel");
@@ -50,6 +61,7 @@ namespace AlephNote.WPF.Shortcuts
 			AddCommand("ShowAbout",            vm => vm.ShowAboutCommand,                  "Show the about window");
 			AddCommand("ShowLog",              vm => vm.ShowLogCommand,                    "Show the log window");
 			AddCommand("AppExit",              vm => vm.ExitCommand,                       "Close the application");
+			AddCommand("AppRestart",           vm => vm.RestartCommand,                    "Restart the application");
 			AddCommand("AppHide",              vm => vm.HideCommand,                       "Hide main window");
 			AddCommand("FocusEditor",          vm => vm.FocusScintillaCommand,             "Select the note editor");
 			AddCommand("FocusNotesList",       vm => vm.FocusNotesListCommand,             "Select the note list");
@@ -59,12 +71,16 @@ namespace AlephNote.WPF.Shortcuts
 			AddCommand("CheckForUpdates",      vm => vm.ManuallyCheckForUpdatesCommand,    "Manually check for new updates");
 
 			AddCommand("ToggleAlwaysOnTop",    vm => vm.SettingAlwaysOnTopCommand,         "Change the option 'Always on top'");
-			AddCommand("ToggleLineNumbers",    vm => vm.SettingLineNumbersCommand,         "Change the option 'Show line numbers'");
+			AddCommand("ToggleLineNumbers",    vm => vm.SettingLineNumbersCommand,         "Change the option 'Show line numbers'"); 
 			AddCommand("ToggleWordWrap",       vm => vm.SettingsWordWrapCommand,           "Change the option 'Word Wrap'");
+			AddCommand("RotateTheme",          vm => vm.SettingsRotateThemeCommand,        "Change the current theme to the next available");
+			AddCommand("ToggleReadonly",       vm => vm.SettingReadonlyModeCommand,        "Change the option 'Readonly mode'");
 		}
 
 		public static void Execute(MainWindow mw, string key)
 		{
+			App.Logger.Trace("ShortcutManager", $"Execute Action [{key}]");
+
 			if (_actions.TryGetValue(key, out var action))
 			{
 				action.Run(mw);
@@ -83,24 +99,21 @@ namespace AlephNote.WPF.Shortcuts
 			return string.Empty;
 		}
 
-		public static void AddAction(string k, Action<MainWindow> a, string desc)
+		public static void AddCommand(string k, Func<MainWindowViewmodel, ICommand> a, string desc, ActionModifier mod = ActionModifier.None)
 		{
-			_actions.Add(k, new AlephAction(ActionType.Internal, a, desc));
-		}
-
-		public static void AddCommand(string k, Func<MainWindowViewmodel, ICommand> a, string desc)
-		{
-			void Exec(MainWindow w)
+			bool Exec(AlephAction src, MainWindow w)
 			{
 				var vm = w.VM;
-				if (vm != null)
-				{
-					var c = a(vm);
-					if (c.CanExecute(null)) c.Execute(null);
-				}
+				if (vm == null) return false;
+
+				var c = a(vm);
+				if (!c.CanExecute(null)) return false;
+
+				c.Execute(null);
+				return true;
 			}
 
-			_actions.Add(k, new AlephAction(ActionType.Internal, Exec, desc));
+			_actions.Add(k, new AlephAction(Exec, desc, mod));
 		}
 
 		public static bool Contains(string snipkey)
@@ -110,17 +123,19 @@ namespace AlephNote.WPF.Shortcuts
 
 		public static void AddSnippetCommand(string snippetactionkey, string snippetvalue, string displayname)
 		{
-			void Exec(MainWindow w)
+			bool Exec(AlephAction src, MainWindow w)
 			{
 				var vm = w.VM;
-				if (vm != null)
-				{
-					var c = vm.InsertSnippetCommand;
-					if (c.CanExecute(snippetvalue)) c.Execute(snippetvalue);
-				}
+				if (vm == null) return false;
+
+				var c = vm.InsertSnippetCommand;
+				if (!c.CanExecute(null)) return false;
+
+				c.Execute(snippetvalue);
+				return true;
 			}
 
-			_actions.Add(snippetactionkey, new AlephAction(ActionType.FromSnippet, Exec, $"Inserts the snippet '{displayname}'"));
+			_actions.Add(snippetactionkey, new AlephAction(Exec, $"Inserts the snippet '{displayname}'", ActionModifier.FromSnippet | ActionModifier.AccessControl));
 		}
 
 		public static ObservableCollectionNoReset<ObservableShortcutConfig> ListObservableShortcuts(AppSettings settings)
@@ -131,11 +146,11 @@ namespace AlephNote.WPF.Shortcuts
 			{
 				if (settings.Shortcuts.TryGetValue(a.Key, out var def))
 				{
-					result.Add(new ObservableShortcutConfig((int) a.Value.AType, a.Key, a.Value.Description, def.Key, def.Modifiers, def.Scope));
+					result.Add(new ObservableShortcutConfig(a.Key, a.Value.Description, def.Key, def.Modifiers, def.Scope));
 				}
 				else
 				{
-					result.Add(new ObservableShortcutConfig((int)a.Value.AType, a.Key, a.Value.Description, AlephKey.None, AlephModifierKeys.None, AlephShortcutScope.Window));
+					result.Add(new ObservableShortcutConfig(a.Key, a.Value.Description, AlephKey.None, AlephModifierKeys.None, AlephShortcutScope.Window));
 				}
 			}
 

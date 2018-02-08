@@ -22,6 +22,9 @@ using Hardcodet.Wpf.TaskbarNotification;
 using AlephNote.WPF.Converter;
 using Color = System.Drawing.Color;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
+using AlephNote.Common.Themes;
+using AlephNote.WPF.Extensions;
+using AlephNote.Common.Util;
 
 namespace AlephNote.WPF.Windows
 {
@@ -35,48 +38,17 @@ namespace AlephNote.WPF.Windows
 		private readonly ScintillaHighlighter _highlighterMarkdown = new MarkdownHighlighter();
 
 		private readonly GlobalShortcutManager _scManager;
-		private readonly bool _firstLaunch;
 
 		public AppSettings Settings => viewmodel?.Settings;
-
 		public MainWindowViewmodel VM => viewmodel;
 
 		public INotesViewControl NotesViewControl { get; private set; }
 
-		public MainWindow()
+		public MainWindow(AppSettings settings)
 		{
 			InitializeComponent();
 			Instance = this;
-
-			PluginManager.Inst.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory, App.Logger);
-
-			_firstLaunch = false;
-			AppSettings settings;
-			try
-			{
-				if (File.Exists(App.PATH_SETTINGS))
-				{
-					settings = AppSettings.Load(App.PATH_SETTINGS);
-					if (App.IsUpdateMigration)
-					{
-						settings.Migrate(App.UpdateMigrationFrom, App.UpdateMigrationTo, App.Logger);
-						settings.Save();
-					}
-				}
-				else
-				{
-					settings = AppSettings.CreateEmpty(App.PATH_SETTINGS);
-					settings.Save();
-
-					_firstLaunch = true;
-				}
-			}
-			catch (Exception e)
-			{
-				ExceptionDialog.Show(null, "Could not load settings", "Could not load settings from " + App.PATH_SETTINGS, e);
-				settings = AppSettings.CreateEmpty(App.PATH_SETTINGS);
-			}
-
+			
 			UpdateNotesViewComponent(settings);
 
 			_scManager = new GlobalShortcutManager(this);
@@ -178,12 +150,19 @@ namespace AlephNote.WPF.Windows
 
 		public void SetupScintilla(AppSettings s)
 		{
+			var theme = ThemeManager.Inst.CurrentTheme;
+
 			NoteEdit.Lexer = Lexer.Container;
 
-			NoteEdit.WhitespaceSize = 1;
+			NoteEdit.CaretForeColor          = theme.Get<ColorRef>("scintilla.caret:foreground").ToDCol();
+			NoteEdit.CaretLineBackColor      = theme.Get<ColorRef>("scintilla.caret:background").ToDCol();
+			NoteEdit.CaretLineBackColorAlpha = theme.Get<int>("scintilla.caret:background_alpha");
+			NoteEdit.CaretLineVisible        = theme.Get<bool>("scintilla.caret:visible");
+
+			NoteEdit.WhitespaceSize = theme.Get<int>("scintilla.whitespace:size");
 			NoteEdit.ViewWhitespace = s.SciShowWhitespace ? WhitespaceMode.VisibleAlways : WhitespaceMode.Invisible;
-			//NoteEdit.SetWhitespaceForeColor(true, Color.FromArgb(255, 165, 0));
-			NoteEdit.SetWhitespaceForeColor(true, Color.FromArgb(255, 195, 85));
+			NoteEdit.SetWhitespaceForeColor(!theme.Get<ColorRef>("scintilla.whitespace:color").IsTransparent, theme.Get<ColorRef>("scintilla.whitespace:color").ToDCol());
+			NoteEdit.SetWhitespaceBackColor(!theme.Get<ColorRef>("scintilla.whitespace:background").IsTransparent, theme.Get<ColorRef>("scintilla.whitespace:background").ToDCol());
 
 			UpdateMargins(s);
 			NoteEdit.BorderStyle = BorderStyle.FixedSingle;
@@ -210,6 +189,8 @@ namespace AlephNote.WPF.Windows
 
 			NoteEdit.UseTabs = s.SciUseTabs;
 			NoteEdit.TabWidth = s.SciTabWidth * 2;
+
+			NoteEdit.ReadOnly = s.IsReadOnlyMode;
 
 			ResetScintillaScrollAndUndo();
 
@@ -294,15 +275,19 @@ namespace AlephNote.WPF.Windows
 		{
 			if (s == null) return;
 
+			var theme = ThemeManager.Inst.CurrentTheme;
+
 			bool listHighlight = 
 				(s.ListMode == ListHighlightMode.Always) || 
 				(s.ListMode == ListHighlightMode.WithTag && viewmodel?.SelectedNote?.HasTagCasInsensitive(AppSettings.TAG_LIST) == true);
 
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].Width = s.SciLineNumbers ? NoteEdit.TextWidth(ScintillaHighlighter.STYLE_DEFAULT, "5555") : 0;
+			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].BackColor = theme.Get<ColorRef>("scintilla.margin.numbers:background").ToDCol();
 
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].Width = listHighlight ? (NoteEdit.Lines.FirstOrDefault()?.Height ?? 32) : 0;
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].Mask = Marker.MaskAll;
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].Sensitive = true;
+			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].BackColor = theme.Get<ColorRef>("scintilla.margin.symbols:background").ToDCol();
 
 			NoteEdit.Margins[2].Width = 0;
 
@@ -321,6 +306,11 @@ namespace AlephNote.WPF.Windows
 		public void FocusScintillaDelayed(int d = 50)
 		{
 			new Thread(() => { Thread.Sleep(d); System.Windows.Application.Current.Dispatcher.Invoke(FocusScintilla); }).Start();
+		}
+
+		public void ExecuteDelayed(int d, Action a)
+		{
+			new Thread(() => { Thread.Sleep(d); System.Windows.Application.Current.Dispatcher.BeginInvoke(a); }).Start();
 		}
 
 		public void FocusScintilla()
@@ -404,7 +394,7 @@ namespace AlephNote.WPF.Windows
 		{
 			ResetScintillaScrollAndUndo();
 
-			if (_firstLaunch)
+			if (App.IsFirstLaunch)
 			{
 				var fsw = new FirstStartupWindow(this);
 				fsw.ShowDialog();
@@ -421,6 +411,11 @@ namespace AlephNote.WPF.Windows
 			DocumentSearchBar.Show();
 		}
 
+		public IDisposable PreventScintillaFocus()
+		{
+			return VM.PreventScintillaFocusLock.Set();
+		}
+
 		public void HideDocSearchBar()
 		{
 			DocumentSearchBar.Hide();
@@ -429,6 +424,8 @@ namespace AlephNote.WPF.Windows
 		public void MainWindow_OnClosed(EventArgs args)
 		{
 			_scManager.Close();
+
+			App.Current.Shutdown();
 		}
 
 		private void OnHideDoumentSearchBox(object sender, EventArgs e)
@@ -579,34 +576,6 @@ namespace AlephNote.WPF.Windows
 			NotesViewControl = (INotesViewControl) ctrl;
 		}
 
-		public void ShowMoveFolderPopup()
-		{
-			if (VM.SelectedNote == null) return;
-
-			FolderPopupListView.Items.Clear();
-
-			foreach (var folder in NotesViewControl.ListFolder()) FolderPopupListView.Items.Add(folder);
-
-			FolderPopupListView.SelectedItem = VM.SelectedNote.Path;
-
-			FolderPopup.IsOpen = true;
-		}
-
-		private void ButtonMoveFolder_OnClick(object sender, RoutedEventArgs e)
-		{
-			if (VM.SelectedNote == null) return;
-
-			var newPath = FolderPopupListView.SelectedItem as DirectoryPath;
-			if (newPath == null) return;
-
-			if (VM.SelectedNote.Path.EqualsWithCase(newPath)) return;
-
-			VM.SelectedNote.Path = newPath;
-			VM.SelectedFolderPath = newPath;
-
-			FolderPopup.IsOpen = false;
-		}
-
 		private void NoteEdit_OnMouseWheel(object sender, MouseEventArgs e)
 		{
 			if (Settings?.FixScintillaScrollMessages != true) return;
@@ -622,6 +591,21 @@ namespace AlephNote.WPF.Windows
 		private void CDC_DoChangeAccount(object sender, ConnectionDisplayControl.AccountChangeEventArgs e)
 		{
 			VM.ChangeAccount(e.AccountID);
+		}
+
+		private void ImageLock_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			VM.ChangeSettingReadonlyMode();
+		}
+
+		private void NoteEdit_OnBeforeTextSet()
+		{
+			if (NoteEdit != null && NoteEdit.ReadOnly) NoteEdit.ReadOnly = false;
+		}
+
+		private void NoteEdit_OnAfterTextSet()
+		{
+			if (NoteEdit != null && Settings?.IsReadOnlyMode==true) NoteEdit.ReadOnly = true;
 		}
 	}
 }

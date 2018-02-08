@@ -18,6 +18,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using AlephNote.Common.MVVM;
 using AlephNote.Common.Operations;
 using AlephNote.Common.Settings;
@@ -25,10 +26,12 @@ using AlephNote.Common.Threading;
 using AlephNote.Impl;
 using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.Dialogs;
+using AlephNote.Common.Themes;
+using AlephNote.Common.Util;
 
 namespace AlephNote.WPF.Windows
 {
-	public class MainWindowViewmodel : ObservableObject, ISynchronizationFeedback
+	public class MainWindowViewmodel : ObservableObject, ISynchronizationFeedback, IThemeListener
 	{
 		public ICommand SettingsCommand { get { return new RelayCommand(ShowSettings); } }
 		public ICommand CreateNewNoteCommand { get { return new RelayCommand(CreateNote);} }
@@ -43,6 +46,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand AddSubFolderCommand { get { return new RelayCommand(AddSubFolder); } }
 		public ICommand RenameFolderCommand { get { return new RelayCommand(RenameFolder); } }
 		public ICommand ExitCommand { get { return new RelayCommand(Exit); } }
+		public ICommand RestartCommand { get { return new RelayCommand(Restart); } }
 		public ICommand ShowAboutCommand { get { return new RelayCommand(ShowAbout); } }
 		public ICommand ShowLogCommand { get { return new RelayCommand(ShowLog); } }
 		public ICommand SaveAndSyncCommand { get { return new RelayCommand(SaveAndSync); } }
@@ -51,7 +55,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand FullResyncCommand { get { return new RelayCommand(FullResync); } }
 		public ICommand ManuallyCheckForUpdatesCommand { get { return new RelayCommand(ManuallyCheckForUpdates); } }
 		public ICommand InsertSnippetCommand { get { return new RelayCommand<string>(InsertSnippet); } }
-		public ICommand ChangePathCommand { get { return new RelayCommand(ChangePath); } }
+		public ICommand ChangePathCommand { get { return new RelayCommand(() => Owner.PathEditor.ChangePath()); } }
 		public ICommand HideCommand { get { return new RelayCommand(() => Owner.Hide()); } }
 		public ICommand FocusScintillaCommand { get { return new RelayCommand(() => Owner.FocusScintilla()); } }
 		public ICommand FocusNotesListCommand { get { return new RelayCommand(() => Owner.NotesViewControl.FocusNotesList()); } }
@@ -64,14 +68,19 @@ namespace AlephNote.WPF.Windows
 		public ICommand CloseEvent { get { return new RelayCommand<EventArgs>(OnClose); } }
 		public ICommand StateChangedEvent { get { return new RelayCommand<EventArgs>(OnStateChanged); } }
 
-		public ICommand SettingAlwaysOnTopCommand { get { return new RelayCommand(ChangeSettingAlwaysOnTop); } }
-		public ICommand SettingLineNumbersCommand { get { return new RelayCommand(ChangeSettingLineNumbers); } }
-		public ICommand SettingsWordWrapCommand   { get { return new RelayCommand(ChangeSettingWordWrap); } }
+		public ICommand SettingAlwaysOnTopCommand  { get { return new RelayCommand(ChangeSettingAlwaysOnTop); } }
+		public ICommand SettingLineNumbersCommand  { get { return new RelayCommand(ChangeSettingLineNumbers); } }
+		public ICommand SettingsWordWrapCommand    { get { return new RelayCommand(ChangeSettingWordWrap); } }
+		public ICommand SettingsRotateThemeCommand { get { return new RelayCommand(ChangeSettingTheme); } }
+		public ICommand SettingReadonlyModeCommand { get { return new RelayCommand(ChangeSettingReadonlyMode); } }
 
 		public ICommand DebugCreateIpsumNotesCommand { get { return new RelayCommand<string>(s => { DebugCreateIpsumNotes(int.Parse(s)); }); } }
 		public ICommand DebugSerializeSettingsCommand { get { return new RelayCommand(DebugSerializeSettings); } }
 		public ICommand DebugSerializeNoteCommand { get { return new RelayCommand(DebugSerializeNote); } }
 		public ICommand DebugRefreshViewCommand { get { return new RelayCommand(()=> { Owner.NotesViewControl.RefreshView(); }); } }
+		public ICommand DebugShowThemeEditorCommand { get { return new RelayCommand(DebugShowThemeEditor); } }
+		public ICommand DebugShowDefaultThemeCommand { get { return new RelayCommand(DebugShowDefaultTheme); } }
+		public ICommand DebugDiscoThemeCommand { get { return new RelayCommand(DebugDiscoTheme); } }
 
 		private AppSettings _settings;
 		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); SettingsChanged(); } }
@@ -119,12 +128,14 @@ namespace AlephNote.WPF.Windows
 
 		public string FullVersion { get { return "AlephNote v" + App.APP_VERSION; } }
 
+		bool IThemeListener.IsTargetAlive => true;
+
 		private readonly SynchronizationDispatcher dispatcher = new SynchronizationDispatcher();
 		private readonly DelayedCombiningInvoker _invSaveSettings;
 		private readonly SimpleParamStringParser _spsParser = new SimpleParamStringParser();
 		private readonly ScrollCache _scrollCache;
 
-		private bool _preventScintillaFocus = false;
+		public readonly StackingBool PreventScintillaFocusLock = new StackingBool();
 		private bool _forceClose = false;
 
 		public readonly MainWindow Owner;
@@ -136,10 +147,10 @@ namespace AlephNote.WPF.Windows
 			_settings = settings;
 			_invSaveSettings = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SaveSettings)), 8 * 1000, 60 * 1000);
 
-			_repository = new NoteRepository(App.PATH_LOCALDB, this, settings, settings.ActiveAccount, App.Logger, dispatcher);
+			_repository = new NoteRepository(App.PATH_LOCALDB, this, settings, settings.ActiveAccount, dispatcher);
 			Repository.Init();
 
-			_scrollCache = Settings.RememberScroll ? ScrollCache.LoadFromFile(App.PATH_SCROLLCACHE, App.Logger) : ScrollCache.CreateEmpty(App.PATH_SCROLLCACHE, App.Logger);
+			_scrollCache = Settings.RememberScroll ? ScrollCache.LoadFromFile(App.PATH_SCROLLCACHE) : ScrollCache.CreateEmpty(App.PATH_SCROLLCACHE);
 
 			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
 
@@ -171,6 +182,8 @@ namespace AlephNote.WPF.Windows
 #endif
 
 			SettingsChanged();
+
+			ThemeManager.Inst.RegisterSlave(this);
 		}
 
 		private void ShowSettings()
@@ -192,7 +205,7 @@ namespace AlephNote.WPF.Windows
 			}
 			catch (Exception e)
 			{
-				ExceptionDialog.Show(Owner, "Cannot create note", e);
+				ExceptionDialog.Show(Owner, "Cannot create note", e, string.Empty);
 			}
 		}
 
@@ -209,6 +222,7 @@ namespace AlephNote.WPF.Windows
 					(Settings.UseHierachicalNoteStructure != newSettings.UseHierachicalNoteStructure);
 				var refreshNotesViewTemplate = (Settings.UseHierachicalNoteStructure != newSettings.UseHierachicalNoteStructure);
 				var refreshNotesCtrlView = (Settings.NoteSorting != newSettings.NoteSorting) || (Settings.SortByPinned != newSettings.SortByPinned);
+				var refreshNotesTheme    = (Settings.Theme != newSettings.Theme);
 
 				if (reconnectRepo)
 				{
@@ -219,7 +233,7 @@ namespace AlephNote.WPF.Windows
 					catch (Exception e)
 					{
 						App.Logger.Error("Main", "Shutting down current connection failed", e);
-						ExceptionDialog.Show(Owner, "Shutting down current connection failed.\r\nConnection will be forcefully aborted", e);
+						ExceptionDialog.Show(Owner, "Shutting down current connection failed.\r\nConnection will be forcefully aborted", e, string.Empty);
 						_repository.KillThread();
 					}
 				}
@@ -229,9 +243,11 @@ namespace AlephNote.WPF.Windows
 				Settings.Save();
 				App.Logger.Trace("Main", $"Settings saved in {sw2.ElapsedMilliseconds}ms");
 
+				if (refreshNotesTheme) ThemeManager.Inst.ChangeTheme(Settings.Theme);
+
 				if (reconnectRepo)
 				{
-					_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.ActiveAccount, App.Logger, dispatcher);
+					_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.ActiveAccount, dispatcher);
 					_repository.Init();
 
 					OnExplicitPropertyChanged("Repository");
@@ -271,7 +287,7 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				App.Logger.Error("Main", "Apply Settings failed", e);
-				ExceptionDialog.Show(Owner, "Apply Settings failed.\r\nSettings and Local notes could be in an invalid state.\r\nContinue with caution.", e);
+				ExceptionDialog.Show(Owner, "Apply Settings failed.\r\nSettings and Local notes could be in an invalid state.\r\nContinue with caution.", e, string.Empty);
 			}
 		}
 
@@ -294,7 +310,7 @@ namespace AlephNote.WPF.Windows
 
 			Owner.ResetScintillaScrollAndUndo();
 			if (Settings != null) Owner.UpdateMargins(Settings);
-			if (!_preventScintillaFocus && Settings?.AutofocusScintilla == true) Owner.FocusScintillaDelayed();
+			if (!PreventScintillaFocusLock.Value && Settings?.AutofocusScintilla == true) Owner.FocusScintillaDelayed();
 
 			if (SelectedNote != null) ScintillaSearcher.Highlight(Owner.NoteEdit, SelectedNote, SearchText);
 
@@ -443,7 +459,7 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				App.Logger.Error("Main", "Shutting down connection failed", e);
-				ExceptionDialog.Show(Owner, "Shutting down connection failed.\r\nConnection will be forcefully aborted.", e);
+				ExceptionDialog.Show(Owner, "Shutting down connection failed.\r\nConnection will be forcefully aborted.", e, string.Empty);
 				_repository.KillThread();
 			}
 
@@ -492,7 +508,7 @@ namespace AlephNote.WPF.Windows
 				catch (Exception e)
 				{
 					App.Logger.Error("Main", "Could not write to file", e);
-					ExceptionDialog.Show(Owner, "Could not write to file", e);
+					ExceptionDialog.Show(Owner, "Could not write to file", e, string.Empty);
 				}
 			}
 		}
@@ -512,7 +528,7 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				App.Logger.Error("Main", "Could not delete note", e);
-				ExceptionDialog.Show(Owner, "Could not delete note", e);
+				ExceptionDialog.Show(Owner, "Could not delete note", e, string.Empty);
 			}
 		}
 
@@ -522,7 +538,7 @@ namespace AlephNote.WPF.Windows
 			{
 				var fp = SelectedFolderPath;
 
-				if (fp == null || fp.IsRoot()) return;
+				if (fp == null || HierachicalBaseWrapper.IsSpecial(fp)) return;
 
 				var delNotes = Repository.Notes.Where(n => n.Path.IsPathOrSubPath(fp)).ToList();
 
@@ -540,31 +556,26 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				App.Logger.Error("Main", "Could not delete folder", e);
-				ExceptionDialog.Show(Owner, "Could not delete folder", e);
+				ExceptionDialog.Show(Owner, "Could not delete folder", e, string.Empty);
 			}
 		}
 
 		private void AddSubFolder()
 		{
-			var fnd = new FolderNameDialog {DialogText = "Insert the name for the new subfolder", Owner = Owner };
-
-			if (fnd.ShowDialog() != true) return;
-
-			var foldercomponent = fnd.FolderName;
+			if (!GenericInputDialog.ShowInputDialog(Owner, "Insert the name for the new subfolder", "Folder name", "", out var foldercomponent)) return;
 			if (string.IsNullOrWhiteSpace(foldercomponent)) return;
 
-			var path = SelectedFolderPath.SubDir(foldercomponent);
+			var currentPath = SelectedFolderPath;
+			if (currentPath == null || HierachicalBaseWrapper.IsSpecial(currentPath)) currentPath = DirectoryPath.Root();
+
+			var path = currentPath.SubDir(foldercomponent);
 
 			Owner.NotesViewControl.AddFolder(path);
 		}
 
 		private void AddRootFolder()
 		{
-			var fnd = new FolderNameDialog { DialogText = "Insert the name for the new folder", Owner = Owner };
-
-			if (fnd.ShowDialog() != true) return;
-
-			var foldercomponent = fnd.FolderName;
+			if (!GenericInputDialog.ShowInputDialog(Owner, "Insert the name for the new folder", "Folder name", "", out var foldercomponent)) return;
 			if (string.IsNullOrWhiteSpace(foldercomponent)) return;
 
 			var path = DirectoryPath.Create(Enumerable.Repeat(foldercomponent, 1));
@@ -577,13 +588,11 @@ namespace AlephNote.WPF.Windows
 			try
 			{
 				var oldPath = SelectedFolderPath;
-				if (oldPath.IsRoot()) return;
+				if (HierachicalBaseWrapper.IsSpecial(oldPath)) return;
 
-				var fnd = new FolderNameDialog { DialogText = "Insert the new name for the folder", FolderName = oldPath.GetLastComponent(), Owner = Owner};
+				if (!GenericInputDialog.ShowInputDialog(Owner, "Insert the name for the folder", "Folder name", oldPath.GetLastComponent(), out var newFolderName)) return;
 
-				if (fnd.ShowDialog() != true) return;
-
-				var newPath = oldPath.ParentPath().SubDir(fnd.FolderName);
+				var newPath = oldPath.ParentPath().SubDir(newFolderName);
 
 				if (newPath.EqualsWithCase(oldPath)) return;
 
@@ -602,7 +611,7 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				App.Logger.Error("Main", "Could not rename folder", e);
-				ExceptionDialog.Show(Owner, "Could not rename folder", e);
+				ExceptionDialog.Show(Owner, "Could not rename folder", e, string.Empty);
 			}
 		}
 
@@ -610,6 +619,19 @@ namespace AlephNote.WPF.Windows
 		{
 			_forceClose = true;
 			Owner.Close();
+		}
+
+		public void Restart()
+		{
+			_forceClose = true;
+			Owner.Close();
+
+			ProcessStartInfo Info = new ProcessStartInfo();
+			Info.Arguments = "/C ping 127.0.0.1 -n 3 && \"" + Environment.GetCommandLineArgs()[0] + "\"";
+			Info.WindowStyle = ProcessWindowStyle.Hidden;
+			Info.CreateNoWindow = true;
+			Info.FileName = "cmd.exe";
+			Process.Start(Info);
 		}
 
 		private void ShowAbout()
@@ -632,7 +654,7 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				App.Logger.Error("Main", "Synchronization failed", e);
-				ExceptionDialog.Show(Owner, "Synchronization failed", e);
+				ExceptionDialog.Show(Owner, "Synchronization failed", e, string.Empty);
 			}
 		}
 
@@ -648,7 +670,7 @@ namespace AlephNote.WPF.Windows
 
 				Repository.DeleteLocalData();
 
-				_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.ActiveAccount, App.Logger, dispatcher);
+				_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.ActiveAccount, dispatcher);
 				_repository.Init();
 
 				OnExplicitPropertyChanged("Repository");
@@ -658,7 +680,7 @@ namespace AlephNote.WPF.Windows
 			catch (Exception e)
 			{
 				App.Logger.Error("Main", "Full Synchronization failed", e);
-				ExceptionDialog.Show(Owner, "Full Synchronization failed", e);
+				ExceptionDialog.Show(Owner, "Full Synchronization failed", e, string.Empty);
 			}
 		}
 
@@ -666,29 +688,23 @@ namespace AlephNote.WPF.Windows
 		{
 			var sn = SelectedNote;
 
-			_preventScintillaFocus = true;
+			using (PreventScintillaFocusLock.Set())
 			{
 				Owner.NotesViewControl.RefreshView();
-				if (Owner.NotesViewControl.Contains(sn)) 
+				if (Owner.NotesViewControl.Contains(sn))
 					SelectedNote = sn;
 				else
 					SelectedNote = Owner.NotesViewControl.GetTopNote();
 			}
-			_preventScintillaFocus = false;
 
 			if (SelectedNote != null) ScintillaSearcher.Highlight(Owner.NoteEdit, SelectedNote, SearchText);
 		}
 
 		public void SetSelectedNoteWithoutFocus(INote n)
 		{
-			try
+			using (PreventScintillaFocusLock.Set())
 			{
-				_preventScintillaFocus = true;
 				SelectedNote = n;
-			}
-			finally
-			{
-				_preventScintillaFocus = false;
 			}
 		}
 
@@ -706,7 +722,7 @@ namespace AlephNote.WPF.Windows
 		{
 			try
 			{
-				var ghc = new GithubConnection(App.Logger);
+				var ghc = new GithubConnection();
 				var r = ghc.GetLatestRelease();
 
 				if (r.Item1 > App.APP_VERSION)
@@ -740,7 +756,7 @@ namespace AlephNote.WPF.Windows
 			try
 			{
 				Thread.Sleep(1000);
-				var ghc = new GithubConnection(App.Logger);
+				var ghc = new GithubConnection();
 				var r = ghc.GetLatestRelease();
 
 				if (r.Item1 > App.APP_VERSION)
@@ -759,7 +775,7 @@ namespace AlephNote.WPF.Windows
 			try
 			{
 				Thread.Sleep(3000);
-				var asc = new StatsConnection(Settings, Repository, App.Logger);
+				var asc = new StatsConnection(Settings, Repository);
 				asc.UploadStatistics(App.APP_VERSION);
 			}
 			catch (Exception e)
@@ -808,6 +824,27 @@ namespace AlephNote.WPF.Windows
 			DebugTextWindow.Show(Owner, XHelper.ConvertToStringFormatted(Repository.SerializeNote(SelectedNote)), "XHelper.ConvertToStringFormatted(Repository.SerializeNote(SelectedNote))");
 		}
 
+		private void DebugShowThemeEditor()
+		{
+			var w = new ThemeEditor() { Owner = Owner };
+			w.Show();
+		}
+
+		private void DebugShowDefaultTheme()
+		{
+			ThemeManager.Inst.ChangeTheme(ThemeManager.Inst.Cache.GetFallback());
+		}
+
+		private void DebugDiscoTheme()
+		{
+			var tmr = new DispatcherTimer(TimeSpan.FromSeconds(0.05), DispatcherPriority.Normal, (a, e) =>
+			{
+				ThemeManager.Inst.ChangeTheme(ThemeManager.Inst.Cache.GetFallback());
+			}, Application.Current.Dispatcher);
+
+			tmr.Start();
+		}
+
 		private string CreateLoremIpsum(int len, int linelen)
 		{
 			var words = Regex.Split(Properties.Resources.LoremIpsum, @"\r?\n");
@@ -824,23 +861,44 @@ namespace AlephNote.WPF.Windows
 
 		private void ChangeSettingAlwaysOnTop()
 		{
-			Settings.AlwaysOnTop = !Settings.AlwaysOnTop;
-
-			ChangeSettings(Settings);
+			var ns = Settings.Clone();
+			ns.AlwaysOnTop = !ns.AlwaysOnTop;
+			ChangeSettings(ns);
 		}
 		
 		private void ChangeSettingLineNumbers()
 		{
-			Settings.SciLineNumbers = !Settings.SciLineNumbers;
-
-			ChangeSettings(Settings);
+			var ns = Settings.Clone();
+			ns.SciLineNumbers = !ns.SciLineNumbers;
+			ChangeSettings(ns);
 		}
 
 		private void ChangeSettingWordWrap()
 		{
+			var ns = Settings.Clone();
 			Settings.SciWordWrap = !Settings.SciWordWrap;
-
 			ChangeSettings(Settings);
+		}
+
+		public void ChangeSettingReadonlyMode()
+		{
+			var ns = Settings.Clone();
+			Settings.IsReadOnlyMode = !Settings.IsReadOnlyMode;
+			ChangeSettings(Settings);
+		}
+
+		private void ChangeSettingTheme()
+		{
+			var themes = ThemeManager.Inst.Cache.GetAllAvailable();
+
+			var idx = themes.IndexOf(ThemeManager.Inst.CurrentTheme);
+			if (idx < 0) return;
+
+			idx = (idx + 1) % themes.Count;
+
+			var ns = Settings.Clone();
+			ns.Theme = themes[idx].SourceFilename;
+			ChangeSettings(ns);
 		}
 
 		public void OnNewNoteDrop(IDataObject data)
@@ -963,14 +1021,6 @@ namespace AlephNote.WPF.Windows
 			Owner.FocusScintilla();
 		}
 
-		private void ChangePath()
-		{
-			if (SelectedNote == null) return;
-			if (!Settings.UseHierachicalNoteStructure) return;
-
-			Owner.ShowMoveFolderPopup();
-		}
-
 		private void DuplicateNote()
 		{
 			if (SelectedNote == null) return;
@@ -999,7 +1049,11 @@ namespace AlephNote.WPF.Windows
 			if (SelectedNote == null) return;
 
 			SelectedNote.IsPinned = !SelectedNote.IsPinned;
+		}
 
+		public void OnThemeChanged()
+		{
+			Owner.SetupScintilla(Settings);
 		}
 	}
 }

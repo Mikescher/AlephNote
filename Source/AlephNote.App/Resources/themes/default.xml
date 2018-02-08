@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+============================
+	THEME FILE FOR ALEPHNOTE  
+============================
+
+Theme:      AlephNote default theme
+
+Repository: https://github.com/Mikescher/AlephNote
+
+-->
+<theme>
+	<meta>
+		<name>Default</name>
+		<version>1.0</version>
+		<compatibility>1.6.X</compatibility>
+	</meta>
+
+	<ref>
+		<!-- Standard .Net colors ( http://yorktown.cbe.wwu.edu/sandvig/shared/NetColors.aspx ) -->
+		<valueref key="Transparent"    type="color">#00000000</valueref>
+		<valueref key="Black"          type="color">#000000</valueref>
+		<valueref key="White"          type="color">#FFFFFF</valueref>
+		<valueref key="Red"            type="color">#FF0000</valueref>
+		<valueref key="Lime"           type="color">#00FF00</valueref>
+		<valueref key="Green"          type="color">#008000</valueref>
+		<valueref key="Blue"           type="color">#0000FF</valueref>
+		<valueref key="Yellow"         type="color">#FFFF00</valueref>
+		<valueref key="DarkGray"       type="color">#A9A9A9</valueref>
+		<valueref key="LightGray"      type="color">#D3D3D3</valueref>
+		<valueref key="SeaShell"       type="color">#FFF5EE</valueref>
+		<valueref key="CornflowerBlue" type="color">#6495ED</valueref>
+		<valueref key="Linen"          type="color">#FAF0E6</valueref>
+		<valueref key="Gainsboro"      type="color">#DCDCDC</valueref>
+		<valueref key="Beige"          type="color">#F5F5DC</valueref>
+		<valueref key="Firebrick"      type="color">#B22222</valueref>
+		<valueref key="Gray"           type="color">#808080</valueref>
+		<valueref key="DarkGreen"      type="color">#006400</valueref>
+		<valueref key="DimGray"        type="color">#696969</valueref>
+		<valueref key="Brown"          type="color">#A52A2A</valueref>
+		<valueref key="Snow"           type="color">#FFFAFA</valueref>
+	</ref>
+
+	<data>
+
+		<group name="scintilla">
+
+			<property name="scintilla.background"            value="@White"/>
+			
+			<property name="scintilla.whitespace:size"       value="1"/>
+			<property name="scintilla.whitespace:color"      value="#FFC355"/>
+			<property name="scintilla.whitespace:background" value="@Transparent"/>
+
+			<property name="scintilla.caret:foreground"       value="$scintilla.default:foreground"/>
+			<property name="scintilla.caret:background"       value="@Yellow"/>
+			<property name="scintilla.caret:background_alpha" value="256"/>
+			<property name="scintilla.caret:visible"          value="false"/>
+
+			<group name="default">
+				<property name="scintilla.default:foreground" value="@Black"/>
+				<property name="scintilla.default:underline"  value="false"/>
+				<property name="scintilla.default:background" value="$scintilla.background"/>
+				<property name="scintilla.default:bold"       value="false"/>
+				<property name="scintilla.default:italic"     value="false"/>
+			</group>
+			
+			<group name="link">
+				<property name="scintilla.link:foreground" value="@Blue"/>
+				<property name="scintilla.link:underline"  value="true"/>
+				<property name="scintilla.link:background" value="$scintilla.background"/>
+				<property name="scintilla.link:bold"       value="false"/>
+				<property name="scintilla.link:italic"     value="false"/>
+			</group>
+
+			<group name="markdown">
+				<property name="scintilla.markdown.default:foreground"     value="$scintilla.default:foreground"/>
+				<property name="scintilla.markdown.default:underline"      value="false"/>
+				<property name="scintilla.markdown.default:background"     value="$scintilla.background"/>
+				<property name="scintilla.markdown.default:bold"           value="false"/>
+				<property name="scintilla.markdown.default:italic"         value="false"/>
+
+				<property name="scintilla.markdown.emph:foreground"        value="$scintilla.markdown.default:foreground"/>
+				<property name="scintilla.markdown.emph:underline"         value="false"/>
+				<property name="scintilla.markdown.emph:background"        value="$scintilla.markdown.default:background"/>
+				<property name="scintilla.markdown.emph:bold"              value="false"/>
+				<property name="scintilla.markdown.emph:italic"            value="true"/>
+
+				<property name="scintilla.markdown.strong_emph:foreground" value="$scintilla.markdown.default:foreground"/>
+				<property name="scintilla.markdown.strong_emph:underline"  value="false"/>
+				<property name="scintilla.markdown.strong_emph:background" value="$scintilla.markdown.default:background"/>
+				<property name="scintilla.markdown.strong_emph:bold"       value="true"/>
+				<property name="scintilla.markdown.strong_emph:italic"     value="false"/>
+
+				<property name="scintilla.markdown.header:foreground"      value="@Firebrick"/>
+				<property name="scintilla.markdown.header:underline"       value="false"/>
+				<property name="scintilla.markdown.header:background"      value="$scintilla.markdown.default:background"/>
+				<property name="scintilla.markdown.header:bold"            value="false"/>
+				<property name="scintilla.markdown.header:italic"          value="false"/>
+
+				<property name="scintilla.markdown.code:foreground"        value="@Green"/>
+				<property name="scintilla.markdown.code:underline"         value="false"/>
+				<property name="scintilla.markdown.code:background"        value="$scintilla.markdown.default:background"/>
+				<property name="scintilla.markdown.code:bold"              value="false"/>
+				<property name="scintilla.markdown.code:italic"            value="false"/>
+
+				<property name="scintilla.markdown.list:foreground"        value="@Gray"/>
+				<property name="scintilla.markdown.list:underline"         value="false"/>
+				<property name="scintilla.markdown.list:background"        value="$scintilla.markdown.default:background"/>
+				<property name="scintilla.markdown.list:bold"              value="false"/>
+				<property name="scintilla.markdown.list:italic"            value="false"/>
+
+				<property name="scintilla.markdown.url:foreground"         value="@Blue"/>
+				<property name="scintilla.markdown.url:underline"          value="false"/>
+				<property name="scintilla.markdown.url:background"         value="$scintilla.markdown.default:background"/>
+				<property name="scintilla.markdown.url:bold"               value="false"/>
+				<property name="scintilla.markdown.url:italic"             value="false"/>
+			</group>
+
+			<group name="search">
+				<property name="scintilla.search.local:color"          value="@Red"/>
+				<property name="scintilla.search.local:alpha"          value="64"/>
+				<property name="scintilla.search.local:outline_alpha"  value="196"/>
+				<property name="scintilla.search.local:under_text"     value="true"/>
+
+				<property name="scintilla.search.global:color"         value="@DarkGreen"/>
+				<property name="scintilla.search.global:alpha"         value="96"/>
+				<property name="scintilla.search.global:outline_alpha" value="196"/>
+				<property name="scintilla.search.global:under_text"    value="true"/>
+			</group>
+
+			<group name="margin">
+				<property name="scintilla.margin.numbers:foreground" value="$scintilla.default:foreground"/>
+				<property name="scintilla.margin.numbers:underline"  value="false"/>
+				<property name="scintilla.margin.numbers:background" value="#F0F0F0"/>
+				<property name="scintilla.margin.numbers:bold"       value="false"/>
+				<property name="scintilla.margin.numbers:italic"     value="false"/>
+
+				<property name="scintilla.margin.symbols:background" value="@Transparent"/>
+			</group>
+			
+		</group>
+
+		<group name="window">
+			
+			<property name="window.background"            value="@White"/>
+			<property name="window.foreground"            value="@Black"/>
+			<property name="window.splitter"              value="#F0F0F0"/>
+
+			<property name="window.notetitle:foreground"  value="@CornflowerBlue"/>
+			<property name="window.changedate:foreground" value="@DarkGray"/>
+
+			<group name="menubar">
+				<property name="window.menubar:background"           value="gradient-v://0.25:#FFF6F6F6|0.25:#FFEAE8E8|0.80:#FFDCD9D9|1.00:#FFFFFFFF"/>
+				<property name="window.menubar:foreground"           value="@black"/>
+			</group>
+			
+			<group name="tageditor">
+				<property name="window.tageditor.popup:background"            value="#EEEEEE"/>
+				<property name="window.tageditor.popup:bordercolor"           value="@LightGray"/>
+				<property name="window.tageditor.popup:foreground"            value="$window.foreground"/>
+
+				<property name="window.tageditor.placeholder"                 value="#888888"/>
+				<property name="window.tageditor.foreground"                  value="$window.foreground"/>
+
+				<property name="window.tageditor.tag:background"              value="@SeaShell"/>
+				<property name="window.tageditor.tag:bordercolor_default"     value="@LightGray"/>
+				<property name="window.tageditor.tag:bordercolor_highlighted" value="@Black"/>
+				<property name="window.tageditor.tag:foreground"              value="$window.foreground"/>
+			</group>
+
+			<group name="pathdisplay">
+				<property name="window.pathdisplay:foregroud"                 value="$window.foreground"/>
+
+				<property name="window.pathdisplay.element:foregroud"         value="$window.foreground"/>
+				<property name="window.pathdisplay.element:background"        value="$window.background"/>
+				<property name="window.pathdisplay.element:background_hover"  value="@Linen"/>
+				<property name="window.pathdisplay.element:border"            value="@LightGray"/>
+
+				<property name="window.pathdisplay.button:foreground"         value="@Black"/>
+				<property name="window.pathdisplay.button:background"         value="@White"/>
+				<property name="window.pathdisplay.button:border"             value="#707070"/>
+
+				<property name="window.pathdisplay.popup:background"               value="@Beige"/>
+				<property name="window.pathdisplay.popup:border"                   value="$window.pathdisplay.popup:background"/>
+				<property name="window.pathdisplay.popup:border_thickness"         value="0"/>
+				<property name="window.pathdisplay.popup.text:foreground"          value="$window.foreground"/>
+				<property name="window.pathdisplay.popup.list:foreground"          value="$window.foreground"/>
+				<property name="window.pathdisplay.popup.list:background"          value="$window.background"/>
+				<property name="window.pathdisplay.popup.list.selected:foreground" value="$window.pathdisplay.popup.list:foreground"/>
+				<property name="window.pathdisplay.popup.list.selected:background" value="#B9D1EA"/>
+				<property name="window.pathdisplay.popup.button:foreground"        value="@Black"/>
+				<property name="window.pathdisplay.popup.button:background"        value="@White"/>
+				<property name="window.pathdisplay.popup.button:border"            value="@Beige"/>
+			</group>
+
+			<group name="inlinesearch">
+				<property name="window.inlinesearch:background"               value="@Gainsboro"/>
+				<property name="window.inlinesearch:foreground"               value="@Black"/>
+				
+				<property name="window.inlinesearch.textbox:background"       value="@White"/>
+				<property name="window.inlinesearch.textbox:foreground"       value="@Black"/>
+				
+				<property name="window.inlinesearch.btnSearch:background"     value="@Transparent"/>
+				<property name="window.inlinesearch.btnSearch:foreground"     value="@Black"/>
+				
+				<property name="window.inlinesearch.btnCaseIns:background"    value="@Transparent"/>
+				<property name="window.inlinesearch.btnCaseIns:foreground"    value="@Black"/>
+				
+				<property name="window.inlinesearch.btnWholeWord:background"  value="@Transparent"/>
+				<property name="window.inlinesearch.btnWholeWord:foreground"  value="@Black"/>
+				
+				<property name="window.inlinesearch.btnRegex:background"      value="@Transparent"/>
+				<property name="window.inlinesearch.btnRegex:foreground"      value="@Black"/>
+			</group>
+
+			<group name="globalsearch">
+				<property name="window.globalsearch.input:background"         value="@White"/>
+				<property name="window.globalsearch.input:foreground"         value="@Black"/>
+				<property name="window.globalsearch.input:border"             value="#E3E9EF"/>
+				
+				<property name="window.globalsearch.placeholder:foreground"   value="#888888"/>
+				
+				<property name="window.globalsearch.button:background"        value="@White"/>
+				<property name="window.globalsearch.button:foreground"        value="@Black"/>
+				<property name="window.globalsearch.button:border"            value="@Black"/>
+				<property name="window.globalsearch.button:border_thickness"  value="0"/>
+			</group>
+
+			<group name="notesview">
+				<group name="flat">
+					<property name="window.notesview.flat:background"           value="@White"/>
+					<property name="window.notesview.flat:foreground"           value="@Black"/>
+					<property name="window.notesview.flat.selected:background"  value="#B9D1EA"/>
+					<property name="window.notesview.flat.selected:foreground"  value="@Black"/>
+					<property name="window.notesview.flat.datetime1:foreground" value="@DimGray"/>
+					<property name="window.notesview.flat.datetime2:foreground" value="@Brown"/>
+					<property name="window.notesview.flat.preview:foreground"   value="@DarkGray"/>
+					<property name="window.notesview.flat.separator"            value="@Snow"/>
+				</group>
+				
+				<group name="hierachical">
+					<property name="window.notesview.hierachical.list:background"           value="$window.notesview.flat:background"/>
+					<property name="window.notesview.hierachical.list:foreground"           value="$window.notesview.flat:foreground"/>
+					<property name="window.notesview.hierachical.list.selected:background"  value="$window.notesview.flat.selected:background"/>
+					<property name="window.notesview.hierachical.list.selected:foreground"  value="$window.notesview.flat.selected:foreground"/>
+					<property name="window.notesview.hierachical.list.datetime1:foreground" value="$window.notesview.flat.datetime1:foreground"/>
+					<property name="window.notesview.hierachical.list.datetime2:foreground" value="$window.notesview.flat.datetime2:foreground"/>
+					<property name="window.notesview.hierachical.list.preview:foreground"   value="$window.notesview.flat.preview:foreground"/>
+					<property name="window.notesview.hierachical.list.separator"            value="$window.notesview.flat.separator"/>
+					
+					<property name="window.notesview.hierachical.splitter"                  value="$window.splitter"/>
+
+					<property name="window.notesview.hierachical.tree:background"           value="$window.notesview.flat:background"/>
+					<property name="window.notesview.hierachical.tree:foreground"           value="$window.notesview.flat:foreground"/>
+					<property name="window.notesview.hierachical.tree.selected:background"  value="#3399FF"/>
+					<property name="window.notesview.hierachical.tree.selected:foreground"  value="@Black"/>
+				</group>
+			</group>
+
+			<group name="statusbar">
+				<property name="window.statusbar:background"           value="#F1EDED"/>
+				<property name="window.statusbar:foreground"           value="#000000"/>
+
+				<property name="window.statusbar.btnReload:background" value="@Transparent"/>
+				<property name="window.statusbar.btnReload:foreground" value="@Black"/>
+				<property name="window.statusbar.btnReload:border"     value="@Black"/>
+			</group>
+			
+		</group>
+		
+	</data>
+</theme>

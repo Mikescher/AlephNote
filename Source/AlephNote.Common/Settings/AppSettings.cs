@@ -9,6 +9,7 @@ using AlephNote.Common.AlephXMLSerialization;
 using AlephNote.Common.MVVM;
 using AlephNote.Common.Plugins;
 using AlephNote.Common.Settings.Types;
+using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Objects.AXML;
 using AlephNote.PluginInterface.Util;
@@ -71,10 +72,6 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public string NoteFontFamily { get { return _noteFontFamily; } set { _noteFontFamily = value; OnPropertyChanged(); } }
 		private string _noteFontFamily = string.Empty;
-
-		[AlephXMLField]
-		public FontModifier NoteFontModifier { get { return _noteFontModifier; } set { _noteFontModifier = value; OnPropertyChanged(); } }
-		private FontModifier _noteFontModifier = FontModifier.Normal;
 
 		[AlephXMLField]
 		public FontSize NoteFontSize { get { return _noteFontSize; } set { _noteFontSize = value; OnPropertyChanged(); } }
@@ -344,6 +341,18 @@ namespace AlephNote.Common.Settings
 		public bool FolderViewShowAllNotesNode { get { return _folderViewAllNotesNode; } set { _folderViewAllNotesNode = value; OnPropertyChanged(); } }
 		private bool _folderViewAllNotesNode = true;
 
+		[AlephXMLField]
+		public string Theme { get { return _theme; } set { _theme = value; OnPropertyChanged(); } }
+		private string _theme = "default.xml";
+
+		[AlephXMLField]
+		public bool IsReadOnlyMode { get { return _isReadonlyMode; } set { _isReadonlyMode = value; OnPropertyChanged(); } }
+		private bool _isReadonlyMode = false;
+
+		[AlephXMLField]
+		public bool ShowReadonlyLock { get { return _showReadonlyLock; } set { _showReadonlyLock = value; OnPropertyChanged(); } }
+		private bool _showReadonlyLock = false;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;
@@ -528,26 +537,26 @@ namespace AlephNote.Common.Settings
 			ShortcutDefinition.DEFAULT);
 		}
 
-		public void Migrate(Version from, Version to, IAlephLogger log)
+		public void Migrate(Version from, Version to)
 		{
 			var v1_6_4 = new Version(1, 6, 4, 0);
 			var v1_6_6 = new Version(1, 6, 6, 0);
 
-			log.Info("AppSettings", $"Migrate settings from {from} to {to}");
+			LoggerSingleton.Inst.Info("AppSettings", $"Migrate settings from {from} to {to}");
 
 			if (from < v1_6_4)
 			{
-				log.Info("AppSettings", "(Migration) Insert shortcut for [DeleteFolder]");
+				LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [DeleteFolder]");
 				Shortcuts = Shortcuts.Concat(Tuple.Create("DeleteFolder", new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None, AlephKey.Delete)));
 			}
 			if (from < v1_6_4)
 			{
-				log.Info("AppSettings", "(Migration) Insert shortcut for [RenameFolder]");
+				LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [RenameFolder]");
 				Shortcuts = Shortcuts.Concat(Tuple.Create("RenameFolder", new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None, AlephKey.F2)));
 			}
 			if (from < v1_6_6)
 			{
-				log.Info("AppSettings", "(Migration) Insert shortcut for [NewNoteFromTextFile]");
+				LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [NewNoteFromTextFile]");
 				Shortcuts = Shortcuts.Concat(Tuple.Create("NewNoteFromTextFile", new ShortcutDefinition(AlephShortcutScope.Window, AlephModifierKeys.Control, AlephKey.O)));
 			}
 		}

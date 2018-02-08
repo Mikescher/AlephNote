@@ -50,6 +50,13 @@ namespace AlephNote.Log
 			Log(new LogEvent(LogEventType.Trace, src, text, longtext));
 		}
 
+		[Conditional("DEBUG")]
+		public void TraceExt(string src, string text, params Tuple<string, string>[] longtexts)
+		{
+			var pad = longtexts.Length == 0 ? 0 : longtexts.Max(l => l.Item1.Length);
+			Log(new LogEvent(LogEventType.Trace, src, text, string.Join("\n", longtexts.Select(txt => txt.Item1.PadRight(pad, ' ') + " = " + txt.Item2))));
+		}
+
 		public void Debug(string src, string text, string longtext = null)
 		{
 			Log(new LogEvent(LogEventType.Debug, src, text, longtext));
@@ -75,9 +82,14 @@ namespace AlephNote.Log
 			Log(new LogEvent(LogEventType.Error, src, text, e.ToString()));
 		}
 
+		public void ShowExceptionDialog(string title, Exception e, string additionalInfo)
+		{
+			ExceptionDialog.Show(null, title, e, additionalInfo);
+		}
+
 		public void ShowExceptionDialog(string title, Exception e)
 		{
-			ExceptionDialog.Show(null, title, e);
+			ExceptionDialog.Show(null, title, e, "");
 		}
 
 		public void ShowExceptionDialog(string title, string message, Exception e, params Exception[] additionalExceptions)

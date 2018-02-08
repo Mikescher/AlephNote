@@ -10,6 +10,7 @@ using AlephNote.Common.MVVM;
 using AlephNote.Common.Operations;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Threading;
+using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Util;
 
@@ -17,6 +18,8 @@ namespace AlephNote.Common.Repository
 {
 	public class NoteRepository : ObservableObject, ISynchronizationFeedback
 	{
+		private readonly IAlephLogger logger = LoggerSingleton.Inst;
+
 		private readonly string pathLocalFolder;
 		private readonly string pathLocalData;
 		private readonly string pathLocalBase;
@@ -27,7 +30,6 @@ namespace AlephNote.Common.Repository
 		private readonly SynchronizationThread thread;
 		private readonly ISynchronizationFeedback listener;
 		private readonly IAlephDispatcher dispatcher;
-		private readonly IAlephLogger logger;
 
 		public readonly List<INote> LocalDeletedNotes = new List<INote>(); // deleted local but not on remote
 
@@ -50,7 +52,7 @@ namespace AlephNote.Common.Repository
 		public string ProviderID { get { return account.Plugin.GetUniqueID().ToString("B"); } }
 		public Guid ProviderUID { get { return account.Plugin.GetUniqueID(); } }
 
-		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, RemoteStorageAccount acc, IAlephLogger log, IAlephDispatcher disp)
+		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, RemoteStorageAccount acc, IAlephDispatcher disp)
 		{
 			pathLocalBase = path;
 			pathLocalFolder = Path.Combine(path, acc.ID.ToString("B"));
@@ -59,9 +61,8 @@ namespace AlephNote.Common.Repository
 			account = acc;
 			appconfig = cfg;
 			listener = fb;
-			logger = log;
 			dispatcher = disp;
-			thread = new SynchronizationThread(this, new[]{ this, fb }, cfg.ConflictResolution, log, dispatcher);
+			thread = new SynchronizationThread(this, new[]{ this, fb }, cfg.ConflictResolution, dispatcher);
 
 			invSaveNotesLocal     = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SaveAllDirtyNotes),      10 * 1000,  1 * 60 * 1000);
 			invSaveNotesRemote    = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SyncNow),                45 * 1000, 15 * 60 * 1000);
@@ -307,7 +308,7 @@ namespace AlephNote.Common.Repository
 
 		private void CommitToLocalGitBackup()
 		{
-			LocalGitBackup.UpdateRepository(this, appconfig, logger);
+			LocalGitBackup.UpdateRepository(this, appconfig);
 		}
 
 		public void SaveAll()
@@ -425,14 +426,14 @@ namespace AlephNote.Common.Repository
 		{
 			// [event from sync thread]
 
-			LocalGitBackup.UpdateRepository(this, appconfig, logger);
+			LocalGitBackup.UpdateRepository(this, appconfig);
 		}
 
 		public void SyncError(List<Tuple<string, Exception>> errors)
 		{
 			// [event from sync thread]
 
-			LocalGitBackup.UpdateRepository(this, appconfig, logger);
+			LocalGitBackup.UpdateRepository(this, appconfig);
 		}
 
 		public void OnSyncRequest()

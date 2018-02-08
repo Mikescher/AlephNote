@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 
 namespace AlephNote.WPF.Util
@@ -34,6 +36,21 @@ namespace AlephNote.WPF.Util
 			return source as TreeViewItem;
 		}
 
+		public static ListViewItem VisualLVUpwardSearch(DependencyObject source)
+		{
+			while (source != null && !(source is ListViewItem))
+			{
+				if (source is Run)
+				{
+					source = LogicalTreeHelper.GetParent(source);
+					continue;
+				}
+				source = VisualTreeHelper.GetParent(source);
+			}
+
+			return source as ListViewItem;
+		}
+
 		public static ScrollViewer GetScrollViewer(DependencyObject o)
 		{
 			// Return the DependencyObject if it is a ScrollViewer
@@ -47,6 +64,16 @@ namespace AlephNote.WPF.Util
 				if (result != null) return result;
 			}
 			return null;
+		}
+
+		public static void ExecDelayed(int ms, Action a)
+		{
+			new Thread(() => 
+			{
+				Thread.Sleep(ms);
+				Application.Current?.Dispatcher.BeginInvoke(a);
+			}).Start();
+
 		}
 	}
 }

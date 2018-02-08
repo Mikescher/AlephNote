@@ -4,18 +4,31 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:conv="clr-namespace:AlephNote.WPF.Converter"
+			 xmlns:self="clr-namespace:AlephNote.WPF.Controls"
+			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 			 mc:Ignorable="d" 
+			 Background="Transparent"
 			 d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<DataTemplate x:Key="TagTemplate">
-				<Border VerticalAlignment="Center" Background="SeaShell" BorderThickness="1" BorderBrush="{Binding ., Converter={conv:TagToBorderBrush}}" Margin="-4,1,8,1" Padding="1">
-					<TextBlock Text="{Binding .}" Padding="2,0,2,0" />
+				<Border VerticalAlignment="Center" 
+						Background="{ext:ThemeBinding 'window.tageditor.tag:background'}" 
+						BorderThickness="1" 
+						BorderBrush="{ext:ThemeSlaveBinding {Binding ., Converter={conv:TagToBorderBrush}}}" 
+						Margin="-4,1,8,1" Padding="1">
+					
+					<TextBlock 
+						Foreground="{ext:ThemeBinding 'window.tageditor.tag:foreground'}" 
+						Background="Transparent"
+						Text="{Binding .}" 
+						Padding="2,0,2,0" />
+					
 				</Border>
 			</DataTemplate>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid x:Name="MainGrid">
+	<Grid x:Name="MainGrid" d:DataContext="{d:DesignInstance self:TagEditor}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
@@ -23,15 +36,20 @@
 		<TextBox
 				Grid.Row="0" MinHeight="25" BorderThickness="0" 
 				Focusable="False" IsHitTestVisible="False" Panel.ZIndex="2"
-				Background="Transparent" Foreground="#888"
+				Background="Transparent" 
+				Foreground="{ext:ThemeBinding 'window.tageditor.placeholder'}"
 				Text="{Binding FormattedText, Converter={conv:TagsToPlaceholder}, Mode=OneWay}"
 				AcceptsReturn="False" AcceptsTab="False" 
 				Margin="5,0,0,0" VerticalContentAlignment="Top" >
 		</TextBox>
 
 		<RichTextBox 
+				Foreground="{ext:ThemeBinding 'window.tageditor.foreground'}" 
+				Background="Transparent"
 				Grid.Row="0" x:Name="TagCtrl" MinHeight="25" BorderThickness="0" 
 				AcceptsReturn="False" AcceptsTab="False" 
+				IsReadOnly="{Binding Settings.IsReadOnlyMode}"
+				IsReadOnlyCaretVisible="True"
 				VerticalContentAlignment="Bottom">
 			
 			<RichTextBox.Document>
@@ -46,10 +64,12 @@
 
 		<Popup Grid.Row="1" x:Name="AutocompletePopup" StaysOpen="False" Placement="Bottom" VerticalOffset="1">
 			<Grid>
-				<ListView x:Name="AutocompleteContent" Focusable="False" Background="#EEE" SelectionChanged="AutocompleteContent_Selected">
+				<ListView x:Name="AutocompleteContent" Focusable="False" Background="{ext:ThemeBinding 'window.tageditor.popup:background'}" SelectionChanged="AutocompleteContent_Selected">
 					<ListView.ItemContainerStyle>
 						<Style TargetType="{x:Type ListViewItem}">
-							<Setter Property="BorderBrush" Value="LightGray" />
+							<Setter Property="BorderBrush" Value="{ext:ThemeBinding 'window.tageditor.popup:bordercolor'}" />
+							<Setter Property="Foreground" Value="{ext:ThemeBinding 'window.tageditor.popup:foreground'}" />
+							<Setter Property="Background" Value="Transparent" />
 							<Setter Property="BorderThickness" Value="0,0,0,1" />
 						</Style>
 					</ListView.ItemContainerStyle>

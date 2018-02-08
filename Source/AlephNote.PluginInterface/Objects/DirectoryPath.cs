@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 
 namespace AlephNote.PluginInterface.Util
@@ -21,6 +22,7 @@ namespace AlephNote.PluginInterface.Util
 
 		public static DirectoryPath Root() => ROOT;
 		public static DirectoryPath Create(IEnumerable<string> path) => new DirectoryPath(path);
+		public static DirectoryPath Create(params string[] path) => new DirectoryPath(path);
 
 		public IEnumerable<string> Enumerate() => _path;
 		public int Length => _path.Count;
@@ -33,6 +35,29 @@ namespace AlephNote.PluginInterface.Util
 			var result = new List<XElement>();
 			foreach (var elem in _path) result.Add(new XElement("PathComponent", new XAttribute("Name", elem)));
 			return result.ToArray();
+		}
+
+		public string StrSerialize()
+		{
+			if (IsRoot()) return "/";
+			return string.Join("/", _path.Select(SerializeEscape));
+		}
+
+		private string SerializeEscape(string txt)
+		{
+			var b = new StringBuilder();
+			foreach (var chr in txt)
+			{
+				if (((chr >= 20 && chr <= 126) || char.IsLetterOrDigit(chr)) && chr != '/' && chr != '&')
+				{
+					b.Append(chr);
+				}
+				else
+				{
+					b.Append("&#x"+Convert.ToString((int)chr, 16).ToUpper() + ";");
+				}
+			}
+			return b.ToString();
 		}
 
 		public static DirectoryPath Deserialize(IEnumerable<XElement> childs)

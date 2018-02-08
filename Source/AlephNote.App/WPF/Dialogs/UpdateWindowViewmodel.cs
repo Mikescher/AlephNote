@@ -87,7 +87,7 @@ namespace AlephNote.WPF.Windows
 		{
 			if (args.Error != null)
 			{
-				ExceptionDialog.Show(_owner, "Could not download new version", args.Error);
+				ExceptionDialog.Show(_owner, "Could not download new version", args.Error, "");
 				ButtonsEnabled = true;
 				return;
 			}
@@ -101,7 +101,7 @@ namespace AlephNote.WPF.Windows
 		{
 			if (args.Error != null)
 			{
-				ExceptionDialog.Show(_owner, "Could not download new version", args.Error);
+				ExceptionDialog.Show(_owner, "Could not download new version", args.Error, "");
 				ButtonsEnabled = true;
 				return;
 			}
@@ -123,7 +123,7 @@ namespace AlephNote.WPF.Windows
 			}
 			catch (Exception e)
 			{
-				ExceptionDialog.Show(_owner, "Could not auto update", e);
+				ExceptionDialog.Show(_owner, "Could not auto update", e, "");
 			}
 
 		}

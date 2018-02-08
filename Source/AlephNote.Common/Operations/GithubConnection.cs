@@ -15,16 +15,9 @@ namespace AlephNote.Common.Operations
 // ReSharper restore All
 #pragma warning restore 0649
 
-		private readonly IAlephLogger _log;
-
-		public GithubConnection(IAlephLogger log)
-		{
-			_log = log;
-		}
-
 		public Tuple<Version, DateTime, string> GetLatestRelease()
 		{
-			var rest = new SimpleJsonRest(null, @"https://api.github.com", _log);
+			var rest = new SimpleJsonRest(null, @"https://api.github.com");
 
 			var response = rest.Get<JsonResponse>("repos/Mikescher/AlephNote/releases/latest");
 

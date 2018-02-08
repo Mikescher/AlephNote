@@ -6,8 +6,6 @@ namespace AlephNote.WPF.Shortcuts
 {
 	public class ObservableShortcutConfig : ObservableObject
 	{
-		private readonly int _actionType;
-
 		private readonly string _identifier;
 		public string Identifier { get { return _identifier; } }
 
@@ -25,9 +23,8 @@ namespace AlephNote.WPF.Shortcuts
 
 		public string Gesture => GetGestureString();
 
-		public ObservableShortcutConfig(int t, string id, string d, AlephKey k, AlephModifierKeys m, AlephShortcutScope s)
+		public ObservableShortcutConfig(string id, string d, AlephKey k, AlephModifierKeys m, AlephShortcutScope s)
 		{
-			_actionType = t;
 			_identifier = id;
 			_description = d;
 			_key = k;

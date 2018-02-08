@@ -93,13 +93,18 @@ namespace AlephNote.Common.Settings.Types
 
 		public string Serialize(AXMLSerializationSettings opt)
 		{
+			return Serialize();
+		}
+
+		public string Serialize()
+		{
 			if (Key == AlephKey.None) return "";
 			if (Modifiers == AlephModifierKeys.None)
 			{
 				if (Scope == AlephShortcutScope.Window)
 					return Key.ToString();
 				else
-					return Key.ToString() + " [" + Scope.ToString() + "]";
+					return $"{Key} [{Scope}]";
 			}
 
 			List<string> elements = new List<string>(4);
@@ -113,7 +118,7 @@ namespace AlephNote.Common.Settings.Types
 			if (Scope == AlephShortcutScope.Window)
 				return string.Join(" + ", elements);
 			else
-				return string.Join(" + ", elements) + " [" + Scope.ToString() + "]";
+				return $"{string.Join(" + ", elements)} [{Scope}]";
 		}
 	}
 }

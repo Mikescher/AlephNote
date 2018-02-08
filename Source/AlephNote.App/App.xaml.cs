@@ -8,6 +8,12 @@ using System.Windows.Threading;
 using AlephNote.Commandline;
 using AlephNote.Common.Plugins;
 using AlephNote.Impl;
+using AlephNote.Common.Themes;
+using AlephNote.Common.Util;
+using AlephNote.Common.Settings;
+using System.Windows;
+using System.Globalization;
+using System.Threading;
 
 namespace AlephNote
 {
@@ -27,18 +33,32 @@ namespace AlephNote
 
 		public static CommandLineArguments Args;
 
-		public static readonly EventLogger Logger = new EventLogger();
+		public static readonly ThemeCache    Themes    = new ThemeCache();
+		public static readonly EventLogger   Logger    = new EventLogger();
+		public static readonly PluginManager PluginMan = new PluginManager();
+
 		public static bool DebugMode = false;
+
+		public static bool IsFirstLaunch = false;
 
 		public static bool IsUpdateMigration = false;
 		public static Version UpdateMigrationFrom;
 		public static Version UpdateMigrationTo;
 
+
 		public App()
 		{
-			DispatcherUnhandledException += AppDispatcherUnhandledException;
+			//NOP
+		}
 
-			PluginManagerSingleton.Register(new PluginManager());
+		private void Application_Startup(object sender, StartupEventArgs suea)
+		{
+			DispatcherUnhandledException += AppDispatcherUnhandledException;
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
+			LoggerSingleton.Register(Logger);
+			PluginManagerSingleton.Register(PluginMan);
+			ThemeManager.Register(Themes);
 
 			Args = new CommandLineArguments(Environment.GetCommandLineArgs(), false);
 
@@ -53,7 +73,40 @@ namespace AlephNote
 			DebugMode = true;
 #endif
 			Logger.DebugEnabled = DebugMode;
+			
+			PluginManager.Inst.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory);
+			App.Themes.Init(Args.GetStringDefault("themes", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "themes")));
 
+			AppSettings settings;
+			try
+			{
+				if (File.Exists(PATH_SETTINGS))
+				{
+					settings = AppSettings.Load(PATH_SETTINGS);
+					if (IsUpdateMigration)
+					{
+						settings.Migrate(UpdateMigrationFrom, UpdateMigrationTo);
+						settings.Save();
+					}
+				}
+				else
+				{
+					settings = AppSettings.CreateEmpty(PATH_SETTINGS);
+					settings.Save();
+
+					IsFirstLaunch = true;
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionDialog.Show(null, "Could not load settings", "Could not load settings from " + PATH_SETTINGS, e);
+				settings = AppSettings.CreateEmpty(App.PATH_SETTINGS);
+			}
+
+			ThemeManager.Inst.LoadWithErrorDialog(settings);
+			
+			var mw = new MainWindow(settings);
+			mw.Show();
 		}
 		
 		void AppDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

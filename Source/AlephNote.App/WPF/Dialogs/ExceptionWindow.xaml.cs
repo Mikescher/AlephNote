@@ -20,15 +20,20 @@ namespace AlephNote.WPF.Windows
 			InitializeComponent();
 		}
 
-		public static void Show(Window owner, string title, Exception e)
+		public static void Show(Window owner, string title, Exception e, string additionalInfo)
 		{
 			var dlg = new ExceptionDialog
 			{
-				ErrorMessage = { Text = e.Message },
-				ErrorTrace   = { Text = FormatExecption(e) },
+				ErrorMessage =
+				{
+					Text = e?.Message ?? "Error in AlephNote"
+				},
+				ErrorTrace   =
+				{
+					Text = (FormatException(e, additionalInfo) ?? FormatStacktrace(additionalInfo))
+				},
 				Title        = title,
 			};
-
 
 			if (owner != null && owner.IsLoaded)
 				dlg.Owner = owner;
@@ -44,8 +49,14 @@ namespace AlephNote.WPF.Windows
 
 			var dlg = new ExceptionDialog
 			{
-				ErrorMessage = { Text = message },
-				ErrorTrace   = { Text = string.Join(split, new List<Exception> {e}.Concat(additionalExceptions).Select(FormatExecption)) },
+				ErrorMessage =
+				{
+					Text = message
+				},
+				ErrorTrace   =
+				{
+					Text = string.Join(split, new List<Exception> {e}.Concat(additionalExceptions).Select(ex => FormatException(ex, "")))
+				},
 				Title        = title,
 			};
 			
@@ -57,16 +68,38 @@ namespace AlephNote.WPF.Windows
 			dlg.ShowDialog();
 		}
 
-		private static string FormatExecption(Exception e)
+		private static string FormatException(Exception e, string suffix)
 		{
 			const string DELIMITER = " ---> ";
 
-			var lines = Regex.Split(e.ToString(), @"\r?\n");
+			if (e == null) return null;
+
+			var lines = Regex.Split(e.ToString(), @"\r?\n").ToList();
 
 			if (lines.Any()) lines[0] = lines[0].Replace(DELIMITER, Environment.NewLine + "    ---> ");
 
-			return string.Join(Environment.NewLine, lines);
+			if (!string.IsNullOrWhiteSpace(suffix))
+			{
+				lines.Add("");
+				lines.Add("-----------------------");
+				lines.Add("");
+				lines.Add(suffix);
+			}
 
+			return string.Join(Environment.NewLine, lines);
+		}
+
+		private static string FormatStacktrace(string suffix)
+		{
+			var trace = Environment.StackTrace;
+			if (!string.IsNullOrWhiteSpace(suffix))
+			{
+				trace += "\r\n";
+				trace += "\r\n-----------------------";
+				trace += "\r\n";
+				trace += "\r\n" + suffix;
+			}
+			return trace;
 		}
 
 		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
@@ -76,7 +109,7 @@ namespace AlephNote.WPF.Windows
 
 		private void ClickLink(object sender, MouseButtonEventArgs e)
 		{
-			Process.Start(@"https://github.com/Mikescher/CommonNote/issues");
+			Process.Start(@"https://github.com/Mikescher/AlephNote/issues");
 		}
 
 		private void ButtonExportLogfile_OnClick(object sender, RoutedEventArgs e)

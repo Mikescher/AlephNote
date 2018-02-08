@@ -35,7 +35,6 @@ namespace AlephNote.WPF.Services
 			contentPresenter = new ContentPresenter
 			{
 				Content = watermark,
-				Opacity = 0.5,
 				Margin = new Thickness(Control.Margin.Left + Control.Padding.Left, Control.Margin.Top + Control.Padding.Top, 0, 0)
 			};
 

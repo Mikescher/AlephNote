@@ -7,6 +7,9 @@ using AlephNote.Common.Settings.Types;
 using System.Text;
 using System.Drawing;
 using AlephNote.Common.Settings;
+using AlephNote.Common.Themes;
+using AlephNote.WPF.Extensions;
+using AlephNote.Common.Util;
 
 namespace AlephNote.WPF.Util
 {
@@ -35,76 +38,106 @@ namespace AlephNote.WPF.Util
 
 		public void SetUpStyles(Scintilla sci, AppSettings s)
 		{
-			sci.Styles[STYLE_DEFAULT].Bold = s.NoteFontModifier == FontModifier.Bold || s.NoteFontModifier == FontModifier.BoldItalic;
-			sci.Styles[STYLE_DEFAULT].Italic = s.NoteFontModifier == FontModifier.Italic || s.NoteFontModifier == FontModifier.BoldItalic;
-			sci.Styles[STYLE_DEFAULT].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_DEFAULT].Font = s.NoteFontFamily;
+			var theme = ThemeManager.Inst.CurrentTheme;
 
-			sci.Styles[STYLE_URL].Bold = s.NoteFontModifier == FontModifier.Bold || s.NoteFontModifier == FontModifier.BoldItalic;
-			sci.Styles[STYLE_URL].Italic = s.NoteFontModifier == FontModifier.Italic || s.NoteFontModifier == FontModifier.BoldItalic;
-			sci.Styles[STYLE_URL].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_URL].Font = s.NoteFontFamily;
-			sci.Styles[STYLE_URL].ForeColor = Color.Blue;
-			sci.Styles[STYLE_URL].Hotspot = (s.LinkMode != LinkHighlightMode.OnlyHighlight);
-			sci.Styles[STYLE_URL].Underline = true;
+			sci.Styles[Style.Default].BackColor = theme.Get<ColorRef>("scintilla.background").ToDCol();
 
-			sci.Styles[STYLE_MD_DEFAULT].Bold = false;
-			sci.Styles[STYLE_MD_DEFAULT].Italic = false;
-			sci.Styles[STYLE_MD_DEFAULT].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_MD_DEFAULT].Font = s.NoteFontFamily;
+			sci.Styles[STYLE_DEFAULT].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_DEFAULT].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_DEFAULT].Bold      = theme.Get<bool>(    "scintilla.default:bold");
+			sci.Styles[STYLE_DEFAULT].Italic    = theme.Get<bool>(    "scintilla.default:italic");
+			sci.Styles[STYLE_DEFAULT].Underline = theme.Get<bool>(    "scintilla.default:underline");
+			sci.Styles[STYLE_DEFAULT].ForeColor = theme.Get<ColorRef>("scintilla.default:foreground").ToDCol();
+			sci.Styles[STYLE_DEFAULT].BackColor = theme.Get<ColorRef>("scintilla.default:background").ToDCol();
 
-			sci.Styles[STYLE_MD_BOLD].Bold = true;
-			sci.Styles[STYLE_MD_BOLD].Italic = false;
-			sci.Styles[STYLE_MD_BOLD].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_MD_BOLD].Font = s.NoteFontFamily;
-			//sci.Styles[STYLE_MD_BOLD].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
+			sci.Styles[STYLE_URL].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_URL].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_URL].Bold      = theme.Get<bool>(    "scintilla.link:bold");
+			sci.Styles[STYLE_URL].Italic    = theme.Get<bool>(    "scintilla.link:italic");
+			sci.Styles[STYLE_URL].Underline = theme.Get<bool>(    "scintilla.link:underline");
+			sci.Styles[STYLE_URL].ForeColor = theme.Get<ColorRef>("scintilla.link:foreground").ToDCol();
+			sci.Styles[STYLE_URL].BackColor = theme.Get<ColorRef>("scintilla.link:background").ToDCol();
+			sci.Styles[STYLE_URL].Hotspot   = (s.LinkMode != LinkHighlightMode.OnlyHighlight);
 
-			sci.Styles[STYLE_MD_ITALIC].Bold = false;
-			sci.Styles[STYLE_MD_ITALIC].Italic = true;
-			sci.Styles[STYLE_MD_ITALIC].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_MD_ITALIC].Font = s.NoteFontFamily;
-			//sci.Styles[STYLE_MD_ITALIC].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
+			sci.Styles[STYLE_MD_DEFAULT].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_DEFAULT].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_DEFAULT].Bold      = theme.Get<bool>(    "scintilla.markdown.default:bold");
+			sci.Styles[STYLE_MD_DEFAULT].Italic    = theme.Get<bool>(    "scintilla.markdown.default:italic");
+			sci.Styles[STYLE_MD_DEFAULT].Underline = theme.Get<bool>(    "scintilla.markdown.default:underline");
+			sci.Styles[STYLE_MD_DEFAULT].ForeColor = theme.Get<ColorRef>("scintilla.markdown.default:foreground").ToDCol();
+			sci.Styles[STYLE_MD_DEFAULT].BackColor = theme.Get<ColorRef>("scintilla.markdown.default:background").ToDCol();
 
-			sci.Styles[STYLE_MD_HEADER].Bold = false;
-			sci.Styles[STYLE_MD_HEADER].Italic = false;
-			sci.Styles[STYLE_MD_HEADER].ForeColor = Color.FromArgb(178, 34, 34);
-			sci.Styles[STYLE_MD_HEADER].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_MD_HEADER].Font = s.NoteFontFamily;
-			//sci.Styles[STYLE_MD_HEADER].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
+			sci.Styles[STYLE_MD_BOLD].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_BOLD].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_BOLD].Bold      = theme.Get<bool>(    "scintilla.markdown.strong_emph:bold");
+			sci.Styles[STYLE_MD_BOLD].Italic    = theme.Get<bool>(    "scintilla.markdown.strong_emph:italic");
+			sci.Styles[STYLE_MD_BOLD].Underline = theme.Get<bool>(    "scintilla.markdown.strong_emph:underline");
+			sci.Styles[STYLE_MD_BOLD].ForeColor = theme.Get<ColorRef>("scintilla.markdown.strong_emph:foreground").ToDCol();
+			sci.Styles[STYLE_MD_BOLD].BackColor = theme.Get<ColorRef>("scintilla.markdown.strong_emph:background").ToDCol();
 
-			sci.Styles[STYLE_MD_CODE].Bold = false;
-			sci.Styles[STYLE_MD_CODE].Italic = false;
-			sci.Styles[STYLE_MD_CODE].ForeColor = Color.FromArgb(0, 128, 0);
-			sci.Styles[STYLE_MD_CODE].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_MD_CODE].Font = s.NoteFontFamily;
-			//sci.Styles[STYLE_MD_CODE].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
+			sci.Styles[STYLE_MD_ITALIC].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_ITALIC].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_ITALIC].Bold      = theme.Get<bool>(    "scintilla.markdown.emph:bold");
+			sci.Styles[STYLE_MD_ITALIC].Italic    = theme.Get<bool>(    "scintilla.markdown.emph:italic");
+			sci.Styles[STYLE_MD_ITALIC].Underline = theme.Get<bool>(    "scintilla.markdown.emph:underline");
+			sci.Styles[STYLE_MD_ITALIC].ForeColor = theme.Get<ColorRef>("scintilla.markdown.emph:foreground").ToDCol();
+			sci.Styles[STYLE_MD_ITALIC].BackColor = theme.Get<ColorRef>("scintilla.markdown.emph:background").ToDCol();
 
-			sci.Styles[STYLE_MD_URL].Bold = false;
-			sci.Styles[STYLE_MD_URL].Italic = false;
-			sci.Styles[STYLE_MD_URL].ForeColor = Color.FromArgb(0, 0, 255);
-			sci.Styles[STYLE_MD_URL].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_MD_URL].Font = s.NoteFontFamily;
-			//sci.Styles[STYLE_MD_URL].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
+			sci.Styles[STYLE_MD_HEADER].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_HEADER].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_HEADER].Bold      = theme.Get<bool>(    "scintilla.markdown.header:bold");
+			sci.Styles[STYLE_MD_HEADER].Italic    = theme.Get<bool>(    "scintilla.markdown.header:italic");
+			sci.Styles[STYLE_MD_HEADER].Underline = theme.Get<bool>(    "scintilla.markdown.header:underline");
+			sci.Styles[STYLE_MD_HEADER].ForeColor = theme.Get<ColorRef>("scintilla.markdown.header:foreground").ToDCol();
+			sci.Styles[STYLE_MD_HEADER].BackColor = theme.Get<ColorRef>("scintilla.markdown.header:background").ToDCol();
 
-			sci.Styles[STYLE_MD_LIST].Bold = false;
-			sci.Styles[STYLE_MD_LIST].Italic = false;
-			sci.Styles[STYLE_MD_LIST].ForeColor = Color.FromArgb(128, 128, 128);
-			sci.Styles[STYLE_MD_LIST].Size = (int)s.NoteFontSize;
-			sci.Styles[STYLE_MD_LIST].Font = s.NoteFontFamily;
-			//sci.Styles[STYLE_MD_LIST].BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
+			sci.Styles[STYLE_MD_CODE].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_CODE].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_CODE].Bold      = theme.Get<bool>(    "scintilla.markdown.code:bold");
+			sci.Styles[STYLE_MD_CODE].Italic    = theme.Get<bool>(    "scintilla.markdown.code:italic");
+			sci.Styles[STYLE_MD_CODE].Underline = theme.Get<bool>(    "scintilla.markdown.code:underline");
+			sci.Styles[STYLE_MD_CODE].ForeColor = theme.Get<ColorRef>("scintilla.markdown.code:foreground").ToDCol();
+			sci.Styles[STYLE_MD_CODE].BackColor = theme.Get<ColorRef>("scintilla.markdown.code:background").ToDCol();
+
+			sci.Styles[STYLE_MD_URL].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_URL].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_URL].Bold      = theme.Get<bool>(    "scintilla.markdown.url:bold");
+			sci.Styles[STYLE_MD_URL].Italic    = theme.Get<bool>(    "scintilla.markdown.url:italic");
+			sci.Styles[STYLE_MD_URL].Underline = theme.Get<bool>(    "scintilla.markdown.url:underline");
+			sci.Styles[STYLE_MD_URL].ForeColor = theme.Get<ColorRef>("scintilla.markdown.url:foreground").ToDCol();
+			sci.Styles[STYLE_MD_URL].BackColor = theme.Get<ColorRef>("scintilla.markdown.url:background").ToDCol();
+
+			sci.Styles[STYLE_MD_LIST].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_LIST].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_LIST].Bold      = theme.Get<bool>(    "scintilla.markdown.list:bold");
+			sci.Styles[STYLE_MD_LIST].Italic    = theme.Get<bool>(    "scintilla.markdown.list:italic");
+			sci.Styles[STYLE_MD_LIST].Underline = theme.Get<bool>(    "scintilla.markdown.list:underline");
+			sci.Styles[STYLE_MD_LIST].ForeColor = theme.Get<ColorRef>("scintilla.markdown.list:foreground").ToDCol();
+			sci.Styles[STYLE_MD_LIST].BackColor = theme.Get<ColorRef>("scintilla.markdown.list:background").ToDCol();
 
 
-			sci.Indicators[INDICATOR_INLINE_SEARCH].Style = IndicatorStyle.StraightBox;
-			sci.Indicators[INDICATOR_INLINE_SEARCH].Under = true;
-			sci.Indicators[INDICATOR_INLINE_SEARCH].ForeColor = Color.Red;
-			sci.Indicators[INDICATOR_INLINE_SEARCH].OutlineAlpha = 196;
-			sci.Indicators[INDICATOR_INLINE_SEARCH].Alpha = 64;
+			sci.Indicators[INDICATOR_INLINE_SEARCH].Style        = IndicatorStyle.StraightBox;
+			sci.Indicators[INDICATOR_INLINE_SEARCH].Under        = theme.Get<bool>(    "scintilla.search.local:under_text");
+			sci.Indicators[INDICATOR_INLINE_SEARCH].ForeColor    = theme.Get<ColorRef>("scintilla.search.local:color").ToDCol();
+			sci.Indicators[INDICATOR_INLINE_SEARCH].OutlineAlpha = theme.Get<int>(     "scintilla.search.local:outline_alpha");
+			sci.Indicators[INDICATOR_INLINE_SEARCH].Alpha        = theme.Get<int>(     "scintilla.search.local:alpha");
 
-			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Style = IndicatorStyle.StraightBox;
-			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Under = true;
-			sci.Indicators[INDICATOR_GLOBAL_SEARCH].ForeColor = Color.DarkGreen;
-			sci.Indicators[INDICATOR_GLOBAL_SEARCH].OutlineAlpha = 196;
-			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Alpha = 96;
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Style        = IndicatorStyle.StraightBox;
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Under        = theme.Get<bool>(    "scintilla.search.global:under_text");
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].ForeColor    = theme.Get<ColorRef>("scintilla.search.global:color").ToDCol();
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].OutlineAlpha = theme.Get<int>(     "scintilla.search.global:outline_alpha");
+			sci.Indicators[INDICATOR_GLOBAL_SEARCH].Alpha        = theme.Get<int>(     "scintilla.search.global:alpha");
+
+			sci.Styles[Style.LineNumber].Bold               = theme.Get<bool>("scintilla.margin.numbers:bold");
+			sci.Styles[Style.LineNumber].Italic             = theme.Get<bool>("scintilla.margin.numbers:italic");
+			sci.Styles[Style.LineNumber].Underline          = theme.Get<bool>("scintilla.margin.numbers:underline");
+			sci.Styles[Style.LineNumber].ForeColor          = theme.Get<ColorRef>("scintilla.margin.numbers:foreground").ToDCol();
+			sci.Styles[Style.LineNumber].BackColor          = theme.Get<ColorRef>("scintilla.margin.numbers:background").ToDCol();
+			sci.Margins[STYLE_MARGIN_LINENUMBERS].BackColor = theme.Get<ColorRef>("scintilla.margin.numbers:background").ToDCol();
+
+			sci.Margins[STYLE_MARGIN_LISTSYMBOLS].BackColor = theme.Get<ColorRef>("scintilla.margin.symbols:background").ToDCol();
+			sci.SetFoldMarginColor(!theme.Get<ColorRef>("scintilla.margin.symbols:background").IsTransparent, theme.Get<ColorRef>("scintilla.margin.symbols:background").ToDCol());
+			sci.SetFoldMarginHighlightColor(!theme.Get<ColorRef>("scintilla.margin.symbols:background").IsTransparent, theme.Get<ColorRef>("scintilla.margin.symbols:background").ToDCol());
 		}
 
 		public abstract void Highlight(Scintilla sci, int start, int end, AppSettings s);

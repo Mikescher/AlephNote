@@ -8,6 +8,7 @@ using System.Threading;
 using AlephNote.Common.Repository;
 using AlephNote.Common.Settings;
 using AlephNote.PluginInterface.Util;
+using AlephNote.Common.Util;
 
 namespace AlephNote.Common.Operations
 {
@@ -15,28 +16,28 @@ namespace AlephNote.Common.Operations
 	{
 		private static readonly object _gitAccessLock = new object();
 
-		public static void UpdateRepository(NoteRepository repo, AppSettings config, IAlephLogger logger)
+		public static void UpdateRepository(NoteRepository repo, AppSettings config)
 		{
 			if (!config.DoGitMirror) return;
 
 			if (string.IsNullOrWhiteSpace(config.GitMirrorPath))
 			{
-				logger.Warn("LocalGitMirror", "Cannot do a local git mirror: Path is empty.");
+				LoggerSingleton.Inst.Warn("LocalGitMirror", "Cannot do a local git mirror: Path is empty.");
 				return;
 			}
 			if (string.IsNullOrWhiteSpace(config.GitMirrorFirstName))
 			{
-				logger.Warn("LocalGitMirror", "Cannot do a local git mirror: Authorname is empty.");
+				LoggerSingleton.Inst.Warn("LocalGitMirror", "Cannot do a local git mirror: Authorname is empty.");
 				return;
 			}
 			if (string.IsNullOrWhiteSpace(config.GitMirrorLastName))
 			{
-				logger.Warn("LocalGitMirror", "Cannot do a local git mirror: Authorname is empty.");
+				LoggerSingleton.Inst.Warn("LocalGitMirror", "Cannot do a local git mirror: Authorname is empty.");
 				return;
 			}
 			if (string.IsNullOrWhiteSpace(config.GitMirrorMailAddress))
 			{
-				logger.Warn("LocalGitMirror", "Cannot do a local git mirror: Authormail is empty.");
+				LoggerSingleton.Inst.Warn("LocalGitMirror", "Cannot do a local git mirror: Authormail is empty.");
 				return;
 			}
 
@@ -46,7 +47,7 @@ namespace AlephNote.Common.Operations
 				{
 					if (!NeedsUpdate(repo, config))
 					{
-						logger.Debug("LocalGitMirror", "git repository is up to date - no need to commit");
+						LoggerSingleton.Inst.Debug("LocalGitMirror", "git repository is up to date - no need to commit");
 						return;
 					}
 
@@ -57,12 +58,12 @@ namespace AlephNote.Common.Operations
 					{
 						if (Directory.EnumerateFileSystemEntries(config.GitMirrorPath).Any())
 						{
-							logger.Warn("LocalGitMirror", "Cannot do a local git mirror: Targetfolder is neither a repository nor empty.");
+							LoggerSingleton.Inst.Warn("LocalGitMirror", "Cannot do a local git mirror: Targetfolder is neither a repository nor empty.");
 							return;
 						}
 
 						var o = ProcessHelper.ProcExecute("git", "init", config.GitMirrorPath);
-						logger.Debug("LocalGitMirror", "git mirror [git init]", o.ToString());
+						LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git init]", o.ToString());
 					}
 
 					if (config.GitMirrorSubfolders)
@@ -111,15 +112,14 @@ namespace AlephNote.Common.Operations
 						config.GitMirrorFirstName, 
 						config.GitMirrorLastName, 
 						config.GitMirrorMailAddress, 
-						config.GitMirrorDoPush, 
-						logger);
+						config.GitMirrorDoPush);
 				}).Start();
 
 			}
 			catch (Exception e)
 			{
-				logger.Error("PluginManager", "Local git mirroring failed with exception:\n" + e.Message, e.ToString());
-				logger.ShowExceptionDialog("Local git mirror failed", e);
+				LoggerSingleton.Inst.Error("PluginManager", "Local git mirroring failed with exception:\n" + e.Message, e.ToString());
+				LoggerSingleton.Inst.ShowExceptionDialog("Local git mirror failed", e);
 			}
 		}
 
@@ -204,46 +204,46 @@ namespace AlephNote.Common.Operations
 			return false;
 		}
 
-		private static void CommitRepository(string provname, string provid, string repoPath, string firstname, string lastname, string mail, bool pushremote, IAlephLogger logger)
+		private static void CommitRepository(string provname, string provid, string repoPath, string firstname, string lastname, string mail, bool pushremote)
 		{
 			try
 			{
 				lock (_gitAccessLock)
 				{
 					var o1 = ProcessHelper.ProcExecute("git", "add .", repoPath);
-					logger.Debug("LocalGitMirror", "git mirror [git add]", o1.ToString());
+					LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git add]", o1.ToString());
 
 					var o2 = ProcessHelper.ProcExecute("git", "status", repoPath);
-					logger.Debug("LocalGitMirror", "git mirror [git status]", o2.ToString());
+					LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git status]", o2.ToString());
 					if (o2.StdOut.Contains("nothing to commit") || o2.StdErr.Contains("nothing to commit"))
 					{
-						logger.Debug("LocalGitMirror", "Local git mirror not updated ('nothing to commit')");
+						LoggerSingleton.Inst.Debug("LocalGitMirror", "Local git mirror not updated ('nothing to commit')");
 						return;
 					}
 					var msg =
 						"Automatic Mirroring of AlephNote notes" + "\n" +
 						"" + "\n" +
-						"# AlephNote Version: " + logger.AppVersion + "\n" +
+						"# AlephNote Version: " + LoggerSingleton.Inst.AppVersion + "\n" +
 						"# Timestamp(UTC): " + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + "\n" +
 						"# Provider: " + provname + "\n" +
 						"# Provider (ID): " + provid + "\n";
 
 					var o3 = ProcessHelper.ProcExecute("git", $"commit -a --allow-empty --message=\"{msg}\" --author=\"{firstname} {lastname} <{mail}>\"", repoPath);
-					logger.Debug("LocalGitMirror", "git mirror [git commit]", o3.ToString());
+					LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git commit]", o3.ToString());
 
 					if (pushremote)
 					{
 						var o4 = ProcessHelper.ProcExecute("git", "push", repoPath);
-						logger.Debug("LocalGitMirror", "git mirror [git push]", o4.ToString());
+						LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git push]", o4.ToString());
 					}
 
-					logger.Info("LocalGitMirror", "Local git mirror updated" + (pushremote ? " (+ pushed)":""));
+					LoggerSingleton.Inst.Info("LocalGitMirror", "Local git mirror updated" + (pushremote ? " (+ pushed)":""));
 				}
 			}
 			catch (Exception e)
 			{
-				logger.Error("PluginManager", "Local git mirroring (commit) failed with exception:\n" + e.Message, e.ToString());
-				logger.ShowExceptionDialog("Local git mirror (commit) failed", e);
+				LoggerSingleton.Inst.Error("PluginManager", "Local git mirroring (commit) failed with exception:\n" + e.Message, e.ToString());
+				LoggerSingleton.Inst.ShowExceptionDialog("Local git mirror (commit) failed", e);
 			}
 		}
 	}

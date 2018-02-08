@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using AlephNote.Common.Threading;
+using AlephNote.Common.Util;
 
 namespace AlephNote.Common.Repository
 {
 	public class ScrollCache
 	{
-		private IAlephLogger _logger;
 		private Dictionary<string, int> _cache;
 		private string _filepath;
 
@@ -17,20 +17,19 @@ namespace AlephNote.Common.Repository
 
 		private readonly DelayedCombiningInvoker invSave;
 
-		private ScrollCache(string fp, IAlephLogger log)
+		private ScrollCache(string fp)
 		{
-			_logger = log;
 			_cache = new Dictionary<string, int>();
 			_filepath = fp;
 
 			invSave = DelayedCombiningInvoker.Create(SaveDirect, 15 * 1000, 2 * 60 * 1000);
 		}
 
-		public static ScrollCache LoadFromFile(string path, IAlephLogger log)
+		public static ScrollCache LoadFromFile(string path)
 		{
 			try
 			{
-				var sc = new ScrollCache(path, log);
+				var sc = new ScrollCache(path);
 				if (!File.Exists(path)) return sc;
 
 				foreach (var line in File.ReadAllLines(path, Encoding.UTF8))
@@ -45,14 +44,14 @@ namespace AlephNote.Common.Repository
 			}
 			catch (Exception e)
 			{
-				log.Error("ScrollCache", $"Could not load ScrollCache from file '{path}'", e);
-				return new ScrollCache(path, log);
+				LoggerSingleton.Inst.Error("ScrollCache", $"Could not load ScrollCache from file '{path}'", e);
+				return new ScrollCache(path);
 			}
 		}
 
-		public static ScrollCache CreateEmpty(string path, IAlephLogger log)
+		public static ScrollCache CreateEmpty(string path)
 		{
-			return new ScrollCache(path, log);
+			return new ScrollCache(path);
 		}
 
 		public int? Get(INote n)
@@ -101,7 +100,7 @@ namespace AlephNote.Common.Repository
 				}
 				catch (Exception e)
 				{
-					_logger.Error("ScrollCache", $"Could not save ScrollCache to file '{_filepath}'", e);
+					LoggerSingleton.Inst.Error("ScrollCache", $"Could not save ScrollCache to file '{_filepath}'", e);
 				}
 			}
 		}

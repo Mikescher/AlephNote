@@ -70,9 +70,11 @@
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="1*"/>
+			<RowDefinition Height="1*" MinHeight="50"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="175" MinHeight="50"/>
 		</Grid.RowDefinitions>
+
 		<Grid Grid.Row="0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
@@ -91,6 +93,7 @@
 			</StackPanel>
 			<Button    Grid.Column="5" Grid.Row="0" Content="Clear" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="0" Margin="10,4" Command="{Binding ClearCommand}" />
 		</Grid>
+
 		<ListView ItemsSource="{Binding LogView}" SelectedItem="{Binding SelectedLog}" Grid.Row="1">
 			<ListView.Resources>
 				<Style TargetType="ListViewItem">
@@ -111,7 +114,22 @@
 			</ListView.View>
 		</ListView>
 
-		<TextBox IsReadOnly="True" Height="150" Margin="2" Grid.Row="2" Text="{Binding SelectedLog.LongText, TargetNullValue='', Mode=OneWay}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
+		<GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Height="3" Focusable="False"/>
+
+		<Grid Grid.Row="3">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" MaxWidth="200" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<TextBox Grid.Row="0" Grid.Column="0"                     IsReadOnly="True" IsReadOnlyCaretVisible="True" FontFamily="Courier New" Margin="2" Text="{Binding SelectedLog.DateTime, TargetNullValue='', Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm:ss.fff'}" />
+			<TextBox Grid.Row="0" Grid.Column="1"                     IsReadOnly="True" IsReadOnlyCaretVisible="True" FontFamily="Courier New" Margin="2" Text="{Binding SelectedLog.Text,     TargetNullValue='', Mode=OneWay}" />
+			<TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" IsReadOnlyCaretVisible="True" FontFamily="Courier New" Margin="2" Text="{Binding SelectedLog.LongText, TargetNullValue='', Mode=OneWay}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
+		</Grid>
+
 		
 	</Grid>
 </Window>

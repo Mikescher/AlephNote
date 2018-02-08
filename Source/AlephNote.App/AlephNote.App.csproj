@@ -52,6 +52,7 @@
       <HintPath>..\..\Lib\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Lib\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
     </Reference>
@@ -105,6 +106,9 @@
     <Compile Include="WPF\Controls\NotesViewHierachical.xaml.cs">
       <DependentUpon>NotesViewHierachical.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Controls\PathEditor.xaml.cs">
+      <DependentUpon>PathEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Controls\PHelpBtn.xaml.cs">
       <DependentUpon>PHelpBtn.xaml</DependentUpon>
     </Compile>
@@ -112,7 +116,12 @@
     <Compile Include="WPF\Controls\TagEditor.xaml.cs">
       <DependentUpon>TagEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Converter\BoolToColor.cs" />
+    <Compile Include="WPF\Converter\BrushRefToBrush.cs" />
+    <Compile Include="WPF\Converter\ColorRefToBrush.cs" />
+    <Compile Include="WPF\Converter\MultiBoolToVisibility.cs" />
     <Compile Include="WPF\Converter\HierachicalWrapperToIcon.cs" />
+    <Compile Include="WPF\Converter\ReadonlyToLockIcon.cs" />
     <Compile Include="WPF\Converter\StringIsNotWhitespace.cs" />
     <Compile Include="WPF\Converter\PropertyToHelpText.cs" />
     <Compile Include="WPF\Converter\FontNameToFontFamily.cs" />
@@ -124,9 +133,18 @@
     <Compile Include="WPF\Converter\SnippetsToSnippetSource.cs" />
     <Compile Include="WPF\Converter\TagsToPlaceholder.cs" />
     <Compile Include="WPF\Converter\TagToBorderBrush.cs" />
-    <Compile Include="WPF\Dialogs\FolderNameDialog.xaml.cs">
-      <DependentUpon>FolderNameDialog.xaml</DependentUpon>
+    <Compile Include="WPF\Dialogs\GenericInputDialog.xaml.cs">
+      <DependentUpon>GenericInputDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Extensions\ThemeSlaveBinding.cs" />
+    <Compile Include="WPF\Windows\ThemeEditor.xaml.cs">
+      <DependentUpon>ThemeEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\ThemeEditorViewmodel.cs">
+      <DependentUpon>ThemeEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Extensions\AlephThemeExtension.cs" />
+    <Compile Include="WPF\Extensions\ThemeBindingExtension.cs" />
     <Compile Include="WPF\Services\ConditionalControlTemplate.cs" />
     <Compile Include="WPF\Services\MultiControlTemplateService.cs" />
     <Compile Include="WPF\Shortcuts\GlobalShortcutManager.cs" />
@@ -259,6 +277,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="WPF\Controls\PathEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WPF\Controls\PHelpBtn.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -271,7 +293,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WPF\Dialogs\FolderNameDialog.xaml">
+    <Page Include="WPF\Dialogs\GenericInputDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Windows\ThemeEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -398,6 +424,41 @@
   <ItemGroup>
     <Resource Include="Resources\folder_none.png" />
     <Resource Include="Resources\folder_root.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ContentWithTargetPath Include="Resources\themes\solarized-dark.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Themes\solarized-dark.xml</TargetPath>
+      <SubType>Designer</SubType>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\themes\solarized-light.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Themes\solarized-light.xml</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\themes\default.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Themes\default.xml</TargetPath>
+      <SubType>Designer</SubType>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\themes\monokai-neo.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Themes\monokai-neo.xml</TargetPath>
+      <SubType>Designer</SubType>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\themes\highcontrast-white.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Themes\highcontrast-white.xml</TargetPath>
+      <SubType>Designer</SubType>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\themes\highcontrast-black.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Themes\highcontrast-black.xml</TargetPath>
+      <SubType>Designer</SubType>
+    </ContentWithTargetPath>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\lock.png" />
+    <Resource Include="Resources\lock_open.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

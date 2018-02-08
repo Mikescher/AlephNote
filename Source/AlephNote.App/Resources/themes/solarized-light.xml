@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+============================
+  THEME FILE FOR ALEPHNOTE
+============================
+
+Theme:      Solarized Light
+
+Source:     http://ethanschoonover.com/solarized
+
+Repository: https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized
+
+License:    Copyright (c) 2011 Ethan Schoonover
+            Permission is hereby granted, free of charge, to any person obtaining a copy
+            of this software and associated documentation files (the "Software"), to deal
+            in the Software without restriction, including without limitation the rights
+            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+            copies of the Software, and to permit persons to whom the Software is
+            furnished to do so, subject to the following conditions:
+            The above copyright notice and this permission notice shall be included in
+            all copies or substantial portions of the Software.
+            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+            THE SOFTWARE.
+
+-->
+<theme>
+	<meta>
+		<name>Solarized Light</name>
+		<version>1.0</version>
+		<compatibility>*</compatibility>
+	</meta>
+
+	<ref>
+		<!--// base** values  -->
+		
+		<valueref key="base3"   type="color">#FDF6E3</valueref> <!-- Background                                 -->
+		<valueref key="base2"   type="color">#EEE8D5</valueref> <!-- Background highlights                      -->
+		<valueref key="base1"   type="color">#93A1A1</valueref> <!-- Comments / secondary content               -->
+		<valueref key="base0"   type="color">#839496</valueref> <!--                                            -->
+		<valueref key="base00"  type="color">#657B83</valueref> <!-- Body text / Default code / Primary content -->
+		<valueref key="base01"  type="color">#586E75</valueref> <!-- Optional emphasized content                -->
+		<valueref key="base02"  type="color">#073642</valueref> <!--                                            -->
+		<valueref key="base03"  type="color">#002B36</valueref> <!--                                            -->
+		
+		<valueref key="yellow"  type="color">#B58900</valueref>
+		<valueref key="orange"  type="color">#CB4B16</valueref>
+		<valueref key="red"     type="color">#DC322F</valueref>
+		<valueref key="magenta" type="color">#D33682</valueref>
+		<valueref key="violet"  type="color">#6C71C4</valueref>
+		<valueref key="blue"    type="color">#268BD2</valueref>
+		<valueref key="cyan"    type="color">#2AA198</valueref>
+		<valueref key="green"   type="color">#859900</valueref>
+
+		<!--// Other constants -->
+
+		<valueref key="Transparent"    type="color">#00000000</valueref>
+		<valueref key="Black"          type="color">#000000</valueref>
+		<valueref key="White"          type="color">#FFFFFF</valueref>
+	</ref>
+
+	<data>
+
+		<group name="scintilla">
+			<property name="scintilla.background"                         value="@base3"/>
+			<property name="scintilla.default:foreground"                 value="@base00"/>
+
+			<property name="scintilla.caret:background"                   value="@base2"/>
+			<property name="scintilla.caret:visible"                      value="true"/>
+
+			<property name="scintilla.whitespace:color"                   value="@base1"/>
+
+			<property name="scintilla.markdown.emph:foreground"           value="@base01"/>
+			<property name="scintilla.markdown.strong_emph:foreground"    value="@base01"/>
+
+			<property name="scintilla.link:foreground"                    value="@blue"/>
+			<property name="scintilla.markdown.header:foreground"         value="@orange"/>
+			<property name="scintilla.markdown.code:foreground"           value="@yellow"/>
+			<property name="scintilla.markdown.list:foreground"           value="@cyan"/>
+			<property name="scintilla.markdown.url:foreground"            value="@blue"/>
+
+			<property name="scintilla.search.local:color"                 value="@red"/>
+			<property name="scintilla.search.global:color"                value="@green"/>
+
+			<property name="scintilla.margin.numbers:foreground"          value="@base2"/>
+			<property name="scintilla.margin.numbers:background"          value="@base00"/>
+			<property name="scintilla.margin.symbols:background"          value="@base1"/>
+		</group>
+
+		<group name="window">
+			<property name="window.background"                            value="@base2"/>
+			<property name="window.foreground"                            value="@base01"/>
+			<property name="window.splitter"                              value="@Transparent"/>
+
+			<property name="window.mainmenu:background"                   value="@base1"/>
+			<property name="window.mainmenu:foreground"                   value="@base02"/>
+
+			<property name="window.notetitle:foreground"                  value="@yellow"/>
+			<property name="window.changedate:foreground"                 value="@base00"/>
+
+			<property name="window.menubar:background"                    value="@base3"/>
+			<property name="window.menubar:foreground"                    value="@base00"/>
+
+			<property name="window.tageditor.popup:background"            value="@base01"/>
+			<property name="window.tageditor.popup:bordercolor"           value="@base02"/>
+			<property name="window.tageditor.popup:foreground"            value="@base3"/>
+
+			<property name="window.tageditor.tag:foreground"              value="$window.foreground"/>
+			<property name="window.tageditor.tag:background"              value="$window.background"/>
+			<property name="window.tageditor.tag:bordercolor_default"     value="@violet"/>
+			<property name="window.tageditor.tag:bordercolor_highlighted" value="@violet"/>
+
+			<property name="window.tageditor.tag:bordercolor_default"     value="@base0"/>
+			<property name="window.tageditor.tag:bordercolor_highlighted" value="@cyan"/>
+
+			<property name="window.pathdisplay.element:background_hover"  value="@base1"/>
+			<property name="window.pathdisplay.element:border"            value="@green"/>
+			<property name="window.pathdisplay.button:background"         value="@base3"/>
+			<property name="window.pathdisplay.button:foreground"         value="@base00"/>
+			<property name="window.pathdisplay.button:border"             value="@base00"/>
+
+			<property name="window.pathdisplay.popup:background"               value="@base3"/>
+			<property name="window.pathdisplay.popup:border"                   value="@base00"/>
+			<property name="window.pathdisplay.popup:border_thickness"         value="2"/>
+			<property name="window.pathdisplay.popup.text:foreground"          value="@base00"/>
+			<property name="window.pathdisplay.popup.list:foreground"          value="@base2"/>
+			<property name="window.pathdisplay.popup.list:background"          value="@base01"/>
+			<property name="window.pathdisplay.popup.list.selected:background" value="@Orange"/>
+			<property name="window.pathdisplay.popup.button:foreground"        value="@base3"/>
+			<property name="window.pathdisplay.popup.button:background"        value="@base00"/>
+			<property name="window.pathdisplay.popup.button:border"            value="@base00"/>
+
+			<property name="window.inlinesearch:background"               value="@base2"/>
+			<property name="window.inlinesearch:foreground"               value="@base01"/>
+			<property name="window.inlinesearch.textbox:background"       value="@base3"/>
+			<property name="window.inlinesearch.textbox:foreground"       value="@base00"/>
+			<property name="window.inlinesearch.btnSearch:foreground"     value="@base01"/>
+			<property name="window.inlinesearch.btnCaseIns:foreground"    value="@base01"/>
+			<property name="window.inlinesearch.btnWholeWord:foreground"  value="@base01"/>
+			<property name="window.inlinesearch.btnRegex:foreground"      value="@base01"/>
+
+			<property name="window.globalsearch.input:foreground"         value="$scintilla.default:foreground"/>
+			<property name="window.globalsearch.input:background"         value="$scintilla.background"/>
+			<property name="window.globalsearch.input:border"             value="$window.foreground"/>
+			<property name="window.globalsearch.placeholder:foreground"   value="@base1"/>
+			<property name="window.globalsearch.button:background"        value="$window.background"/>
+			<property name="window.globalsearch.button:border"            value="$window.foreground"/>
+
+			<property name="window.notesview.flat:background"             value="@base3"/>
+			<property name="window.notesview.flat:foreground"             value="@base00"/>
+			<property name="window.notesview.flat.selected:background"    value="@base2"/>
+			<property name="window.notesview.flat.selected:foreground"    value="@yellow"/>
+			<property name="window.notesview.flat.datetime1:foreground"   value="@green"/>
+			<property name="window.notesview.flat.datetime2:foreground"   value="@green"/>
+			<property name="window.notesview.flat.preview:foreground"     value="@base1"/>
+			<property name="window.notesview.flat.separator"              value="@base2"/>
+
+			<property name="window.notesview.hierachical.tree.selected:background"  value="$window.notesview.flat.selected:background"/>
+			<property name="window.notesview.hierachical.tree.selected:foreground"  value="$window.notesview.flat.selected:foreground"/>
+			<property name="window.notesview.hierachical.tree:foreground"           value="$window.notesview.flat:foreground"/>
+
+			<property name="window.statusbar:background"                  value="@base3"/>
+			<property name="window.statusbar:foreground"                  value="@base00"/>
+			<property name="window.statusbar.btnReload:background"        value="@base2"/>
+			<property name="window.statusbar.btnReload:foreground"        value="@base01"/>
+			<property name="window.statusbar.btnReload:border"            value="@base01"/>
+		</group>
+
+	</data>
+</theme>

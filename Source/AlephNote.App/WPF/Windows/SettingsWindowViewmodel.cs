@@ -8,6 +8,9 @@ using AlephNote.Common.MVVM;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
 using AlephNote.WPF.Shortcuts;
+using System.Collections.Generic;
+using AlephNote.Common.Themes;
+using AlephNote.Common.Util;
 
 namespace AlephNote.WPF.Windows
 {
@@ -24,12 +27,31 @@ namespace AlephNote.WPF.Windows
 		private ObservableShortcutConfig _selectedShortcut;
 		public ObservableShortcutConfig SelectedShortcut { get { return _selectedShortcut; } set { _selectedShortcut = value; OnPropertyChanged(); } }
 
+		public List<AlephTheme> AvailableThemes { get; set; }
+
+		private AlephTheme _selectedTheme;
+		public AlephTheme SelectedTheme { get { return _selectedTheme; } set { _selectedTheme = value; OnPropertyChanged(); UpdateThemePreview(); } }
+
+		private AlephTheme _oldTheme = null;
+		private bool _isThemePreview = false;
+
 		public SettingsWindowViewmodel(MainWindow main, AppSettings data)
 		{
 			mainWindow = main;
 			Settings = data;
 
 			ShortcutList = ShortcutManager.ListObservableShortcuts(data);
+			AvailableThemes = App.Themes.GetAllAvailable();
+
+			_selectedTheme = App.Themes.GetByFilename(Settings.Theme, out _) 
+						  ?? App.Themes.GetByFilename("default.xml", out _)
+						  ?? AvailableThemes.FirstOrDefault()
+						  ?? App.Themes.GetFallback();
+		}
+
+		public void OnBeforeClose()
+		{
+			if (_isThemePreview) ThemeManager.Inst.ChangeTheme(_oldTheme);
 		}
 
 		public void OnBeforeApply()
@@ -39,6 +61,8 @@ namespace AlephNote.WPF.Windows
 				.Select(s => Tuple.Create(s.Identifier, new ShortcutDefinition(s.Scope, s.Modifiers, s.Key)));
 
 			Settings.Shortcuts = new KeyValueFlatCustomList<ShortcutDefinition>(sdata, ShortcutDefinition.DEFAULT);
+
+			Settings.Theme = SelectedTheme.SourceFilename;
 		}
 
 		private void InsertCurrentWindowState()
@@ -70,7 +94,6 @@ namespace AlephNote.WPF.Windows
 				Settings.StartupPositionWidth = (int)mainWindow.Width;
 				Settings.StartupPositionHeight = (int)mainWindow.Height;
 			}
-
 		}
 
 		public void AddAccount(IRemotePlugin p)
@@ -85,6 +108,16 @@ namespace AlephNote.WPF.Windows
 			if (Settings.Accounts.Count <= 1) return;
 
 			Settings.RemoveAccount(Settings.ActiveAccount);
+		}
+
+		private void UpdateThemePreview()
+		{
+			if (SelectedTheme == null || SelectedTheme.IsFallback) return;
+
+			_isThemePreview = true;
+
+			if (_oldTheme == null) _oldTheme = ThemeManager.Inst.CurrentTheme;
+			ThemeManager.Inst.ChangeTheme(SelectedTheme);
 		}
 	}
 }

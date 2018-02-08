@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -68,7 +69,7 @@ namespace AlephNote.PluginInterface.Util
 			var child = parent.Elements(childName).FirstOrDefault();
 			if (child == null) return defaultValue;
 
-			return double.Parse(child.Value);
+			return double.Parse(child.Value, NumberStyles.Float, CultureInfo.InvariantCulture);
 		}
 
 		public static TEnumType GetChildValue<TEnumType>(XElement parent, string childName, TEnumType defaultValue) where TEnumType : struct, IComparable, IFormattable, IConvertible

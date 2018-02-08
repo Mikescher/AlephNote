@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using AlephNote.Common.Settings;
 using AlephNote.Impl;
+using System.Diagnostics;
 
 namespace AlephNote.WPF.Windows
 {
@@ -29,14 +30,20 @@ namespace AlephNote.WPF.Windows
 
 		private void OnOKClicked(object sender, RoutedEventArgs e)
 		{
+			Close();
+
 			viewmodel.OnBeforeApply();
 			if (!viewmodel.Settings.IsEqual(ownerVM.Settings)) ownerVM.ChangeSettings(viewmodel.Settings);
-			Close();
 		}
 
 		private void OnCancelClicked(object sender, RoutedEventArgs e)
 		{
 			Close();
+		}
+
+		private void DialogWindow_Closed(object sender, System.EventArgs e)
+		{
+			viewmodel.OnBeforeClose();
 		}
 
 		private void OnAddAccountClicked(object sender, RoutedEventArgs e)
@@ -58,6 +65,11 @@ namespace AlephNote.WPF.Windows
 		private void OnRemAccountClicked(object sender, RoutedEventArgs e)
 		{
 			viewmodel.RemoveAccount();
+		}
+
+		private void Button_OpenThemeFolder_Click(object sender, RoutedEventArgs e)
+		{
+			Process.Start("explorer.exe", '"'+App.Themes.BasePath+'"');
 		}
 	}
 }

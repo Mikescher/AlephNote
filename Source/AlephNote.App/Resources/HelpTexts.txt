@@ -228,10 +228,17 @@ in the folder list in the top right corner.
 
 [FolderViewShowEmptyPathNode]
 Show an additional node "Unsorted notes" in the folder list in the top right corner.
-This node contains all notes that are not in any directory
+This node contains all notes that are not in any directory.
 (= Notes that live in the root)
-
 
 [FolderViewShowAllNotesNode]
 Show an additional node "All notes" in the folder list in the top right corner.
-This node displays all available notes, regardless of their directory
+This node displays all available notes, regardless of their directory.
+
+[IsReadOnlyMode]
+In readonly mode you cannot edit/create/delete notes.
+Only viewign and synchronization is enabled, this prevents accidental edits.
+
+[ShowReadonlyLock]
+Display a lock icon in the top right area to toggle between normal and readonly mode.
+

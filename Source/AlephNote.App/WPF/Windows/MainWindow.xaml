@@ -13,6 +13,7 @@
 		xmlns:tb="http://www.hardcodet.net/taskbar"
 		xmlns:mext="clr-namespace:AlephNote.WPF.MarkupExtensions"
 		xmlns:util="clr-namespace:AlephNote.WPF.Util"
+		xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 		mc:Ignorable="d" 
 		Icon="/Resources/IconMain.png"
 		WindowState="{Binding WindowState}"
@@ -24,6 +25,7 @@
 		Loaded="MainWindow_OnLoaded"
 		KeyDown="MainWindow_OnKeyDown"
 		Topmost="{Binding Settings.AlwaysOnTop}"
+		Background="{ext:ThemeBinding 'window.background'}"
 		Title="AlephNote" Height="350" Width="525">
 
 	<Grid x:Name="LayoutRoot">
@@ -38,29 +40,32 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" >
-			<MenuItem Header="File">
-				<ctrl:AutoActionMenuItem Header="New Note"                  AlephAction="NewNote"              Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="New Note (from clipboard)" AlephAction="NewNoteFromClipboard" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="New Note (from text file)" AlephAction="NewNoteFromTextFile"  Settings="{Binding Settings}" />
+		<Menu Grid.Row="0" Grid.Column="0" 
+			  Background="{ext:ThemeBinding 'window.menubar:background'}"
+			  Foreground="{ext:ThemeBinding 'window.menubar:foreground'}"
+			  Grid.ColumnSpan="3">
+			<MenuItem Header="_File">
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="New Note"                  AlephAction="NewNote"              Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="New Note (from clipboard)" AlephAction="NewNoteFromClipboard" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="New Note (from text file)" AlephAction="NewNoteFromTextFile"  Settings="{Binding Settings}" />
 				<Separator />
-				<ctrl:AutoActionMenuItem Header="Duplicate Note"            AlephAction="DuplicateNote"        Settings="{Binding Settings}" />
-				<ctrl:AutoActionMenuItem Header="Pin / Unpin Note"          AlephAction="PinUnpinNote"         Settings="{Binding Settings}" />
-				<ctrl:AutoActionMenuItem Header="Export Note"               AlephAction="ExportNote"           Settings="{Binding Settings}" />
-				<ctrl:AutoActionMenuItem Header="Delete Note"               AlephAction="DeleteNote"           Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Duplicate Note"            AlephAction="DuplicateNote"        Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Pin / Unpin Note"          AlephAction="PinUnpinNote"         Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Export Note"               AlephAction="ExportNote"           Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Delete Note"               AlephAction="DeleteNote"           Settings="{Binding Settings}" />
 				<Separator />
 				<ctrl:AutoActionMenuItem Header="Exit"                      AlephAction="AppExit"              Settings="{Binding Settings}"  />
 			</MenuItem>
-			<MenuItem Header="Edit">
-				<ctrl:AutoActionMenuItem Header="Settings" AlephAction="ShowSettings" Settings="{Binding Settings}"  />
+			<MenuItem Header="_Edit">
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Settings" AlephAction="ShowSettings" Settings="{Binding Settings}"  />
 				<Separator />
-				<ctrl:AutoActionMenuItem Header="Synchronize now" AlephAction="Resync" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="Delete local data and sync new" AlephAction="FullResync" Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Synchronize now" AlephAction="Resync" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Delete local data and sync new" AlephAction="FullResync" Settings="{Binding Settings}" />
 				<Separator />
-				<MenuItem Header="Insert Snippet" UsesItemContainerTemplate="True" ItemsSource="{Binding Settings.Snippets, Converter={conv:SnippetsToSnippetSource}}" >
+				<MenuItem Foreground="Black" Header="Insert Snippet" UsesItemContainerTemplate="True" ItemsSource="{Binding Settings.Snippets, Converter={conv:SnippetsToSnippetSource}}" >
 					<MenuItem.Resources>
 						<ItemContainerTemplate DataType="{x:Type conv:SnippetElem}">
-							<ctrl:AutoActionMenuItem />
+							<ctrl:AutoActionMenuItem Foreground="Black" />
 						</ItemContainerTemplate>
 					</MenuItem.Resources>
 
@@ -76,32 +81,37 @@
 					<MenuItem.ItemContainerTemplateSelector>
 						<util:MenuItemContainerTemplateSelector>
 							<DataTemplate>
-								<ctrl:AutoActionMenuItem />
+								<ctrl:AutoActionMenuItem Foreground="Black" />
 							</DataTemplate>
 						</util:MenuItemContainerTemplateSelector>
 					</MenuItem.ItemContainerTemplateSelector>
 				</MenuItem>
 
 			</MenuItem>
-			<MenuItem Header="View">
-				<ctrl:AutoActionMenuItem Header="Always on Top" AlephAction="ToggleAlwaysOnTop" IsChecked="{Binding Settings.AlwaysOnTop}" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="Display Line Numbers" AlephAction="ToggleLineNumbers" IsChecked="{Binding Settings.SciLineNumbers}" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="Word Wrap" AlephAction="ToggleWordWrap" IsChecked="{Binding Settings.SciWordWrap}" Settings="{Binding Settings}"  />
+			<MenuItem Header="_View">
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Always on Top"        AlephAction="ToggleAlwaysOnTop" IsChecked="{Binding Settings.AlwaysOnTop}"    Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Display Line Numbers" AlephAction="ToggleLineNumbers" IsChecked="{Binding Settings.SciLineNumbers}" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Word Wrap"            AlephAction="ToggleWordWrap"    IsChecked="{Binding Settings.SciWordWrap}"    Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Readonly mode"        AlephAction="ToggleReadonly"    IsChecked="{Binding Settings.IsReadOnlyMode}" Settings="{Binding Settings}"  />
 			</MenuItem>
-			<MenuItem Header="Help">
-				<ctrl:AutoActionMenuItem Header="Check for Updates" AlephAction="CheckForUpdates" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="Show Log" AlephAction="ShowLog" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="About" AlephAction="ShowAbout" Settings="{Binding Settings}"  />
+			<MenuItem Header="_Help">
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Check for Updates"  AlephAction="CheckForUpdates" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Show Log"           AlephAction="ShowLog"        Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="About"              AlephAction="ShowAbout"      Settings="{Binding Settings}"  />
 			</MenuItem>
-			<MenuItem Header="Debug" Visibility="{Binding DebugMode, Converter={conv:BoolToVisibility}, ConverterParameter=Visible;Collapsed}">
-				<MenuItem Header="Create 1 Note (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="1" />
-				<MenuItem Header="Create 10 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="10" />
-				<MenuItem Header="Create 100 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="100" />
+			<MenuItem Header="_Debug" Visibility="{Binding DebugMode, Converter={conv:BoolToVisibility}, ConverterParameter=Visible;Collapsed}">
+				<MenuItem Foreground="Black" Header="Show interactive theme editor" Command="{Binding DebugShowThemeEditorCommand}" />
+				<MenuItem Foreground="Black" Header="Remove theme" Command="{Binding DebugShowDefaultThemeCommand}" />
+				<MenuItem Foreground="Black" Header="Disco Fever" Command="{Binding DebugDiscoThemeCommand}" />
 				<Separator/>
-				<MenuItem Header="Serialize Settings" Command="{Binding DebugSerializeSettingsCommand}" />
-				<MenuItem Header="Serialize CurrentNote" Command="{Binding DebugSerializeNoteCommand}" />
+				<MenuItem Foreground="Black" Header="Create 1 Note (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="1" />
+				<MenuItem Foreground="Black" Header="Create 10 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="10" />
+				<MenuItem Foreground="Black" Header="Create 100 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="100" />
 				<Separator/>
-				<MenuItem Header="NotesViewControl.RefreshView()" Command="{Binding DebugRefreshViewCommand}" />
+				<MenuItem Foreground="Black" Header="Serialize Settings" Command="{Binding DebugSerializeSettingsCommand}" />
+				<MenuItem Foreground="Black" Header="Serialize CurrentNote" Command="{Binding DebugSerializeNoteCommand}" />
+				<Separator/>
+				<MenuItem Foreground="Black" Header="NotesViewControl.RefreshView()" Command="{Binding DebugRefreshViewCommand}" />
 			</MenuItem>
 		</Menu>
 
@@ -115,14 +125,30 @@
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
 
-			<controls:ClickSelectTextBox Grid.Row="0" Margin="0,2" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" x:Name="GlobalSearchBar">
+			<controls:ClickSelectTextBox 
+				Grid.Row="0" Margin="0,2" 
+				Foreground="{ext:ThemeBinding 'window.globalsearch.input:foreground'}" 
+				Background="{ext:ThemeBinding 'window.globalsearch.input:background'}" 
+				BorderBrush="{ext:ThemeBinding 'window.globalsearch.input:border'}" 
+				Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" x:Name="GlobalSearchBar">
 				<services:WatermarkService.Watermark>
-					<TextBlock Text="Search" Padding="5,0"/>
+					<TextBlock 
+						Foreground="{ext:ThemeBinding 'window.globalsearch.placeholder:foreground'}"
+						Background="Transparent"
+						Text="Search" 
+						Padding="5,0"/>
 				</services:WatermarkService.Watermark>
 			</controls:ClickSelectTextBox>
 
-			<Button Grid.Row="0" Grid.Column="1" Margin="2" BorderThickness="0" Padding="0" FontWeight="Bold" Command="{Binding CreateNewNoteCommand}">
-				<Image Source="/Resources/plus.png" />
+			<Button Grid.Row="0" Grid.Column="1" Margin="2" Padding="0" FontWeight="Bold" 
+					Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
+					Foreground="{ext:ThemeBinding 'window.globalsearch.button:foreground'}" 
+					Background="{ext:ThemeBinding 'window.globalsearch.button:background'}" 
+					BorderThickness="{ext:ThemeBinding 'window.globalsearch.button:border_thickness'}"
+					BorderBrush="{ext:ThemeBinding 'window.globalsearch.button:border'}" 
+					IsEnabled="{Binding Settings.IsReadOnlyMode, Converter={conv:NegateBool}}"
+					Command="{Binding CreateNewNoteCommand}">
+				<Image Source="/Resources/plus.png" Margin="2" />
 			</Button>
 
 			<ContentControl Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"  x:Name="NotesViewCtrlWrapper">
@@ -157,7 +183,9 @@
 
 		</Grid>
 
-		<GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Width="3" Focusable="False" />
+		<GridSplitter Grid.Row="1" Grid.Column="1" 
+					  Background="{ext:ThemeBinding 'window.splitter'}"
+					  HorizontalAlignment="Stretch" Width="3" Focusable="False" />
 
 		<Grid Grid.Column="2" Margin="1" Grid.Row="1" Visibility="{Binding SelectedNote, Converter={conv:IsNullToVisibility}, ConverterParameter=Hidden;Visible}" >
 			<Grid.ColumnDefinitions>
@@ -172,7 +200,8 @@
 			</Grid.RowDefinitions>
 
 			<TextBox Grid.Row="0" BorderBrush="Transparent" BorderThickness="0"  
-					 Foreground="CornflowerBlue" 
+					 Background="Transparent"
+					 Foreground="{ext:ThemeBinding 'window.notetitle:foreground'}" 
 					 FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
 					 FontFamily="{Binding Settings.TitleFontFamily, Converter={conv:FontNameToFontFamily}}" 
 					 FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
@@ -180,78 +209,59 @@
 					 Text="{Binding SelectedNote.Title, UpdateSourceTrigger=PropertyChanged}" >
 				<services:WatermarkService.Watermark>
 					<TextBlock Text="Empty Title..." VerticalAlignment="Center" Padding="6,0"
-					 FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
-					 FontFamily="{Binding Settings.TitleFontFamily, Converter={conv:FontNameToFontFamily}}" 
-					 FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
-					 FontStyle="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontStyle}}" />
+							   FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
+							   FontFamily="{Binding Settings.TitleFontFamily, Converter={conv:FontNameToFontFamily}}" 
+							   FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
+							   FontStyle="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontStyle}}" />
 				</services:WatermarkService.Watermark>
 			</TextBox>
 
-			<ctrl:TagEditor Grid.Row="1" Grid.Column="0" TagSource="{Binding SelectedNote.Tags}" Repository="{Binding Repository}" Settings="{Binding Settings}" Changed="TagEditor_OnChanged"/>
+			<Image Grid.Row="0" Grid.Column="1" Margin="2,0"
+				   Cursor="Hand"
+				   MouseDown="ImageLock_MouseDown"
+				   HorizontalAlignment="Right" 
+				   Source="{Binding Settings.IsReadOnlyMode, Converter={conv:ReadonlyToLockIcon}}" 
+				   Height="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" >
+
+				<Image.Resources>
+					<conv:MultiBoolToVisibility x:Key="MB2V" />
+				</Image.Resources>
+				<Image.Visibility>
+					<MultiBinding Converter="{StaticResource MB2V}" ConverterParameter="OR;Visible;Collapsed">
+						<Binding Path="Settings.IsReadOnlyMode" />
+						<Binding Path="Settings.ShowReadonlyLock" />
+					</MultiBinding>
+				</Image.Visibility>
+				
+			</Image>
+
+			<ctrl:TagEditor Grid.Row="1" Grid.Column="0" 
+							TagSource="{Binding SelectedNote.Tags}" 
+							Repository="{Binding Repository}" 
+							Settings="{Binding Settings}" 
+							Changed="TagEditor_OnChanged"/>
 
 			<StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="8,2">
-				<TextBlock Text="*" Foreground="DarkGray" Visibility="{Binding SelectedNote.IsLocalSaved, Converter={conv:BoolToVisibility}, ConverterParameter=Collapsed;Visible}" />
-				<TextBlock Text="{Binding SelectedNote.ModificationDate, Converter={conv:SmartDateTimeToDisplay}}" ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DTOToDisplay}}" Foreground="DarkGray" />
+				<TextBlock Text="*" 
+						   Foreground="{ext:ThemeBinding 'window.changedate:foreground'}" 
+						   Visibility="{Binding SelectedNote.IsLocalSaved, Converter={conv:BoolToVisibility}, ConverterParameter=Collapsed;Visible}" />
+				<TextBlock Text="{Binding SelectedNote.ModificationDate, Converter={conv:SmartDateTimeToDisplay}}" 
+						   ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DTOToDisplay}}" 
+						   Foreground="{ext:ThemeBinding 'window.changedate:foreground'}" />
 			</StackPanel>
 
-			<Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="{Binding Settings.UseHierachicalNoteStructure, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
-
-				<ItemsControl Grid.Column="0" ItemsSource="{Binding SelectedNote.Path.ListProperty}" Margin="0,0,0,4" MinHeight="20">
-					<ItemsControl.ItemsPanel>
-						<ItemsPanelTemplate>
-							<StackPanel Orientation="Horizontal" />
-						</ItemsPanelTemplate>
-					</ItemsControl.ItemsPanel>
-					<ItemsControl.ItemTemplate>
-						<DataTemplate>
-							<StackPanel Orientation="Horizontal">
-								<Border CornerRadius="4" BorderThickness="1" BorderBrush="LightGray" Padding="4,1" Margin="0,0,5,0">
-									<Border.Style>
-										<Style TargetType="{x:Type Border}">
-											<Setter Property="Background" Value="White"/>
-											<Style.Triggers>
-												<Trigger Property="IsMouseOver" Value="True">
-													<Setter Property="Background" Value="Linen"/>
-												</Trigger>
-											</Style.Triggers>
-										</Style>
-									</Border.Style>
-									<TextBlock Text="{Binding .}"/>
-								</Border>
-								<TextBlock Text="/" Margin="0,0,5,0"/>
-							</StackPanel>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
-
-				<Button Grid.Column="1" Content="..." Margin="2,0" MinWidth="30" VerticalAlignment="Center" Background="White" Command="{Binding ChangePathCommand}" />
-				<Popup Grid.Column="1" StaysOpen="False" Placement="Right" x:Name="FolderPopup">
-					<Grid Background="Beige">
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />
-						</Grid.RowDefinitions>
-
-						<TextBlock  Grid.Row="0" Text="Move Note" FontWeight="Bold" HorizontalAlignment="Center" FontSize="16" />
-						<ListView   Grid.Row="1" x:Name="FolderPopupListView" DisplayMemberPath="Formatted" MaxHeight="200" Margin="2" />
-						<StackPanel Grid.Row="2">
-							<Button Content="Move" MinWidth="200" FontWeight="Bold" Click="ButtonMoveFolder_OnClick" HorizontalAlignment="Right" Margin="2" />
-						</StackPanel>
-					</Grid>
-				</Popup>
-
-			</Grid>
+			<ctrl:PathEditor Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="PathEditor"
+							 Visibility="{Binding Settings.UseHierachicalNoteStructure, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}"
+							 Settings="{Binding Settings}"
+							 SelectedNote="{Binding SelectedNote}"
+							 SelectedFolderPath="{Binding SelectedFolderPath}" />
 
 			<Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*"/>
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
+				
 				<WindowsFormsHost Grid.Row="0" x:Name="NoteEditHost">
 					<WindowsFormsHost.Child>
 						<scinet:Scintilla x:Name="NoteEdit" AllowDrop="True"
@@ -269,11 +279,18 @@
 				<ctrl:SearchBox x:Name="DocumentSearchBar" Grid.Row="1" Height="28" HideBox="OnHideDoumentSearchBox" Target="{Binding ElementName=NoteEdit}" Settings="{Binding Settings}" />
 			</Grid>
 
-			<proxy:LegacyStringBinding Grid.Row="0" Grid.Column="0" Element="{Binding ElementName=NoteEdit}" PropertyPath="Text" ChangedEventPath="TextChanged" TargetBinding="{Binding SelectedNote.Text}" />
+			<proxy:LegacyStringBinding Grid.Row="0" Grid.Column="0" 
+									   Element="{Binding ElementName=NoteEdit}" 
+									   PropertyPath="Text" ChangedEventPath="TextChanged" TargetBinding="{Binding SelectedNote.Text}" 
+									   OnBeforePropertySet="NoteEdit_OnBeforeTextSet"
+									   OnAfterPropertySet="NoteEdit_OnAfterTextSet"/>
 
 		</Grid>
 
-		<StatusBar Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
+		<StatusBar Grid.Column="0" Grid.Row="2"
+				   Background="{ext:ThemeBinding 'window.statusbar:background'}"
+				   Foreground="{ext:ThemeBinding 'window.statusbar:foreground'}"
+				   Grid.ColumnSpan="3">
 			<StatusBar.Resources>
 				<Style TargetType="StatusBarItem">
 					<Setter Property="FontSize" Value="10" />
@@ -282,7 +299,12 @@
 
 			<StatusBarItem  Content="Last Synchronized: " />
 			<StatusBarItem Content="{Binding LastSynchronizedText}" />
-			<Button ToolTip="Synchronize Now" Padding="0" BorderThickness="0" Height="14" Command="{Binding ResyncCommand}"  >
+			<Button ToolTip="Synchronize Now" Padding="0" BorderThickness="0" Height="14" 
+					Background="{ext:ThemeBinding 'window.statusbar.btnReload:background'}"
+					Foreground="{ext:ThemeBinding 'window.statusbar.btnReload:foreground'}"
+					BorderBrush="{ext:ThemeBinding 'window.statusbar.btnReload:border'}"
+					Command="{Binding ResyncCommand}" 
+					Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"   >
 				<Image Source="/Resources/refresh.png" />
 			</Button>
 			<Separator Margin="5,2" Foreground="Beige" />

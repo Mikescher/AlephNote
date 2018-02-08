@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace AlephNote.PluginInterface
 {
@@ -15,6 +14,7 @@ namespace AlephNote.PluginInterface
 		void Error(string src, string text, Exception e);
 
 		void ShowExceptionDialog(string title, Exception e);
+		void ShowExceptionDialog(string title, Exception e, string suffix);
 		void ShowExceptionDialog(string title, string message, Exception e, params Exception[] additionalExceptions);
 	}
 
@@ -30,6 +30,7 @@ namespace AlephNote.PluginInterface
 		public void Error(string src, string text, Exception e) { }
 
 		public void ShowExceptionDialog(string title, Exception e) { }
+		public void ShowExceptionDialog(string title, Exception e, string suffix) { }
 		public void ShowExceptionDialog(string title, string message, Exception e, params Exception[] additionalExceptions) { }
 	}
 }

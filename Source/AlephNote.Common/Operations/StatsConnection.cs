@@ -2,6 +2,7 @@
 using AlephNote.Common.Network;
 using AlephNote.Common.Repository;
 using AlephNote.Common.Settings;
+using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 
 namespace AlephNote.Common.Operations
@@ -14,14 +15,12 @@ namespace AlephNote.Common.Operations
 		private class JsonResponse { public bool success; }
 // ReSharper restore All
 #pragma warning restore 0649
-
-		private readonly IAlephLogger _log;
+			
 		private readonly AppSettings _settings;
 		private readonly NoteRepository _repository;
 
-		public StatsConnection(AppSettings settings, NoteRepository repo, IAlephLogger log)
+		public StatsConnection(AppSettings settings, NoteRepository repo)
 		{
-			_log = log;
 			_settings = settings;
 			_repository = repo;
 		}
@@ -30,7 +29,7 @@ namespace AlephNote.Common.Operations
 		{
 			try
 			{
-				var rest = new SimpleJsonRest(_settings.CreateProxy(), @"https://mikescher.com", _log);
+				var rest = new SimpleJsonRest(_settings.CreateProxy(), @"https://mikescher.com");
 
 				var response = rest.Get<JsonResponse>(
 					"api/statsping", 
@@ -46,7 +45,7 @@ namespace AlephNote.Common.Operations
 			}
 			catch (Exception e)
 			{
-				_log.Warn("StatsConnection", "Could not send anonymous usage statistics to server", e.ToString());
+				LoggerSingleton.Inst.Warn("StatsConnection", "Could not send anonymous usage statistics to server", e.ToString());
 				return false;
 			}
 		}
