@@ -19,6 +19,8 @@ using System.Diagnostics;
 using System.Windows.Controls;
 using System.Windows.Media;
 using AlephNote.PluginInterface.Util;
+using System;
+using System.Threading;
 
 namespace AlephNote.WPF.Controls
 {
@@ -280,6 +282,49 @@ namespace AlephNote.WPF.Controls
 		public DirectoryPath GetNewNotesPath()
 		{
 			return DirectoryPath.Root();
+		}
+
+		private void NotesList_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+		{
+			ListViewItem treeViewItem = WPFHelper.VisualLVUpwardSearch(e.OriginalSource as DependencyObject);
+
+			if (treeViewItem != null)
+			{
+				// click on item
+
+				var cms = new ContextMenu
+				{
+					Items =
+					{
+						new AutoActionMenuItem{ Header="Export",      AlephAction="ExportNote",    ParentAnchor=ParentAnchor},
+						new AutoActionMenuItem{ Header="Duplicate",   AlephAction="DuplicateNote", ParentAnchor=ParentAnchor},
+						new AutoActionMenuItem{ Header="Pin / Unpin", AlephAction="PinUnpinNote",  ParentAnchor=ParentAnchor},
+						new Separator(),
+						new AutoActionMenuItem{ Header="Delete",      AlephAction="DeleteNote",    ParentAnchor=ParentAnchor},
+					}
+				};
+				NotesList.ContextMenu = null;
+				new Thread(() => { Thread.Sleep(50); Dispatcher.BeginInvoke(new Action(() => { NotesList.ContextMenu = cms; cms.IsOpen = true; })); }).Start();
+				
+			}
+			else
+			{
+				// click on free space
+
+				var cms = new ContextMenu
+				{
+					Items =
+					{
+						new AutoActionMenuItem{ Header="New Note",                  AlephAction="NewNote",              ParentAnchor=ParentAnchor},
+						new AutoActionMenuItem{ Header="New Note (from clipboard)", AlephAction="NewNoteFromClipboard", ParentAnchor=ParentAnchor},
+						new AutoActionMenuItem{ Header="New Note (from text file)", AlephAction="NewNoteFromTextFile",  ParentAnchor=ParentAnchor},
+					}
+				};
+				NotesList.ContextMenu = cms;
+				cms.IsOpen = true;
+			}
+
+
 		}
 	}
 }

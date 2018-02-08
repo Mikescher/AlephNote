@@ -48,20 +48,11 @@
 					  Foreground="{ext:ThemeBinding 'window.notesview.flat:foreground'}"
 					  ItemsSource="{Binding NotesView}" 
 					  SelectedValue="{Binding SelectedNote}"
+					  MouseRightButtonUp="NotesList_MouseRightButtonUp"
 					  FontSize="{Binding Settings.ListFontSize, Converter={conv:FontSizeToInt}}" 
 					  FontFamily="{Binding Settings.ListFontFamily, Converter={conv:FontNameToFontFamily}}" 
 					  FontWeight="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontWeight}}" 
 					  FontStyle="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontStyle}}">
-
-			<ListView.ContextMenu>
-				<ContextMenu>
-					<self:AutoActionMenuItem Header="Export"      AlephAction="ExportNote"    ParentAnchor="{Binding ParentAnchor}" />
-					<self:AutoActionMenuItem Header="Duplicate"   AlephAction="DuplicateNote" ParentAnchor="{Binding ParentAnchor}" />
-					<self:AutoActionMenuItem Header="Pin / Unpin" AlephAction="PinUnpinNote"  ParentAnchor="{Binding ParentAnchor}" />
-					<Separator />
-					<self:AutoActionMenuItem Header="Delete"      AlephAction="DeleteNote"    ParentAnchor="{Binding ParentAnchor}" />
-				</ContextMenu>
-			</ListView.ContextMenu>
 
 			<!-- ReSharper disable Xaml.RedundantResource -->
 			<services:MultiDataTemplateService.MultiDataTemplate>

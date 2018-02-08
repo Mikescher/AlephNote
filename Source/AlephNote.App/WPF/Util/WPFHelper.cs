@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 
 namespace AlephNote.WPF.Util
@@ -32,6 +33,21 @@ namespace AlephNote.WPF.Util
 				source = VisualTreeHelper.GetParent(source);
 
 			return source as TreeViewItem;
+		}
+
+		public static ListViewItem VisualLVUpwardSearch(DependencyObject source)
+		{
+			while (source != null && !(source is ListViewItem))
+			{
+				if (source is Run)
+				{
+					source = LogicalTreeHelper.GetParent(source);
+					continue;
+				}
+				source = VisualTreeHelper.GetParent(source);
+			}
+
+			return source as ListViewItem;
 		}
 
 		public static ScrollViewer GetScrollViewer(DependencyObject o)
