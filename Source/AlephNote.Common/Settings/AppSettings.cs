@@ -345,6 +345,14 @@ namespace AlephNote.Common.Settings
 		public string Theme { get { return _theme; } set { _theme = value; OnPropertyChanged(); } }
 		private string _theme = "default.xml";
 
+		[AlephXMLField]
+		public bool IsReadOnlyMode { get { return _isReadonlyMode; } set { _isReadonlyMode = value; OnPropertyChanged(); } }
+		private bool _isReadonlyMode = false;
+
+		[AlephXMLField]
+		public bool ShowReadonlyLock { get { return _showReadonlyLock; } set { _showReadonlyLock = value; OnPropertyChanged(); } }
+		private bool _showReadonlyLock = false;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

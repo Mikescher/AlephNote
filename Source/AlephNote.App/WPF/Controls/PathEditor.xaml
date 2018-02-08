@@ -49,6 +49,7 @@
 						Foreground="{ext:ThemeBinding 'window.pathdisplay.button:foreground'}" 
 						Background="{ext:ThemeBinding 'window.pathdisplay.button:background'}" 
 						BorderBrush="{ext:ThemeBinding 'window.pathdisplay.button:border'}" 
+						IsEnabled="{Binding Settings.IsReadOnlyMode, Converter={conv:NegateBool}}"
 						Command="{Binding ChangePathCommand}" />
 
 		<Popup Grid.Column="1" StaysOpen="False" Placement="Right" x:Name="FolderPopup">

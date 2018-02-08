@@ -82,6 +82,8 @@ namespace AlephNote.WPF.Controls
 
 		private void OnTextChanged(object sender, TextChangedEventArgs e)
 		{
+			if (Settings?.IsReadOnlyMode == true) return;
+
 			var para = TagCtrl.CaretPosition.Paragraph;
 
 			if (para != null && e.Changes.Any(c => c.RemovedLength > 0))
@@ -164,6 +166,8 @@ namespace AlephNote.WPF.Controls
 
 		private void OnKeyDown(object sender, KeyEventArgs e)
 		{
+			if (Settings?.IsReadOnlyMode == true) return;
+
 			if (e.Key == Key.Enter || e.Key == Key.Tab)
 			{
 				var text = TagCtrl.CaretPosition.GetTextInRun(LogicalDirection.Backward);
@@ -230,6 +234,8 @@ namespace AlephNote.WPF.Controls
 
 		private void AutocompleteContent_Selected(object sender, RoutedEventArgs e)
 		{
+			if (Settings?.IsReadOnlyMode == true) return;
+
 			if (AutocompleteContent.SelectedIndex >= 0 && AutocompleteContent.SelectedValue != null)
 			{
 				var tag = (string)AutocompleteContent.SelectedValue;

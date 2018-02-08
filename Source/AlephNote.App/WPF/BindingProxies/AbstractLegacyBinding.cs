@@ -48,6 +48,9 @@ namespace AlephNote.WPF.BindingProxies
 
 		private bool _suppressChangedEvent = false;
 
+		public event Action OnBeforePropertySet;
+		public event Action OnAfterPropertySet;
+
 		protected AbstractLegacyBinding()
 		{
 			Visibility = Visibility.Collapsed;
@@ -131,7 +134,9 @@ namespace AlephNote.WPF.BindingProxies
 			{
 				if (!EqualityComparer<TType>.Default.Equals(v, _indirectProperty.Get()))
 				{
+					OnBeforePropertySet?.Invoke();
 					_indirectProperty.Set((TType)args.NewValue);
+					OnAfterPropertySet?.Invoke();
 				}
 			}
 		}

@@ -160,18 +160,27 @@
 							<Grid>
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="Auto" />
 									<ColumnDefinition Width="10" />
 									<ColumnDefinition Width="1*" />
 								</Grid.ColumnDefinitions>
 								<Grid.RowDefinitions>
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 
-								<TextBlock Grid.Row="0" Grid.Column="0" Margin="5" Text="Theme:"/>
-								<ComboBox  Grid.Row="0" Grid.Column="2" Margin="5" ItemsSource="{Binding AvailableThemes}" SelectedItem="{Binding SelectedTheme}" DisplayMemberPath="Name" />
+								<TextBlock Grid.Row="0" Grid.Column="0" Margin="5" Text="Theme:" Grid.ColumnSpan="2" />
+								<ComboBox  Grid.Row="0" Grid.Column="3" Margin="5" ItemsSource="{Binding AvailableThemes}" SelectedItem="{Binding SelectedTheme}" DisplayMemberPath="Name" />
 
-								<Button    Grid.Row="1" Grid.Column="2" Margin="5,0,5,5" HorizontalAlignment="Right" Content="Open folder" FontStyle="Italic" Padding="5,1" Click="Button_OpenThemeFolder_Click" />
+								<Button    Grid.Row="1" Grid.Column="3" Margin="5,0,5,5" HorizontalAlignment="Right" Content="Open folder" FontStyle="Italic" Padding="5,1" Click="Button_OpenThemeFolder_Click" />
+
+								<CheckBox      Grid.Row="2" Grid.Column="0" Margin="2" Content="Readonly mode"  IsChecked="{Binding Settings.IsReadOnlyMode}" />
+								<ctrl:PHelpBtn Grid.Row="2" Grid.Column="1" HelpProperty="IsReadOnlyMode" Margin="2,0" VerticalAlignment="Center" />
+
+								<CheckBox      Grid.Row="3" Grid.Column="0" Margin="2" Content="Show readonly lock icon"  IsChecked="{Binding Settings.ShowReadonlyLock}" />
+								<ctrl:PHelpBtn Grid.Row="3" Grid.Column="1" HelpProperty="ShowReadonlyLock" Margin="2,0" VerticalAlignment="Center" />
 
 							</Grid>
 						</GroupBox>

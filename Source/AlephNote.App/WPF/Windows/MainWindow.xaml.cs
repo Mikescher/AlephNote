@@ -190,6 +190,8 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.UseTabs = s.SciUseTabs;
 			NoteEdit.TabWidth = s.SciTabWidth * 2;
 
+			NoteEdit.ReadOnly = s.IsReadOnlyMode;
+
 			ResetScintillaScrollAndUndo();
 
 			ForceNewHighlighting(s);
@@ -589,6 +591,21 @@ namespace AlephNote.WPF.Windows
 		private void CDC_DoChangeAccount(object sender, ConnectionDisplayControl.AccountChangeEventArgs e)
 		{
 			VM.ChangeAccount(e.AccountID);
+		}
+
+		private void ImageLock_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			VM.ChangeSettingReadonlyMode();
+		}
+
+		private void NoteEdit_OnBeforeTextSet()
+		{
+			if (NoteEdit != null && NoteEdit.ReadOnly) NoteEdit.ReadOnly = false;
+		}
+
+		private void NoteEdit_OnAfterTextSet()
+		{
+			if (NoteEdit != null && Settings?.IsReadOnlyMode==true) NoteEdit.ReadOnly = true;
 		}
 	}
 }

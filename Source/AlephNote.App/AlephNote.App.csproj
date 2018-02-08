@@ -119,7 +119,9 @@
     <Compile Include="WPF\Converter\BoolToColor.cs" />
     <Compile Include="WPF\Converter\BrushRefToBrush.cs" />
     <Compile Include="WPF\Converter\ColorRefToBrush.cs" />
+    <Compile Include="WPF\Converter\MultiBoolToVisibility.cs" />
     <Compile Include="WPF\Converter\HierachicalWrapperToIcon.cs" />
+    <Compile Include="WPF\Converter\ReadonlyToLockIcon.cs" />
     <Compile Include="WPF\Converter\StringIsNotWhitespace.cs" />
     <Compile Include="WPF\Converter\PropertyToHelpText.cs" />
     <Compile Include="WPF\Converter\FontNameToFontFamily.cs" />
@@ -453,6 +455,10 @@
       <TargetPath>Themes\highcontrast-black.xml</TargetPath>
       <SubType>Designer</SubType>
     </ContentWithTargetPath>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\lock.png" />
+    <Resource Include="Resources\lock_open.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

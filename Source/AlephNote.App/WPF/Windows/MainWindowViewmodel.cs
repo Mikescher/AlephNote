@@ -72,6 +72,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand SettingLineNumbersCommand  { get { return new RelayCommand(ChangeSettingLineNumbers); } }
 		public ICommand SettingsWordWrapCommand    { get { return new RelayCommand(ChangeSettingWordWrap); } }
 		public ICommand SettingsRotateThemeCommand { get { return new RelayCommand(ChangeSettingTheme); } }
+		public ICommand SettingReadonlyModeCommand { get { return new RelayCommand(ChangeSettingReadonlyMode); } }
 
 		public ICommand DebugCreateIpsumNotesCommand { get { return new RelayCommand<string>(s => { DebugCreateIpsumNotes(int.Parse(s)); }); } }
 		public ICommand DebugSerializeSettingsCommand { get { return new RelayCommand(DebugSerializeSettings); } }
@@ -876,6 +877,13 @@ namespace AlephNote.WPF.Windows
 		{
 			var ns = Settings.Clone();
 			Settings.SciWordWrap = !Settings.SciWordWrap;
+			ChangeSettings(Settings);
+		}
+
+		public void ChangeSettingReadonlyMode()
+		{
+			var ns = Settings.Clone();
+			Settings.IsReadOnlyMode = !Settings.IsReadOnlyMode;
 			ChangeSettings(Settings);
 		}
 

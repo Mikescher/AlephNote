@@ -89,14 +89,15 @@
 
 			</MenuItem>
 			<MenuItem Header="_View">
-				<ctrl:AutoActionMenuItem Foreground="Black" Header="Always on Top" AlephAction="ToggleAlwaysOnTop" IsChecked="{Binding Settings.AlwaysOnTop}" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Always on Top"        AlephAction="ToggleAlwaysOnTop" IsChecked="{Binding Settings.AlwaysOnTop}"    Settings="{Binding Settings}"  />
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Display Line Numbers" AlephAction="ToggleLineNumbers" IsChecked="{Binding Settings.SciLineNumbers}" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Foreground="Black" Header="Word Wrap" AlephAction="ToggleWordWrap" IsChecked="{Binding Settings.SciWordWrap}" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Word Wrap"            AlephAction="ToggleWordWrap"    IsChecked="{Binding Settings.SciWordWrap}"    Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Readonly mode"        AlephAction="ToggleReadonly"    IsChecked="{Binding Settings.IsReadOnlyMode}" Settings="{Binding Settings}"  />
 			</MenuItem>
 			<MenuItem Header="_Help">
-				<ctrl:AutoActionMenuItem Foreground="Black" Header="Check for Updates" AlephAction="CheckForUpdates" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Foreground="Black" Header="Show Log" AlephAction="ShowLog" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Foreground="Black" Header="About" AlephAction="ShowAbout" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Check for Updates"  AlephAction="CheckForUpdates" Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Show Log"           AlephAction="ShowLog"        Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="About"              AlephAction="ShowAbout"      Settings="{Binding Settings}"  />
 			</MenuItem>
 			<MenuItem Header="_Debug" Visibility="{Binding DebugMode, Converter={conv:BoolToVisibility}, ConverterParameter=Visible;Collapsed}">
 				<MenuItem Foreground="Black" Header="Show interactive theme editor" Command="{Binding DebugShowThemeEditorCommand}" />
@@ -145,6 +146,7 @@
 					Background="{ext:ThemeBinding 'window.globalsearch.button:background'}" 
 					BorderThickness="{ext:ThemeBinding 'window.globalsearch.button:border_thickness'}"
 					BorderBrush="{ext:ThemeBinding 'window.globalsearch.button:border'}" 
+					IsEnabled="{Binding Settings.IsReadOnlyMode, Converter={conv:NegateBool}}"
 					Command="{Binding CreateNewNoteCommand}">
 				<Image Source="/Resources/plus.png" Margin="2" />
 			</Button>
@@ -214,6 +216,25 @@
 				</services:WatermarkService.Watermark>
 			</TextBox>
 
+			<Image Grid.Row="0" Grid.Column="1" Margin="2,0"
+				   Cursor="Hand"
+				   MouseDown="ImageLock_MouseDown"
+				   HorizontalAlignment="Right" 
+				   Source="{Binding Settings.IsReadOnlyMode, Converter={conv:ReadonlyToLockIcon}}" 
+				   Height="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" >
+
+				<Image.Resources>
+					<conv:MultiBoolToVisibility x:Key="MB2V" />
+				</Image.Resources>
+				<Image.Visibility>
+					<MultiBinding Converter="{StaticResource MB2V}" ConverterParameter="OR;Visible;Collapsed">
+						<Binding Path="Settings.IsReadOnlyMode" />
+						<Binding Path="Settings.ShowReadonlyLock" />
+					</MultiBinding>
+				</Image.Visibility>
+				
+			</Image>
+
 			<ctrl:TagEditor Grid.Row="1" Grid.Column="0" 
 							TagSource="{Binding SelectedNote.Tags}" 
 							Repository="{Binding Repository}" 
@@ -240,6 +261,9 @@
 					<RowDefinition Height="*"/>
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
+				
+				<Image Grid.Row="0" Source="/Resources/plus.png" Margin="2" VerticalAlignment="Top" HorizontalAlignment="Right" />
+				
 				<WindowsFormsHost Grid.Row="0" x:Name="NoteEditHost">
 					<WindowsFormsHost.Child>
 						<scinet:Scintilla x:Name="NoteEdit" AllowDrop="True"
@@ -257,7 +281,11 @@
 				<ctrl:SearchBox x:Name="DocumentSearchBar" Grid.Row="1" Height="28" HideBox="OnHideDoumentSearchBox" Target="{Binding ElementName=NoteEdit}" Settings="{Binding Settings}" />
 			</Grid>
 
-			<proxy:LegacyStringBinding Grid.Row="0" Grid.Column="0" Element="{Binding ElementName=NoteEdit}" PropertyPath="Text" ChangedEventPath="TextChanged" TargetBinding="{Binding SelectedNote.Text}" />
+			<proxy:LegacyStringBinding Grid.Row="0" Grid.Column="0" 
+									   Element="{Binding ElementName=NoteEdit}" 
+									   PropertyPath="Text" ChangedEventPath="TextChanged" TargetBinding="{Binding SelectedNote.Text}" 
+									   OnBeforePropertySet="NoteEdit_OnBeforeTextSet"
+									   OnAfterPropertySet="NoteEdit_OnAfterTextSet"/>
 
 		</Grid>
 
