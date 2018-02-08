@@ -63,5 +63,9 @@ License:    Copyright (c) 2017 Skyler Lee
 
 	<data>
 
+		<property name="scintilla.background"                    value="@MK_VeryDarkGray" />
+		<property name="scintilla.default:foreground"            value="@MK_VeryLightGray" />
+		<property name="scintilla.margin.numbers:background"     value="@MK_VeryDarkGray" />
+		<property name="scintilla.margin.symbols:background"     value="@MK_VeryDarkGray" />
 	</data>
 </theme>

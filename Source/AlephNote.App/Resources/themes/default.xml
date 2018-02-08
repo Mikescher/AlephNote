@@ -52,10 +52,6 @@ Repository: https://github.com/Mikescher/AlephNote
 			<property name="scintilla.whitespace:color"      value="#FFC355"/>
 			<property name="scintilla.whitespace:background" value="@Transparent"/>
 
-			<property name="scintilla.margin.linenumbers:background" value="@Black"/>
-				
-			<property name="scintilla.margin.listsymbols:background" value="@Black"/>
-
 			<property name="scintilla.caret:foreground"       value="$scintilla.default:foreground"/>
 			<property name="scintilla.caret:background"       value="@Yellow"/>
 			<property name="scintilla.caret:background_alpha" value="256"/>

@@ -113,9 +113,6 @@ namespace AlephNote.Common.Themes
 			Tuple.Create("scintilla.whitespace:color"                            , AlephThemePropType.Color     ),
 			Tuple.Create("scintilla.whitespace:background"                       , AlephThemePropType.Color     ),
 
-			Tuple.Create("scintilla.margin.linenumbers:background"               , AlephThemePropType.Color     ),
-			Tuple.Create("scintilla.margin.listsymbols:background"               , AlephThemePropType.Color     ),
-
 			Tuple.Create("scintilla.caret:foreground"                            , AlephThemePropType.Color     ),
 			Tuple.Create("scintilla.caret:background"                            , AlephThemePropType.Color     ),
 			Tuple.Create("scintilla.caret:background_alpha"                      , AlephThemePropType.Integer   ),
