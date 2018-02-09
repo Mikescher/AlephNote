@@ -32,17 +32,17 @@ rmdir ru /S /Q
 rmdir sv /S /Q
 rmdir zh-Hans /S /Q
 
-del /s *.pdb
-del /s *.vshost.exe
-del /s *.manifest
-del /s *.xml
-del /s *.config
+del /q *.pdb
+del /q *.vshost.exe
+del /q *.manifest
+del /q *.xml
+del /q *.config
 if exist .notes rd /S /Q .notes
 cd Plugins
-del /s *.pdb
-del /s *.vshost.exe
-del /s *.manifest
-del /s *.xml
+del /q *.pdb
+del /q *.vshost.exe
+del /q *.manifest
+del /q *.xml
 cd ..
 
 @REM ================ PACKAGE ================
