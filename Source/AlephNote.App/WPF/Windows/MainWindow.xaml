@@ -54,7 +54,7 @@
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Export Note"               AlephAction="ExportNote"           Settings="{Binding Settings}" />
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Delete Note"               AlephAction="DeleteNote"           Settings="{Binding Settings}" />
 				<Separator />
-				<ctrl:AutoActionMenuItem Header="Exit"                      AlephAction="AppExit"              Settings="{Binding Settings}"  />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Exit"                      AlephAction="AppExit"              Settings="{Binding Settings}"  />
 			</MenuItem>
 			<MenuItem Header="_Edit">
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Settings" AlephAction="ShowSettings" Settings="{Binding Settings}"  />
