@@ -120,9 +120,6 @@ namespace AlephNote.WPF.Windows
 				Width = settings.StartupPositionWidth;
 				Height = screen.WorkingArea.Height - 10;
 			}
-
-			if (settings.MinimizeToTray && settings.StartupState == ExtendedWindowState.Minimized)
-				Hide();
 		}
 
 		private WindowState ConvertWindowStateEnum(ExtendedWindowState s)
@@ -306,11 +303,6 @@ namespace AlephNote.WPF.Windows
 		public void FocusScintillaDelayed(int d = 50)
 		{
 			new Thread(() => { Thread.Sleep(d); System.Windows.Application.Current.Dispatcher.Invoke(FocusScintilla); }).Start();
-		}
-
-		public void ExecuteDelayed(int d, Action a)
-		{
-			new Thread(() => { Thread.Sleep(d); System.Windows.Application.Current.Dispatcher.BeginInvoke(a); }).Start();
 		}
 
 		public void FocusScintilla()

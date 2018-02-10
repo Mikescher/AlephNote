@@ -14,6 +14,7 @@ using AlephNote.Common.Settings;
 using System.Windows;
 using System.Globalization;
 using System.Threading;
+using AlephNote.Common.Settings.Types;
 
 namespace AlephNote
 {
@@ -106,7 +107,8 @@ namespace AlephNote
 			ThemeManager.Inst.LoadWithErrorDialog(settings);
 			
 			var mw = new MainWindow(settings);
-			mw.Show();
+
+			if (!(settings.MinimizeToTray && settings.StartupState == ExtendedWindowState.Minimized)) mw.Show();
 		}
 		
 		void AppDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
