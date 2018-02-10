@@ -17,7 +17,7 @@ namespace AlephNote.WPF.Extensions
 		public static IEnumerable<T> OfType<T>(this ICollectionView view)
 		{
 			var enumerator = view.GetEnumerator();
-			while (enumerator.MoveNext()) yield return (T)enumerator.Current;
+			while (enumerator.MoveNext()) if (enumerator.Current is T r) yield return r;
 		}
 	}
 }
