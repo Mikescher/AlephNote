@@ -353,6 +353,10 @@ namespace AlephNote.Common.Settings
 		public bool ShowReadonlyLock { get { return _showReadonlyLock; } set { _showReadonlyLock = value; OnPropertyChanged(); } }
 		private bool _showReadonlyLock = false;
 
+		[AlephXMLField]
+		public bool UpdateToPrerelease { get { return _updateToPrerelease; } set { _updateToPrerelease = value; OnPropertyChanged(); } }
+		private bool _updateToPrerelease = false;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

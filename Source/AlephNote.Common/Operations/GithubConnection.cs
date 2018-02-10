@@ -15,17 +15,34 @@ namespace AlephNote.Common.Operations
 // ReSharper restore All
 #pragma warning restore 0649
 
-		public Tuple<Version, DateTime, string> GetLatestRelease()
+		public Tuple<Version, DateTime, string> GetLatestRelease(bool includeBeta)
 		{
-			var rest = new SimpleJsonRest(null, @"https://api.github.com");
+			if (includeBeta)
+			{
+				var rest = new SimpleJsonRest(null, @"https://api.github.com");
 
-			var response = rest.Get<JsonResponse>("repos/Mikescher/AlephNote/releases/latest");
+				var response = rest.Get<List<JsonResponse>>("repos/Mikescher/AlephNote/releases").First();
 
-			var url = response.assets.First(a => a.browser_download_url.EndsWith(".zip")).browser_download_url;
-			var date = response.published_at;
-			var version = ParseVersion(response.tag_name);
+				var url = response.assets.First(a => a.browser_download_url.EndsWith(".zip")).browser_download_url;
+				var date = response.published_at;
+				var version = ParseVersion(response.tag_name);
 
-			return Tuple.Create(version, date, url);
+				return Tuple.Create(version, date, url);
+			}
+			else
+			{
+				var rest = new SimpleJsonRest(null, @"https://api.github.com");
+
+				var response = rest.Get<JsonResponse>("repos/Mikescher/AlephNote/releases/latest");
+
+				var url = response.assets.First(a => a.browser_download_url.EndsWith(".zip")).browser_download_url;
+				var date = response.published_at;
+				var version = ParseVersion(response.tag_name);
+
+				return Tuple.Create(version, date, url);
+			}
+
+
 		}
 
 		private static Version ParseVersion(string dat)

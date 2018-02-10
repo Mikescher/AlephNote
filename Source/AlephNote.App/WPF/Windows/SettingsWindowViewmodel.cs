@@ -19,7 +19,9 @@ namespace AlephNote.WPF.Windows
 		private readonly MainWindow mainWindow;
 
 		public AppSettings Settings { get; private set; }
-		
+
+		public bool IsAppDebugMode => App.DebugMode;
+
 		public ICommand InsertCurrentWindowStateCommand { get { return new RelayCommand(InsertCurrentWindowState); } }
 
 		public ObservableCollectionNoReset<ObservableShortcutConfig> ShortcutList { get; set; }
