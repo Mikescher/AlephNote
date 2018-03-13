@@ -99,6 +99,9 @@
     <Compile Include="WPF\Controls\ConnectionDisplayControl.xaml.cs">
       <DependentUpon>ConnectionDisplayControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Controls\GlobalSearchTextBox.xaml.cs">
+      <DependentUpon>GlobalSearchTextBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Controls\INotesViewControl.cs" />
     <Compile Include="WPF\Controls\NotesViewFlat.xaml.cs">
       <DependentUpon>NotesViewFlat.xaml</DependentUpon>
@@ -117,6 +120,7 @@
       <DependentUpon>TagEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Converter\BoolToColor.cs" />
+    <Compile Include="WPF\Converter\EmptyToVisibility.cs" />
     <Compile Include="WPF\Converter\BrushRefToBrush.cs" />
     <Compile Include="WPF\Converter\ColorRefToBrush.cs" />
     <Compile Include="WPF\Converter\MultiBoolToVisibility.cs" />
@@ -264,6 +268,10 @@
     <Page Include="WPF\Controls\FontBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WPF\Controls\GlobalSearchTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WPF\Controls\NotesViewFlat.xaml">
       <SubType>Designer</SubType>

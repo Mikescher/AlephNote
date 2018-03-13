@@ -125,20 +125,7 @@
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
 
-			<controls:ClickSelectTextBox 
-				Grid.Row="0" Margin="0,2" 
-				Foreground="{ext:ThemeBinding 'window.globalsearch.input:foreground'}" 
-				Background="{ext:ThemeBinding 'window.globalsearch.input:background'}" 
-				BorderBrush="{ext:ThemeBinding 'window.globalsearch.input:border'}" 
-				Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" x:Name="GlobalSearchBar">
-				<services:WatermarkService.Watermark>
-					<TextBlock 
-						Foreground="{ext:ThemeBinding 'window.globalsearch.placeholder:foreground'}"
-						Background="Transparent"
-						Text="Search" 
-						Padding="5,0"/>
-				</services:WatermarkService.Watermark>
-			</controls:ClickSelectTextBox>
+			<controls:GlobalSearchTextBox Grid.Row="0" Margin="0,2" SearchText="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" x:Name="GlobalSearchBar" />
 
 			<Button Grid.Row="0" Grid.Column="1" Margin="2" Padding="0" FontWeight="Bold" 
 					Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 

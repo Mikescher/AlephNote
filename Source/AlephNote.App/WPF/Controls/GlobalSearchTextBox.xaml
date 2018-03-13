@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="AlephNote.WPF.Controls.GlobalSearchTextBox"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:AlephNote.WPF.Controls"
+			 xmlns:services="clr-namespace:AlephNote.WPF.Services"
+			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
+			 xmlns:conv="clr-namespace:AlephNote.WPF.Converter"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="22" d:DesignWidth="300">
+	<Grid x:Name="LayoutRoot">
+		
+		<local:ClickSelectTextBox 
+				x:Name="SearchControl"
+				Foreground="{ext:ThemeBinding 'window.globalsearch.input:foreground'}" 
+				Background="{ext:ThemeBinding 'window.globalsearch.input:background'}" 
+				BorderBrush="{ext:ThemeBinding 'window.globalsearch.input:border'}" 
+				Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+			<services:WatermarkService.Watermark>
+				<TextBlock 
+						Foreground="{ext:ThemeBinding 'window.globalsearch.placeholder:foreground'}"
+						Background="Transparent"
+						Text="Search" 
+						Padding="5,0"/>
+			</services:WatermarkService.Watermark>
+		</local:ClickSelectTextBox>
+
+		<Button 
+			Visibility="{Binding SearchText, Converter={conv:EmptyToVisibility}, ConverterParameter='Hidden;Visible'}"
+			HorizontalAlignment="Right" VerticalAlignment="Center"
+			Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+			FontSize="12" Height="16" Width="16" Background="{ext:ThemeBinding 'window.globalsearch.input:background'}"
+			Foreground="{ext:ThemeBinding 'window.globalsearch.input:foreground'}"
+			Padding="0,0,0,0" Margin="3,0"
+			Click="Button_Clear_Click"
+			HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+			<TextBlock Text="x" Margin="0,-3,0,0"/>
+		</Button>
+
+	</Grid>
+</UserControl>

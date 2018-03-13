@@ -225,6 +225,9 @@ Repository: https://github.com/Mikescher/AlephNote
 				<property name="window.globalsearch.button:foreground"        value="@Black"/>
 				<property name="window.globalsearch.button:border"            value="@Black"/>
 				<property name="window.globalsearch.button:border_thickness"  value="0"/>
+
+				<property name="window.globalsearch.clearbutton:background"   value="@Transparent"/>
+				<property name="window.globalsearch.clearbutton:foreground"   value="$window.globalsearch.input:foreground"/>
 			</group>
 
 			<group name="notesview">

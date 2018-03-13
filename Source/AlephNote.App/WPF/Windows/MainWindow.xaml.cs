@@ -315,7 +315,6 @@ namespace AlephNote.WPF.Windows
 		public void FocusGlobalSearch()
 		{
 			GlobalSearchBar.Focus();
-			Keyboard.Focus(GlobalSearchBar);
 		}
 
 		private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
