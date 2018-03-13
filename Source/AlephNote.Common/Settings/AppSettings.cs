@@ -357,6 +357,10 @@ namespace AlephNote.Common.Settings
 		public bool UpdateToPrerelease { get { return _updateToPrerelease; } set { _updateToPrerelease = value; OnPropertyChanged(); } }
 		private bool _updateToPrerelease = false;
 
+		[AlephXMLField]
+		public bool ClearSearchOnFolderClick { get { return _clearSearchOnFolderClick; } set { _clearSearchOnFolderClick = value; OnPropertyChanged(); } }
+		private bool _clearSearchOnFolderClick = true;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

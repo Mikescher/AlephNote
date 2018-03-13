@@ -331,6 +331,10 @@ namespace AlephNote.WPF.Windows
 				Settings.LastSelectedNote = SelectedNote?.GetUniqueName();
 				Settings.LastSelectedFolder = SelectedFolderPath ?? DirectoryPath.Root();
 			}
+			if (!string.IsNullOrEmpty(SearchText) && (Settings != null && Settings.ClearSearchOnFolderClick) && !(SelectedFolderPath == null || HierachicalBaseWrapper.IsSpecial(SelectedFolderPath)))
+			{
+				SearchText = ""; // clear serach on subfolder click 
+			}
 			RequestSettingsSave();
 		}
 
