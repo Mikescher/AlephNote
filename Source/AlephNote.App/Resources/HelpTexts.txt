@@ -242,3 +242,9 @@ Only viewign and synchronization is enabled, this prevents accidental edits.
 [ShowReadonlyLock]
 Display a lock icon in the top right area to toggle between normal and readonly mode.
 
+[LockOnStartup]
+Activate the readonly-mode on startup (you cannot change notes until you manually unlock it)
+
+[LockOnMinimize]
+Activate the readonly-mode when minimizing the main window (either to taskbar or to the trayarea)
+

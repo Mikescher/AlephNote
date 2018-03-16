@@ -352,11 +352,19 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public bool ShowReadonlyLock { get { return _showReadonlyLock; } set { _showReadonlyLock = value; OnPropertyChanged(); } }
 		private bool _showReadonlyLock = false;
+		
+		[AlephXMLField]
+		public bool LockOnStartup { get { return _lockOnStartup; } set { _lockOnStartup = value; OnPropertyChanged(); } }
+		private bool _lockOnStartup = false;
+
+		[AlephXMLField]
+		public bool LockOnMinimize { get { return _lockOnMinimize; } set { _lockOnMinimize = value; OnPropertyChanged(); } }
+		private bool _lockOnMinimize = false;
 
 		[AlephXMLField]
 		public bool UpdateToPrerelease { get { return _updateToPrerelease; } set { _updateToPrerelease = value; OnPropertyChanged(); } }
 		private bool _updateToPrerelease = false;
-
+		
 		[AlephXMLField]
 		public bool ClearSearchOnFolderClick { get { return _clearSearchOnFolderClick; } set { _clearSearchOnFolderClick = value; OnPropertyChanged(); } }
 		private bool _clearSearchOnFolderClick = true;

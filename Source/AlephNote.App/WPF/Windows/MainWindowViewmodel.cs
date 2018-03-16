@@ -484,6 +484,12 @@ namespace AlephNote.WPF.Windows
 			{
 				Owner.Hide();
 			}
+
+			if (WindowState == WindowState.Minimized && Settings.LockOnMinimize && !Settings.IsReadOnlyMode)
+			{
+				Settings.IsReadOnlyMode = true;
+				RequestSettingsSave();
+			}
 		}
 
 		private void ExportNote()

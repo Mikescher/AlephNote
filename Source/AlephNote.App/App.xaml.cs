@@ -104,6 +104,8 @@ namespace AlephNote
 				settings = AppSettings.CreateEmpty(App.PATH_SETTINGS);
 			}
 
+			if (settings.LockOnStartup && !settings.IsReadOnlyMode) settings.IsReadOnlyMode = true;
+
 			ThemeManager.Inst.LoadWithErrorDialog(settings);
 			
 			var mw = new MainWindow(settings);
