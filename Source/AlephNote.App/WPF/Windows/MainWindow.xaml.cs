@@ -168,10 +168,10 @@ namespace AlephNote.WPF.Windows
 
 			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_ON].DefineRgbaImage(Properties.Resources.ui_on);
 
-			NoteEdit.MultipleSelection = s.SciRectSelection;
-			NoteEdit.MouseSelectionRectangularSwitch = s.SciRectSelection;
-			NoteEdit.AdditionalSelectionTyping = s.SciRectSelection;
-			NoteEdit.VirtualSpaceOptions = s.SciRectSelection ? VirtualSpace.RectangularSelection : VirtualSpace.None;
+			NoteEdit.MultipleSelection = s.SciMultiSelection;
+			NoteEdit.MouseSelectionRectangularSwitch = s.SciMultiSelection;
+			NoteEdit.AdditionalSelectionTyping = s.SciMultiSelection;
+			NoteEdit.VirtualSpaceOptions = s.SciMultiSelection ? VirtualSpace.RectangularSelection : VirtualSpace.None;
 			NoteEdit.EndAtLastLine = !s.SciScrollAfterLastLine;
 
 			var fnt = string.IsNullOrWhiteSpace(s.NoteFontFamily) ? FontNameToFontFamily.StrDefaultValue : s.NoteFontFamily;
@@ -337,7 +337,7 @@ namespace AlephNote.WPF.Windows
 				}
 			}
 
-			if (e.Key == Key.System && ReferenceEquals(e.OriginalSource, NoteEditHost))
+			if (e.Key == Key.System && ReferenceEquals(e.OriginalSource, NoteEditHost) && Settings?.SciRectSelection==true)
 			{
 				// Prevent ALT key removing focus of control
 				e.Handled = true;

@@ -95,7 +95,11 @@ namespace AlephNote.Common.Settings
 
 		[AlephXMLField]
 		public bool SciRectSelection { get { return _sciRectSelection; } set { _sciRectSelection = value; OnPropertyChanged(); } }
-		private bool _sciRectSelection = false;
+		private bool _sciRectSelection = true;
+
+		[AlephXMLField]
+		public bool SciMultiSelection { get { return _sciMultiSelection; } set { _sciMultiSelection = value; OnPropertyChanged(); } }
+		private bool _sciMultiSelection = false;
 
 		[AlephXMLField]
 		public bool SciZoomable { get { return _sciZoomable; } set { _sciZoomable = value; OnPropertyChanged(); } }

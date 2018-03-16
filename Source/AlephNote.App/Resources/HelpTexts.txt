@@ -96,6 +96,9 @@ The font used for the note titles
 [SciRectSelection]
 Enable rectangular selection (by holding down the Alt key) in the main edit control
 
+[SciMultiSelection]
+Enable multiple selection (by holding down the Ctrl key) in the main edit control
+
 [SciZoomable]
 Enable zooming in the main edit control (by Control+Scrollwheel)
 

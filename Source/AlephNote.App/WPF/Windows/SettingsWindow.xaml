@@ -464,6 +464,7 @@
 										<RowDefinition Height="Auto" />
 										<RowDefinition Height="Auto" />
 										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
 									</Grid.RowDefinitions>
 									
 									<CheckBox Grid.Row="0" Grid.Column="0" Margin="2" Content="Display Line numbers" IsChecked="{Binding Settings.SciLineNumbers}" />
@@ -471,11 +472,14 @@
 									<CheckBox Grid.Row="1" Grid.Column="0" Margin="2" Content="Enable rectangular selection" IsChecked="{Binding Settings.SciRectSelection}" />
 									<ctrl:PHelpBtn Grid.Row="1" Grid.Column="1" HelpProperty="SciRectSelection" Margin="2,0" VerticalAlignment="Center" />
 
-									<CheckBox Grid.Row="2" Grid.Column="0" Margin="2" Content="Can zoom" IsChecked="{Binding Settings.SciZoomable}" />
-									<ctrl:PHelpBtn Grid.Row="2" Grid.Column="1" HelpProperty="SciZoomable" Margin="2,0" VerticalAlignment="Center" />
+									<CheckBox Grid.Row="2" Grid.Column="0" Margin="2" Content="Enable multiple selections" IsChecked="{Binding Settings.SciMultiSelection}" IsEnabled="{Binding Settings.SciRectSelection}" />
+									<ctrl:PHelpBtn Grid.Row="2" Grid.Column="1" HelpProperty="SciMultiSelection" Margin="2,0" VerticalAlignment="Center" />
 
-									<CheckBox Grid.Row="3" Grid.Column="0" Margin="2" Content="Use tabs instead of spaces" IsChecked="{Binding Settings.SciUseTabs}" />
-									<ctrl:PHelpBtn Grid.Row="3" Grid.Column="1" HelpProperty="SciUseTabs" Margin="2,0" VerticalAlignment="Center" />
+									<CheckBox Grid.Row="3" Grid.Column="0" Margin="2" Content="Can zoom" IsChecked="{Binding Settings.SciZoomable}" />
+									<ctrl:PHelpBtn Grid.Row="3" Grid.Column="1" HelpProperty="SciZoomable" Margin="2,0" VerticalAlignment="Center" />
+
+									<CheckBox Grid.Row="4" Grid.Column="0" Margin="2" Content="Use tabs instead of spaces" IsChecked="{Binding Settings.SciUseTabs}" />
+									<ctrl:PHelpBtn Grid.Row="4" Grid.Column="1" HelpProperty="SciUseTabs" Margin="2,0" VerticalAlignment="Center" />
 								</Grid>
 
 								<Grid Grid.Row="0" Grid.Column="1">
