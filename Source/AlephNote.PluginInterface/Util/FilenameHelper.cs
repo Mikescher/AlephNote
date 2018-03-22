@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 
 namespace AlephNote.PluginInterface.Util
@@ -40,10 +41,43 @@ namespace AlephNote.PluginInterface.Util
 
 			var fileName = output.ToString();
 
-			if (RESERVED_FILENAMES.Any(r => r.ToLower() == fileName.ToLower())) fileName = "_" + fileName;
-			if (RESERVED_FILENAMES.Any(r => fileName.ToLower().StartsWith(r.ToLower() + "."))) fileName = "_" + fileName;
+			if (fileName.EndsWith("."))
+			{
+				fileName = fileName.Substring(0, fileName.Length-1) + CONVERT_ESCAPE_CHARACTER + string.Format("{0:X4}", (int)'.');
+			}
+
+			if (RESERVED_FILENAMES.Any(r => r.ToLower() == fileName.ToLower())) 
+			{
+				fileName = CONVERT_ESCAPE_CHARACTER + string.Format("{0:X4}", (int)fileName[0]) + fileName.Substring(1);
+			}
 
 			return fileName;
+		}
+
+		public static string ConvertStringFromFilenameBack(string input)
+		{
+			StringBuilder output = new StringBuilder(input.Length);
+
+			for (int i = 0; i < input.Length; i++)
+			{
+				var c = input[i];
+
+				if (c == CONVERT_ESCAPE_CHARACTER && i + 4 < input.Length)
+				{
+					string n = "";
+					n += input[++i];
+					n += input[++i];
+					n += input[++i];
+					n += input[++i];
+					output.Append((char)Convert.ToInt32(n, 16));
+				}
+				else
+				{
+					output.Append(c);
+				}
+			}
+
+			return output.ToString();
 		}
 
 		public static string StripStringForFilename(string input, char? repl = null)
