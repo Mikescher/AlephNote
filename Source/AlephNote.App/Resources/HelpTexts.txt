@@ -251,3 +251,17 @@ Activate the readonly-mode on startup (you cannot change notes until you manuall
 [LockOnMinimize]
 Activate the readonly-mode when minimizing the main window (either to taskbar or to the trayarea)
 
+[RawFolderRepo]
+//TODO
+
+[RawFolderRepoAllowModification]
+//TODO
+
+[RawFolderRepoAllowCreation]
+//TODO
+
+[RawFolderRepoAllowDeletion]
+//TODO
+
+[RawFolderRepoUseFileWatcher]
+//TODO

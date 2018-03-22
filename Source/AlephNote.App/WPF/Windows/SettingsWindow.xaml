@@ -598,21 +598,21 @@
 
 								<TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Push to remote" />
 								<CheckBox  Grid.Row="1" Grid.Column="1" IsChecked="{Binding Settings.GitMirrorDoPush}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
-								<ctrl:PHelpBtn Grid.Row="2" Grid.Column="3" HelpProperty="GitMirrorDoPush" Margin="2,0" VerticalAlignment="Center" />
+								<ctrl:PHelpBtn Grid.Row="1" Grid.Column="3" HelpProperty="GitMirrorDoPush" Margin="2,0" VerticalAlignment="Center" />
 
 								<TextBlock    Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Path" />
-								<ctrl:PathBox Grid.Row="2" Grid.Column="1" PathText="{Binding Settings.GitMirrorPath}" Margin="1" Grid.ColumnSpan="2" />
+								<ctrl:PathBox Grid.Row="2" Grid.Column="1" PathText="{Binding Settings.GitMirrorPath}" Margin="0,1" Grid.ColumnSpan="2" />
 
 								<TextBlock     Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Separate folders per account" />
 								<CheckBox      Grid.Row="3" Grid.Column="1" IsChecked="{Binding Settings.GitMirrorSubfolders}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
 								<ctrl:PHelpBtn Grid.Row="3" Grid.Column="3" HelpProperty="GitMirrorSubfolders" Margin="2,0" VerticalAlignment="Center" />
 
 								<TextBlock Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Authorname" />
-								<TextBox   Grid.Row="4" Grid.Column="1" Text="{Binding Settings.GitMirrorFirstName}" Margin="1" />
-								<TextBox   Grid.Row="4" Grid.Column="2" Text="{Binding Settings.GitMirrorLastName}"  Margin="1" />
+								<TextBox   Grid.Row="4" Grid.Column="1" Text="{Binding Settings.GitMirrorFirstName}" Margin="0,1,1,1" />
+								<TextBox   Grid.Row="4" Grid.Column="2" Text="{Binding Settings.GitMirrorLastName}"  Margin="1,1,0,1" />
 
 								<TextBlock Grid.Row="5" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Authormail" />
-								<TextBox   Grid.Row="5" Grid.Column="1" Text="{Binding Settings.GitMirrorMailAddress}" Margin="1" Grid.ColumnSpan="2" />
+								<TextBox   Grid.Row="5" Grid.Column="1" Text="{Binding Settings.GitMirrorMailAddress}" Margin="0,1" Grid.ColumnSpan="2" />
 
 							</Grid>
 						</GroupBox>
@@ -653,7 +653,7 @@
 									<ctrl:PHelpBtn Grid.Row="0" Grid.Column="2" HelpProperty="EmulateHierachicalStructure" Margin="2,0" VerticalAlignment="Center" />
 
 									<TextBlock     Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Emulated directory seperator" />
-									<ComboBox      Grid.Row="1" Grid.Column="1" Margin="3" ItemsSource="{mext:EnumSource settings:HierachicalStructureSeperator}" SelectedValue="{Binding Settings.HStructureSeperator}" />
+									<ComboBox      Grid.Row="1" Grid.Column="1" Margin="0,3" ItemsSource="{mext:EnumSource settings:HierachicalStructureSeperator}" SelectedValue="{Binding Settings.HStructureSeperator}" />
 
 									<TextBlock     Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Show all notes from all subfolder" />
 									<CheckBox      Grid.Row="2" Grid.Column="1" IsChecked="{Binding Settings.DeepFolderView}" VerticalAlignment="Center"/>
@@ -671,6 +671,61 @@
 									<CheckBox      Grid.Row="5" Grid.Column="1" IsChecked="{Binding Settings.FolderViewShowAllNotesNode}" VerticalAlignment="Center"/>
 									<ctrl:PHelpBtn Grid.Row="5" Grid.Column="2" HelpProperty="FolderViewShowAllNotesNode" Margin="2,0" VerticalAlignment="Center" />
 								</Grid>
+
+							</Grid>
+						</GroupBox>
+						<GroupBox Padding="4">
+							<GroupBox.Header>
+								<StackPanel Orientation="Horizontal">
+									<TextBlock Text="Local filesystem repository" />
+									<ctrl:PHelpBtn HelpProperty="RawFolderRepo" Margin="6,0,0,0" VerticalAlignment="Center" Height="14" Width="14" />
+								</StackPanel>
+							</GroupBox.Header>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="2*" />
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+
+								<TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Synchronize notes with local folder" />
+								<CheckBox  Grid.Row="0" Grid.Column="1" IsChecked="{Binding Settings.UseRawFolderRepo}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+
+								<TextBlock     Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Path" />
+								<ctrl:PathBox  Grid.Row="1" Grid.Column="1" IsEnabled="{Binding Settings.UseRawFolderRepo}" PathText="{Binding Settings.RawFolderRepoPath}" Margin="0,1,1,1" Grid.ColumnSpan="2" />
+								<ctrl:PHelpBtn Grid.Row="1" Grid.Column="3" HelpProperty="RawFolderRepoPath" Margin="2,0" VerticalAlignment="Center" />
+
+								<TextBlock Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Textfile encoding" />
+								<ComboBox  Grid.Row="2" Grid.Column="1" Margin="0,3,3,3" IsEnabled="{Binding Settings.UseRawFolderRepo}" ItemsSource="{mext:EnumSource settings:EncodingEnum}" SelectedValue="{Binding Settings.RawFolderRepoEncoding}" />
+
+								<TextBlock Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Synchronize modifications from filesystem" />
+								<CheckBox  Grid.Row="3" Grid.Column="1" IsEnabled="{Binding Settings.UseRawFolderRepo}" IsChecked="{Binding Settings.RawFolderRepoAllowModification}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+								<ctrl:PHelpBtn Grid.Row="3" Grid.Column="3" HelpProperty="RawFolderRepoAllowModification" Margin="2,0" VerticalAlignment="Center" />
+								
+								<TextBlock Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Synchronize note creation from filesystem" />
+								<CheckBox  Grid.Row="4" Grid.Column="1" IsEnabled="{Binding Settings.UseRawFolderRepo}" IsChecked="{Binding Settings.RawFolderRepoAllowCreation}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+								<ctrl:PHelpBtn Grid.Row="4" Grid.Column="3" HelpProperty="RawFolderRepoAllowCreation" Margin="2,0" VerticalAlignment="Center" />
+								
+								<TextBlock Grid.Row="5" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Synchronize note deletion from filesystem" />
+								<CheckBox  Grid.Row="5" Grid.Column="1" IsEnabled="{Binding Settings.UseRawFolderRepo}" IsChecked="{Binding Settings.RawFolderRepoAllowDeletion}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+								<ctrl:PHelpBtn Grid.Row="5" Grid.Column="3" HelpProperty="RawFolderRepoAllowDeletion" Margin="2,0" VerticalAlignment="Center" />
+								
+								<TextBlock     Grid.Row="6" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Use a filewatcher for change notifications" />
+								<CheckBox      Grid.Row="6" Grid.Column="1" IsEnabled="{Binding Settings.UseRawFolderRepo}" IsChecked="{Binding Settings.RawFolderRepoUseFileWatcher}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+								<ctrl:PHelpBtn Grid.Row="6" Grid.Column="3" HelpProperty="RawFolderRepoUseFileWatcher" Margin="2,0" VerticalAlignment="Center" />
+
+
 
 							</Grid>
 						</GroupBox>

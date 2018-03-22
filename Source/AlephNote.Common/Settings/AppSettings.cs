@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using AlephNote.Common.AlephXMLSerialization;
 using AlephNote.Common.MVVM;
 using AlephNote.Common.Plugins;
@@ -372,6 +373,34 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public bool ClearSearchOnFolderClick { get { return _clearSearchOnFolderClick; } set { _clearSearchOnFolderClick = value; OnPropertyChanged(); } }
 		private bool _clearSearchOnFolderClick = true;
+		
+		[AlephXMLField]
+		public bool UseRawFolderRepo { get { return _useRawFolderRepo; } set { _useRawFolderRepo = value; OnPropertyChanged(); } }
+		private bool _useRawFolderRepo = true;
+		
+		[AlephXMLField]
+		public string RawFolderRepoPath { get { return _rawFolderRepoPath; } set { _rawFolderRepoPath = value; OnPropertyChanged(); } }
+		private string _rawFolderRepoPath = "";
+		
+		[AlephXMLField]
+		public bool RawFolderRepoAllowDeletion { get { return _rawFolderRepoAllowDeletion; } set { _rawFolderRepoAllowDeletion = value; OnPropertyChanged(); } }
+		private bool _rawFolderRepoAllowDeletion = false;
+		
+		[AlephXMLField]
+		public bool RawFolderRepoAllowCreation { get { return _rawFolderRepoAllowCreation; } set { _rawFolderRepoAllowCreation = value; OnPropertyChanged(); } }
+		private bool _rawFolderRepoAllowCreation = false;
+		
+		[AlephXMLField]
+		public bool RawFolderRepoAllowModification { get { return _rawFolderRepoAllowModification; } set { _rawFolderRepoAllowModification = value; OnPropertyChanged(); } }
+		private bool _rawFolderRepoAllowModification = true;
+		
+		[AlephXMLField]
+		public EncodingEnum RawFolderRepoEncoding { get { return _rawFolderRepoEncoding; } set { _rawFolderRepoEncoding = value; OnPropertyChanged(); } }
+		private EncodingEnum _rawFolderRepoEncoding = EncodingEnum.UTF8;
+		
+		[AlephXMLField]
+		public bool RawFolderRepoUseFileWatcher { get { return _rawFolderRepoUseFileWatcher; } set { _rawFolderRepoUseFileWatcher = value; OnPropertyChanged(); } }
+		private bool _rawFolderRepoUseFileWatcher = true;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
