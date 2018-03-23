@@ -103,13 +103,17 @@ namespace AlephNote.Plugins.Filesystem
 		protected override BasicHierachicalNote CreateClone()
 		{
 			var n = new FilesystemNote(_id, _config);
-			n._text = _text;
-			n._title = _title;
-			n._path = _path;
-			n._pathRemote = _pathRemote;
-			n._creationDate = _creationDate;
-			n._modificationDate = _modificationDate;
-			return n;
+
+			using (n.SuppressDirtyChanges())
+			{
+				n._text             = _text;
+				n._title            = _title;
+				n._path             = _path;
+				n._pathRemote       = _pathRemote;
+				n._creationDate     = _creationDate;
+				n._modificationDate = _modificationDate;
+				return n;
+			}
 		}
 
 		public override void OnAfterUpload(INote clonenote)

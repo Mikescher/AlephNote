@@ -205,19 +205,23 @@ namespace AlephNote.Plugins.StandardNote
 
 		protected override BasicFlatNote CreateClone()
 		{
-			var n               = new StandardFileNote(_id, _config, _hConfig);
+			var n = new StandardFileNote(_id, _config, _hConfig);
 
-			n._internalTags     = _internalTags.ToList();
-			n.ResyncTags();
-			n._text             = _text;
-			n._internaltitle    = _internaltitle;
-			n._creationDate     = _creationDate;
-			n._modificationDate = _modificationDate;
-			n._contentVersion   = _contentVersion;
-			n._authHash         = _authHash;
-			n._internalRef.Synchronize(_internalRef);
-			n._isPinned         = _isPinned;
-			return n;
+			using (n.SuppressDirtyChanges())
+			{
+				n._internalTags     = _internalTags.ToList();
+				n.ResyncTags();
+				n._text             = _text;
+				n._internaltitle    = _internaltitle;
+				n._creationDate     = _creationDate;
+				n._modificationDate = _modificationDate;
+				n._contentVersion   = _contentVersion;
+				n._authHash         = _authHash;
+				n._internalRef.Synchronize(_internalRef);
+				n._isPinned         = _isPinned;
+				
+				return n;
+			}
 		}
 	}
 }

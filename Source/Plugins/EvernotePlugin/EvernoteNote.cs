@@ -105,12 +105,16 @@ namespace AlephNote.Plugins.Evernote
 		protected override BasicFlatNote CreateClone()
 		{
 			var n = new EvernoteNote(_id, _config, _hConfig);
-			n._internalTitle = _internalTitle;
-			n._text = _text;
-			n._creationDate = _creationDate;
-			n._modificationDate = _modificationDate;
-			n._updateSequenceNumber = _updateSequenceNumber;
-			return n;
+
+			using (n.SuppressDirtyChanges())
+			{
+				n._internalTitle        = _internalTitle;
+				n._text                 = _text;
+				n._creationDate         = _creationDate;
+				n._modificationDate     = _modificationDate;
+				n._updateSequenceNumber = _updateSequenceNumber;
+				return n;
+			}
 		}
 
 		public string CreateENML()

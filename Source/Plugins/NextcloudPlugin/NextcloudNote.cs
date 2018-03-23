@@ -213,14 +213,19 @@ namespace AlephNote.Plugins.Nextcloud
 		protected override BasicHierachicalNote CreateClone()
 		{
 			var n = new NextcloudNote(_remoteID, _localID, _config);
-			n._content = _content;
-			n._path = _path;
-			n._creationDate = _creationDate;
-			n._modificationDate = _modificationDate;
-			n._remoteTimestamp = _remoteTimestamp;
-			n._favorite = _favorite;
-			n._etag = _etag;
-			return n;
+			
+			using (n.SuppressDirtyChanges())
+			{
+				n._content          = _content;
+				n._path             = _path;
+				n._creationDate     = _creationDate;
+				n._modificationDate = _modificationDate;
+				n._remoteTimestamp  = _remoteTimestamp;
+				n._favorite         = _favorite;
+				n._etag             = _etag;
+
+				return n;
+			}
 		}
 	}
 }

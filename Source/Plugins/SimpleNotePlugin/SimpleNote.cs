@@ -191,16 +191,21 @@ namespace AlephNote.Plugins.SimpleNote
 		protected override BasicFlatNote CreateClone()
 		{
 			var n = new SimpleNote(_id, _config, _hConfig);
-			n._tags.Synchronize(_tags.ToList());
-			n._content = _content;
-			n._deleted = _deleted;
-			n._shareURL = _shareURL;
-			n._publicURL = _publicURL;
-			n._systemTags = _systemTags.ToList();
-			n._creationDate = _creationDate;
-			n._modificationDate = _modificationDate;
-			n._localVersion = _localVersion;
-			return n;
+			
+			using (n.SuppressDirtyChanges())
+			{
+				n._tags.Synchronize(_tags.ToList());
+				n._content          = _content;
+				n._deleted          = _deleted;
+				n._shareURL         = _shareURL;
+				n._publicURL        = _publicURL;
+				n._systemTags       = _systemTags.ToList();
+				n._creationDate     = _creationDate;
+				n._modificationDate = _modificationDate;
+				n._localVersion     = _localVersion;
+
+				return n;
+			}
 		}
 
 		public override void OnAfterUpload(INote iother)

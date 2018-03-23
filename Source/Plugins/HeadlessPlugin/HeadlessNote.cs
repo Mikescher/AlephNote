@@ -80,12 +80,19 @@ namespace AlephNote.Plugins.Headless
 		protected override BasicHierachicalNote CreateClone()
 		{
 			var n = new HeadlessNote(_id);
-			n._title = _title;
-			n._text = _text;
-			n._tags.Synchronize(_tags);
-			n._path = _path;
-			n._isPinned = _isPinned;
-			return n;
+
+			using (n.SuppressDirtyChanges())
+			{
+				n._title            = _title;
+				n._text             = _text;
+				n._tags.Synchronize(_tags);
+				n._path             = _path;
+				n._isPinned         = _isPinned;
+				n._creationDate     = _creationDate;
+				n._modificationDate = _modificationDate;
+
+				return n;
+			}
 		}
 
 		public override void ApplyUpdatedData(INote iother)
