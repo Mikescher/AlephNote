@@ -16,6 +16,9 @@ namespace AlephNote.PluginInterface
 		void ShowExceptionDialog(string title, Exception e);
 		void ShowExceptionDialog(string title, Exception e, string suffix);
 		void ShowExceptionDialog(string title, string message, Exception e, params Exception[] additionalExceptions);
+
+		void ShowSyncErrorDialog(string message, string trace);
+		void ShowSyncErrorDialog(string message, Exception e);
 	}
 
 	public class AlephDummyLoggger : IAlephLogger
@@ -32,5 +35,8 @@ namespace AlephNote.PluginInterface
 		public void ShowExceptionDialog(string title, Exception e) { }
 		public void ShowExceptionDialog(string title, Exception e, string suffix) { }
 		public void ShowExceptionDialog(string title, string message, Exception e, params Exception[] additionalExceptions) { }
+
+		public void ShowSyncErrorDialog(string message, string trace) { }
+		public void ShowSyncErrorDialog(string message, Exception e) { }
 	}
 }

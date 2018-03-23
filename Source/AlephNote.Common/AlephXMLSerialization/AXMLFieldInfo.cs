@@ -35,11 +35,13 @@ namespace AlephNote.Common.AlephXMLSerialization
 
 		private readonly SettingObjectTypeEnum _objectType;
 		public readonly PropertyInfo PropInfo;
-		
-		public AXMLFieldInfo(SettingObjectTypeEnum t, PropertyInfo i)
+		public readonly AlephXMLFieldAttribute Attribute;
+
+		public AXMLFieldInfo(SettingObjectTypeEnum t, PropertyInfo i, AlephXMLFieldAttribute a)
 		{
 			_objectType = t;
 			PropInfo = i;
+			Attribute = a;
 		}
 
 		public XElement Serialize(object objdata, AXMLSerializationSettings opt)

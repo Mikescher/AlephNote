@@ -234,6 +234,11 @@ namespace AlephNote.PluginInterface.Util
 			return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" + doc.ToString(SaveOptions.DisableFormatting);
 		}
 
+		public static string ConvertToStringRaw(XElement xel)
+		{
+			return xel.ToString(SaveOptions.DisableFormatting);
+		}
+
 		public static string ConvertToC80Base64(string content, int indent = 8, int indentLast = 6)
 		{
 			var chunks = ChunkSplit(Convert.ToBase64String(Encoding.UTF8.GetBytes(content)), 80).ToList();

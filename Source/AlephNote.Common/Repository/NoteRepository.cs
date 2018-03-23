@@ -30,6 +30,7 @@ namespace AlephNote.Common.Repository
 		private readonly SynchronizationThread thread;
 		private readonly ISynchronizationFeedback listener;
 		private readonly IAlephDispatcher dispatcher;
+		private readonly RawFolderRepository rawFilesystemRepo;
 
 		public readonly List<INote> LocalDeletedNotes = new List<INote>(); // deleted local but not on remote
 
@@ -43,8 +44,9 @@ namespace AlephNote.Common.Repository
 		private readonly DelayedCombiningInvoker invSaveNotesRemote;
 		private readonly DelayedCombiningInvoker invSaveNotesGitBackup;
 
-		public IRemoteStorageConnection Connection { get { return conn; } }
 
+		public IRemoteStorageConnection Connection { get { return conn; } }
+		
 		public string ConnectionName { get { return account.Plugin.DisplayTitleShort; } }
 		public string ConnectionDisplayTitle { get { return account.DisplayTitle; } }
 		public string ConnectionUUID { get { return account.ID.ToString("B"); } }
@@ -68,6 +70,8 @@ namespace AlephNote.Common.Repository
 			invSaveNotesRemote    = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SyncNow),                45 * 1000, 15 * 60 * 1000);
 			invSaveNotesGitBackup = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(CommitToLocalGitBackup), 10 * 1000, 15 * 60 * 1000);
 
+			rawFilesystemRepo = new RawFolderRepository(this, disp, cfg);
+
 			_notes.CollectionChanged += NoteCollectionChanged;
 		}
 
@@ -84,6 +88,8 @@ namespace AlephNote.Common.Repository
 			LoadNotesFromLocal();
 
 			thread.Start(appconfig.GetSyncDelay());
+			
+			rawFilesystemRepo.Start();
 
 			logger.Trace("Repository", $"SyncThread init took {sw.ElapsedMilliseconds}ms");
 		}
@@ -99,6 +105,9 @@ namespace AlephNote.Common.Repository
 				thread.SyncNowAndStopAsync();
 			else
 				thread.StopAsync();
+
+			if (lastSync) dispatcher.Invoke(() => rawFilesystemRepo.SyncNow());
+			rawFilesystemRepo.Shutdown();
 
 			logger.Trace("Repository", $"SyncThread shutdown took {sw.ElapsedMilliseconds}ms");
 		}
@@ -275,6 +284,7 @@ namespace AlephNote.Common.Repository
 			if (found && updateRemote)
 			{
 				LocalDeletedNotes.Add(note);
+				rawFilesystemRepo.AddLocalDeletedNote(note);
 				thread.SyncNowAsync();
 			}
 		}
@@ -295,11 +305,13 @@ namespace AlephNote.Common.Repository
 			}
 		}
 
-		public void SyncNow()
+		public void SyncNow() // = StartSyncNow, real sync happens asynchronous
 		{
 			logger.Info("Repository", "Sync Now");
 
 			invSaveNotesRemote.CancelPendingRequests();
+
+			dispatcher.Invoke(() => rawFilesystemRepo.SyncNow()); //synchron
 
 			thread.SyncNowAsync();
 

@@ -252,16 +252,36 @@ Activate the readonly-mode on startup (you cannot change notes until you manuall
 Activate the readonly-mode when minimizing the main window (either to taskbar or to the trayarea)
 
 [RawFolderRepo]
-//TODO
+The "synchronize witj local folder" options synchronizes all your notes with a local folder.
+First enable this option and choose an empty folder, the folder will be filled with a textfile for each of your notes.
+Every change in AlephNote will (with the next synchronization) be reflected in the folder.
+If you enable "Synchronize modifications" etc changes in the folder will also be reflected in AlephNote.
+
+This feature is useful if you want to manage/edit your notes wit another program and only use AlephNote to sync them with a remote provider.
+
+Be aware that this synchronization does not do any conflict resolution, it will always take the latest change in case of conflicting edits.
 
 [RawFolderRepoAllowModification]
-//TODO
+Allow modifications of notes in the filesystem to synchronize into AlephNote.
+If disabled AlephNote will never react to changes in the fileystem and all edits must happen in this program.
 
 [RawFolderRepoAllowCreation]
-//TODO
+Allow creation of new notes in the filesystem.
+If enabled you can craete new notes (= new files) in the filesystem and with the next ynchronization they will appear in AlephNote
+
+(!) Please use the correct encoding when creating new notes, otherwise AlephNote could read garbage from the files.
 
 [RawFolderRepoAllowDeletion]
-//TODO
+Allow the deletion of notes in the filesystem.
+If anebaled you can delete files in the filesystem and the corresponding notes in AlepHNote will also be deleted on the next synchronization.
+
+(!) This is kinda dangerous, because this setting makes it easy to accidentally delete all your notes.
+    It is my advise to use some kind of backup/history for your data:
+     - either a filesystem with regular snapshots,
+     - a remote provider with history
+     - or the "local github backup" feature of AlephNote
 
 [RawFolderRepoUseFileWatcher]
-//TODO
+If enabled AlephNote listens (under Windows) to the filesystem events to sync after a file in the path has changed.
+Unfortunately these events aren't totally reliable, so the time-based synchronization should not be disabled.
+

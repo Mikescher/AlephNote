@@ -215,14 +215,21 @@ namespace AlephNote.WPF.Windows
 			{
 				var sw = Stopwatch.StartNew();
 
-				var reconnectRepo = 
-					(!Settings.ActiveAccount.IsEqual(newSettings.ActiveAccount)) ||
-					(Settings.EmulateHierachicalStructure != newSettings.EmulateHierachicalStructure) ||
-					(Settings.HStructureSeperator != newSettings.HStructureSeperator) ||
-					(Settings.UseHierachicalNoteStructure != newSettings.UseHierachicalNoteStructure);
-				var refreshNotesViewTemplate = (Settings.UseHierachicalNoteStructure != newSettings.UseHierachicalNoteStructure);
-				var refreshNotesCtrlView = (Settings.NoteSorting != newSettings.NoteSorting) || (Settings.SortByPinned != newSettings.SortByPinned);
-				var refreshNotesTheme    = (Settings.Theme != newSettings.Theme);
+				var diffs = AppSettings.Diff(Settings, newSettings);
+
+				var reconnectRepo            = diffs.Any(d => d.Attribute.ReconnectRepo) || (!Settings.ActiveAccount.IsEqual(newSettings.ActiveAccount));
+				var refreshNotesViewTemplate = diffs.Any(d => d.Attribute.RefreshNotesViewTemplate);
+				var refreshNotesCtrlView     = diffs.Any(d => d.Attribute.RefreshNotesControlView);
+				var refreshNotesTheme        = diffs.Any(d => d.Attribute.RefreshNotesTheme);
+
+				App.Logger.Debug("Main", 
+					$"Settings changed by user ({diffs.Count} diffs)", 
+					$"reconnectRepo: {reconnectRepo}\n" +  
+					$"refreshNotesViewTemplate: {refreshNotesViewTemplate}\n" +  
+					$"refreshNotesCtrlView: {refreshNotesCtrlView}\n" +  
+					$"refreshNotesTheme: {refreshNotesTheme}\n" +  
+					"\n\nDifferences:\n" +  
+					string.Join("\n", diffs.Select(d => " - " + d.PropInfo.Name)));
 
 				if (reconnectRepo)
 				{
@@ -886,15 +893,15 @@ namespace AlephNote.WPF.Windows
 		private void ChangeSettingWordWrap()
 		{
 			var ns = Settings.Clone();
-			Settings.SciWordWrap = !Settings.SciWordWrap;
-			ChangeSettings(Settings);
+			ns.SciWordWrap = !ns.SciWordWrap;
+			ChangeSettings(ns);
 		}
 
 		public void ChangeSettingReadonlyMode()
 		{
 			var ns = Settings.Clone();
-			Settings.IsReadOnlyMode = !Settings.IsReadOnlyMode;
-			ChangeSettings(Settings);
+			ns.IsReadOnlyMode = !ns.IsReadOnlyMode;
+			ChangeSettings(ns);
 		}
 
 		private void ChangeSettingTheme()

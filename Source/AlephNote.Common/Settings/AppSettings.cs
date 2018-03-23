@@ -158,11 +158,11 @@ namespace AlephNote.Common.Settings
 		public bool LaunchOnBoot { get { return _launchOnBoot; } set { _launchOnBoot = value; OnPropertyChanged(); } }
 		private bool _launchOnBoot = false;
 
-		[AlephXMLField]
+		[AlephXMLField(RefreshNotesControlView=true)]
 		public SortingMode NoteSorting { get { return _noteSorting; } set { _noteSorting = value; OnPropertyChanged(); } }
 		private SortingMode _noteSorting = SortingMode.ByModificationDate;
 
-		[AlephXMLField]
+		[AlephXMLField(RefreshNotesControlView=true)]
 		public bool SortByPinned { get { return _sortByPinned; } set { _sortByPinned = value; OnPropertyChanged(); } }
 		private bool _sortByPinned = true;
 
@@ -238,7 +238,7 @@ namespace AlephNote.Common.Settings
 		public bool GitMirrorSubfolders { get { return _gitMirrorSubfolders; } set { _gitMirrorSubfolders = value; OnPropertyChanged(); } }
 		private bool _gitMirrorSubfolders = false;
 
-		[AlephXMLField]
+		[AlephXMLField(ReconnectRepo=true)]
 		public RemoteStorageAccount ActiveAccount { get { return _activeAccount; } set { _activeAccount = value; OnPropertyChanged(); } }
 		private RemoteStorageAccount _activeAccount = null;
 
@@ -298,15 +298,15 @@ namespace AlephNote.Common.Settings
 		public bool RememberScroll { get { return _rememberScroll; } set { _rememberScroll = value; OnPropertyChanged(); } }
 		private bool _rememberScroll = false;
 
-		[AlephXMLField]
+		[AlephXMLField(ReconnectRepo=true, RefreshNotesViewTemplate=true)]
 		public bool UseHierachicalNoteStructure { get { return _useHierachicalNoteStructure; } set { _useHierachicalNoteStructure = value; OnPropertyChanged(); } }
 		private bool _useHierachicalNoteStructure = false;
 
-		[AlephXMLField]
+		[AlephXMLField(ReconnectRepo=true)]
 		public bool EmulateHierachicalStructure { get { return _emulateHierachicalStructure; } set { _emulateHierachicalStructure = value; OnPropertyChanged(); } }
 		private bool _emulateHierachicalStructure = true;
 
-		[AlephXMLField]
+		[AlephXMLField(ReconnectRepo=true)]
 		public HierachicalStructureSeperator HStructureSeperator { get { return _hStructureSeperator; } set { _hStructureSeperator = value; OnPropertyChanged(); } }
 		private HierachicalStructureSeperator _hStructureSeperator = HierachicalStructureSeperator.SeperatorForwardSlash;
 
@@ -346,7 +346,7 @@ namespace AlephNote.Common.Settings
 		public bool FolderViewShowAllNotesNode { get { return _folderViewAllNotesNode; } set { _folderViewAllNotesNode = value; OnPropertyChanged(); } }
 		private bool _folderViewAllNotesNode = true;
 
-		[AlephXMLField]
+		[AlephXMLField(RefreshNotesTheme=true)]
 		public string Theme { get { return _theme; } set { _theme = value; OnPropertyChanged(); } }
 		private string _theme = "default.xml";
 
@@ -374,33 +374,37 @@ namespace AlephNote.Common.Settings
 		public bool ClearSearchOnFolderClick { get { return _clearSearchOnFolderClick; } set { _clearSearchOnFolderClick = value; OnPropertyChanged(); } }
 		private bool _clearSearchOnFolderClick = true;
 		
-		[AlephXMLField]
+		[AlephXMLField(ReconnectRepo=true)]
 		public bool UseRawFolderRepo { get { return _useRawFolderRepo; } set { _useRawFolderRepo = value; OnPropertyChanged(); } }
-		private bool _useRawFolderRepo = true;
+		private bool _useRawFolderRepo = false;
 		
-		[AlephXMLField]
+		[AlephXMLField(ReconnectRepo=true)]
 		public string RawFolderRepoPath { get { return _rawFolderRepoPath; } set { _rawFolderRepoPath = value; OnPropertyChanged(); } }
 		private string _rawFolderRepoPath = "";
 		
-		[AlephXMLField]
+		[AlephXMLField(ReconnectRepo=true)]
 		public bool RawFolderRepoAllowDeletion { get { return _rawFolderRepoAllowDeletion; } set { _rawFolderRepoAllowDeletion = value; OnPropertyChanged(); } }
 		private bool _rawFolderRepoAllowDeletion = false;
 		
-		[AlephXMLField]
+		[AlephXMLField(ReconnectRepo=true)]
 		public bool RawFolderRepoAllowCreation { get { return _rawFolderRepoAllowCreation; } set { _rawFolderRepoAllowCreation = value; OnPropertyChanged(); } }
 		private bool _rawFolderRepoAllowCreation = false;
 		
-		[AlephXMLField]
+		[AlephXMLField(ReconnectRepo=true)]
 		public bool RawFolderRepoAllowModification { get { return _rawFolderRepoAllowModification; } set { _rawFolderRepoAllowModification = value; OnPropertyChanged(); } }
 		private bool _rawFolderRepoAllowModification = true;
 		
-		[AlephXMLField]
+		[AlephXMLField(ReconnectRepo=true)]
 		public EncodingEnum RawFolderRepoEncoding { get { return _rawFolderRepoEncoding; } set { _rawFolderRepoEncoding = value; OnPropertyChanged(); } }
 		private EncodingEnum _rawFolderRepoEncoding = EncodingEnum.UTF8;
 		
-		[AlephXMLField]
+		[AlephXMLField(ReconnectRepo=true)]
 		public bool RawFolderRepoUseFileWatcher { get { return _rawFolderRepoUseFileWatcher; } set { _rawFolderRepoUseFileWatcher = value; OnPropertyChanged(); } }
 		private bool _rawFolderRepoUseFileWatcher = true;
+		
+		[AlephXMLField(ReconnectRepo=true)]
+		public int RawFolderRepoMaxDirectoryDepth { get { return _rawFolderRepoMaxDirectoryDepth; } set { _rawFolderRepoMaxDirectoryDepth = value; OnPropertyChanged(); } }
+		private int _rawFolderRepoMaxDirectoryDepth = 5;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
@@ -608,6 +612,11 @@ namespace AlephNote.Common.Settings
 				LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [NewNoteFromTextFile]");
 				Shortcuts = Shortcuts.Concat(Tuple.Create("NewNoteFromTextFile", new ShortcutDefinition(AlephShortcutScope.Window, AlephModifierKeys.Control, AlephKey.O)));
 			}
+		}
+
+		public static List<AXMLFieldInfo> Diff(AppSettings a, AppSettings b)
+		{
+			return _serializer.Diff(a, b).ToList();
 		}
 	}
 }

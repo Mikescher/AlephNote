@@ -84,17 +84,52 @@ namespace AlephNote.Log
 
 		public void ShowExceptionDialog(string title, Exception e, string additionalInfo)
 		{
+			if (Application.Current != null && !Application.Current.Dispatcher.CheckAccess())
+			{
+				Application.Current.Dispatcher.Invoke(() => ExceptionDialog.Show(null, title, e, additionalInfo));
+				return;
+			}
 			ExceptionDialog.Show(null, title, e, additionalInfo);
 		}
 
 		public void ShowExceptionDialog(string title, Exception e)
 		{
+			if (Application.Current != null && !Application.Current.Dispatcher.CheckAccess())
+			{
+				Application.Current.Dispatcher.Invoke(() => ExceptionDialog.Show(null, title, e, ""));
+				return;
+			}
 			ExceptionDialog.Show(null, title, e, "");
 		}
 
 		public void ShowExceptionDialog(string title, string message, Exception e, params Exception[] additionalExceptions)
 		{
+			if (Application.Current != null && !Application.Current.Dispatcher.CheckAccess())
+			{
+				Application.Current.Dispatcher.Invoke(() => ExceptionDialog.Show(null, title, message, e, additionalExceptions));
+				return;
+			}
 			ExceptionDialog.Show(null, title, message, e, additionalExceptions);
+		}
+
+		public void ShowSyncErrorDialog(string message, string trace)
+		{
+			if (Application.Current != null && !Application.Current.Dispatcher.CheckAccess())
+			{
+				Application.Current.Dispatcher.Invoke(() => SyncErrorDialog.Show(null, message, trace));
+				return;
+			}
+			SyncErrorDialog.Show(null, message, trace);
+		}
+
+		public void ShowSyncErrorDialog(string message, Exception e)
+		{
+			if (Application.Current != null && !Application.Current.Dispatcher.CheckAccess())
+			{
+				Application.Current.Dispatcher.Invoke(() => SyncErrorDialog.Show(null, new[]{message}, new[]{e}));
+				return;
+			}
+			SyncErrorDialog.Show(null, new[]{message}, new[]{e});
 		}
 
 		public string Export()

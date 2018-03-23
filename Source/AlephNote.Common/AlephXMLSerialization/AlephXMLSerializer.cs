@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using AlephNote.Common.Settings;
 using AlephNote.PluginInterface.Objects;
 using AlephNote.PluginInterface.Objects.AXML;
 
@@ -42,7 +43,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 			var attr = (AlephXMLFieldAttribute)p.Attributes.Single();
 			var type = GetSettingType(p.Info, attr.Encrypted);
 
-			return new AXMLFieldInfo(type, p.Info);
+			return new AXMLFieldInfo(type, p.Info, attr);
 		}
 
 		private AXMLFieldInfo.SettingObjectTypeEnum GetSettingType(PropertyInfo prop, bool encrypt)
@@ -112,6 +113,20 @@ namespace AlephNote.Common.AlephXMLSerialization
 			var xml2 = Serialize(b, opt);
 
 			return xml1 == xml2;
+		}
+
+		public IEnumerable<AXMLFieldInfo> Diff(AppSettings as1, AppSettings as2)
+		{
+			foreach (var prop in _fields)
+			{
+				var data1 = prop.PropInfo.GetValue(as1);
+				var data2 = prop.PropInfo.GetValue(as2);
+
+				var xml1 = XHelper.ConvertToStringRaw(prop.Serialize(data1, AXMLSerializationSettings.None));
+				var xml2 = XHelper.ConvertToStringRaw(prop.Serialize(data2, AXMLSerializationSettings.None));
+
+				if (xml1 != xml2) yield return prop;
+			}
 		}
 	}
 }
