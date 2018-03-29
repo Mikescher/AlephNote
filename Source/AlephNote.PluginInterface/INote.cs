@@ -39,6 +39,7 @@ namespace AlephNote.PluginInterface
 		INote Clone();
 		IDisposable SuppressDirtyChanges();
 		void TriggerOnChanged(bool doNotSendChangeEvents);
-		bool HasTagCasInsensitive(string tag);
+		bool HasTagCaseInsensitive(string tag);
+		bool HasTagCaseSensitive(string tag);
 	}
 }

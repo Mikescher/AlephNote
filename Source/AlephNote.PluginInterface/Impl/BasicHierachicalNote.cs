@@ -166,9 +166,14 @@ namespace AlephNote.PluginInterface.Impl
 			}
 		}
 
-		public bool HasTagCasInsensitive(string tag)
+		public bool HasTagCaseInsensitive(string tag)
 		{
 			return Tags.Any(t => tag.ToLower() == t.ToLower());
+		}
+
+		public bool HasTagCaseSensitive(string tag)
+		{
+			return Tags.Any(t => tag == t);
 		}
 
 		public abstract void ApplyUpdatedData(INote other);

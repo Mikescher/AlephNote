@@ -19,6 +19,7 @@ using AlephNote.Common.MVVM;
 using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.MVVM;
 using AlephNote.WPF.Shortcuts;
+using AlephNote.Common.Util.Search;
 
 namespace AlephNote.WPF.Controls
 {
@@ -408,7 +409,7 @@ namespace AlephNote.WPF.Controls
 
 		public bool SearchFilter(INote note)
 		{
-			return ScintillaSearcher.IsInFilter(note, SearchText);
+			return SearchStringParser.Parse(SearchText).IsMatch(note);
 		}
 
 		public IComparer<INote> DisplaySorter()

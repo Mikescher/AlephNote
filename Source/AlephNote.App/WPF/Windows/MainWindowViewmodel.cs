@@ -505,7 +505,7 @@ namespace AlephNote.WPF.Windows
 
 			SaveFileDialog sfd = new SaveFileDialog();
 
-			if (SelectedNote.HasTagCasInsensitive(AppSettings.TAG_MARKDOWN))
+			if (SelectedNote.HasTagCaseInsensitive(AppSettings.TAG_MARKDOWN))
 			{
 				sfd.Filter = "Markdown files (*.md)|*.md";
 				sfd.FileName = SelectedNote.Title + ".md";

@@ -144,7 +144,7 @@ namespace AlephNote.Common.Operations
 
 			var ext = ".txt";
 
-			if (note.HasTagCasInsensitive(AppSettings.TAG_MARKDOWN)) ext = ".md";
+			if (note.HasTagCaseInsensitive(AppSettings.TAG_MARKDOWN)) ext = ".md";
 
 			var path = Path.Combine(note.Path.Enumerate().Select(c => FilenameHelper.StripStringForFilename(c)).ToArray());
 

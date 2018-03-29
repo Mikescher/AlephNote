@@ -604,7 +604,7 @@ namespace AlephNote.Common.Operations
 			if (string.IsNullOrWhiteSpace(filename)) filename = FilenameHelper.ConvertStringForFilename(note.GetUniqueName());
 
 			var ext = ".txt";
-			if (note.HasTagCasInsensitive(AppSettings.TAG_MARKDOWN)) ext = ".md";
+			if (note.HasTagCaseInsensitive(AppSettings.TAG_MARKDOWN)) ext = ".md";
 
 			if (note.Path.IsRoot()) return Path.Combine(_path, filename+ext);
 

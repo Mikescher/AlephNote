@@ -21,6 +21,7 @@ using System.Windows.Media;
 using AlephNote.PluginInterface.Util;
 using System;
 using System.Threading;
+using AlephNote.Common.Util.Search;
 
 namespace AlephNote.WPF.Controls
 {
@@ -171,7 +172,7 @@ namespace AlephNote.WPF.Controls
 
 		private bool SearchFilter(INote note)
 		{
-			return ScintillaSearcher.IsInFilter(note, SearchText);
+			return SearchStringParser.Parse(SearchText).IsMatch(note);
 		}
 
 		private void NotesList_Drop(object sender, DragEventArgs e)
