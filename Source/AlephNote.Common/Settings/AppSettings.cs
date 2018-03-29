@@ -405,6 +405,10 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField(ReconnectRepo=true)]
 		public int RawFolderRepoMaxDirectoryDepth { get { return _rawFolderRepoMaxDirectoryDepth; } set { _rawFolderRepoMaxDirectoryDepth = value; OnPropertyChanged(); } }
 		private int _rawFolderRepoMaxDirectoryDepth = 5;
+		
+		[AlephXMLField]
+		public bool HideTagChooser { get { return _hideTagChooser; } set { _hideTagChooser = value; OnPropertyChanged(); } }
+		private bool _hideTagChooser = false;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

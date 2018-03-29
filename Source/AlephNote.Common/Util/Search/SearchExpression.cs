@@ -1,4 +1,5 @@
-﻿using AlephNote.PluginInterface;
+﻿using System.Collections.Generic;
+using AlephNote.PluginInterface;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -7,6 +8,7 @@ namespace AlephNote.Common.Util.Search
 	public abstract class SearchExpression
 	{
 		public abstract bool IsMatch(INote n);
+		public abstract IEnumerable<string> GetPossibleMatchedTags();
 	}
 
 	public class SearchExpression_Regex : SearchExpression
@@ -26,6 +28,8 @@ namespace AlephNote.Common.Util.Search
 
 			return false;
 		}
+		
+		public override IEnumerable<string> GetPossibleMatchedTags() => Enumerable.Empty<string>();
 	}
 	
 	public class SearchExpression_Text : SearchExpression
@@ -76,11 +80,13 @@ namespace AlephNote.Common.Util.Search
 
 			return false;
 		}
+		
+		public override IEnumerable<string> GetPossibleMatchedTags() => Enumerable.Repeat(_needle, 1);
 	}
 	
 	public class SearchExpression_Tag : SearchExpression
 	{
-		private readonly string _tag;
+		public readonly string _tag;
 		private readonly bool _nocase;
 
 		public SearchExpression_Tag(string tag, bool ignorecase)
@@ -96,16 +102,22 @@ namespace AlephNote.Common.Util.Search
 
 			return false;
 		}
+		
+		public override IEnumerable<string> GetPossibleMatchedTags() => Enumerable.Repeat(_tag, 1);
 	}
 	
 	public class SearchExpression_All : SearchExpression
 	{
 		public override bool IsMatch(INote n) => true;
+		
+		public override IEnumerable<string> GetPossibleMatchedTags() => Enumerable.Empty<string>();
 	}
 	
 	public class SearchExpression_None : SearchExpression
 	{
 		public override bool IsMatch(INote n) => false;
+		
+		public override IEnumerable<string> GetPossibleMatchedTags() => Enumerable.Empty<string>();
 	}
 	
 	public class SearchExpression_AND : SearchExpression
@@ -118,6 +130,8 @@ namespace AlephNote.Common.Util.Search
 		}
 
 		public override bool IsMatch(INote n) => _expressions.All(e => e.IsMatch(n));
+		
+		public override IEnumerable<string> GetPossibleMatchedTags() => _expressions.SelectMany(e => e.GetPossibleMatchedTags());
 	}
 	
 	public class SearchExpression_OR : SearchExpression
@@ -130,6 +144,8 @@ namespace AlephNote.Common.Util.Search
 		}
 
 		public override bool IsMatch(INote n) => _expressions.Any(e => e.IsMatch(n));
+		
+		public override IEnumerable<string> GetPossibleMatchedTags() => _expressions.SelectMany(e => e.GetPossibleMatchedTags());
 	}
 	
 	public class SearchExpression_NOT : SearchExpression
@@ -142,5 +158,7 @@ namespace AlephNote.Common.Util.Search
 		}
 
 		public override bool IsMatch(INote n) => !_expression.IsMatch(n);
+		
+		public override IEnumerable<string> GetPossibleMatchedTags() => Enumerable.Empty<string>();
 	}
 }

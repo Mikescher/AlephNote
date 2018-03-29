@@ -117,6 +117,7 @@
 
 		<Grid Margin="1" Grid.Column="0" Grid.Row="1">
 			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="1*"/>
 				<ColumnDefinition Width="26"/>
 			</Grid.ColumnDefinitions>
@@ -125,9 +126,45 @@
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
 
-			<controls:GlobalSearchTextBox Grid.Row="0" Margin="0,2" SearchText="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" x:Name="GlobalSearchBar" />
+			<Button Grid.Row="0" Grid.Column="0" Margin="2" Padding="0" FontWeight="Bold" x:Name="TagPopupButton"
+			        Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
+			        Foreground="{ext:ThemeBinding 'window.globalsearch.tagbutton:foreground'}" 
+			        Background="{ext:ThemeBinding 'window.globalsearch.tagbutton:background'}" 
+			        BorderThickness="{ext:ThemeBinding 'window.globalsearch.tagbutton:border_thickness'}"
+			        BorderBrush="{ext:ThemeBinding 'window.globalsearch.tagbutton:border'}" 
+			        Visibility="{Binding Settings.HideTagChooser, Converter={conv:BoolToVisibility}, ConverterParameter=Hidden;Visible}"
+			        Command="{Binding ShowTagFilterCommand}">
+				<Image Source="/Resources/tag.png" Margin="2" />
+			</Button>
 
-			<Button Grid.Row="0" Grid.Column="1" Margin="2" Padding="0" FontWeight="Bold" 
+			
+			<Popup Grid.Row="0" Grid.Column="0" StaysOpen="False" Placement="Bottom" PlacementTarget="{Binding ElementName=TagPopupButton}" x:Name="TagPopup" AllowsTransparency="True">
+				<Border 
+					Padding="{ext:ThemeBinding 'window.globalsearch.tagbutton.popup:padding'}" 
+					Margin="{ext:ThemeBinding 'window.globalsearch.tagbutton.popup:margin'}" 
+					Background="{ext:ThemeBinding 'window.globalsearch.tagbutton.popup:background'}" 
+					BorderBrush="{ext:ThemeBinding 'window.globalsearch.tagbutton.popup:bordercolor'}"
+					BorderThickness="{ext:ThemeBinding 'window.globalsearch.tagbutton.popup:border_thickness'}">
+					<ScrollViewer MaxHeight="200" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+						<ItemsControl Width="200" x:Name="TagPopupList">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel Orientation="Vertical" Background="{ext:ThemeBinding 'window.globalsearch.tagbutton.popup:background'}" />
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<CheckBox Content="{Binding Name}" IsChecked="{Binding Checked}" Foreground="{ext:ThemeBinding 'window.globalsearch.tagbutton.popup:foreground'}" />
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</ScrollViewer>
+				</Border>
+			</Popup>
+
+			<controls:GlobalSearchTextBox Grid.Row="0" Grid.Column="1" Margin="0,2" SearchText="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" x:Name="GlobalSearchBar" />
+
+			<Button Grid.Row="0" Grid.Column="2" Margin="2" Padding="0" FontWeight="Bold" 
 					Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
 					Foreground="{ext:ThemeBinding 'window.globalsearch.button:foreground'}" 
 					Background="{ext:ThemeBinding 'window.globalsearch.button:background'}" 
@@ -138,7 +175,7 @@
 				<Image Source="/Resources/plus.png" Margin="2" />
 			</Button>
 
-			<ContentControl Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"  x:Name="NotesViewCtrlWrapper">
+			<ContentControl Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3"  x:Name="NotesViewCtrlWrapper">
 				<ContentControl.Resources>
 
 					<ControlTemplate x:Key="TemplateFlat" >

@@ -141,6 +141,7 @@
       <DependentUpon>GenericInputDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Extensions\ThemeSlaveBinding.cs" />
+    <Compile Include="WPF\Util\CheckableTag.cs" />
     <Compile Include="WPF\Windows\ThemeEditor.xaml.cs">
       <DependentUpon>ThemeEditor.xaml</DependentUpon>
     </Compile>
@@ -467,6 +468,9 @@
   <ItemGroup>
     <Resource Include="Resources\lock.png" />
     <Resource Include="Resources\lock_open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\tag.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

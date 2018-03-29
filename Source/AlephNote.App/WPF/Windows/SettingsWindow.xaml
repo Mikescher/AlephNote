@@ -173,6 +173,7 @@
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 
 								<TextBlock Grid.Row="0" Grid.Column="0" Margin="5" Text="Theme:" Grid.ColumnSpan="2" />
@@ -185,6 +186,8 @@
 
 								<CheckBox      Grid.Row="3" Grid.Column="0" Margin="2" Content="Show readonly lock icon"  IsChecked="{Binding Settings.ShowReadonlyLock}" />
 								<ctrl:PHelpBtn Grid.Row="3" Grid.Column="1" HelpProperty="ShowReadonlyLock" Margin="2,0" VerticalAlignment="Center" />
+
+								<CheckBox      Grid.Row="4" Grid.Column="0" Margin="2" Content="Hide tag search button"  IsChecked="{Binding Settings.HideTagChooser}" />
 
 								<CheckBox      Grid.Row="2" Grid.Column="3" Margin="2" Content="Set readonly mode on startup"  IsChecked="{Binding Settings.LockOnStartup}" />
 								<ctrl:PHelpBtn Grid.Row="2" Grid.Column="4" HelpProperty="LockOnStartup" Margin="2,0" VerticalAlignment="Center" />

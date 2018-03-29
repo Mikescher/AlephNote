@@ -215,19 +215,31 @@ Repository: https://github.com/Mikescher/AlephNote
 			</group>
 
 			<group name="globalsearch">
-				<property name="window.globalsearch.input:background"         value="@White"/>
-				<property name="window.globalsearch.input:foreground"         value="@Black"/>
-				<property name="window.globalsearch.input:border"             value="#E3E9EF"/>
+				<property name="window.globalsearch.input:background"                 value="@White"/>
+				<property name="window.globalsearch.input:foreground"                 value="@Black"/>
+				<property name="window.globalsearch.input:border"                     value="#E3E9EF"/>
 				
-				<property name="window.globalsearch.placeholder:foreground"   value="#888888"/>
+				<property name="window.globalsearch.placeholder:foreground"           value="#888888"/>
 				
-				<property name="window.globalsearch.button:background"        value="@White"/>
-				<property name="window.globalsearch.button:foreground"        value="@Black"/>
-				<property name="window.globalsearch.button:border"            value="@Black"/>
-				<property name="window.globalsearch.button:border_thickness"  value="0"/>
+				<property name="window.globalsearch.button:background"                value="@White"/>
+				<property name="window.globalsearch.button:foreground"                value="@Black"/>
+				<property name="window.globalsearch.button:border"                    value="@Black"/>
+				<property name="window.globalsearch.button:border_thickness"          value="0"/>
+				
+				<property name="window.globalsearch.tagbutton:background"             value="$window.globalsearch.button:background"/>
+				<property name="window.globalsearch.tagbutton:foreground"             value="$window.globalsearch.button:foreground"/>
+				<property name="window.globalsearch.tagbutton:border"                 value="$window.globalsearch.button:border"/>
+				<property name="window.globalsearch.tagbutton:border_thickness"       value="$window.globalsearch.button:border_thickness"/>
+				
+				<property name="window.globalsearch.tagbutton.popup:background"       value="$window.tageditor.popup:background"/>
+				<property name="window.globalsearch.tagbutton.popup:bordercolor"      value="@DarkGray"/>
+				<property name="window.globalsearch.tagbutton.popup:foreground"       value="$window.tageditor.popup:foreground"/>
+				<property name="window.globalsearch.tagbutton.popup:border_thickness" value="1"/>
+				<property name="window.globalsearch.tagbutton.popup:margin"           value="0"/>
+				<property name="window.globalsearch.tagbutton.popup:padding"          value="2"/>
 
-				<property name="window.globalsearch.clearbutton:background"   value="@Transparent"/>
-				<property name="window.globalsearch.clearbutton:foreground"   value="$window.globalsearch.input:foreground"/>
+				<property name="window.globalsearch.clearbutton:background"           value="@Transparent"/>
+				<property name="window.globalsearch.clearbutton:foreground"           value="$window.globalsearch.input:foreground"/>
 			</group>
 
 			<group name="notesview">

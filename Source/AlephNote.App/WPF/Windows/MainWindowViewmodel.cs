@@ -63,6 +63,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand FocusFolderCommand { get { return new RelayCommand(() => Owner.NotesViewControl.FocusFolderList()); } }
 		public ICommand DuplicateNoteCommand { get { return new RelayCommand(DuplicateNote); } }
 		public ICommand PinUnpinNoteCommand { get { return new RelayCommand(PinUnpinNote); } }
+		public ICommand ShowTagFilterCommand { get { return new RelayCommand(ShowTagFilter); } }
 
 		public ICommand ClosingEvent { get { return new RelayCommand<CancelEventArgs>(OnClosing); } }
 		public ICommand CloseEvent { get { return new RelayCommand<EventArgs>(OnClose); } }
@@ -1071,6 +1072,11 @@ namespace AlephNote.WPF.Windows
 		public void OnThemeChanged()
 		{
 			Owner.SetupScintilla(Settings);
+		}
+
+		private void ShowTagFilter()
+		{
+			Owner.ShowTagFilter();
 		}
 	}
 }

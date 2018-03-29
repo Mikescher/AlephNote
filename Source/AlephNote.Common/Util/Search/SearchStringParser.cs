@@ -87,7 +87,7 @@ namespace AlephNote.Common.Util.Search
 				var chr = text[i];
 				if (intag)
 				{
-					if (chr == '\\' && i+1<text.Length && (text[i+1]=='[' || text[i+1]==']') )
+					if (chr == '\\' && i+1<text.Length && (text[i+1]=='[' || text[i+1]==']' || text[i+1]=='\\') )
 					{
 						tagbuilder.Append(text[i+1]);
 						i++;
