@@ -285,3 +285,6 @@ If anebaled you can delete files in the filesystem and the corresponding notes i
 If enabled AlephNote listens (under Windows) to the filesystem events to sync after a file in the path has changed.
 Unfortunately these events aren't totally reliable, so the time-based synchronization should not be disabled.
 
+[SuppressConnectionProblemPopup]
+Do not show traybar tooltips or error dialogs when the synchronisation failed due to connection problems (no network connection, no internet, misconfigured proxy, ...).
+Normal errors are still displayed

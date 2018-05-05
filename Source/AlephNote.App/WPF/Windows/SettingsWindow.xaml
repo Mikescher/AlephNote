@@ -90,6 +90,9 @@
 								<TextBlock     Grid.Row="3" Grid.Column="0" Text="Conflict resolution:" VerticalAlignment="Center" />
 								<ComboBox      Grid.Row="3" Grid.Column="2" Margin="2" ItemsSource="{mext:EnumSource {x:Type settings:ConflictResolutionStrategyConfig}}" SelectedValue="{Binding Settings.ConflictResolution}" />
 								<ctrl:PHelpBtn Grid.Row="3" Grid.Column="3" HelpProperty="ConflictResolutionStrategyConfig" Margin="2,0" VerticalAlignment="Center" />
+
+								<CheckBox      Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="3" VerticalAlignment="Center" Content="Suppress connection error popups" IsChecked="{Binding Settings.SuppressConnectionProblemPopup}" />
+								<ctrl:PHelpBtn Grid.Row="4" Grid.Column="3" HelpProperty="SuppressConnectionProblemPopup" Margin="2,0" VerticalAlignment="Center" />
 							</Grid>
 						</GroupBox>
 

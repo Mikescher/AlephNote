@@ -28,6 +28,7 @@ using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.Dialogs;
 using AlephNote.Common.Themes;
 using AlephNote.Common.Util;
+using AlephNote.PluginInterface.Exceptions;
 
 namespace AlephNote.WPF.Windows
 {
@@ -417,6 +418,8 @@ namespace AlephNote.WPF.Windows
 
 		public void SyncError(List<Tuple<string, Exception>> errors)
 		{
+			if (errors.Count==0) return;
+
 			if (_lastSynchronized != null)
 			{
 				LastSynchronizedText = _lastSynchronized.Value.ToLocalTime().ToString("HH:mm:ss");
@@ -430,18 +433,24 @@ namespace AlephNote.WPF.Windows
 
 			App.Logger.Error("Sync", string.Join(Environment.NewLine, errors.Select(p => p.Item1)), string.Join("\r\n\r\n\r\n", errors.Select(p => p.Item2.ToString())));
 
-			if (Owner.Visibility == Visibility.Hidden)
+			if (Settings.SuppressConnectionProblemPopup && errors.All(e => (e.Item2 as RestException)?.IsConnectionProblem == true))
 			{
-				Owner.TrayIcon.ShowBalloonTip(
-					"Synchronization failed", 
-					string.Join(Environment.NewLine, errors.Select(p => p.Item1)), 
-					BalloonIcon.Error);
+				App.Logger.Info("Sync", "Suppress error display due to config [[SuppressConnectionProblemPopup]]");
 			}
 			else
 			{
-				SyncErrorDialog.Show(Owner, errors.Select(p => p.Item1), errors.Select(p => p.Item2));
+				if (Owner.Visibility == Visibility.Hidden)
+				{
+					Owner.TrayIcon.ShowBalloonTip(
+						"Synchronization failed", 
+						string.Join(Environment.NewLine, errors.Select(p => p.Item1)), 
+						BalloonIcon.Error);
+				}
+				else
+				{
+					SyncErrorDialog.Show(Owner, errors.Select(p => p.Item1).ToList(), errors.Select(p => p.Item2).ToList());
+				}
 			}
-
 		}
 
 		private void ShowMainWindow()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 
 namespace AlephNote.PluginInterface.Exceptions
 {
@@ -6,10 +7,12 @@ namespace AlephNote.PluginInterface.Exceptions
 	{
 		public readonly string ShortMessage;
 
-		public RestException(string shortmessage, string message) : base(message) { ShortMessage = shortmessage; }
-		public RestException(string shortmessage, string message, Exception inner) : base(message, inner) { ShortMessage = shortmessage; }
+		public readonly bool IsConnectionProblem;
 
-		public RestException(string message) : base(message) { ShortMessage = message; }
-		public RestException(string message, Exception inner) : base(message, inner) { ShortMessage = message; }
+		public RestException(string shortmessage, string message, bool isconnerr) : base(message) { ShortMessage = shortmessage; IsConnectionProblem = isconnerr; }
+		public RestException(string shortmessage, string message, Exception inner, bool isconnerr) : base(message, inner) { ShortMessage = shortmessage; IsConnectionProblem = isconnerr; }
+
+		public RestException(string message, bool isconnerr) : base(message) { ShortMessage = message; IsConnectionProblem = isconnerr; }
+		public RestException(string message, Exception inner, bool isconnerr) : base(message, inner) { ShortMessage = message; IsConnectionProblem = isconnerr; }
 	}
 }

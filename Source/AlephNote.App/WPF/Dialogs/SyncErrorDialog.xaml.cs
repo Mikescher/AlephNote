@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
+using AlephNote.PluginInterface.Exceptions;
 using Microsoft.Win32;
 
 namespace AlephNote.WPF.Windows
@@ -45,12 +46,18 @@ namespace AlephNote.WPF.Windows
 			dlg.ShowDialog();
 		}
 
-		public static void Show(Window owner, IEnumerable<string> messages, IEnumerable<Exception> exceptions)
+		public static void Show(Window owner, IEnumerable<string> imessages, IEnumerable<Exception> iexceptions)
 		{
 			string split = Environment.NewLine + "--------------------" + Environment.NewLine;
 
-			var dlg = new SyncErrorDialog();
+			var messages = imessages.ToList();
+			var exceptions = iexceptions.ToList();
 
+			bool isconnerror = exceptions.All(e => (e as RestException)?.IsConnectionProblem == true);
+
+			var dlg = new SyncErrorDialog();
+			
+			dlg.CbSupress.Visibility = isconnerror ? Visibility.Visible : Visibility.Collapsed;
 			dlg.ErrorMessage.Text = string.Join(Environment.NewLine, messages);
 			dlg.ErrorTrace.Text = string.Join(split, exceptions.Select(FormatExecption));
 
@@ -60,6 +67,12 @@ namespace AlephNote.WPF.Windows
 				dlg.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
 			dlg.ShowDialog();
+
+			if (isconnerror && dlg.CbSupress.IsChecked==true)
+			{
+				MainWindow.Instance.Settings.SuppressConnectionProblemPopup = true;
+				MainWindow.Instance.Settings.Save();
+			}
 		}
 
 		private static string FormatExecption(Exception e)

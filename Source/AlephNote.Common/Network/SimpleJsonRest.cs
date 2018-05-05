@@ -343,9 +343,15 @@ namespace AlephNote.Common.Network
 			catch (AggregateException e)
 			{
 				if (e.InnerExceptions.Count == 1)
-					throw new RestException("Could not communicate with server " + uri.Host, e.InnerExceptions.First());
+				{
+					var e0 = e.InnerExceptions.First();
+					throw new RestException("Could not communicate with server " + uri.Host, e0 is HttpRequestException);
+				}
 				else
-					throw new RestException("Could not communicate with server " + uri.Host, e);
+				{
+					var e0 = e.InnerExceptions.First();
+					throw new RestException("Could not communicate with server " + uri.Host, e, e0 is HttpRequestException);
+				}
 			}
 			catch (RestException)
 			{
@@ -353,7 +359,7 @@ namespace AlephNote.Common.Network
 			}
 			catch (Exception e)
 			{
-				throw new RestException("Could not communicate with server " + uri.Host, e);
+				throw new RestException("Could not communicate with server " + uri.Host, e, e is HttpRequestException);
 			}
 
 			TResult downloadObject;
@@ -363,7 +369,7 @@ namespace AlephNote.Common.Network
 			}
 			catch (Exception e)
 			{
-				throw new RestException("Rest call to " + uri.Host + " returned unexpected data :\r\n" + download, e);
+				throw new RestException("Rest call to " + uri.Host + " returned unexpected data :\r\n" + download, e, false);
 			}
 
 			LoggerSingleton.Inst.Debug("REST",
@@ -411,9 +417,15 @@ namespace AlephNote.Common.Network
 			catch (AggregateException e)
 			{
 				if (e.InnerExceptions.Count == 1)
-					throw new RestException("Could not communicate with server " + uri.Host, e.InnerExceptions.First());
+				{
+					var e0 = e.InnerExceptions.First();
+					throw new RestException("Could not communicate with server " + uri.Host, e0 is HttpRequestException);
+				}
 				else
-					throw new RestException("Could not communicate with server " + uri.Host, e);
+				{
+					var e0 = e.InnerExceptions.First();
+					throw new RestException("Could not communicate with server " + uri.Host, e, e0 is HttpRequestException);
+				}
 			}
 			catch (RestException)
 			{
@@ -421,7 +433,7 @@ namespace AlephNote.Common.Network
 			}
 			catch (Exception e)
 			{
-				throw new RestException("Could not communicate with server " + uri.Host, e);
+				throw new RestException("Could not communicate with server " + uri.Host, e, e is HttpRequestException);
 			}
 
 			LoggerSingleton.Inst.Debug("REST",
@@ -478,9 +490,15 @@ namespace AlephNote.Common.Network
 			catch (AggregateException e)
 			{
 				if (e.InnerExceptions.Count == 1)
-					throw new RestException("Could not communicate with server " + uri.Host, e.InnerExceptions.First());
+				{
+					var e0 = e.InnerExceptions.First();
+					throw new RestException("Could not communicate with server " + uri.Host, e0 is HttpRequestException);
+				}
 				else
-					throw new RestException("Could not communicate with server " + uri.Host, e);
+				{
+					var e0 = e.InnerExceptions.First();
+					throw new RestException("Could not communicate with server " + uri.Host, e, e0 is HttpRequestException);
+				}
 			}
 			catch (RestException)
 			{
@@ -488,7 +506,7 @@ namespace AlephNote.Common.Network
 			}
 			catch (Exception e)
 			{
-				throw new RestException("Could not communicate with server " + uri.Host, e);
+				throw new RestException("Could not communicate with server " + uri.Host, e, e is HttpRequestException);
 			}
 
 			TResult downloadObject;
@@ -498,7 +516,7 @@ namespace AlephNote.Common.Network
 			}
 			catch (Exception e)
 			{
-				throw new RestException("Rest call to " + uri.Host + " returned unexpected data", "Rest call to " + uri.Host + " returned unexpected data :\r\n" + download, e);
+				throw new RestException("Rest call to " + uri.Host + " returned unexpected data", "Rest call to " + uri.Host + " returned unexpected data :\r\n" + download, e, false);
 			}
 
 			LoggerSingleton.Inst.Debug("REST",
@@ -543,9 +561,15 @@ namespace AlephNote.Common.Network
 			catch (AggregateException e)
 			{
 				if (e.InnerExceptions.Count == 1)
-					throw new RestException("Could not communicate with server " + uri.Host, e.InnerExceptions.First());
+				{
+					var e0 = e.InnerExceptions.First();
+					throw new RestException("Could not communicate with server " + uri.Host, e0 is HttpRequestException);
+				}
 				else
-					throw new RestException("Could not communicate with server " + uri.Host, e);
+				{
+					var e0 = e.InnerExceptions.First();
+					throw new RestException("Could not communicate with server " + uri.Host, e, e0 is HttpRequestException);
+				}
 			}
 			catch (RestException)
 			{
@@ -553,7 +577,7 @@ namespace AlephNote.Common.Network
 			}
 			catch (Exception e)
 			{
-				throw new RestException("Could not communicate with server " + uri.Host, e);
+				throw new RestException("Could not communicate with server " + uri.Host, e, e is HttpRequestException);
 			}
 
 			LoggerSingleton.Inst.Debug("REST", string.Format("Calling REST API '{0}' [{1}]", uri, method), "Send: Nothing\r\n\r\nRecieved: Nothing");

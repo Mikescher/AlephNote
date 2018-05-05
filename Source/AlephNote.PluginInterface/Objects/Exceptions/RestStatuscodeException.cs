@@ -7,7 +7,7 @@
 		public readonly string StatusPhrase;
 
 		public RestStatuscodeException(string host, int statuscode, string phrase, string content)
-			: base($"Server {host} returned status code: {statuscode} : {phrase}")
+			: base($"Server {host} returned status code: {statuscode} : {phrase}", false)
 		{
 			StatusCode = statuscode;
 			HTTPContent = content;

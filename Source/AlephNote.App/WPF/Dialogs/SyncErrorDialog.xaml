@@ -13,7 +13,7 @@
 		</Grid.RowDefinitions>
 
 		<TextBlock Grid.Row="0" Text="Error while syncing data" HorizontalAlignment="Center" FontWeight="Bold" FontSize="16" Margin="5" />
-		
+
 		<Border Grid.Row="1" Background="Crimson" BorderBrush="DimGray" BorderThickness="1" Margin="10" CornerRadius="10">
 			<ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxHeight="200">
 				<TextBlock Foreground="White" Background="Transparent" TextWrapping="Wrap" x:Name="ErrorMessage" />
@@ -22,10 +22,27 @@
 
 		<TextBox Grid.Row="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" x:Name="ErrorTrace" />
 
+		<Grid Grid.Row="3">
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+
+			<CheckBox Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Do not show errors for connection problems again" Margin="5" x:Name="CbSupress" />
+
+			<Button Grid.Column="0" Grid.Row="1" Content="Export full log file" Margin="5" MinWidth="100" FontStyle="Italic" Click="ButtonExportLog_OnClick"/>
+			<Button Grid.Column="2" Grid.Row="1" Content="OK"                   Margin="5" MinWidth="100" FontWeight="Bold"  Click="ButtonBase_OnClick"/>
+
+		</Grid>
+
 		<StackPanel Grid.Row="3" HorizontalAlignment="Right" >
-			<Button Content="OK" Margin="5" MinWidth="100" FontWeight="Bold" Click="ButtonBase_OnClick" />
 		</StackPanel>
-		<Button Grid.Row="3" Content="Export full log file" Margin="5" MinWidth="100" FontStyle="Italic" Click="ButtonExportLog_OnClick" HorizontalAlignment="Left" />
 
 	</Grid>
 </controls:DialogWindow>

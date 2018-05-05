@@ -409,6 +409,10 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public bool HideTagChooser { get { return _hideTagChooser; } set { _hideTagChooser = value; OnPropertyChanged(); } }
 		private bool _hideTagChooser = false;
+		
+		[AlephXMLField]
+		public bool SuppressConnectionProblemPopup { get { return _suppressConnectionProblemPopup; } set { _suppressConnectionProblemPopup = value; OnPropertyChanged(); } }
+		private bool _suppressConnectionProblemPopup = false;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
