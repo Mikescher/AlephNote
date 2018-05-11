@@ -16,14 +16,30 @@ namespace AlephNote.Common.MVVM
 		{
 			return new ProjectionComparer<TSource, TKey>(projection, invert);
 		}
+		
+		public static ProjectionComparer<TSource, string> CreateStr<TSource>(Func<TSource, string> projection, bool invert, bool natural)
+		{
+			if (natural)
+				return new ProjectionComparer<TSource, string>(projection, new NaturalSortComparer(), invert);
+			else
+				return new ProjectionComparer<TSource, string>(projection, invert);
+		}
 
 		public static ExtendedProjectionComparer<TSource, TKey> CreateExtended<TSource, TKey>(Func<TSource, TKey> projection, Func<TSource, bool> ispin, bool invert = false)
 		{
 			return new ExtendedProjectionComparer<TSource, TKey>(projection, ispin, invert);
 		}
 
-	}
+		public static ExtendedProjectionComparer<TSource, string> CreateExtendedStr<TSource>(Func<TSource, string> projection, Func<TSource, bool> ispin, bool invert, bool natural)
+		{
+			if (natural)
+				return new ExtendedProjectionComparer<TSource, string>(projection, new NaturalSortComparer(), ispin, invert);
+			else
+			return new ExtendedProjectionComparer<TSource, string>(projection, ispin, invert);
+		}
 
+	}
+	
 	/// <summary>
 	/// Class generic in the source only to produce instances of the 
 	/// doubly generic class, optionally using type inference.
@@ -93,6 +109,14 @@ namespace AlephNote.Common.MVVM
 		public ExtendedProjectionComparer(Func<TSource, TKey> projection, Func<TSource, bool> priority, bool invert = false)
 		{
 			_comparer = Comparer<TKey>.Default;
+			_priority = priority;
+			_projection = projection;
+			_inverted = invert ? -1 : 1;
+		}
+		
+		public ExtendedProjectionComparer(Func<TSource, TKey> projection, IComparer<TKey> comp, Func<TSource, bool> priority, bool invert = false)
+		{
+			_comparer = comp;
 			_priority = priority;
 			_projection = projection;
 			_inverted = invert ? -1 : 1;

@@ -293,3 +293,7 @@ Normal errors are still displayed
 Do not shsow any traybar tooltips or error dialogs when the synchronisation fails.
 This setting should only ever be set if are in an environment where the server randomly returns invalid data (badly configured proxies, ISP blocking, etc).
 Be aware that this suppresses all errors and you can only notice synchronization problems via the log menu (and the tray icon color).
+
+[UseNaturalNoteSort]
+Uses instead of a per-character alphabetical sort order an ordering where multi-digit numbers are treated as a single character.
+This way numbers (e.g. '1', '2', '10') are ordered by their numerical values.
