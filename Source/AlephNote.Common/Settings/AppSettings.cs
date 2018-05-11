@@ -413,6 +413,10 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public bool SuppressConnectionProblemPopup { get { return _suppressConnectionProblemPopup; } set { _suppressConnectionProblemPopup = value; OnPropertyChanged(); } }
 		private bool _suppressConnectionProblemPopup = false;
+		
+		[AlephXMLField]
+		public bool SuppressAllSyncProblemsPopup { get { return _suppressAllSyncProblemsPopup; } set { _suppressAllSyncProblemsPopup = value; OnPropertyChanged(); } }
+		private bool _suppressAllSyncProblemsPopup = false;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

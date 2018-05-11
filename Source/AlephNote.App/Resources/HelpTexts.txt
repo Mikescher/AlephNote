@@ -288,3 +288,8 @@ Unfortunately these events aren't totally reliable, so the time-based synchroniz
 [SuppressConnectionProblemPopup]
 Do not show traybar tooltips or error dialogs when the synchronisation failed due to connection problems (no network connection, no internet, misconfigured proxy, ...).
 Normal errors are still displayed
+
+[SuppressAllSyncProblemsPopup]
+Do not shsow any traybar tooltips or error dialogs when the synchronisation fails.
+This setting should only ever be set if are in an environment where the server randomly returns invalid data (badly configured proxies, ISP blocking, etc).
+Be aware that this suppresses all errors and you can only notice synchronization problems via the log menu (and the tray icon color).

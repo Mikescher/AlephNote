@@ -433,7 +433,11 @@ namespace AlephNote.WPF.Windows
 
 			App.Logger.Error("Sync", string.Join(Environment.NewLine, errors.Select(p => p.Item1)), string.Join("\r\n\r\n\r\n", errors.Select(p => p.Item2.ToString())));
 
-			if (Settings.SuppressConnectionProblemPopup && errors.All(e => (e.Item2 as RestException)?.IsConnectionProblem == true))
+			if (Settings.SuppressAllSyncProblemsPopup)
+			{
+				App.Logger.Info("Sync", "Suppress error display due to config [[SuppressAllSyncProblemsPopup]]");
+			}
+			else if (Settings.SuppressConnectionProblemPopup && errors.All(e => (e.Item2 as RestException)?.IsConnectionProblem == true))
 			{
 				App.Logger.Info("Sync", "Suppress error display due to config [[SuppressConnectionProblemPopup]]");
 			}
