@@ -100,8 +100,11 @@ namespace AlephNote.WPF.Shortcuts
 
 		public void Close()
 		{
-			_source.RemoveHook(HwndHook);
-			foreach (var hk in _hotkeys) UnregisterHotKey(_windowHandle, hk.Item3);
+			if (_source != null)
+			{
+				_source.RemoveHook(HwndHook);
+				foreach (var hk in _hotkeys) UnregisterHotKey(_windowHandle, hk.Item3);
+			}
 
 			init = false;
 		}
