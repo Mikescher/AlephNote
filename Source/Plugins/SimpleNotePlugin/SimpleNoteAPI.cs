@@ -242,6 +242,10 @@ namespace AlephNote.Plugins.SimpleNote
 
 				return n;
 			}
+			catch (RestException)
+			{
+				throw;
+			}
 			catch (Exception e)
 			{
 				throw new SimpleNoteAPIException("SimpleNote API returned unexpected note data", e);

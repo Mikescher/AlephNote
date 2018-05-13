@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using AlephNote.PluginInterface.Exceptions;
 
 namespace AlephNote.Plugins.SimpleNote
 {
@@ -51,6 +52,10 @@ namespace AlephNote.Plugins.SimpleNote
 						_logger.Debug(SimpleNotePlugin.Name, "Simplenote server returned token for user " + _token.userid);
 					}
 				}
+			}
+			catch (RestException)
+			{
+				throw;
 			}
 			catch (Exception e)
 			{

@@ -146,6 +146,10 @@ namespace AlephNote.Plugins.StandardNote
 				tok.version = "002";
 				return tok;
 			}
+			catch (RestException)
+			{
+				throw;
+			}
 			catch (StandardNoteAPIException)
 			{
 				throw;
@@ -392,6 +396,10 @@ namespace AlephNote.Plugins.StandardNote
 
 				content = web.ParseJsonWithoutConverter<ContentNote>(contentJson);
 			}
+			catch (RestException)
+			{
+				throw;
+			}
 			catch (Exception e)
 			{
 				throw new StandardNoteAPIException("Cannot decrypt note with local masterkey", e);
@@ -464,6 +472,10 @@ namespace AlephNote.Plugins.StandardNote
 					$"[contentJson]:\r\n{contentJson}\r\n");
 
 				content = web.ParseJsonWithoutConverter<ContentTag>(contentJson);
+			}
+			catch (RestException)
+			{
+				throw;
 			}
 			catch (Exception e)
 			{
