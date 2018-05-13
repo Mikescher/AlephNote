@@ -14,7 +14,7 @@
 		WindowStartupLocation="CenterOwner"
 		Closed="DialogWindow_Closed"
 		Icon="/Resources/IconMain.png"
-		Title="AlephNote - Configuration" MinHeight="300" MinWidth="300" Height="666" Width="555">
+		Title="AlephNote - Configuration" MinHeight="300" MinWidth="300" Height="700" Width="555">
 	<Window.Resources>
 		<converter:CreatePluginSettingsGrid x:Key="CreateGridConv" />
 	</Window.Resources>
