@@ -160,8 +160,8 @@ namespace AlephNote.Plugins.SimpleNote
 				new XElement("PublishURL", _publicURL),
 				new XElement("SystemTags", SystemTags.Select(p => new XElement("STag", p)).Cast<object>().ToArray()),
 				new XElement("Content", XHelper.ConvertToC80Base64(_content)),
-				new XElement("ModificationDate", XHelper.ToString(ModificationDate),
-				new XElement("CreationDate", XHelper.ToString(_creationDate),
+				new XElement("ModificationDate", XHelper.ToString(ModificationDate)),
+				new XElement("CreationDate", XHelper.ToString(_creationDate)),
 				new XElement("LocalVersion", _localVersion),
 			};
 
