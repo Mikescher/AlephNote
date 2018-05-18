@@ -195,7 +195,7 @@ namespace AlephNote.PluginInterface.Util
 		{
 			var child = GetChildOrThrow(parent, childName);
 
-			return DateTimeOffset.Parse(child.Value);
+			return DateTimeOffset.Parse(child.Value, CultureInfo.InvariantCulture);
 		}
 
 		#endregion
@@ -267,6 +267,11 @@ namespace AlephNote.PluginInterface.Util
 			if (child == null) return Enumerable.Empty<XElement>(); ;
 
 			return child.Elements(subChildName);
+		}
+
+		public static string ToString(DateTimeOffset o)
+		{
+			return o.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture);
 		}
 
 		#region GetAttribute

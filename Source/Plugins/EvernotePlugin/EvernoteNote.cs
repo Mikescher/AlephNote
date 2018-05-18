@@ -50,8 +50,8 @@ namespace AlephNote.Plugins.Evernote
 				new XElement("ID", _id),
 				new XElement("Title", _internalTitle),
 				new XElement("Text", XHelper.ConvertToC80Base64(_text)),
-				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
-				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
+				new XElement("ModificationDate", XHelper.ToString(ModificationDate)),
+				new XElement("CreationDate", XHelper.ToString(_creationDate)),
 				new XElement("UpdateSequenceNumber", _updateSequenceNumber),
 			};
 

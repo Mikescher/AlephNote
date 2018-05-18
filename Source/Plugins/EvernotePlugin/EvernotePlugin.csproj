@@ -1,44 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net46;netstandard1.6</TargetFrameworks>
+	<PropertyGroup>
+		<TargetFrameworks>net46;netstandard1.6</TargetFrameworks>
 
-    <AssemblyName>EvernotePlugin</AssemblyName>
-    <PackageId>EvernotePlugin</PackageId>
-    
-    <AssemblyVersion>0.0.0.9</AssemblyVersion>
-		<FileVersion>0.0.0.9</FileVersion>
-		<Version>0.0.0.9</Version>
+		<AssemblyName>EvernotePlugin</AssemblyName>
+		<PackageId>EvernotePlugin</PackageId>
+		
+		<AssemblyVersion>0.0.0.10</AssemblyVersion>
+		<FileVersion>0.0.0.10</FileVersion>
+		<Version>0.0.0.10</Version>
 
-    <DefineConstants>NETFX_CORE</DefineConstants>
+		<DefineConstants>NETFX_CORE</DefineConstants>
 
-    <OutDir>..\..\..\Bin\$(Configuration)\$(TargetFramework)\Plugins\</OutDir>
+		<OutDir>..\..\..\Bin\$(Configuration)\$(TargetFramework)\Plugins\</OutDir>
 
-    <RootNamespace>AlephNote.Plugins.Evernote</RootNamespace>
-  </PropertyGroup>
+		<RootNamespace>AlephNote.Plugins.Evernote</RootNamespace>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj"><Private>false</Private></ProjectReference>
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj"><Private>false</Private></ProjectReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Net.Requests" Version="4.3.0" />
-    <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
-    <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
-    <PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="System.Net.Requests" Version="4.3.0" />
+		<PackageReference Include="System.Threading.Thread" Version="4.3.0" />
+		<PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
+		<PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
+	</ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
+		<Reference Include="System" />
+		<Reference Include="Microsoft.CSharp" />
+	</ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
-  </ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Properties\" />
+	</ItemGroup>
 
 </Project>

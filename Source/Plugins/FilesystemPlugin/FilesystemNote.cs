@@ -74,8 +74,8 @@ namespace AlephNote.Plugins.Filesystem
 				new XElement("Text", XHelper.ConvertToC80Base64(_text)),
 				new XElement("Title", Convert.ToBase64String(Encoding.UTF8.GetBytes(_title))),
 				new XElement("PathRemote", _pathRemote),
-				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
-				new XElement("ModificationDate", _modificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
+				new XElement("CreationDate", XHelper.ToString(_creationDate)),
+				new XElement("ModificationDate", XHelper.ToString(_modificationDate)),
 				new XElement("Path", Path.Serialize()),
 			};
 

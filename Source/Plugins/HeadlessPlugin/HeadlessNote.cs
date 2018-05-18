@@ -52,8 +52,8 @@ namespace AlephNote.Plugins.Headless
 				new XElement("Title", Title),
 				new XElement("Text", XHelper.ConvertToC80Base64(Text)),
 				new XElement("Tags", Tags.Select(p => new XElement("Tag", p)).Cast<object>().ToArray()),
-				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
-				new XElement("CreationDate", CreationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
+				new XElement("ModificationDate", XHelper.ToString(ModificationDate)),
+				new XElement("CreationDate", XHelper.ToString(CreationDate)),
 				new XElement("Path", Path.Serialize()),
 				new XElement("IsPinned", IsPinned),
 			};

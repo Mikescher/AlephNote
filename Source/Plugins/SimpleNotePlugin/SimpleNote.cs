@@ -3,6 +3,7 @@ using AlephNote.PluginInterface.Impl;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using AlephNote.PluginInterface.Util;
@@ -159,8 +160,8 @@ namespace AlephNote.Plugins.SimpleNote
 				new XElement("PublishURL", _publicURL),
 				new XElement("SystemTags", SystemTags.Select(p => new XElement("STag", p)).Cast<object>().ToArray()),
 				new XElement("Content", XHelper.ConvertToC80Base64(_content)),
-				new XElement("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
-				new XElement("CreationDate", _creationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")),
+				new XElement("ModificationDate", XHelper.ToString(ModificationDate),
+				new XElement("CreationDate", XHelper.ToString(_creationDate),
 				new XElement("LocalVersion", _localVersion),
 			};
 
