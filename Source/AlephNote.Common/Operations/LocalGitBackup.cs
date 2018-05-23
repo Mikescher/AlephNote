@@ -9,6 +9,7 @@ using AlephNote.Common.Repository;
 using AlephNote.Common.Settings;
 using AlephNote.PluginInterface.Util;
 using AlephNote.Common.Util;
+using System.Collections.Generic;
 
 namespace AlephNote.Common.Operations
 {
@@ -16,7 +17,9 @@ namespace AlephNote.Common.Operations
 	{
 		private static readonly object _gitAccessLock = new object();
 
-		public static void UpdateRepository(NoteRepository repo, AppSettings config)
+		private class AugmentedNote { public INote Note; public string RelativePath; public string Content; }
+
+		public static void UpdateRepository(NoteRepository nrepo, AppSettings config)
 		{
 			if (!config.DoGitMirror) return;
 
@@ -45,7 +48,9 @@ namespace AlephNote.Common.Operations
 			{
 				lock(_gitAccessLock)
 				{
-					if (!NeedsUpdate(repo, config))
+					var notes = GetNotes(nrepo, config);
+
+					if (!NeedsUpdate(notes, config))
 					{
 						LoggerSingleton.Inst.Debug("LocalGitMirror", "git repository is up to date - no need to commit");
 						return;
@@ -66,48 +71,29 @@ namespace AlephNote.Common.Operations
 						LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git init]", o.ToString());
 					}
 
+					string targetFolder = config.GitMirrorPath;
+					
 					if (config.GitMirrorSubfolders)
 					{
-						CleanFolderFromNotes(config.GitMirrorPath);
-
 						var subfolder = Path.Combine(config.GitMirrorPath, config.ActiveAccount.ID.ToString("B"));
 						Directory.CreateDirectory(subfolder);
-
-						CleanFolderFromNotes(subfolder);
-
-						foreach (var note in repo.Notes)
-						{
-							var fn = GetFilename(note);
-							var path = Path.Combine(subfolder, fn);
-							var fld = Path.GetDirectoryName(path);
-							var txt = GetFileContent(note);
-
-							if (fld != null) Directory.CreateDirectory(fld);
-							File.WriteAllText(path, txt, new UTF8Encoding(false));
-						}
+						targetFolder = subfolder;
 					}
-					else
+
+					var changed = SyncNotesToFolder(notes, config, targetFolder);
+
+					if (!changed)
 					{
-						CleanFolderFromNotes(config.GitMirrorPath);
-
-						foreach (var note in repo.Notes)
-						{
-							var fn = GetFilename(note);
-							var path = Path.Combine(config.GitMirrorPath, fn);
-							var fld = Path.GetDirectoryName(path);
-							var txt = GetFileContent(note);
-
-							if (fld != null) Directory.CreateDirectory(fld);
-							File.WriteAllText(path, txt, new UTF8Encoding(false));
-						}
+						LoggerSingleton.Inst.Info("LocalGitMirror", "Local git synchronisation was triggered but no changes were found");
+						return;
 					}
 				}
 
 				new Thread(() =>
 				{
 					CommitRepository(
-						repo.ConnectionName + " (" + repo.ConnectionUUID + ")",
-						repo.ProviderID,
+						nrepo.ConnectionName + " (" + nrepo.ConnectionUUID + ")",
+						nrepo.ProviderID,
 						config.GitMirrorPath, 
 						config.GitMirrorFirstName, 
 						config.GitMirrorLastName, 
@@ -118,54 +104,166 @@ namespace AlephNote.Common.Operations
 			}
 			catch (Exception e)
 			{
-				LoggerSingleton.Inst.Error("PluginManager", "Local git mirroring failed with exception:\n" + e.Message, e.ToString());
+				LoggerSingleton.Inst.Error("LocalGitMirror", "Local git mirroring failed with exception:\n" + e.Message, e.ToString());
 				LoggerSingleton.Inst.ShowExceptionDialog("Local git mirror failed", e);
 			}
 		}
 
-		private static void CleanFolderFromNotes(string folder)
+		private static List<AugmentedNote> GetNotes(NoteRepository repo, AppSettings config)
 		{
-			foreach (var file in Directory.EnumerateFiles(folder))
+			var result = new List<AugmentedNote>();
+
+			var existing = new HashSet<string>();
+
+			foreach (var note in repo.Notes.OrderBy(p => p.CreationDate))
 			{
-				if (file.ToLower().EndsWith(".txt") || file.ToLower().EndsWith(".md")) File.Delete(file);
+				var fn = FilenameHelper.ConvertStringForFilename(note.Title);
+				if (string.IsNullOrWhiteSpace(fn)) fn = FilenameHelper.StripStringForFilename(note.GetUniqueName());
+
+				var ext = ".txt";
+
+				if (note.HasTagCaseInsensitive(AppSettings.TAG_MARKDOWN)) ext = ".md";
+
+				var path = Path.Combine(note.Path.Enumerate().Select(c => FilenameHelper.StripStringForFilename(c)).ToArray());
+
+				var oldfn = fn;
+
+				int idx = 0;
+				string rpath = "";
+				for (;;)
+				{
+					fn = (idx == 0) ? oldfn : $"{oldfn}_{idx:000}";
+
+					rpath = string.IsNullOrWhiteSpace(path) ? (fn+ext) : Path.Combine(path, fn+ext);
+
+					if (existing.Add(rpath)) break;
+
+					idx++;
+				}
+				
+				string txt = note.Text;
+				if (fn != note.Title && !string.IsNullOrWhiteSpace(note.Title)) txt = note.Title + "\n\n" + note.Text;
+
+				result.Add(new AugmentedNote(){ Note = note, RelativePath = rpath, Content = txt });
 			}
 
-			foreach (var dir in Directory.EnumerateDirectories(folder))
-			{
-				if ((Path.GetFileName(dir) ?? "").ToLower() == ".git") continue;
-				Directory.Delete(dir, true);
-			}
+			return result;
 		}
 
-		private static string GetFilename(INote note)
+		private static bool SyncNotesToFolder(List<AugmentedNote> reponotes, AppSettings config, string targetFolder)
 		{
-			var fn = FilenameHelper.ConvertStringForFilename(note.Title);
-			if (string.IsNullOrWhiteSpace(fn)) fn = FilenameHelper.StripStringForFilename(note.GetUniqueName());
+			var dataRepo   = reponotes.ToList();
+			var dataSystem = new List<Tuple<string, string>>(); // <rel_path, content>
 
-			var ext = ".txt";
-
-			if (note.HasTagCaseInsensitive(AppSettings.TAG_MARKDOWN)) ext = ".md";
-
-			var path = Path.Combine(note.Path.Enumerate().Select(c => FilenameHelper.StripStringForFilename(c)).ToArray());
-
-			if (string.IsNullOrWhiteSpace(path)) return fn + ext;
-
-			return Path.Combine(path, fn + ext);
-		}
-
-		private static string GetFileContent(INote note)
-		{
-			var fn = GetFilename(note);
-
-			string txt = note.Text;
-			if (fn != (note.Title + ".txt") && !string.IsNullOrWhiteSpace(note.Title))
+			foreach (var file in FileSystemUtil.EnumerateFilesDeep(targetFolder, 16, new[]{".git"}))
 			{
-				txt = note.Title + "\n\n" + note.Text;
+				if (!(file.ToLower().EndsWith(".txt") || file.ToLower().EndsWith(".md"))) continue;
+				
+				var rpath = FileSystemUtil.MakePathRelative(file, targetFolder);
+				var txt   = File.ReadAllText(file, Encoding.UTF8);
+
+				dataSystem.Add(Tuple.Create(rpath, txt));
 			}
-			return txt;
+
+			var files_nochange = new List<string>();
+			for (int i = dataRepo.Count-1; i >= 0; i--)
+			{
+				var match = dataSystem.FirstOrDefault(ds => ds.Item1 == dataRepo[i].RelativePath && ds.Item2 == dataRepo[i].Content);
+				if (match == null) continue;
+
+				// Note exists in repo and filesystem with same content - everything is ok
+
+				files_nochange.Add(match.Item1);
+
+				dataSystem.Remove(match);
+				dataRepo.RemoveAt(i);
+			}
+
+			if (dataSystem.Count==0 && dataRepo.Count==0) 
+			{
+				LoggerSingleton.Inst.Debug("LocalGitMirror", "SyncNotesToFolder found 0 differences", string.Join("\n", files_nochange));
+				return false;
+			}
+			
+			var files_deleted = new List<string>();
+			for (int i = dataSystem.Count-1; i >= 0; i--)
+			{
+				if (dataRepo.Any(ds => ds.RelativePath == dataSystem[i].Item1)) continue;
+
+				// Note exists in filesystem but not in repo - delete it
+
+				//var noteRepo = null;
+				var noteFSys = dataSystem[i];
+
+				files_deleted.Add(noteFSys.Item1);
+
+				dataSystem.RemoveAt(i);
+				var fpath = Path.Combine(targetFolder, noteFSys.Item1);
+				File.Delete(fpath);
+
+				LoggerSingleton.Inst.Info("LocalGitMirror", $"File deleted: '{noteFSys.Item1}'", fpath);
+			}
+			
+			var files_modified = new List<string>();
+			for (int i = dataSystem.Count-1; i >= 0; i--)
+			{
+				var match = dataRepo.FirstOrDefault(ds => ds.RelativePath == dataSystem[i].Item1 && ds.Content == dataSystem[i].Item2);
+				if (match == null) continue;
+
+				// Note exists in filesystem and in repo but with different content - modify it
+				
+				var noteRepo = match;
+				var noteFSys = dataSystem[i];
+
+				files_modified.Add(noteFSys.Item1);
+				dataSystem.RemoveAt(i);
+				dataRepo.Remove(noteRepo);
+
+				var fpath = Path.Combine(targetFolder, noteRepo.RelativePath);
+				File.WriteAllText(fpath, noteRepo.Content, new UTF8Encoding(false));
+				
+				LoggerSingleton.Inst.Info("LocalGitMirror", $"File modified: '{noteRepo.RelativePath}'", fpath);
+			}
+			
+			var files_created = new List<string>();
+			for (int i = dataRepo.Count-1; i >= 0; i--)
+			{
+				// Note exists in repo but not in filesystem - create it
+				
+				var noteRepo = dataRepo[i];
+				//var noteFSys = null;
+
+				files_created.Add(noteRepo.RelativePath);
+				dataRepo.RemoveAt(i);
+
+				var fpath = Path.Combine(targetFolder, noteRepo.RelativePath);
+				Directory.CreateDirectory(Path.GetDirectoryName(fpath));
+				File.WriteAllText(fpath, noteRepo.Content, new UTF8Encoding(false));
+				
+				LoggerSingleton.Inst.Info("LocalGitMirror", $"File created: '{noteRepo.RelativePath}'", fpath);
+			}
+			
+			var dir_deleted = new List<string>();
+			foreach (var dir in FileSystemUtil.EnumerateEmptyDirectories(targetFolder, 16).ToList())
+			{
+				dir_deleted.Add(dir);
+				Directory.Delete(dir);
+				
+				var rpath = FileSystemUtil.MakePathRelative(dir, targetFolder);
+				LoggerSingleton.Inst.Info("LocalGitMirror", $"Directory dleted: '{rpath}'", dir);
+			}
+
+			LoggerSingleton.Inst.Debug("LocalGitMirror", "SyncNotesToFolder found multiple differences", 
+				"Unchanged:\n{\n"         + string.Join("\n", files_nochange.Select(p => "    "+p)) + "\n}\n\n" + 
+				"Deleted:\n{\n"           + string.Join("\n", files_deleted.Select(p  => "    "+p)) + "\n}\n\n" + 
+				"Created:\n{\n"           + string.Join("\n", files_created.Select(p  => "    "+p)) + "\n}\n\n" + 
+				"Modified:\n{\n"          + string.Join("\n", files_modified.Select(p => "    "+p)) + "\n}\n\n" + 
+				"Empty-Directories:\n{\n" + string.Join("\n", dir_deleted.Select(p    => "    "+p)) + "\n}\n\n");
+
+			return true;
 		}
 
-		private static bool NeedsUpdate(NoteRepository repo, AppSettings config)
+		private static bool NeedsUpdate(List<AugmentedNote> notes, AppSettings config)
 		{
 			if (!File.Exists(Path.Combine(config.GitMirrorPath, ".git", "HEAD"))) return true;
 
@@ -177,20 +275,25 @@ namespace AlephNote.Common.Operations
 			var filesGit  = FileSystemUtil
 				.EnumerateFilesDeep(folder, 8)
 				.Where(f => f.ToLower().EndsWith(".txt") || f.ToLower().EndsWith(".md"))
-				.Select(Path.GetFileName).Select(f => f.ToLower()).ToList();
+				.Select(Path.GetFileName)
+				.Select(f => f.ToLower())
+				.ToList();
 
-			var filesThis = repo.Notes.Select(GetFilename).Select(f => f.ToLower()).ToList(); //TODO What happens when 2 notes have same title
+			var filesThis = notes
+				.Select(p => Path.Combine(folder, p.RelativePath))
+				.Select(f => f.ToLower())
+				.ToList();
 
 			if (filesGit.Count != filesThis.Count) return true;
 			if (filesGit.Except(filesThis).Any()) return true;
 			if (filesThis.Except(filesGit).Any()) return true;
 
-			foreach (var note in repo.Notes)
+			foreach (var note in notes)
 			{
 				try
 				{
-					var fn = Path.Combine(folder, GetFilename(note));
-					var txtThis = GetFileContent(note);
+					var fn = Path.Combine(folder, note.RelativePath);
+					var txtThis = note.Content;
 					var txtGit = File.ReadAllText(fn, Encoding.UTF8);
 
 					if (txtGit != txtThis) return true;

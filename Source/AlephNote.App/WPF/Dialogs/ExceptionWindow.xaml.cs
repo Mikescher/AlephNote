@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Win32;
 
@@ -22,18 +23,11 @@ namespace AlephNote.WPF.Windows
 
 		public static void Show(Window owner, string title, Exception e, string additionalInfo)
 		{
-			var dlg = new ExceptionDialog
-			{
-				ErrorMessage =
-				{
-					Text = e?.Message ?? "Error in AlephNote"
-				},
-				ErrorTrace   =
-				{
-					Text = (FormatException(e, additionalInfo) ?? FormatStacktrace(additionalInfo))
-				},
-				Title        = title,
-			};
+			var dlg = new ExceptionDialog();
+
+			dlg.Title = "Error in AlephNote v" + App.APP_VERSION;
+			dlg.ErrorMessage.Text = title;
+			dlg.ErrorTrace.Text = (FormatException(e, additionalInfo) ?? FormatStacktrace(additionalInfo));
 
 			if (owner != null && owner.IsLoaded)
 				dlg.Owner = owner;
