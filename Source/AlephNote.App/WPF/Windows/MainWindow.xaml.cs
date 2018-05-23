@@ -465,7 +465,7 @@ namespace AlephNote.WPF.Windows
 					}
 					else
 					{
-						found = (note.GetUniqueName() == viewmodel.SelectedNote.GetUniqueName());
+						found = (note.UniqueName== viewmodel.SelectedNote.UniqueName);
 					}
 				}
 			}

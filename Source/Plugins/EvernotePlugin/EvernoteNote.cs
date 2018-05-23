@@ -75,10 +75,7 @@ namespace AlephNote.Plugins.Evernote
 			}
 		}
 
-		public override string GetUniqueName()
-		{
-			return "("+_id.ToString("P")+")";
-		}
+		public override string UniqueName => "(" + _id.ToString("P") + ")";
 
 		public override void OnAfterUpload(INote iother)
 		{

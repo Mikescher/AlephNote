@@ -152,10 +152,7 @@ namespace AlephNote.Plugins.StandardNote
 			_internalRef.Synchronize(refs.Select(r => new StandardFileRef{UUID = r.uuid, Type = r.content_type}));
 		}
 
-		public override string GetUniqueName()
-		{
-			return _id.ToString("N");
-		}
+		public override string UniqueName => _id.ToString("N");
 
 		public override void OnAfterUpload(INote iother)
 		{

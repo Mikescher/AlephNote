@@ -61,10 +61,7 @@ namespace AlephNote.Plugins.Filesystem
 			return FilenameHelper.StripStringForFilename(str, '_');
 		}
 
-		public override string GetUniqueName()
-		{
-			return _id.ToString("B");
-		}
+		public override string UniqueName => _id.ToString("B");
 
 		public override XElement Serialize()
 		{

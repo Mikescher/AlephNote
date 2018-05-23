@@ -91,7 +91,7 @@ namespace AlephNote.Plugins.Filesystem
 				if (conf.ModificationDate != note.ModificationDate)
 				{
 					conflict = conf;
-					if (strategy == ConflictResolutionStrategy.UseClientCreateConflictFile || strategy == ConflictResolutionStrategy.UseClientVersion)
+					if (strategy == ConflictResolutionStrategy.UseClientCreateConflictFile || strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.ManualMerge)
 					{
 						WriteNoteToPath(note, path);
 						FileSystemUtil.DeleteFileAndFolderIfEmpty(FilesystemPlugin.Name, _logger, _config.Folder, note.PathRemote);

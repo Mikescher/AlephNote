@@ -113,7 +113,7 @@ namespace AlephNote.Plugins.Nextcloud
 				{
 					if (remote.modified > note.RemoteTimestamp)
 					{
-						if (strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.UseClientCreateConflictFile)
+						if (strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.UseClientCreateConflictFile || strategy == ConflictResolutionStrategy.ManualMerge)
 						{
 							conflict = NextcloudAPI.GetNoteData(web, note.RemoteID, _config);
 							inote = NextcloudAPI.ChangeExistingNote(web, note, _config);

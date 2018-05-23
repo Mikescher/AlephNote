@@ -83,6 +83,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand DebugShowThemeEditorCommand { get { return new RelayCommand(DebugShowThemeEditor); } }
 		public ICommand DebugShowDefaultThemeCommand { get { return new RelayCommand(DebugShowDefaultTheme); } }
 		public ICommand DebugDiscoThemeCommand { get { return new RelayCommand(DebugDiscoTheme); } }
+		public ICommand DebugNoteDiffCommand { get { return new RelayCommand(DebugNoteDiff); } }
 
 		private AppSettings _settings;
 		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); SettingsChanged(); } }
@@ -162,7 +163,7 @@ namespace AlephNote.WPF.Windows
 			if (initialNote != null && _settings.RememberLastSelectedNote)
 			{
 				if (initialFolder != null) SelectedFolderPath = initialFolder;
-				SelectedNote = Repository.Notes.FirstOrDefault(n => n.GetUniqueName() == initialNote);
+				SelectedNote = Repository.Notes.FirstOrDefault(n => n.UniqueName== initialNote);
 			}
 			if (SelectedNote == null) SelectedNote = Repository.Notes.FirstOrDefault();
 
@@ -329,7 +330,7 @@ namespace AlephNote.WPF.Windows
 
 			if (Settings != null && Settings.RememberLastSelectedNote)
 			{
-				Settings.LastSelectedNote = SelectedNote?.GetUniqueName();
+				Settings.LastSelectedNote = SelectedNote?.UniqueName;
 				Settings.LastSelectedFolder = SelectedFolderPath ?? DirectoryPath.Root();
 			}
 			RequestSettingsSave();
@@ -339,7 +340,7 @@ namespace AlephNote.WPF.Windows
 		{
 			if (Settings != null && Settings.RememberLastSelectedNote)
 			{
-				Settings.LastSelectedNote = SelectedNote?.GetUniqueName();
+				Settings.LastSelectedNote = SelectedNote?.UniqueName;
 				Settings.LastSelectedFolder = SelectedFolderPath ?? DirectoryPath.Root();
 			}
 			if (!string.IsNullOrEmpty(SearchText) && (Settings != null && Settings.ClearSearchOnFolderClick) && !(SelectedFolderPath == null || HierachicalBaseWrapper.IsSpecial(SelectedFolderPath)))
@@ -878,6 +879,23 @@ namespace AlephNote.WPF.Windows
 			tmr.Start();
 		}
 
+		private INote _noteDiffSelection = null;
+		private void DebugNoteDiff()
+		{
+			if (_noteDiffSelection == null)
+			{
+				_noteDiffSelection = SelectedNote;
+			}
+			else
+			{
+				var d1 = Tuple.Create(SelectedNote.Text, SelectedNote.Title, SelectedNote.Tags.OrderBy(p=>p).ToList(), SelectedNote.Path);
+				var d2 = Tuple.Create(_noteDiffSelection.Text, _noteDiffSelection.Title, _noteDiffSelection.Tags.OrderBy(p=>p).ToList(), _noteDiffSelection.Path);
+				_noteDiffSelection = null;
+
+				ConflictWindow.Show(Repository, Owner, SelectedNote.UniqueName, d1, d2);
+			}
+		}
+
 		private string CreateLoremIpsum(int len, int linelen)
 		{
 			var words = Regex.Split(Properties.Resources.LoremIpsum, @"\r?\n");
@@ -1092,6 +1110,12 @@ namespace AlephNote.WPF.Windows
 		private void ShowTagFilter()
 		{
 			Owner.ShowTagFilter();
+		}
+
+		public void ShowConflictResolutionDialog(string uuid, string txt0, string ttl0, List<string> tgs0, DirectoryPath ndp0, string txt1, string ttl1, List<string> tgs1, DirectoryPath ndp1)
+		{
+			ConflictWindow.Show(Repository, Owner, uuid, Tuple.Create(txt0, ttl0, tgs0, ndp0), Tuple.Create(txt1, ttl1, tgs1, ndp1));
+			//TODO Show me
 		}
 	}
 }

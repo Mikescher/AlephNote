@@ -241,13 +241,13 @@ namespace AlephNote.Common.Operations
 				string.Join("\n", entriesFilesystem.Select(e => e.FilesystemPath)));
 			LoggerSingleton.Inst.Debug("RawFolderSync", 
 				$"Found {entriesNoteRepo.Count} entries in repository",
-				string.Join("\n", entriesNoteRepo.Select(e => e.GetUniqueName()+"\t"+e.Title)));
+				string.Join("\n", entriesNoteRepo.Select(e => e.UniqueName+"\t"+e.Title)));
 			
 			#region Step 1: Analyze
 
 			foreach (var map in _pathMapping.ToList())
 			{
-				var entryNR = entriesNoteRepo.FirstOrDefault(n => n.GetUniqueName() == map.Key);
+				var entryNR = entriesNoteRepo.FirstOrDefault(n => n.UniqueName== map.Key);
 				var entryFS = entriesFilesystem.FirstOrDefault(n => n.FilesystemPath.ToLower() == map.Value.ToLower());
 
 				if (entryNR==null && entryFS==null) continue; // mkay...
@@ -312,7 +312,7 @@ namespace AlephNote.Common.Operations
 
 			foreach (var entryFS in entriesFilesystem.ToList())
 			{
-				var entryNR = entriesNoteRepo.FirstOrDefault(e => e.Path.EqualsIgnoreCase(entryFS.NotePath) && (e.Title.ToLower() == entryFS.Title.ToLower() || (entryFS.Title == e.GetUniqueName() && e.Title=="")));
+				var entryNR = entriesNoteRepo.FirstOrDefault(e => e.Path.EqualsIgnoreCase(entryFS.NotePath) && (e.Title.ToLower() == entryFS.Title.ToLower() || (entryFS.Title == e.UniqueName&& e.Title=="")));
 
 				if (entryNR != null)
 				{
@@ -395,7 +395,7 @@ namespace AlephNote.Common.Operations
 
 			foreach (var data in unmodifiedBoth)
 			{
-				newMapping.Add(Tuple.Create(data.Item1.FilesystemPath, data.Item2.GetUniqueName()));
+				newMapping.Add(Tuple.Create(data.Item1.FilesystemPath, data.Item2.UniqueName));
 			}
 
 			foreach (var data in modifiedNoteRepo ) // Change [Filesystem] <-- [NoteRepo]
@@ -416,7 +416,7 @@ namespace AlephNote.Common.Operations
 					}
 
 					File.WriteAllText(p2, data.Item2.Text, _encoding);
-					newMapping.Add(Tuple.Create(p2, data.Item2.GetUniqueName()));
+					newMapping.Add(Tuple.Create(p2, data.Item2.UniqueName));
 
 					countSuccess++;
 				}
@@ -439,7 +439,7 @@ namespace AlephNote.Common.Operations
 					var tpath = GetFilesystemPath(data.Item2);
 					Directory.CreateDirectory(Path.GetDirectoryName(tpath)??"");
 					File.WriteAllText(tpath, data.Item2.Text, _encoding);
-					newMapping.Add(Tuple.Create(tpath, data.Item2.GetUniqueName()));
+					newMapping.Add(Tuple.Create(tpath, data.Item2.UniqueName));
 
 					countSuccess++;
 				}
@@ -492,7 +492,7 @@ namespace AlephNote.Common.Operations
 						var note = realNoteMapping[data.Item2];
 						note.Text = data.Item1.Content;
 						note.Title = data.Item1.Title;
-						newMapping.Add(Tuple.Create(data.Item1.FilesystemPath, note.GetUniqueName()));
+						newMapping.Add(Tuple.Create(data.Item1.FilesystemPath, note.UniqueName));
 					});
 
 					countSuccess++;
@@ -526,7 +526,7 @@ namespace AlephNote.Common.Operations
 						var n = _repo.CreateNewNote(data.Item1.NotePath);
 						n.Title = data.Item1.Title;
 						n.Text  = data.Item1.Content;
-						newMapping.Add(Tuple.Create(data.Item1.FilesystemPath, n.GetUniqueName()));
+						newMapping.Add(Tuple.Create(data.Item1.FilesystemPath, n.UniqueName));
 					});
 
 					countSuccess++;
@@ -601,7 +601,7 @@ namespace AlephNote.Common.Operations
 		private string GetFilesystemPath(INote note)
 		{
 			var filename = FilenameHelper.ConvertStringForFilename(note.Title);
-			if (string.IsNullOrWhiteSpace(filename)) filename = FilenameHelper.ConvertStringForFilename(note.GetUniqueName());
+			if (string.IsNullOrWhiteSpace(filename)) filename = FilenameHelper.ConvertStringForFilename(note.UniqueName);
 
 			var ext = ".txt";
 			if (note.HasTagCaseInsensitive(AppSettings.TAG_MARKDOWN)) ext = ".md";

@@ -144,10 +144,7 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		public override string GetUniqueName()
-		{
-			return _id;
-		}
+		public override string UniqueName => _id;
 
 		public override XElement Serialize()
 		{

@@ -151,7 +151,7 @@ namespace AlephNote.Common.Repository
 				var realnote = notetuple.Item1;
 				var clonenote = notetuple.Item2;
 
-				_log.Info("Sync", string.Format("Upload note {0}", clonenote.GetUniqueName()));
+				_log.Info("Sync", string.Format("Upload note {0}", clonenote.UniqueName));
 
 				try
 				{
@@ -191,7 +191,7 @@ namespace AlephNote.Common.Repository
 							break;
 
 						case RemoteUploadResult.Conflict:
-							_log.Warn("Sync", "Uploading note " + clonenote.GetUniqueName() + " resulted in conflict");
+							_log.Warn("Sync", "Uploading note " + clonenote.UniqueName+ " resulted in conflict");
 							ResolveUploadConflict(realnote, clonenote, conflictnote);
 							break;
 
@@ -202,7 +202,7 @@ namespace AlephNote.Common.Repository
 				}
 				catch (Exception e)
 				{
-					var message = string.Format("Could not upload note '{2}' ({0}) cause of {1}", clonenote.GetUniqueName(), e.Message, clonenote.Title);
+					var message = string.Format("Could not upload note '{2}' ({0}) cause of {1}", clonenote.UniqueName, e.Message, clonenote.Title);
 
 					_log.Error("Sync", message, e);
 					errors.Add(Tuple.Create(message, e));
@@ -215,7 +215,7 @@ namespace AlephNote.Common.Repository
 				var realnote = notetuple.Item1;
 				var clonenote = notetuple.Item2;
 
-				_log.Info("Sync", string.Format("Reset remote dirty of note {0} (no upload needed)", clonenote.GetUniqueName()));
+				_log.Info("Sync", string.Format("Reset remote dirty of note {0} (no upload needed)", clonenote.UniqueName));
 
 				try
 				{
@@ -239,7 +239,7 @@ namespace AlephNote.Common.Repository
 				}
 				catch (Exception e)
 				{
-					var message = string.Format("Could not reset remote dirty note '{2}' ({0}) cause of {1}", clonenote.GetUniqueName(), e.Message, clonenote.Title);
+					var message = string.Format("Could not reset remote dirty note '{2}' ({0}) cause of {1}", clonenote.UniqueName, e.Message, clonenote.Title);
 
 					_log.Error("Sync", message, e);
 					errors.Add(Tuple.Create(message, e));
@@ -291,20 +291,20 @@ namespace AlephNote.Common.Repository
 							realnote.OnAfterUpload(clonenote);
 							realnote.ResetRemoteDirty();
 							repo.SaveNote(realnote);
-
-							var conflict = repo.CreateNewNote();
-							conflict.Title = string.Format("{0}_conflict-{1:yyyy-MM-dd_HH:mm:ss}", conflictnote.Title, DateTime.Now);
-							conflict.Text = conflictnote.Text;
-							conflict.Tags.Synchronize(conflictnote.Tags);
-							conflict.IsConflictNote = true;
-							repo.SaveNote(conflict);
-
-							_log.Warn("Sync", "Resolve conflict: UseClientCreateConflictFile (conflictnote: " + conflict.GetUniqueName() + ")");
 						}
 						else
 						{
-							_log.Warn("Sync", "Resolve conflict: UseClientCreateConflictFile");
+							_log.Warn("Sync", "Resolve conflict: UseClientCreateConflictFile (do not [OnAfterUpload] cause note changed locally)");
 						}
+
+						var conflict = repo.CreateNewNote(conflictnote.Path);
+						conflict.Title = string.Format("{0}_conflict-{1:yyyy-MM-dd_HH:mm:ss}", conflictnote.Title, DateTime.Now);
+						conflict.Text = conflictnote.Text;
+						conflict.Tags.Synchronize(conflictnote.Tags);
+						conflict.IsConflictNote = true;
+						repo.SaveNote(conflict);
+
+						_log.Warn("Sync", "Resolve conflict: UseClientCreateConflictFile (conflictnote: " + conflict.UniqueName+ ")");
 					});
 					break;
 				case ConflictResolutionStrategy.UseServerCreateConflictFile:
@@ -316,14 +316,60 @@ namespace AlephNote.Common.Repository
 						realnote.ResetRemoteDirty();
 						repo.SaveNote(realnote);
 
-						var conflict = repo.CreateNewNote();
+						var conflict = repo.CreateNewNote(conflictnote.Path);
 						conflict.Title = string.Format("{0}_conflict-{1:yyyy-MM-dd_HH:mm:ss}", conflictnote.Title, DateTime.Now);
 						conflict.Text = conflictnote.Text;
 						conflict.Tags.Synchronize(conflictnote.Tags);
 						conflict.IsConflictNote = true;
 						repo.SaveNote(conflict);
 
-						_log.Warn("Sync", "Resolve conflict: UseServerCreateConflictFile (conflictnote: " + conflict.GetUniqueName() + ")");
+						_log.Warn("Sync", "Resolve conflict: UseServerCreateConflictFile (conflictnote: " + conflict.UniqueName+ ")");
+					});
+					break;
+				case ConflictResolutionStrategy.ManualMerge:
+					dispatcher.Invoke(() =>
+					{
+						if (realnote.IsLocalSaved)
+						{
+							realnote.OnAfterUpload(clonenote);
+							realnote.ResetRemoteDirty();
+							repo.SaveNote(realnote);
+						}
+						else
+						{
+							_log.Warn("Sync", "Resolve conflict: ManualMerge (do not [OnAfterUpload] cause note changed locally)");
+						}
+						
+						var txt0 = clonenote.Text;
+						var txt1 = conflictnote.Text;
+
+						var ttl0 = clonenote.Title;
+						var ttl1 = conflictnote.Title;
+
+						var tgs0 = clonenote.Tags.OrderBy(p=>p).ToList();
+						var tgs1 = conflictnote.Tags.OrderBy(p=>p).ToList();
+
+						var ndp0 = clonenote.Path;
+						var ndp1 = conflictnote.Path;
+
+						if (txt0 != txt1 || ttl0 != ttl1 || !tgs0.CollectionEquals(tgs1) || ndp0 != ndp1)
+						{
+							_log.Info(
+								"Sync", 
+								"Resolve conflict: ManualMerge :: Show dialog", 
+								$"======== Title 1 ========\n{ttl0}\n\n======== Title 2 ========\n{ttl1}\n\n"+
+								$"======== Text 1 ========\n{txt0}\n\n======== Text 2 ========\n{txt1}\n\n"+
+								$"======== Tags 1 ========\n{string.Join(" | ", tgs0)}\n\n======== Tags 2 ========\n{string.Join(" | ", tgs1)}\n\n");
+
+							dispatcher.BeginInvoke(() => 
+							{
+								repo.ShowConflictResolutionDialog(clonenote.UniqueName, txt0, ttl0, tgs0, ndp0, txt1, ttl1, tgs1, ndp1);
+							});
+						}
+						else
+						{
+							_log.Info("Sync", "Resolve conflict: ManualMerge not executed cause conflict==real");
+						}
 					});
 					break;
 				default:
@@ -338,7 +384,7 @@ namespace AlephNote.Common.Repository
 				var realnote = noteuple.Item1;
 				var clonenote = noteuple.Item2;
 
-				_log.Info("Sync", string.Format("Download note {0}", clonenote.GetUniqueName()));
+				_log.Info("Sync", string.Format("Download note {0}", clonenote.UniqueName));
 
 				try
 				{
@@ -409,7 +455,7 @@ namespace AlephNote.Common.Repository
 				}
 				catch (Exception e)
 				{
-					var message = string.Format("Could not synchronize note '{2}' ({0}) cause of {1}", clonenote.GetUniqueName(), e.Message, clonenote.Title);
+					var message = string.Format("Could not synchronize note '{2}' ({0}) cause of {1}", clonenote.UniqueName, e.Message, clonenote.Title);
 					_log.Error("Sync", message, e);
 					errors.Add(Tuple.Create(message, e));
 				}
@@ -422,7 +468,7 @@ namespace AlephNote.Common.Repository
 			{
 				var note = xnote;
 
-				_log.Info("Sync", string.Format("Delete note {0}", note.GetUniqueName()));
+				_log.Info("Sync", string.Format("Delete note {0}", note.UniqueName));
 
 				try
 				{
@@ -431,7 +477,7 @@ namespace AlephNote.Common.Repository
 				}
 				catch (Exception e)
 				{
-					var message = string.Format("Could not delete note {2} ({0}) on remote cause of {1}", note.GetUniqueName(), e.Message, note.Title);
+					var message = string.Format("Could not delete note {2} ({0}) on remote cause of {1}", note.UniqueName, e.Message, note.Title);
 					_log.Error("Sync", message, e);
 					errors.Add(Tuple.Create(message, e));
 				}

@@ -156,7 +156,7 @@ namespace AlephNote.Plugins.Evernote
 			{
 				if (remote.UpdateSequenceNum > note.UpdateSequenceNumber)
 				{
-					if (strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.UseClientCreateConflictFile)
+					if (strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.UseClientCreateConflictFile || strategy == ConflictResolutionStrategy.ManualMerge)
 					{
 						conflict = APIDownloadNote(note.ID);
 						inote = APIUpdateNote(note);

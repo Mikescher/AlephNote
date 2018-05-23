@@ -194,7 +194,7 @@ namespace AlephNote.Plugins.SimpleNote
 				{
 					if (remote.v > note.LocalVersion)
 					{
-						if (strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.UseClientCreateConflictFile)
+						if (strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.UseClientCreateConflictFile || strategy == ConflictResolutionStrategy.ManualMerge)
 						{
 							conflict = SimpleNoteAPI.GetNoteData(web, note.ID, _config, this);
 							inote = SimpleNoteAPI.ChangeExistingNote(web, note, _config, this, out _);

@@ -59,7 +59,7 @@ namespace AlephNote.Common.Repository
 			if (n == null) return null;
 			lock (_masterLock)
 			{
-				if (_cache.TryGetValue(n.GetUniqueName(), out int pos))
+				if (_cache.TryGetValue(n.UniqueName, out int pos))
 				{
 					return pos;
 				}
@@ -72,7 +72,7 @@ namespace AlephNote.Common.Repository
 			if (n == null) return;
 			lock (_masterLock)
 			{
-				_cache[n.GetUniqueName()] = pos;
+				_cache[n.UniqueName] = pos;
 			}
 			SetDirty();
 		}

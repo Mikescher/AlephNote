@@ -371,7 +371,7 @@ namespace AlephNote.WPF.Controls
 
 		private void ResyncDisplayItems(IList<INote> notes)
 		{
-			App.Logger.Trace("NotesViewHierachical", "ResyncDisplayItems", string.Join("\n", notes.Select(n => $"{n.GetUniqueName()}  {n.Title}")));
+			App.Logger.Trace("NotesViewHierachical", "ResyncDisplayItems", string.Join("\n", notes.Select(n => $"{n.UniqueName}  {n.Title}")));
 
 			HierachicalWrapper_Folder root = new HierachicalWrapper_Folder("ROOT", this, DirectoryPath.Root(), true, false);
 			if (Settings?.FolderViewShowRootNode == true)

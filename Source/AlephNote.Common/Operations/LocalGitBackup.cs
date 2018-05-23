@@ -118,7 +118,7 @@ namespace AlephNote.Common.Operations
 			foreach (var note in repo.Notes.OrderBy(p => p.CreationDate))
 			{
 				var fn = FilenameHelper.ConvertStringForFilename(note.Title);
-				if (string.IsNullOrWhiteSpace(fn)) fn = FilenameHelper.StripStringForFilename(note.GetUniqueName());
+				if (string.IsNullOrWhiteSpace(fn)) fn = FilenameHelper.StripStringForFilename(note.UniqueName);
 
 				var ext = ".txt";
 

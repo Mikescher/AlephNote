@@ -108,6 +108,8 @@
 				<MenuItem Foreground="Black" Header="Create 10 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="10" />
 				<MenuItem Foreground="Black" Header="Create 100 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="100" />
 				<Separator/>
+				<MenuItem Foreground="Black" Header="Compare Notes" Command="{Binding DebugNoteDiffCommand}" />
+				<Separator/>
 				<MenuItem Foreground="Black" Header="Serialize Settings" Command="{Binding DebugSerializeSettingsCommand}" />
 				<MenuItem Foreground="Black" Header="Serialize CurrentNote" Command="{Binding DebugSerializeNoteCommand}" />
 				<Separator/>

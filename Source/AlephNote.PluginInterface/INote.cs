@@ -12,7 +12,6 @@ namespace AlephNote.PluginInterface
 		XElement Serialize();
 		void Deserialize(XElement input);
 
-		string GetUniqueName();
 		bool EqualID(INote clonenote);
 
 		void SetDirty();
@@ -23,6 +22,8 @@ namespace AlephNote.PluginInterface
 
 		void OnAfterUpload(INote clonenote);
 		void ApplyUpdatedData(INote other);
+
+		string UniqueName { get; }
 
 		ObservableCollection<string> Tags { get; }
 		string Text { get; set; }

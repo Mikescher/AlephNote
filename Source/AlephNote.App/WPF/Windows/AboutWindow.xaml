@@ -9,7 +9,7 @@
 		WindowStartupLocation="CenterOwner"
 		d:DataContext="{d:DesignInstance windows:AboutWindowViewmodel}"
 		Icon="/Resources/IconMain.png"
-		Title="About AlephNote" Height="355" Width="320" MinWidth="300" MinHeight="340">
+		Title="About AlephNote" Height="365" Width="320" MinWidth="300" MinHeight="340">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -51,6 +51,7 @@
 			<TextBlock Text="Hardcodet.NotifyIcon"         Tag="https://bitbucket.org/hardcodet/notifyicon-wpf/" Foreground="Blue" TextDecorations="Underline" Cursor="Hand" MouseDown="Hyperlink_Clicked" />
 			<TextBlock Text="FatCow Icon Set"              Tag="https://www.fatcow.com/free-icons"               Foreground="Blue" TextDecorations="Underline" Cursor="Hand" MouseDown="Hyperlink_Clicked" />
 			<TextBlock Text="Fugue Icon Set"               Tag="http://p.yusukekamiyamane.com/"                  Foreground="Blue" TextDecorations="Underline" Cursor="Hand" MouseDown="Hyperlink_Clicked" />
+			<TextBlock Text="DiffPlex"                     Tag="https://github.com/mmanela/diffplex"             Foreground="Blue" TextDecorations="Underline" Cursor="Hand" MouseDown="Hyperlink_Clicked" />
 		</StackPanel>
 
 		<StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="3">

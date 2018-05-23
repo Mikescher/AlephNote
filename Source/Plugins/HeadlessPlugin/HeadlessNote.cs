@@ -39,10 +39,7 @@ namespace AlephNote.Plugins.Headless
 			_id = uid;
 		}
 
-		public override string GetUniqueName()
-		{
-			return _id.ToString("B");
-		}
+		public override string UniqueName => _id.ToString("B");
 
 		public override XElement Serialize()
 		{

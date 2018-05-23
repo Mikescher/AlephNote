@@ -16,6 +16,9 @@ namespace AlephNote.Common.Settings.Types
 
 		[EnumDescriptor("Use server version, create conflict note")]
 		UseServerCreateConflictFile = 4,
+
+		[EnumDescriptor("Show conflict resolution dialog")]
+		ManualMerge = 5,
 	}
 
 	public static class ConflictResolutionStrategyHelper

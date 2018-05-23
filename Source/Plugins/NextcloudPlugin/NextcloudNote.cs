@@ -172,10 +172,7 @@ namespace AlephNote.Plugins.Nextcloud
 			}
 		}
 
-		public override string GetUniqueName()
-		{
-			return _localID.ToString("N");
-		}
+		public override string UniqueName => _localID.ToString("N");
 
 		public override void OnAfterUpload(INote iother)
 		{

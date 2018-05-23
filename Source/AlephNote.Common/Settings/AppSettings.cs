@@ -546,12 +546,12 @@ namespace AlephNote.Common.Settings
 			}
 		}
 
-		public static readonly IComparer<INote> COMPARER_PIN_NONE           = ProjectionComparer.CreateExtended<INote, string>(n => n.GetUniqueName(), n => n.IsPinned);
+		public static readonly IComparer<INote> COMPARER_PIN_NONE           = ProjectionComparer.CreateExtended<INote, string>(n => n.UniqueName, n => n.IsPinned);
 		public static readonly IComparer<INote> COMPARER_PIN_NAME_RAW       = ProjectionComparer.CreateExtendedStr<INote>(n => n.Title, n => n.IsPinned, false, false);
 		public static readonly IComparer<INote> COMPARER_PIN_NAME_NATURAL   = ProjectionComparer.CreateExtendedStr<INote>(n => n.Title, n => n.IsPinned, false,  true);
 		public static readonly IComparer<INote> COMPARER_PIN_CDATE          = ProjectionComparer.CreateExtended<INote, DateTimeOffset>(n => n.CreationDate, n => n.IsPinned, true);
 		public static readonly IComparer<INote> COMPARER_PIN_MDATE          = ProjectionComparer.CreateExtended<INote, DateTimeOffset>(n => n.ModificationDate, n => n.IsPinned, true);
-		public static readonly IComparer<INote> COMPARER_NOPIN_NONE         = ProjectionComparer.Create<INote, string>(n => n.GetUniqueName());
+		public static readonly IComparer<INote> COMPARER_NOPIN_NONE         = ProjectionComparer.Create<INote, string>(n => n.UniqueName);
 		public static readonly IComparer<INote> COMPARER_NOPIN_NAME_RAW     = ProjectionComparer.CreateStr<INote>(n => n.Title, false, false);
 		public static readonly IComparer<INote> COMPARER_NOPIN_NAME_NATURAL = ProjectionComparer.CreateStr<INote>(n => n.Title, false, true);
 		public static readonly IComparer<INote> COMPARER_NOPIN_CDATE        = ProjectionComparer.Create<INote, DateTimeOffset>(n => n.CreationDate, true);

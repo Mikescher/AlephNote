@@ -88,7 +88,7 @@ namespace AlephNote.PluginInterface.Util
 				}
 			}
 
-			Debug.Assert(target.CollectionEquals(source));
+			Debug.Assert(target.ListEquals(source));
 		}
 
 		/// <summary>
@@ -223,12 +223,30 @@ namespace AlephNote.PluginInterface.Util
 			return true;
 		}
 		
-		public static bool CollectionEquals(this IList target, IList source)
+		public static bool ListEquals(this IList target, IList source)
 		{
 			if (source.Count != target.Count) return false;
 			for (int i = 0; i < source.Count; i++)
 			{
 				if (source[i] != target[i]) return false;
+			}
+		
+			return true;
+		}
+		
+		public static bool UnorderedCollectionEquals<T>(this IList<T> etarget, IEnumerable<T> esource)
+		{
+			var source = esource.ToList();
+			var target = etarget.ToList();
+
+			if (source.Count != target.Count) return false;
+
+			source = source.OrderBy(p=>p, Comparer<T>.Default).ToList();
+			target = target.OrderBy(p=>p, Comparer<T>.Default).ToList();
+
+			for (int i = 0; i < source.Count; i++)
+			{
+				if (!EqualityComparer<T>.Default.Equals(source[i], target[i])) return false;
 			}
 
 			return true;

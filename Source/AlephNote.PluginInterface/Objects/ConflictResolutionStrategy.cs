@@ -13,5 +13,8 @@
 
 		// Use server version, create conflict note
 		UseServerCreateConflictFile = 4,
+
+		// Initially use client version, but then show merge dialog
+		ManualMerge = 5,
 	}
 }

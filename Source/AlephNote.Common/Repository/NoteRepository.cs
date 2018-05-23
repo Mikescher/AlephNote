@@ -194,7 +194,7 @@ namespace AlephNote.Common.Repository
 		{
 			lock (_lockSaveNote)
 			{
-				var path = Path.Combine(localFolder, note.GetUniqueName() + ".xml");
+				var path = Path.Combine(localFolder, note.UniqueName+ ".xml");
 				var tempPath = Path.GetTempFileName();
 
 				var doc = SerializeNote(note);
@@ -274,11 +274,11 @@ namespace AlephNote.Common.Repository
 
 		public void DeleteNote(INote note, bool updateRemote)
 		{
-			logger.Info("Repository", string.Format("Delete note {0} (updateRemote={1})", note.GetUniqueName(), updateRemote));
+			logger.Info("Repository", string.Format("Delete note {0} (updateRemote={1})", note.UniqueName, updateRemote));
 
 			var found = Notes.Remove(note);
 
-			var path = Path.Combine(pathLocalFolder, note.GetUniqueName() + ".xml");
+			var path = Path.Combine(pathLocalFolder, note.UniqueName+ ".xml");
 			if (File.Exists(path)) File.Delete(path);
 
 			if (found && updateRemote)
@@ -291,7 +291,7 @@ namespace AlephNote.Common.Repository
 
 		public void AddNote(INote note, bool updateRemote)
 		{
-			logger.Info("Repository", string.Format("Add note {0} (updateRemote={1})", note.GetUniqueName(), updateRemote));
+			logger.Info("Repository", string.Format("Add note {0} (updateRemote={1})", note.UniqueName, updateRemote));
 
 			Notes.Add(note);
 			SaveNote(note);
@@ -303,6 +303,15 @@ namespace AlephNote.Common.Repository
 			{
 				thread.SyncNowAsync();
 			}
+		}
+
+		public INote FindNoteByID(string nid)
+		{
+			foreach (var n in _notes)
+			{
+				if (n.UniqueName== nid) return n;
+			}
+			return null;
 		}
 
 		public void SyncNow() // = StartSyncNow, real sync happens asynchronous
@@ -398,6 +407,11 @@ namespace AlephNote.Common.Repository
 
 			logger.Info("Repository", "Delete folder from local repository: " + Path.GetFileName(pathLocalFolder), pathLocalFolder);
 			Directory.Delete(pathLocalFolder, true);
+		}
+
+		public void ShowConflictResolutionDialog(string uuid, string txt0, string ttl0, List<string> tgs0, DirectoryPath ndp0, string txt1, string ttl1, List<string> tgs1, DirectoryPath ndp1)
+		{
+			listener.ShowConflictResolutionDialog(uuid, txt0, ttl0, tgs0, ndp0, txt1, ttl1, tgs1, ndp1);
 		}
 
 		public IEnumerable<string> EnumerateAllTags()

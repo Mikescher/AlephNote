@@ -99,7 +99,7 @@ namespace AlephNote.PluginInterface.Impl
 
 		public bool EqualID(INote other)
 		{
-			return GetUniqueName() == other.GetUniqueName();
+			return UniqueName== other.UniqueName;
 		}
 
 		public void SetDirty()
@@ -131,7 +131,7 @@ namespace AlephNote.PluginInterface.Impl
 		public abstract XElement Serialize();
 		public abstract void Deserialize(XElement input);
 
-		public abstract string GetUniqueName();
+		public abstract string UniqueName { get; }
 
 		public abstract void OnAfterUpload(INote clonenote);
 
