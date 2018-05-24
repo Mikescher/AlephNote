@@ -41,7 +41,7 @@ namespace AlephNote.Plugins.Filesystem
 			var note = (FilesystemNote)inote;
 
 			if (note.IsConflictNote) return false;
-			if (string.IsNullOrWhiteSpace(note.Title)) return false;
+			//if (string.IsNullOrWhiteSpace(note.Title)) return false;
 
 			if (!note.IsRemoteSaved) return true;
 			if (string.IsNullOrWhiteSpace(note.PathRemote)) return true;

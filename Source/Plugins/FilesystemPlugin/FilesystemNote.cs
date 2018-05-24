@@ -50,15 +50,17 @@ namespace AlephNote.Plugins.Filesystem
 		public string GetPath(FilesystemConfig cfg)
 		{
 			var dat = new[] { cfg.Folder }
-				.Concat(Path.Enumerate().Select(CleanForFS))
-				.Concat(new[] { CleanForFS(Title) + "." + cfg.Extension });
+				.Concat(Path.Enumerate().Select(p => CleanForFS(p, p)))
+				.Concat(new[] { CleanForFS(Title, UniqueName) + "." + cfg.Extension });
 
 			return System.IO.Path.Combine(dat.ToArray());
 		}
 
-		private static string CleanForFS(string str)
+		private static string CleanForFS(string str, string uniq)
 		{
-			return FilenameHelper.StripStringForFilename(str, '_');
+			var fn = FilenameHelper.StripStringForFilename(str, '_');
+			if (string.IsNullOrWhiteSpace(fn)) fn = FilenameHelper.StripStringForFilename(uniq);
+			return fn;
 		}
 
 		public override string UniqueName => _id.ToString("B");
