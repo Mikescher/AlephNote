@@ -12,6 +12,8 @@ namespace AlephNote.WPF.Converter
 		{
 			var param = parameter.ToString().Split(';');
 
+			if (values.Any(v=> v == DependencyProperty.UnsetValue)) return DependencyProperty.UnsetValue;
+
 			var value = false;
 
 			     if (param[0].ToLower() == "or")   value = values.Any(v => (bool)v);
