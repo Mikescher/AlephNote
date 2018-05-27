@@ -20,6 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.4.0" />
 		<PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
 	</ItemGroup>
 

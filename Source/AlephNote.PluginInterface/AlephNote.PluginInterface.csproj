@@ -11,7 +11,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
-		<PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.0.0" />
+		<PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.3.0" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
