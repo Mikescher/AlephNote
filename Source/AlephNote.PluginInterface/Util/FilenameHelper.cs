@@ -7,7 +7,7 @@ namespace AlephNote.PluginInterface.Util
 	public static class FilenameHelper
 	{
 		private const char CONVERT_ESCAPE_CHARACTER = '%';
-		private const string ALLOWED_CHARACTER = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~#+-_.,;%& {}()=ÄÖÜäöüµ@";
+		private const string ALLOWED_CHARACTER = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~#+-_.,;'&!§$ {}()=ÄÖÜäöüµ@€[]";
 
 		private static readonly string[] RESERVED_FILENAMES =
 		{
