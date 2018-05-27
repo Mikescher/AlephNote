@@ -52,6 +52,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand ShowLogCommand { get { return new RelayCommand(ShowLog); } }
 		public ICommand SaveAndSyncCommand { get { return new RelayCommand(SaveAndSync); } }
 		public ICommand DocumentSearchCommand { get { return new RelayCommand(ShowDocSearchBar); } }
+		public ICommand DocumentContinueSearchCommand { get { return new RelayCommand(ContinueSearch); } }
 		public ICommand CloseDocumentSearchCommand { get { return new RelayCommand(HideDocSearchBar); } }
 		public ICommand FullResyncCommand { get { return new RelayCommand(FullResync); } }
 		public ICommand ManuallyCheckForUpdatesCommand { get { return new RelayCommand(ManuallyCheckForUpdates); } }
@@ -823,6 +824,14 @@ namespace AlephNote.WPF.Windows
 			Owner.ShowDocSearchBar();
 		}
 
+		private void ContinueSearch()
+		{
+			if (!Settings.DocSearchEnabled) return;
+			if (Owner.DocumentSearchBar.Visibility != Visibility.Visible) return;
+
+			Owner.DocumentSearchBar.ContinueSearch();
+		}
+
 		private void HideDocSearchBar()
 		{
 			Owner.HideDocSearchBar();
@@ -1115,7 +1124,6 @@ namespace AlephNote.WPF.Windows
 		public void ShowConflictResolutionDialog(string uuid, string txt0, string ttl0, List<string> tgs0, DirectoryPath ndp0, string txt1, string ttl1, List<string> tgs1, DirectoryPath ndp1)
 		{
 			ConflictWindow.Show(Repository, Owner, uuid, Tuple.Create(txt0, ttl0, tgs0, ndp0), Tuple.Create(txt1, ttl1, tgs1, ndp1));
-			//TODO Show me
 		}
 	}
 }

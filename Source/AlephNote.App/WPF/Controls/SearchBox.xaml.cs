@@ -90,19 +90,57 @@ namespace AlephNote.WPF.Controls
 			if (WholeWord) scintilla.SearchFlags |= SearchFlags.WholeWord;
 			if (Regex) scintilla.SearchFlags |= ConvertRegexFlags(Settings.DocSearchRegexEngine);
 
-			bool first = true;
 			while (scintilla.SearchInTarget(text) != -1)
 			{
 				scintilla.IndicatorFillRange(scintilla.TargetStart, scintilla.TargetEnd - scintilla.TargetStart);
 
 				scintilla.TargetStart = scintilla.TargetEnd;
 				scintilla.TargetEnd = scintilla.TextLength;
+			}
 
-				if (first)
-				{
-					scintilla.ScrollRange(scintilla.TargetStart, scintilla.TargetEnd);
-					first = false;
-				}
+			ContinueSearch();
+		}
+
+		public void ContinueSearch()
+		{
+			var scintilla = Target;
+			var text = SearchText;
+
+			if (scintilla == null) return;
+			if (string.IsNullOrEmpty(text)) return;
+			
+			// ======== Search from caret ========
+
+			scintilla.TargetStart = scintilla.CurrentPosition+1;
+			scintilla.TargetEnd = scintilla.TextLength;
+			scintilla.SearchFlags = SearchFlags.None;
+			if (CaseSensitive) scintilla.SearchFlags |= SearchFlags.MatchCase;
+			if (WholeWord) scintilla.SearchFlags |= SearchFlags.WholeWord;
+			if (Regex) scintilla.SearchFlags |= ConvertRegexFlags(Settings.DocSearchRegexEngine);
+
+			while (scintilla.SearchInTarget(text) != -1)
+			{
+				scintilla.CurrentPosition = scintilla.TargetStart;
+				scintilla.ScrollRange(scintilla.TargetStart, scintilla.TargetEnd);
+				scintilla.GotoPosition(scintilla.TargetStart);
+				return;
+			}
+			
+			// ======== Search from start ========
+
+			scintilla.TargetStart = 0;
+			scintilla.TargetEnd = scintilla.TextLength;
+			scintilla.SearchFlags = SearchFlags.None;
+			if (CaseSensitive) scintilla.SearchFlags |= SearchFlags.MatchCase;
+			if (WholeWord) scintilla.SearchFlags |= SearchFlags.WholeWord;
+			if (Regex) scintilla.SearchFlags |= ConvertRegexFlags(Settings.DocSearchRegexEngine);
+
+			while (scintilla.SearchInTarget(text) != -1)
+			{
+				scintilla.CurrentPosition = scintilla.TargetStart;
+				scintilla.ScrollRange(scintilla.TargetStart, scintilla.TargetEnd);
+				scintilla.GotoPosition(scintilla.TargetStart);
+				return;
 			}
 		}
 

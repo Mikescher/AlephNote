@@ -54,6 +54,7 @@ namespace AlephNote.WPF.Shortcuts
 			AddCommand("FullResync",           vm => vm.FullResyncCommand,                 "Delete local data and do a full resync",                   ActionModifier.AccessControl);
 
 			AddCommand("DocumentSearch",       vm => vm.DocumentSearchCommand,             "Search in current note");
+			AddCommand("DocumentSearchNext",   vm => vm.DocumentContinueSearchCommand,     "Find next occurence of search");
 			AddCommand("CloseDocumentSearch",  vm => vm.CloseDocumentSearchCommand,        "Close inline search panel");
 
 			AddCommand("ShowSettings",         vm => vm.SettingsCommand,                   "Show settings window");
