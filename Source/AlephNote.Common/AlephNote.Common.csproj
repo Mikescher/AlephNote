@@ -6,7 +6,7 @@
 		<AssemblyName>AlephNote.Common</AssemblyName>
 		<PackageId>AlephNote.Common</PackageId>
 
-		<NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
+		<NetStandardImplicitPackageVersion>0.0.0</NetStandardImplicitPackageVersion>
 		<PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
 		
 		<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
