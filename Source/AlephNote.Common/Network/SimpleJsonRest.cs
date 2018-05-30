@@ -313,6 +313,8 @@ namespace AlephNote.Common.Network
 				};
 				_headers.ToList().ForEach(h => request.Headers.Add(h.Key, h.Value));
 				
+				LoggerSingleton.Inst.Debug("REST", "SendRequest<GenericTwoWay>", $"RequestUri := {uri}\nMethod := {method}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
+
 				resp = _client.SendAsync(request).Result;
 
 				if (!resp.IsSuccessStatusCode)
@@ -398,6 +400,8 @@ namespace AlephNote.Common.Network
 					Method = method,
 				};
 				_headers.ToList().ForEach(h => request.Headers.Add(h.Key, h.Value));
+				
+				LoggerSingleton.Inst.Debug("REST", "SendRequest<GenericUpload>", $"RequestUri := {uri}\nMethod := {method}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
 
 				resp = _client.SendAsync(request).Result;
 
@@ -459,6 +463,8 @@ namespace AlephNote.Common.Network
 					Method = method,
 				};
 				_headers.ToList().ForEach(h => request.Headers.Add(h.Key, h.Value));
+
+				LoggerSingleton.Inst.Debug("REST", "SendRequest<GenericDownload>", $"RequestUri := {uri}\nMethod := {method}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
 
 				resp = _client.SendAsync(request).Result;
 
@@ -542,6 +548,8 @@ namespace AlephNote.Common.Network
 					Method = method,
 				};
 				_headers.ToList().ForEach(h => request.Headers.Add(h.Key, h.Value));
+				
+				LoggerSingleton.Inst.Debug("REST", "SendRequest<GenericEmpty>", $"RequestUri := {uri}\nMethod := {method}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
 
 				resp = _client.SendAsync(request).Result;
 
