@@ -35,7 +35,7 @@
 		<TextBlock Grid.Column="0" Grid.Row="3" Margin="5" Text="{Binding Path1}" />
 		<TextBlock Grid.Column="1" Grid.Row="3" Margin="5" Text="{Binding Path2}" />
 		
-		<Border Grid.Column="1" Grid.Row="4" Margin="5" Height="30">
+		<Border Grid.Column="0" Grid.Row="4" Margin="5" Height="30">
 			<ItemsControl ItemsSource="{Binding Tags1, Mode=OneWay}">
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
@@ -51,7 +51,7 @@
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 		</Border>
-		<Border Grid.Column="2" Grid.Row="4" Margin="5" Height="30">
+		<Border Grid.Column="1" Grid.Row="4" Margin="5" Height="30">
 			<ItemsControl ItemsSource="{Binding Tags2, Mode=OneWay}">
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
