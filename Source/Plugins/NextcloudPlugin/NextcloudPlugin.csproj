@@ -6,9 +6,9 @@
 		<AssemblyName>NextcloudPlugin</AssemblyName>
 		<PackageId>NextcloudPlugin</PackageId>
 		
-		<AssemblyVersion>1.2.5.0</AssemblyVersion>
-		<FileVersion>1.2.5.0</FileVersion>
-		<Version>1.2.5.0</Version>
+		<AssemblyVersion>1.2.6.0</AssemblyVersion>
+		<FileVersion>1.2.6.0</FileVersion>
+		<Version>1.2.6.0</Version>
 
 		<OutDir>..\..\..\Bin\$(Configuration)\$(TargetFramework)\Plugins\</OutDir>
 

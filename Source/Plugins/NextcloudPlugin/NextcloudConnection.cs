@@ -13,7 +13,7 @@ namespace AlephNote.Plugins.Nextcloud
 	/// </summary>
 	class NextcloudConnection : BasicRemoteConnection
 	{
-		private const string API_URL = "/index.php/apps/notes/api/v0.2/";
+		private const string API_URL = "index.php/apps/notes/api/v0.2/";
 
 		private readonly NextcloudConfig _config;
 		private readonly IWebProxy _proxy;
