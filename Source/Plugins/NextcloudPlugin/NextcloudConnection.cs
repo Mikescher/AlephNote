@@ -29,14 +29,26 @@ namespace AlephNote.Plugins.Nextcloud
 			_proxy = proxy;
 			_logger = log;
 		}
+
 		private ISimpleJsonRest CreateAuthenticatedClient()
 		{
-			var client = CreateJsonRestClient(_proxy, new Uri(new Uri(_config.Host), API_URL).ToString());
+			var client = CreateJsonRestClient(_proxy, GetFullHost());
 			//client.SetURLAuthentication(_config.Username, _config.Password); // specs say this works - but it doesn't
 			client.AddHeader("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_config.Username + ":" + _config.Password)));
 			client.SetEscapeAllNonASCIICharacters(true);
 
 			return client;
+		}
+
+		private string GetFullHost()
+		{
+			string h = _config.Host;
+			if (!h.EndsWith("/")) h = h+"/";
+
+			var uri1 = new Uri(h);
+			var uri2 = new Uri(uri1, API_URL);
+
+			return uri2.ToString();
 		}
 
 		public override void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes, List<INote> localdeletednotes)
