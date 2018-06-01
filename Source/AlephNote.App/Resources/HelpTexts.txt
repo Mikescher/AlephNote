@@ -44,6 +44,10 @@ If there are local changes and remote changes an conflict will occur while synci
    The local version will be overridden after the synchronization.
    But the (old) local version will be preserved in a new conflict note.
 
+5. "Show conflict resolution dialog"
+   Shows a conflict-resolution window when a conflict occcurs.
+   This is normally not needed and in most cases option 3. or 4. is a better strategy.
+
 [LaunchOnBoot]
 If checked AlephNote automatically starts with Windows.
 You can change the "Startup state" to start AlephNote minimized or in the tray area
