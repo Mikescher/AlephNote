@@ -320,6 +320,10 @@ namespace AlephNote.WPF.Windows
 
 		private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
 		{
+			var evtkey = e.Key;
+			var evtmod = e.KeyboardDevice.Modifiers;
+			if (evtkey == Key.System) evtkey = e.SystemKey;
+
 			if (Settings != null && ReferenceEquals(e.OriginalSource, NoteEditHost))
 			{
 				foreach (var sc in Settings.Shortcuts)
@@ -328,7 +332,7 @@ namespace AlephNote.WPF.Windows
 					{
 						var kk = (Key)sc.Value.Key;
 						var mm = (ModifierKeys)sc.Value.Modifiers;
-						if (kk == e.Key && mm == (e.KeyboardDevice.Modifiers & mm))
+						if (kk == evtkey && mm == (evtmod & mm))
 						{
 							ShortcutManager.Execute(this, sc.Key);
 							e.Handled = true;
