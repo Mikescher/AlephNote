@@ -239,11 +239,19 @@ namespace AlephNote.WPF.Controls
 			if (SelectedFolder != null && (SelectedNote == null || !SelectedFolder.AllSubNotes.Contains(SelectedNote)) && SelectedFolder.AllSubNotes.Any())
 			{
 				var n = SelectedFolder.AllSubNotes.FirstOrDefault();
+				var oldfolder = SelectedFolder.GetInternalPath();
 				new Thread(() =>
 				{
 					Thread.Sleep(50);
 					Application.Current.Dispatcher.BeginInvoke(new Action(() =>
 					{
+						if (SelectedFolder == null) return;
+						if (!SelectedFolder.GetInternalPath().EqualsWithCase(oldfolder))
+						{
+							App.Logger.Debug("NotesViewHierachical", "Prevent invalidated SelectedFolderChanged event to execute", $"'{SelectedFolder.GetInternalPath()}' <> '{oldfolder}'");
+							return;
+						}
+
 						if (SelectedFolder != null && (SelectedNote == null || !SelectedFolder.AllSubNotes.Contains(SelectedNote)) && SelectedFolder.AllSubNotes.Any())
 						{
 							App.Logger.TraceExt("NotesViewHierachical",
