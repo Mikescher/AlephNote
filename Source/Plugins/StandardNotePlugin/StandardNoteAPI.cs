@@ -104,6 +104,10 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				throw;
 			}
+			catch (RestException)
+			{
+				throw;
+			}
 			catch (Exception e)
 			{
 				throw new StandardNoteAPIException("Authentification with StandardNoteAPI failed.", e);

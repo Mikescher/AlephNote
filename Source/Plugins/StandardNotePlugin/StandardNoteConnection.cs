@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using AlephNote.PluginInterface.Exceptions;
 
 namespace AlephNote.Plugins.StandardNote
 {
@@ -40,11 +41,11 @@ namespace AlephNote.Plugins.StandardNote
 				{
 					using (var web = CreateJsonRestClient(_proxy, _config.Server))
 					{
-						_logger.Debug(StandardNotePlugin.Name, "Requesting token from Simplenote server");
+						_logger.Debug(StandardNotePlugin.Name, "Requesting token from StandardNoteServer");
 
 						_token = StandardNoteAPI.Authenticate(web, _config.Email, _config.Password, _logger);
 
-						_logger.Debug(StandardNotePlugin.Name, "Simplenote server returned token for user " + _token.user.uuid);
+						_logger.Debug(StandardNotePlugin.Name, "StandardNoteServer returned token for user " + _token.user.uuid);
 					}
 				}
 			}
@@ -52,9 +53,13 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				throw;
 			}
+			catch (RestException)
+			{
+				throw;
+			}
 			catch (Exception e)
 			{
-				throw new StandardNoteAPIException("Could not authenticate with SimpleNote server : " + e.Message, e);
+				throw new StandardNoteAPIException("Could not authenticate with StandardNoteServer : " + e.Message, e);
 			}
 		}
 
