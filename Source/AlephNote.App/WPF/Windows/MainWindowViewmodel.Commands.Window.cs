@@ -42,7 +42,7 @@ namespace AlephNote.WPF.Windows
 
 		public ICommand RotateNoteProviderCommand { get { return new RelayCommand(RotateNoteProvider); } }
 		
-		private void ShowMainWindow()
+		public void ShowMainWindow()
 		{
 			Owner.Show();
 			WindowState = WindowState.Normal;

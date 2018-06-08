@@ -15,6 +15,7 @@ using System.Windows;
 using System.Globalization;
 using System.Threading;
 using AlephNote.Common.Settings.Types;
+using AlephNote.Native;
 
 namespace AlephNote
 {
@@ -107,6 +108,22 @@ namespace AlephNote
 			if (settings.LockOnStartup && !settings.IsReadOnlyMode) settings.IsReadOnlyMode = true;
 
 			ThemeManager.Inst.LoadWithErrorDialog(settings);
+
+			if (settings.SingleInstanceMode)
+			{
+				var mtx = new Mutex(true, "AlephNoteApp_"+settings.ClientID);
+				if (!mtx.WaitOne(TimeSpan.Zero, true))
+				{
+					
+					NativeMethods.PostMessage(
+						(IntPtr)NativeMethods.HWND_BROADCAST,
+						NativeMethods.WM_SHOWME,
+						IntPtr.Zero,
+						IntPtr.Zero);
+
+					return;
+				}
+			}
 			
 			var mw = new MainWindow(settings);
 

@@ -154,6 +154,7 @@
     <Compile Include="Log\EventLogger.cs" />
     <Compile Include="Log\LogEvent.cs" />
     <Compile Include="Log\LogEventType.cs" />
+    <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="WPF\Controls\AutoActionMenuItem.cs" />
     <Compile Include="WPF\Controls\ConnectionDisplayControl.xaml.cs">
       <DependentUpon>ConnectionDisplayControl.xaml</DependentUpon>
@@ -212,16 +213,16 @@
       <DependentUpon>ConflictWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Windows\MainWindowViewmodel.Commands.Folders.cs">
-	    <DependentUpon>MainWindow.xaml</DependentUpon>
+      <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Windows\MainWindowViewmodel.Commands.Note.cs">
-	    <DependentUpon>MainWindow.xaml</DependentUpon>
+      <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Windows\MainWindowViewmodel.Commands.Window.cs">
-	    <DependentUpon>MainWindow.xaml</DependentUpon>
+      <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Windows\MainWindowViewmodel.Commands.Debug.cs">
-	    <DependentUpon>MainWindow.xaml</DependentUpon>
+      <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Windows\ThemeEditor.xaml.cs">
       <DependentUpon>ThemeEditor.xaml</DependentUpon>

@@ -421,6 +421,10 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public bool UseNaturalNoteSort { get { return _useNaturalNoteSort; } set { _useNaturalNoteSort = value; OnPropertyChanged(); } }
 		private bool _useNaturalNoteSort = true;
+		
+		[AlephXMLField]
+		public bool SingleInstanceMode { get { return _singleInstanceMode; } set { _singleInstanceMode = value; OnPropertyChanged(); } }
+		private bool _singleInstanceMode = true;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

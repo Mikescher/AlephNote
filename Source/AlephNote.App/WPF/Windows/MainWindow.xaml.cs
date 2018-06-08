@@ -11,6 +11,7 @@ using System.Windows.Input;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using System.Diagnostics;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
 using AlephNote.Impl;
@@ -26,6 +27,7 @@ using AlephNote.Common.Themes;
 using AlephNote.WPF.Extensions;
 using AlephNote.Common.Util;
 using AlephNote.Common.Util.Search;
+using AlephNote.Native;
 
 namespace AlephNote.WPF.Windows
 {
@@ -69,6 +71,15 @@ namespace AlephNote.WPF.Windows
 			base.OnSourceInitialized(e);
 
 			_scManager.OnSourceInitialized();
+
+			if (PresentationSource.FromVisual(this) is HwndSource source) source.AddHook(WndProc);
+		}
+		
+		private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+		{
+			if (msg == NativeMethods.WM_SHOWME) VM.ShowMainWindow();
+
+			return IntPtr.Zero;
 		}
 
 		private void StartupConfigWindow(AppSettings settings)
