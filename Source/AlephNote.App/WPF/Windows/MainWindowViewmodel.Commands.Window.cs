@@ -223,7 +223,7 @@ namespace AlephNote.WPF.Windows
 			var idx = folders.IndexOf(SelectedFolderPath);
 			if (idx == -1) return;
 
-			folders = folders.Take(idx).Concat(folders.Skip(idx+1)).Reverse().ToList();
+			folders = folders.Take(idx).Reverse().Concat(folders.Skip(idx+1).Reverse()).ToList();
 			
 			if (HierachicalBaseWrapper.IsSpecialOrRoot(SelectedFolderPath))
 			{
