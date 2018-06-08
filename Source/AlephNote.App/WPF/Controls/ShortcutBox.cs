@@ -55,7 +55,11 @@ namespace AlephNote.WPF.Controls
 
 		private void OnPreviewKeyDown(object me, KeyEventArgs e)
 		{
-			if (e.Key == Key.Back)
+			var evtkey = e.Key;
+			var evtmod = e.KeyboardDevice.Modifiers;
+			if (evtkey == Key.System) evtkey = e.SystemKey;
+
+			if (evtkey == Key.Back)
 			{
 				ShortcutKey = AlephKey.None;
 				ShortcutModifiers = AlephModifierKeys.None;
@@ -64,15 +68,15 @@ namespace AlephNote.WPF.Controls
 				return;
 			}
 
-			if (SPECIAL_KEYS.Contains(e.Key))
+			if (SPECIAL_KEYS.Contains(evtkey))
 			{
 				e.Handled = true;
 				return;
 			}
 
-			ShortcutKey = (AlephKey)e.Key;
+			ShortcutKey = (AlephKey)evtkey;
 
-			var smod = (AlephModifierKeys)e.KeyboardDevice.Modifiers;
+			var smod = (AlephModifierKeys)evtmod;
 			if (e.KeyboardDevice.GetKeyStates(Key.LWin).HasFlag(KeyStates.Down)) smod |= AlephModifierKeys.Windows;
 			if (e.KeyboardDevice.GetKeyStates(Key.RWin).HasFlag(KeyStates.Down)) smod |= AlephModifierKeys.Windows;
 
