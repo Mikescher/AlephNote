@@ -211,6 +211,18 @@
     <Compile Include="WPF\Windows\ConflictWindowViewmodel.cs">
       <DependentUpon>ConflictWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Windows\MainWindowViewmodel.Commands.Folders.cs">
+	    <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\MainWindowViewmodel.Commands.Note.cs">
+	    <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\MainWindowViewmodel.Commands.Window.cs">
+	    <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\MainWindowViewmodel.Commands.Debug.cs">
+	    <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Windows\ThemeEditor.xaml.cs">
       <DependentUpon>ThemeEditor.xaml</DependentUpon>
     </Compile>
@@ -457,6 +469,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Compile Include="WPF\Windows\MainWindowViewmodel.Commands.Settings.cs">
+      <Generator>SettingsSingleFileGenerator</Generator>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="IconMain.ico" />

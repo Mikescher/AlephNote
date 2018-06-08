@@ -36,46 +36,57 @@ namespace AlephNote.WPF.Shortcuts
 
 		static ShortcutManager()
 		{
-			AddCommand("NewNote",              vm => vm.CreateNewNoteCommand,              "Create a new note",                                        ActionModifier.AccessControl); 
-			AddCommand("NewNoteFromClipboard", vm => vm.CreateNewNoteFromClipboardCommand, "Create a new note from current clipboard content",         ActionModifier.AccessControl);
-			AddCommand("NewNoteFromTextFile",  vm => vm.CreateNewNoteFromTextfileCommand,  "Create a new note from a file",                            ActionModifier.AccessControl);
-			AddCommand("ExportNote",           vm => vm.ExportCommand,                     "Export the current note");
-			AddCommand("DeleteNote",           vm => vm.DeleteCommand,                     "Delete the current note",                                  ActionModifier.AccessControl);
-			AddCommand("DeleteFolder",         vm => vm.DeleteFolderCommand,               "Delete the current selected folder",                       ActionModifier.AccessControl);
-			AddCommand("AddSubFolder",         vm => vm.AddSubFolderCommand,               "Add a new sub folder under the currently selected folder", ActionModifier.AccessControl);
-			AddCommand("AddFolder",            vm => vm.AddFolderCommand,                  "Add a new folder",                                         ActionModifier.AccessControl);
-			AddCommand("RenameFolder",         vm => vm.RenameFolderCommand,               "Rename currently selected folder",                         ActionModifier.AccessControl);
-			AddCommand("ChangeNotePath",       vm => vm.ChangePathCommand,                 "Change the path of the currently selected note",           ActionModifier.AccessControl);
-			AddCommand("DuplicateNote",        vm => vm.DuplicateNoteCommand,              "Create a new note as a copy of the current note",          ActionModifier.AccessControl);
-			AddCommand("PinUnpinNote",         vm => vm.PinUnpinNoteCommand,               "Pin the note to the top (or un-pin the note)",             ActionModifier.AccessControl);
+			AddCommand("NewNote",                 vm => vm.CreateNewNoteCommand,              "Create a new note",                                        ActionModifier.AccessControl); 
+			AddCommand("NewNoteFromClipboard",    vm => vm.CreateNewNoteFromClipboardCommand, "Create a new note from current clipboard content",         ActionModifier.AccessControl);
+			AddCommand("NewNoteFromTextFile",     vm => vm.CreateNewNoteFromTextfileCommand,  "Create a new note from a file",                            ActionModifier.AccessControl);
+			AddCommand("ExportNote",              vm => vm.ExportCommand,                     "Export the current note");
+			AddCommand("DeleteNote",              vm => vm.DeleteCommand,                     "Delete the current note",                                  ActionModifier.AccessControl);
+			AddCommand("DeleteFolder",            vm => vm.DeleteFolderCommand,               "Delete the current selected folder",                       ActionModifier.AccessControl);
+			AddCommand("AddSubFolder",            vm => vm.AddSubFolderCommand,               "Add a new sub folder under the currently selected folder", ActionModifier.AccessControl);
+			AddCommand("AddFolder",               vm => vm.AddFolderCommand,                  "Add a new folder",                                         ActionModifier.AccessControl);
+			AddCommand("RenameFolder",            vm => vm.RenameFolderCommand,               "Rename currently selected folder",                         ActionModifier.AccessControl);
+			AddCommand("ChangeNotePath",          vm => vm.ChangePathCommand,                 "Change the path of the currently selected note",           ActionModifier.AccessControl);
+			AddCommand("DuplicateNote",           vm => vm.DuplicateNoteCommand,              "Create a new note as a copy of the current note",          ActionModifier.AccessControl);
+			AddCommand("PinUnpinNote",            vm => vm.PinUnpinNoteCommand,               "Pin the note to the top (or un-pin the note)",             ActionModifier.AccessControl);
 
-			AddCommand("SaveAndSync",          vm => vm.SaveAndSyncCommand,                "Save current note and synchronize");
-			AddCommand("Resync",               vm => vm.ResyncCommand,                     "Start synchronization with remote");
-			AddCommand("FullResync",           vm => vm.FullResyncCommand,                 "Delete local data and do a full resync",                   ActionModifier.AccessControl);
+			AddCommand("SaveAndSync",             vm => vm.SaveAndSyncCommand,                "Save current note and synchronize");
+			AddCommand("Resync",                  vm => vm.ResyncCommand,                     "Start synchronization with remote");
+			AddCommand("FullResync",              vm => vm.FullResyncCommand,                 "Delete local data and do a full resync",                   ActionModifier.AccessControl);
 
-			AddCommand("DocumentSearch",       vm => vm.DocumentSearchCommand,             "Search in current note");
-			AddCommand("DocumentSearchNext",   vm => vm.DocumentContinueSearchCommand,     "Find next occurence of search");
-			AddCommand("CloseDocumentSearch",  vm => vm.CloseDocumentSearchCommand,        "Close inline search panel");
+			AddCommand("DocumentSearch",          vm => vm.DocumentSearchCommand,             "Search in current note");
+			AddCommand("DocumentSearchNext",      vm => vm.DocumentContinueSearchCommand,     "Find next occurence of search");
+			AddCommand("CloseDocumentSearch",     vm => vm.CloseDocumentSearchCommand,        "Close inline search panel");
 
-			AddCommand("ShowSettings",         vm => vm.SettingsCommand,                   "Show settings window");
-			AddCommand("ShowMainWindow",       vm => vm.ShowMainWindowCommand,             "Bring the window into the foreground");
-			AddCommand("ShowAbout",            vm => vm.ShowAboutCommand,                  "Show the about window");
-			AddCommand("ShowLog",              vm => vm.ShowLogCommand,                    "Show the log window");
-			AddCommand("AppExit",              vm => vm.ExitCommand,                       "Close the application");
-			AddCommand("AppRestart",           vm => vm.RestartCommand,                    "Restart the application");
-			AddCommand("AppHide",              vm => vm.HideCommand,                       "Hide main window");
-			AddCommand("FocusEditor",          vm => vm.FocusScintillaCommand,             "Select the note editor");
-			AddCommand("FocusNotesList",       vm => vm.FocusNotesListCommand,             "Select the note list");
-			AddCommand("FocusGlobalSearch",    vm => vm.FocusGlobalSearchCommand,          "Select the global search field");
-			AddCommand("FocusFolderList",      vm => vm.FocusFolderCommand,                "Select the folder list");
+			AddCommand("ShowSettings",            vm => vm.SettingsCommand,                   "Show settings window");
+			AddCommand("ShowMainWindow",          vm => vm.ShowMainWindowCommand,             "Bring the window into the foreground");
+			AddCommand("ShowAbout",               vm => vm.ShowAboutCommand,                  "Show the about window");
+			AddCommand("ShowLog",                 vm => vm.ShowLogCommand,                    "Show the log window");
+			AddCommand("AppExit",                 vm => vm.ExitCommand,                       "Close the application");
+			AddCommand("AppRestart",              vm => vm.RestartCommand,                    "Restart the application");
+			AddCommand("AppHide",                 vm => vm.HideCommand,                       "Hide main window");
+			AddCommand("FocusEditor",             vm => vm.FocusScintillaCommand,             "Select the note editor");
+			AddCommand("FocusNotesList",          vm => vm.FocusNotesListCommand,             "Select the note list");
+			AddCommand("FocusGlobalSearch",       vm => vm.FocusGlobalSearchCommand,          "Select the global search field");
+			AddCommand("FocusFolderList",         vm => vm.FocusFolderCommand,                "Select the folder list");
 
-			AddCommand("CheckForUpdates",      vm => vm.ManuallyCheckForUpdatesCommand,    "Manually check for new updates");
+			AddCommand("FocusPrevNote",           vm => vm.FocusPrevNoteCommand,              "Select the previous note");
+			AddCommand("FocusNextNote",           vm => vm.FocusNextNoteCommand,              "Select the next note");
+			AddCommand("FocusPrevDirectoryAny",   vm => vm.FocusPrevDirectoryAnyCommand,      "Select the previous directory");
+			AddCommand("FocusNextDirectoryAny",   vm => vm.FocusNextDirectoryAnyCommand,      "Select the next directory");
+			AddCommand("FocusPrevDirectory",      vm => vm.FocusPrevDirectoryCommand,         "Select the previous directory (on the same level)");
+			AddCommand("FocusNextDirectory",      vm => vm.FocusNextDirectoryCommand,         "Select the next directory (on the same level)");
+			AddCommand("FocusDirectoryLevelDown", vm => vm.FocusDirectoryLevelDownCommand,    "Go one directory level down");
+			AddCommand("FocusDirectoryLevelUp",   vm => vm.FocusDirectoryLevelUpCommand,      "Go one directory level up");
 
-			AddCommand("ToggleAlwaysOnTop",    vm => vm.SettingAlwaysOnTopCommand,         "Change the option 'Always on top'");
-			AddCommand("ToggleLineNumbers",    vm => vm.SettingLineNumbersCommand,         "Change the option 'Show line numbers'"); 
-			AddCommand("ToggleWordWrap",       vm => vm.SettingsWordWrapCommand,           "Change the option 'Word Wrap'");
-			AddCommand("RotateTheme",          vm => vm.SettingsRotateThemeCommand,        "Change the current theme to the next available");
-			AddCommand("ToggleReadonly",       vm => vm.SettingReadonlyModeCommand,        "Change the option 'Readonly mode'");
+			AddCommand("CheckForUpdates",         vm => vm.ManuallyCheckForUpdatesCommand,    "Manually check for new updates");
+
+			AddCommand("ToggleAlwaysOnTop",       vm => vm.SettingAlwaysOnTopCommand,         "Toggle the option 'Always on top'");
+			AddCommand("ToggleLineNumbers",       vm => vm.SettingLineNumbersCommand,         "Toggle the option 'Show line numbers'"); 
+			AddCommand("ToggleWordWrap",          vm => vm.SettingsWordWrapCommand,           "Toggle the option 'Word Wrap'");
+			AddCommand("RotateTheme",             vm => vm.SettingsRotateThemeCommand,        "Change the current theme to the next available");
+			AddCommand("ToggleReadonly",          vm => vm.SettingReadonlyModeCommand,        "Toggle the option 'Readonly mode'");
+			
+			AddCommand("RotateNoteProvider",      vm => vm.RotateNoteProviderCommand,         "Switch to the next note provider in the list");
 		}
 
 		public static void Execute(MainWindow mw, string key)

@@ -542,7 +542,10 @@ namespace AlephNote.WPF.Controls
 
 		public IEnumerable<DirectoryPath> ListFolder()
 		{
-			return DisplayItems.ListPaths().Distinct();
+			if (Settings?.FolderViewShowRootNode == false)
+				return new []{ DirectoryPath.Root() }.Concat(DisplayItems.ListPaths()).Distinct();
+			else
+				return DisplayItems.ListPaths().Distinct();
 		}
 
 		public DirectoryPath GetNewNotesPath()

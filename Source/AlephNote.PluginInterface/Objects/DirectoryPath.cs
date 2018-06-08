@@ -163,5 +163,21 @@ namespace AlephNote.PluginInterface.Util
 
 			return Create(p);
 		}
+
+		public bool IsDirectSubPathOf(DirectoryPath parent, bool ignoreCase)
+		{
+			if (Count != parent.Count+1) return false;
+
+			if (ignoreCase)
+			{
+				for (int i = 0; i < parent.Count; i++) if (parent._path[i].ToLower() != _path[i].ToLower()) return false;
+			}
+			else
+			{
+				for (int i = 0; i < parent.Count; i++) if (parent._path[i] != _path[i]) return false;
+			}
+
+			return true;
+		}
 	}
 }

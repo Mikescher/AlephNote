@@ -42,10 +42,15 @@ namespace AlephNote.WPF.Util
 		public abstract bool IsSpecialNode_RootFolder { get; }
 
 		public abstract void Sync(HierachicalBaseWrapper aother, HierachicalWrapper_Folder[] parents);
-
+		
 		public static bool IsSpecial(DirectoryPath p)
 		{
 			return p.EqualsWithCase(DP_ALLNOTES) || p.EqualsWithCase(DP_UNSORTEDNOTES) || p.EqualsWithCase(DP_ROOTFOLDER);
+		}
+		
+		public static bool IsSpecialOrRoot(DirectoryPath p)
+		{
+			return p.IsRoot() || p.EqualsWithCase(DP_ALLNOTES) || p.EqualsWithCase(DP_UNSORTEDNOTES) || p.EqualsWithCase(DP_ROOTFOLDER);
 		}
 	}
 
@@ -326,7 +331,7 @@ namespace AlephNote.WPF.Util
 
 		public IEnumerable<DirectoryPath> ListPaths()
 		{
-			yield return _path;
+			if (!_isRoot) yield return _path;
 			foreach (var sf in SubFolder)
 			{
 				foreach (var p in sf.ListPaths()) yield return p;
