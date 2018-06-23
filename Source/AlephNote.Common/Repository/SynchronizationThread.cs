@@ -155,7 +155,7 @@ namespace AlephNote.Common.Repository
 
 				try
 				{
-					if (!clonenote.IsLocalSaved)
+					if (!realnote.IsLocalSaved)
 					{
 						dispatcher.Invoke(() =>
 						{

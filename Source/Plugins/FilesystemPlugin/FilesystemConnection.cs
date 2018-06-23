@@ -64,7 +64,7 @@ namespace AlephNote.Plugins.Filesystem
 
 			var remote = ReadNoteFromPath(note.PathRemote);
 
-			return remote.ModificationDate > note.ModificationDate;
+			return remote.IsLocked != note.IsLocked || remote.ModificationDate > note.ModificationDate;
 		}
 
 		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, ConflictResolutionStrategy strategy)
@@ -75,7 +75,7 @@ namespace AlephNote.Plugins.Filesystem
 
 			if (File.Exists(note.PathRemote) && path != note.PathRemote && !File.Exists(path))
 			{
-				_logger.Debug(FilesystemPlugin.Name, "Upload note to changed remote path");
+				_logger.Debug(FilesystemPlugin.Name, "Upload note to changed remote path"); // path changed and new path does not exist
 
 				WriteNoteToPath(note, path);
 				conflict = null;
@@ -85,10 +85,10 @@ namespace AlephNote.Plugins.Filesystem
 			}
 			else if (File.Exists(note.PathRemote) && path != note.PathRemote && File.Exists(path))
 			{
-				_logger.Debug(FilesystemPlugin.Name, "Upload note to changed remote path");
+				_logger.Debug(FilesystemPlugin.Name, "Upload note to changed remote path"); // path changed and new path does exist
 
 				var conf = ReadNoteFromPath(note.PathRemote);
-				if (conf.ModificationDate != note.ModificationDate)
+				if (conf.ModificationDate > note.ModificationDate)
 				{
 					conflict = conf;
 					if (strategy == ConflictResolutionStrategy.UseClientCreateConflictFile || strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.ManualMerge)
@@ -113,10 +113,10 @@ namespace AlephNote.Plugins.Filesystem
 					return RemoteUploadResult.Uploaded;
 				}
 			}
-			else if (File.Exists(path))
+			else if (File.Exists(path)) // normal update
 			{
 				var conf = ReadNoteFromPath(path);
-				if (conf.ModificationDate != note.ModificationDate)
+				if (conf.ModificationDate > note.ModificationDate)
 				{
 					conflict = conf;
 					if (strategy == ConflictResolutionStrategy.UseClientCreateConflictFile || strategy == ConflictResolutionStrategy.UseClientVersion)
@@ -140,7 +140,7 @@ namespace AlephNote.Plugins.Filesystem
 					return RemoteUploadResult.Uploaded;
 				}
 			}
-			else
+			else // new file
 			{
 				WriteNoteToPath(note, path);
 				conflict = null;
@@ -154,12 +154,18 @@ namespace AlephNote.Plugins.Filesystem
 			FilesystemNote note = (FilesystemNote) inote;
 
 			var path = note.GetPath(_config);
+			var fi = new FileInfo(path);
 
-			if (!File.Exists(path)) return RemoteDownloadResult.DeletedOnRemote;
+			if (!fi.Exists) return RemoteDownloadResult.DeletedOnRemote;
 
-			note.Title = Path.GetFileNameWithoutExtension(path);
-			note.Text = File.ReadAllText(path, _config.Encoding);
-			note.PathRemote = path;
+			using(note.SuppressDirtyChanges())
+			{
+				note.Title = Path.GetFileNameWithoutExtension(path);
+				note.Text = File.ReadAllText(path, _config.Encoding);
+				note.PathRemote = path;
+				note.ModificationDate = fi.LastWriteTime;
+				note.IsLocked = fi.IsReadOnly;
+			}
 
 			return RemoteDownloadResult.Updated;
 		}
@@ -206,12 +212,16 @@ namespace AlephNote.Plugins.Filesystem
 
 			var note = new FilesystemNote(Guid.NewGuid(), _config);
 
-			note.Title = Path.GetFileNameWithoutExtension(info.FullName);
-			note.Path = FileSystemUtil.GetDirectoryPath(_config.Folder, info.DirectoryName);
-			note.Text  = File.ReadAllText(info.FullName, _config.Encoding);
-			note.CreationDate = info.CreationTime;
-			note.ModificationDate = info.LastWriteTime;
-			note.PathRemote = info.FullName;
+			using (note.SuppressDirtyChanges())
+			{
+				note.Title = Path.GetFileNameWithoutExtension(info.FullName);
+				note.Path = FileSystemUtil.GetDirectoryPath(_config.Folder, info.DirectoryName);
+				note.Text  = File.ReadAllText(info.FullName, _config.Encoding);
+				note.CreationDate = info.CreationTime;
+				note.ModificationDate = info.LastWriteTime;
+				note.PathRemote = info.FullName;
+				note.IsLocked = info.IsReadOnly;
+			}
 
 			return note;
 		}
@@ -220,11 +230,14 @@ namespace AlephNote.Plugins.Filesystem
 		{
 			Directory.CreateDirectory(Path.GetDirectoryName(path));
 
+			FileInfo fileBefore = new FileInfo(path);
+			if (fileBefore.Exists && fileBefore.IsReadOnly) fileBefore.IsReadOnly = false;
+
 			File.WriteAllText(path, note.Text);
 
-			var info = new FileInfo(path);
+			new FileInfo(path).IsReadOnly = note.IsLocked;
 
-			note.ModificationDate = info.LastWriteTime;
+			note.ModificationDate = new FileInfo(path).LastWriteTime;
 		}
 	}
 }
