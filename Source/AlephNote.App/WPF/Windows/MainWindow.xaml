@@ -303,7 +303,7 @@
 					<RowDefinition Height="*"/>
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
-				
+
 				<WindowsFormsHost Grid.Row="0" x:Name="NoteEditHost">
 					<WindowsFormsHost.Child>
 						<scinet:Scintilla x:Name="NoteEdit" AllowDrop="True"

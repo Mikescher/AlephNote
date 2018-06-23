@@ -206,6 +206,7 @@
       <DependentUpon>GenericInputDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Extensions\ThemeSlaveBinding.cs" />
+    <Compile Include="WPF\Util\CaptureMouseWheelWhenUnfocusedBehavior.cs" />
     <Compile Include="WPF\Util\CheckableTag.cs" />
     <Compile Include="WPF\Util\SideBySideDiffModelVisualizer.cs" />
     <Compile Include="WPF\Windows\ConflictWindow.xaml.cs">

@@ -73,6 +73,8 @@ namespace AlephNote.WPF.Windows
 			_scManager.OnSourceInitialized();
 
 			if (PresentationSource.FromVisual(this) is HwndSource source) source.AddHook(WndProc);
+
+			CaptureMouseWheelWhenUnfocusedBehavior.SetIsEnabled(NoteEditHost, Settings.FixScintillaScrollMessages);
 		}
 		
 		private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
