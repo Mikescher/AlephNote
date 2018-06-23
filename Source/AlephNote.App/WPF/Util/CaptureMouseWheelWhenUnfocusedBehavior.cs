@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Forms.Integration;
 using System.Windows.Input;
+using AlephNote.WPF.Windows;
 using ScintillaNET;
 
 namespace AlephNote.WPF.Util
@@ -65,44 +66,45 @@ namespace AlephNote.WPF.Util
 			public bool PreFilterMessage(ref System.Windows.Forms.Message m)
 			{
 				const int WM_MOUSEWHEEL = 0x020A;
-				if(m.Msg == WM_MOUSEWHEEL)
+				if (m.Msg != WM_MOUSEWHEEL) return false;
+				
+				if (!MainWindow.Instance.IsKeyboardFocusWithin) return false;
+
+				var location = LocationFromLParam(m.LParam);
+				foreach(var host in TrackedHosts)
 				{
-					var location = LocationFromLParam(m.LParam);
-					foreach(var host in TrackedHosts)
+					if(!ConsiderRedirect(host)) continue;
+
+					var p1 = host.PointToScreen(new Point(0, 0));
+					var p2 = host.PointToScreen(new Point(host.ActualWidth, host.ActualHeight));
+
+					if(new Rect(p1, p2).Contains(new Point(location.X, location.Y)))
 					{
-						if(!ConsiderRedirect(host)) continue;
+						var delta = DeltaFromWParam(m.WParam);
 
-						var p1 = host.PointToScreen(new Point(0, 0));
-						var p2 = host.PointToScreen(new Point(host.ActualWidth, host.ActualHeight));
-
-						if(new Rect(p1, p2).Contains(new Point(location.X, location.Y)))
 						{
-							var delta = DeltaFromWParam(m.WParam);
-
-							{
-								// raise event for WPF control
-								var mouse = InputManager.Current.PrimaryMouseDevice;
-								var args = new MouseWheelEventArgs(mouse, Environment.TickCount, delta) { RoutedEvent = UIElement.MouseWheelEvent };
-								host.RaiseEvent(args);
-							}
-
-							if (host.Child is Scintilla sci)
-							{
-								// raise event for Scintilla control
-								sci.LineScroll(-Math.Sign(delta)*3, 0);
-							}
-							else
-							{
-								// raise event for winforms control
-								var buttons = MouseButtonsFromWParam(m.WParam);
-								var args = new System.Windows.Forms.MouseEventArgs(buttons, 0, location.X, location.Y, delta);
-								var method = typeof(System.Windows.Forms.Control).GetMethod("OnMouseWheel", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-								method?.Invoke(host.Child, new object[] { args });
-							}
-
-							return true;
-
+							// raise event for WPF control
+							var mouse = InputManager.Current.PrimaryMouseDevice;
+							var args = new MouseWheelEventArgs(mouse, Environment.TickCount, delta) { RoutedEvent = UIElement.MouseWheelEvent };
+							host.RaiseEvent(args);
 						}
+
+						if (host.Child is Scintilla sci)
+						{
+							// raise event for Scintilla control
+							sci.LineScroll(-Math.Sign(delta)*3, 0);
+						}
+						else
+						{
+							// raise event for winforms control
+							var buttons = MouseButtonsFromWParam(m.WParam);
+							var args = new System.Windows.Forms.MouseEventArgs(buttons, 0, location.X, location.Y, delta);
+							var method = typeof(System.Windows.Forms.Control).GetMethod("OnMouseWheel", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+							method?.Invoke(host.Child, new object[] { args });
+						}
+
+						return true;
+
 					}
 				}
 				return false;
