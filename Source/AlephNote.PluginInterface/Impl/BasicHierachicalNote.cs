@@ -153,6 +153,7 @@ namespace AlephNote.PluginInterface.Impl
 					OnExplicitPropertyChanged("Title");
 					OnExplicitPropertyChanged("Path");
 					OnExplicitPropertyChanged("Tags");
+					OnExplicitPropertyChanged("ModificationDate");
 					OnExplicitPropertyChanged("IsPinned");
 				}
 			}
@@ -162,6 +163,7 @@ namespace AlephNote.PluginInterface.Impl
 				OnExplicitPropertyChanged("Title");
 				OnExplicitPropertyChanged("Path");
 				OnExplicitPropertyChanged("Tags");
+				OnExplicitPropertyChanged("ModificationDate");
 				OnExplicitPropertyChanged("IsPinned");
 			}
 		}
