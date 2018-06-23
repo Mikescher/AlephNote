@@ -478,6 +478,10 @@ namespace AlephNote.WPF.Windows
 
 		private void CheckForUpdatesAsync()
 		{
+			#if DEBUG
+			return;
+			#endif
+
 			try
 			{
 				Thread.Sleep(1000);

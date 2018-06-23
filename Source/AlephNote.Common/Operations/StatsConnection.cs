@@ -27,6 +27,10 @@ namespace AlephNote.Common.Operations
 
 		public bool UploadStatistics(Version version)
 		{
+			#if DEBUG
+			return true;
+			#endif
+
 			try
 			{
 				var rest = new SimpleJsonRest(_settings.CreateProxy(), @"https://mikescher.com");
