@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Xml.Linq;
 using System.Runtime.CompilerServices;
 using AlephNote.PluginInterface.Util;
-using System.Text;
 
 namespace AlephNote.PluginInterface.Impl
 {
@@ -78,7 +77,7 @@ namespace AlephNote.PluginInterface.Impl
 				OnExplicitPropertyChanged("Path");
 			}
 
-			if (e.PropertyName == "Text" || e.PropertyName == "Title" || e.PropertyName == "Path" || e.PropertyName == "IsPinned")
+			if (e.PropertyName == "Text" || e.PropertyName == "Title" || e.PropertyName == "Path" || e.PropertyName == "IsPinned" || e.PropertyName == "IsLocked")
 			{
 				SetDirty();
 				ModificationDate = DateTimeOffset.Now;
@@ -138,6 +137,7 @@ namespace AlephNote.PluginInterface.Impl
 		public abstract ObservableCollection<string> Tags { get; }
 		public abstract string Text { get; set; }
 		public abstract bool IsPinned { get; set; }
+		public abstract bool IsLocked { get; set; }
 		public abstract string InternalTitle { get; set; }
 		public abstract DateTimeOffset CreationDate { get; set; }
 		public abstract DateTimeOffset ModificationDate { get; set; }
@@ -170,6 +170,7 @@ namespace AlephNote.PluginInterface.Impl
 					OnExplicitPropertyChanged("Tags");
 					OnExplicitPropertyChanged("ModificationDate");
 					OnExplicitPropertyChanged("IsPinned");
+					OnExplicitPropertyChanged("IsLocked");
 				}
 			}
 			else
@@ -180,6 +181,7 @@ namespace AlephNote.PluginInterface.Impl
 				OnExplicitPropertyChanged("Tags");
 				OnExplicitPropertyChanged("ModificationDate");
 				OnExplicitPropertyChanged("IsPinned");
+				OnExplicitPropertyChanged("IsLocked");
 			}
 		}
 

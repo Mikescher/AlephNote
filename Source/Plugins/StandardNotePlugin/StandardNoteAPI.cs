@@ -364,6 +364,7 @@ namespace AlephNote.Plugins.StandardNote
 			var appdata = new Dictionary<string, Dictionary<string, object>>();
 
 			SetAppDataBool(appdata, APPDATA_PINNED, note.IsPinned);
+			SetAppDataBool(appdata, APPDATA_LOCKED, note.IsLocked);
 
 			var jsnContent = new ContentNote
 			{
@@ -482,6 +483,7 @@ namespace AlephNote.Plugins.StandardNote
 				AuthHash = encNote.auth_hash,
 				ContentVersion = StandardNoteCrypt.GetSchemaVersion(encNote.content),
 				IsPinned = GetAppDataBool(content.appData, APPDATA_PINNED, false),
+				IsLocked = GetAppDataBool(content.appData, APPDATA_LOCKED, false),
 			};
 
 			var refTags = new List<StandardFileTag>();

@@ -12,6 +12,10 @@ namespace AlephNote.Plugins.Evernote
 		public static readonly Version Version = GetInformationalVersion(typeof(EvernotePlugin).GetTypeInfo().Assembly);
 		public const string Name = "EvernotePlugin";
 
+		public override bool SupportsPinning => false;
+		public override bool SupportsLocking => false;
+		public override bool HasNativeDirectorySupport() => false;
+
 		private IAlephLogger _logger;
 
 		public EvernotePlugin() : base("Evernote", Version, Guid.Parse("b1bc98fa-247a-4f12-ac2d-febaa927f2ec"))
@@ -45,9 +49,5 @@ namespace AlephNote.Plugins.Evernote
 			return new EvernoteData();
 		}
 
-		public override bool HasNativeDirectorySupport()
-		{
-			return false;
-		}
 	}
 }

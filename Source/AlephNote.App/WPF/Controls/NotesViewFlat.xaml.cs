@@ -293,17 +293,18 @@ namespace AlephNote.WPF.Controls
 			{
 				// click on item
 
-				var cms = new ContextMenu
-				{
-					Items =
-					{
-						new AutoActionMenuItem{ Header="Export",      AlephAction="ExportNote",    ParentAnchor=ParentAnchor},
-						new AutoActionMenuItem{ Header="Duplicate",   AlephAction="DuplicateNote", ParentAnchor=ParentAnchor},
-						new AutoActionMenuItem{ Header="Pin / Unpin", AlephAction="PinUnpinNote",  ParentAnchor=ParentAnchor},
-						new Separator(),
-						new AutoActionMenuItem{ Header="Delete",      AlephAction="DeleteNote",    ParentAnchor=ParentAnchor},
-					}
-				};
+				var pin = MainWindow.Instance?.VM?.Repository?.SupportsPinning ?? false;
+				var lck = MainWindow.Instance?.VM?.Repository?.SupportsLocking ?? false;
+
+				var cms = new ContextMenu();
+
+				cms.Items.Add(new AutoActionMenuItem{ Header="Export", AlephAction="ExportNote", ParentAnchor=ParentAnchor});
+				cms.Items.Add(new AutoActionMenuItem{ Header="Duplicate", AlephAction="DuplicateNote", ParentAnchor=ParentAnchor});
+				if (pin) cms.Items.Add(new AutoActionMenuItem{ Header="Pin / Unpin", AlephAction="PinUnpinNote", ParentAnchor=ParentAnchor});
+				if (lck) cms.Items.Add(new AutoActionMenuItem{ Header="Lock / Unlock", AlephAction="LockUnlockNote",  ParentAnchor=ParentAnchor});
+				cms.Items.Add(new Separator());
+				cms.Items.Add(new AutoActionMenuItem{ Header="Delete", AlephAction="DeleteNote", ParentAnchor=ParentAnchor});
+				
 				NotesList.ContextMenu = null;
 				WPFHelper.ExecDelayed(50, () => { NotesList.ContextMenu = cms; cms.IsOpen = true; });
 			}

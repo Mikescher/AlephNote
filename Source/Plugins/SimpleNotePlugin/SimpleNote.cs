@@ -37,6 +37,8 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
+		public override bool IsLocked { get { return false; } set { /* no */ } }
+
 		private string _content = "";
 		public string Content { get { return _content; } set { _content = value; OnPropertyChanged(); } }
 

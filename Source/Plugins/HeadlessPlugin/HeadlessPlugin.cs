@@ -12,6 +12,10 @@ namespace AlephNote.Plugins.Headless
 		public static readonly Version Version = GetInformationalVersion(typeof(HeadlessPlugin).GetTypeInfo().Assembly);
 		public const string Name = "HeadlessPlugin";
 
+		public override bool SupportsPinning => true;
+		public override bool SupportsLocking => true;
+		public override bool HasNativeDirectorySupport() => true;
+
 		public HeadlessPlugin() : base("No Remote", Version, Guid.Parse("37de6de1-26b0-41f5-b252-5e625d9ecfa3"))
 		{
 			//
@@ -21,12 +25,7 @@ namespace AlephNote.Plugins.Headless
 		{
 			//
 		}
-
-		public override bool HasNativeDirectorySupport()
-		{
-			return true;
-		}
-
+		
 		public override IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration()
 		{
 			return new HeadlessConfig();

@@ -25,6 +25,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand ChangePathCommand { get { return new RelayCommand(() => Owner.PathEditor.ChangePath()); } }
 		public ICommand DuplicateNoteCommand { get { return new RelayCommand(DuplicateNote); } }
 		public ICommand PinUnpinNoteCommand { get { return new RelayCommand(PinUnpinNote); } }
+		public ICommand LockUnlockNoteCommand { get { return new RelayCommand(LockUnlockNote); } }
 		
 		private void ExportNote()
 		{
@@ -104,6 +105,13 @@ namespace AlephNote.WPF.Windows
 			if (SelectedNote == null) return;
 
 			SelectedNote.IsPinned = !SelectedNote.IsPinned;
+		}
+
+		private void LockUnlockNote()
+		{
+			if (SelectedNote == null) return;
+
+			SelectedNote.IsLocked = !SelectedNote.IsLocked;
 		}
 		
 		private void CreateNote()

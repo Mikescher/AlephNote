@@ -8,6 +8,11 @@
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="40" d:DesignWidth="100">
+
+	<UserControl.Resources>
+		<conv:MultiBoolToVisibility x:Key="MB2V" />
+		<conv:MultiBoolOperator     x:Key="MBOP" />
+	</UserControl.Resources>
 	
 	<Grid x:Name="MainGrid" d:DataContext="{d:DesignInstance self:PathEditor}">
 		
@@ -49,8 +54,14 @@
 						Foreground="{ext:ThemeBinding 'window.pathdisplay.button:foreground'}" 
 						Background="{ext:ThemeBinding 'window.pathdisplay.button:background'}" 
 						BorderBrush="{ext:ThemeBinding 'window.pathdisplay.button:border'}" 
-						IsEnabled="{Binding Settings.IsReadOnlyMode, Converter={conv:NegateBool}}"
-						Command="{Binding ChangePathCommand}" />
+						Command="{Binding ChangePathCommand}" >
+			<Button.IsEnabled>
+				<MultiBinding Converter="{StaticResource MBOP}" ConverterParameter="NOR">
+					<Binding Path="Settings.IsReadOnlyMode" />
+					<Binding Path="SelectedNote.IsLocked" />
+				</MultiBinding>
+			</Button.IsEnabled>
+		</Button>
 
 		<Popup Grid.Column="1" StaysOpen="False" Placement="Right" x:Name="FolderPopup">
 			<Border BorderThickness="{ext:ThemeBinding 'window.pathdisplay.popup:border_thickness'}" BorderBrush="{ext:ThemeBinding 'window.pathdisplay.popup:border'}">

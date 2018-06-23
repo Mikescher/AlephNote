@@ -30,6 +30,9 @@ namespace AlephNote.Plugins.Headless
 		private bool _isPinned = false;
 		public override bool IsPinned { get { return _isPinned; } set { _isPinned = value; OnPropertyChanged(); } }
 
+		private bool _isLocked = false;
+		public override bool IsLocked { get { return _isLocked; } set { _isLocked = value; OnPropertyChanged(); } }
+
 		private readonly ObservableCollection<string> _tags = new ObservableCollection<string>();
 
 		public override ObservableCollection<string> Tags { get { return _tags; } }
@@ -53,6 +56,7 @@ namespace AlephNote.Plugins.Headless
 				new XElement("CreationDate", XHelper.ToString(CreationDate)),
 				new XElement("Path", Path.Serialize()),
 				new XElement("IsPinned", IsPinned),
+				new XElement("IsLocked", IsLocked),
 			};
 
 			var r = new XElement("localnote", data);
@@ -71,6 +75,7 @@ namespace AlephNote.Plugins.Headless
 			_tags.Synchronize(XHelper.GetChildValueStringList(input, "Tags", "Tag"));
 			_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 			_isPinned = XHelper.GetChildValue(input, "IsPinned", false);
+			_isLocked = XHelper.GetChildValue(input, "IsLocked", false);
 			_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
 		}
 
@@ -85,6 +90,7 @@ namespace AlephNote.Plugins.Headless
 				n._tags.Synchronize(_tags);
 				n._path             = _path;
 				n._isPinned         = _isPinned;
+				n._isLocked         = _isLocked;
 				n._creationDate     = _creationDate;
 				n._modificationDate = _modificationDate;
 
@@ -103,6 +109,7 @@ namespace AlephNote.Plugins.Headless
 				_tags.Synchronize(other.Tags);
 				_path = other._path;
 				_isPinned = other._isPinned;
+				_isLocked = other._isLocked;
 			}
 		}
 

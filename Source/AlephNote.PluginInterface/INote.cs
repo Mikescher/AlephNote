@@ -29,6 +29,7 @@ namespace AlephNote.PluginInterface
 		string Text { get; set; }
 		string Title { get; set; }
 		bool IsPinned { get; set; }
+		bool IsLocked { get; set; }
 		DirectoryPath Path { get; set; }
 
 		bool IsLocalSaved { get; set; }

@@ -48,6 +48,7 @@ namespace AlephNote.WPF.Shortcuts
 			AddCommand("ChangeNotePath",          vm => vm.ChangePathCommand,                 "Change the path of the currently selected note",           ActionModifier.AccessControl);
 			AddCommand("DuplicateNote",           vm => vm.DuplicateNoteCommand,              "Create a new note as a copy of the current note",          ActionModifier.AccessControl);
 			AddCommand("PinUnpinNote",            vm => vm.PinUnpinNoteCommand,               "Pin the note to the top (or un-pin the note)",             ActionModifier.AccessControl);
+			AddCommand("LockUnlockNote",          vm => vm.LockUnlockNoteCommand,             "Lock/Unlock the note (prevent editing)",                   ActionModifier.AccessControl);
 
 			AddCommand("SaveAndSync",             vm => vm.SaveAndSyncCommand,                "Save current note and synchronize");
 			AddCommand("Resync",                  vm => vm.ResyncCommand,                     "Start synchronization with remote");

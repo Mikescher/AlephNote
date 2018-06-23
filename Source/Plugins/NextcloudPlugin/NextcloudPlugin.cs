@@ -13,6 +13,10 @@ namespace AlephNote.Plugins.Nextcloud
 		public static readonly Version Version = GetInformationalVersion(typeof(NextcloudPlugin).GetTypeInfo().Assembly);
 		public const string Name = "NextcloudPlugin";
 
+		public override bool SupportsPinning => false;
+		public override bool SupportsLocking => false;
+		public override bool HasNativeDirectorySupport() => true;
+
 		private IAlephLogger _logger;
 
 		public NextcloudPlugin() : base("Nextcloud Notes", Version, Guid.Parse("9c4538de-8adb-438f-99fe-1531f90d9d0a"))
@@ -48,11 +52,6 @@ namespace AlephNote.Plugins.Nextcloud
 		public override IEnumerable<Tuple<string, string>> CreateHelpTexts()
 		{
 			yield return Tuple.Create("BlankLineBelowTitle", "The nextcloud notes app does not really have the concept of a 'note title'.\nNormally the first line is used as a title/preview.\n\nAlephNote also uses the first line as an title,\nfor better formatting when the note is viewed plain (e.g. in the web app) we insert a blank line between title and content by default.");
-		}
-
-		public override bool HasNativeDirectorySupport()
-		{
-			return true;
 		}
 	}
 }

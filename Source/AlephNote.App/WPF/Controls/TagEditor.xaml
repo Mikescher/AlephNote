@@ -48,7 +48,7 @@
 				Background="Transparent"
 				Grid.Row="0" x:Name="TagCtrl" MinHeight="25" BorderThickness="0" 
 				AcceptsReturn="False" AcceptsTab="False" 
-				IsReadOnly="{Binding Settings.IsReadOnlyMode}"
+				IsReadOnly="{Binding Readonly}"
 				IsReadOnlyCaretVisible="True"
 				VerticalContentAlignment="Bottom">
 			

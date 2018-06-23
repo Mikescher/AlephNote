@@ -48,6 +48,7 @@
       <HintPath>..\..\Lib\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\Lib\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
     </Reference>
@@ -186,6 +187,7 @@
     <Compile Include="WPF\Converter\EmptyToVisibility.cs" />
     <Compile Include="WPF\Converter\BrushRefToBrush.cs" />
     <Compile Include="WPF\Converter\ColorRefToBrush.cs" />
+    <Compile Include="WPF\Converter\MultiBoolOperator.cs" />
     <Compile Include="WPF\Converter\MultiBoolToVisibility.cs" />
     <Compile Include="WPF\Converter\HierachicalWrapperToIcon.cs" />
     <Compile Include="WPF\Converter\ReadonlyToLockIcon.cs" />
@@ -564,6 +566,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\tag.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\lock_small.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

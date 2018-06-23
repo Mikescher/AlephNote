@@ -67,7 +67,8 @@ namespace AlephNote.WPF.Controls
 		{
 			if (SelectedNote == null) return;
 			if (!Settings.UseHierachicalNoteStructure) return;
-			if (Settings.IsReadOnlyMode == true) return;
+			if (Settings.IsReadOnlyMode) return;
+			if (SelectedNote.IsLocked) return;
 
 			FolderPopupListView.Items.Clear();
 
@@ -85,7 +86,8 @@ namespace AlephNote.WPF.Controls
 		private void ButtonMoveFolder_OnClick(object sender, RoutedEventArgs e)
 		{
 			if (SelectedNote == null) return;
-			if (Settings.IsReadOnlyMode == true) return;
+			if (Settings.IsReadOnlyMode) return;
+			if (SelectedNote.IsLocked) return;
 
 			var newPath = FolderPopupListView.SelectedItem as DirectoryPath;
 			if (newPath == null) return;

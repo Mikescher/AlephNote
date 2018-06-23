@@ -31,6 +31,8 @@ namespace AlephNote.Plugins.Evernote
 
 		public override bool IsPinned { get { return false; } set  { /* no */ } }
 
+		public override bool IsLocked { get { return false; } set { /* no */ } }
+
 		private int _updateSequenceNumber = 0;
 		public int UpdateSequenceNumber { get { return _updateSequenceNumber; } set { _updateSequenceNumber = value; OnPropertyChanged(); } }
 

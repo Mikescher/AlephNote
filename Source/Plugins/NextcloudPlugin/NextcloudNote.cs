@@ -33,6 +33,8 @@ namespace AlephNote.Plugins.Nextcloud
 
 		public override bool IsPinned { get { return false; } set { /* no */ } }
 
+		public override bool IsLocked { get { return false; } set { /* no */ } }
+
 		private int _remoteTimestamp = -1;
 		public int RemoteTimestamp { get { return _remoteTimestamp; } set { _remoteTimestamp = value; OnPropertyChanged(); } }
 

@@ -199,7 +199,7 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.UseTabs = s.SciUseTabs;
 			NoteEdit.TabWidth = s.SciTabWidth * 2;
 
-			NoteEdit.ReadOnly = s.IsReadOnlyMode;
+			NoteEdit.ReadOnly = s.IsReadOnlyMode || VM?.SelectedNote?.IsLocked==true;
 
 			ResetScintillaScrollAndUndo();
 
@@ -612,7 +612,10 @@ namespace AlephNote.WPF.Windows
 
 		private void NoteEdit_OnAfterTextSet()
 		{
-			if (NoteEdit != null && Settings?.IsReadOnlyMode==true) NoteEdit.ReadOnly = true;
+			if (NoteEdit != null)
+			{
+				NoteEdit.ReadOnly = (Settings?.IsReadOnlyMode==true) || (VM?.SelectedNote?.IsLocked == true);
+			}
 		}
 
 		public void ShowTagFilter()

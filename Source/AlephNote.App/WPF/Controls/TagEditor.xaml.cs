@@ -59,6 +59,19 @@ namespace AlephNote.WPF.Controls
 			get { return (AppSettings)GetValue(SettingsProperty); }
 			set { SetValue(SettingsProperty, value); }
 		}
+
+		public static readonly DependencyProperty ReadonlyProperty =
+			DependencyProperty.Register(
+			"Readonly",
+			typeof(bool),
+			typeof(TagEditor),
+			new FrameworkPropertyMetadata(false));
+
+		public bool Readonly
+		{
+			get { return (bool)GetValue(ReadonlyProperty); }
+			set { SetValue(ReadonlyProperty, value); }
+		}
 		
 		public string FormattedText
 		{
@@ -83,6 +96,7 @@ namespace AlephNote.WPF.Controls
 		private void OnTextChanged(object sender, TextChangedEventArgs e)
 		{
 			if (Settings?.IsReadOnlyMode == true) return;
+			if (Readonly) return;
 
 			var para = TagCtrl.CaretPosition.Paragraph;
 
@@ -167,6 +181,7 @@ namespace AlephNote.WPF.Controls
 		private void OnKeyDown(object sender, KeyEventArgs e)
 		{
 			if (Settings?.IsReadOnlyMode == true) return;
+			if (Readonly) return;
 
 			if (e.Key == Key.Enter || e.Key == Key.Tab)
 			{
@@ -235,6 +250,7 @@ namespace AlephNote.WPF.Controls
 		private void AutocompleteContent_Selected(object sender, RoutedEventArgs e)
 		{
 			if (Settings?.IsReadOnlyMode == true) return;
+			if (Readonly) return;
 
 			if (AutocompleteContent.SelectedIndex >= 0 && AutocompleteContent.SelectedValue != null)
 			{

@@ -36,6 +36,9 @@ namespace AlephNote.PluginInterface.Util
 
 		public static void DeleteFileAndFolderIfEmpty(string logsrc, IAlephLogger log, string baseFolder, string file)
 		{
+			var fi = new FileInfo(file);
+			if (fi.Exists && fi.IsReadOnly) fi.IsReadOnly = false;
+
 			File.Delete(file);
 
 			DeleteFolderIfEmpty(logsrc, log, baseFolder, Path.GetDirectoryName(file));

@@ -38,6 +38,9 @@ namespace AlephNote.Plugins.Filesystem
 
 		public override bool IsPinned { get { return false; } set { /* no */ } }
 
+		private bool _isLocked = false;
+		public override bool IsLocked { get { return _isLocked; } set { _isLocked = value; OnPropertyChanged(); } }
+
 		private readonly FilesystemConfig _config;
 
 		public FilesystemNote(Guid uid, FilesystemConfig cfg)
@@ -76,6 +79,7 @@ namespace AlephNote.Plugins.Filesystem
 				new XElement("CreationDate", XHelper.ToString(_creationDate)),
 				new XElement("ModificationDate", XHelper.ToString(_modificationDate)),
 				new XElement("Path", Path.Serialize()),
+				new XElement("IsLocked", IsLocked),
 			};
 
 			var r = new XElement("fsnote", data);
@@ -96,6 +100,7 @@ namespace AlephNote.Plugins.Filesystem
 				_pathRemote = XHelper.GetChildValueString(input, "PathRemote");
 				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
+				_isLocked = XHelper.GetChildValue(input, "IsLocked", false);
 			}
 		}
 
@@ -111,6 +116,7 @@ namespace AlephNote.Plugins.Filesystem
 				n._pathRemote       = _pathRemote;
 				n._creationDate     = _creationDate;
 				n._modificationDate = _modificationDate;
+				n._isLocked         = _isLocked;
 				return n;
 			}
 		}
@@ -137,6 +143,7 @@ namespace AlephNote.Plugins.Filesystem
 				_title            = other.Title;
 				_path             = other.Path;
 				_pathRemote       = other.PathRemote;
+				_isLocked         = other.IsLocked;
 			}
 		}
 	}

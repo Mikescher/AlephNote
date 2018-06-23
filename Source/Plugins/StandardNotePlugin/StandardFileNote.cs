@@ -44,6 +44,9 @@ namespace AlephNote.Plugins.StandardNote
 		private bool _isPinned = false;
 		public override bool IsPinned { get { return _isPinned; } set { _isPinned = value; OnPropertyChanged(); } }
 
+		private bool _isLocked = false;
+		public override bool IsLocked { get { return _isLocked; } set { _isLocked = value; OnPropertyChanged(); } }
+
 		private readonly ObservableCollection<StandardFileRef> _internalRef = new ObservableCollection<StandardFileRef>();
 		public ObservableCollection<StandardFileRef> InternalReferences { get { return _internalRef; } }
 
@@ -74,6 +77,7 @@ namespace AlephNote.Plugins.StandardNote
 				new XElement("AuthHash", _authHash),
 				new XElement("InternalReferences", _internalRef.Select(ir => new XElement("Ref", new XAttribute("Type", ir.Type), new XAttribute("UUID", ir.UUID.ToString("P").ToUpper())))),
 				new XElement("IsPinned", _isPinned),
+				new XElement("IsLocked", _isLocked),
 			};
 
 			var r = new XElement("standardnote", data);
@@ -98,6 +102,7 @@ namespace AlephNote.Plugins.StandardNote
 				_contentVersion = XHelper.GetChildValueStringOrDefault(input, "ContentVersion", "?");
 				_authHash = XHelper.GetChildValueStringOrDefault(input, "AuthHash", "?");
 				_isPinned = XHelper.GetChildValue(input, "IsPinned", false);
+				_isLocked = XHelper.GetChildValue(input, "IsLocked", false);
 
 				var intref = XHelper.GetChildOrNull(input, "InternalReferences")?.Elements("Ref").Select(x => new StandardFileRef {UUID = XHelper.GetAttributeGuid(x, "UUID"), Type = XHelper.GetAttributeString(x, "Type")}).ToList();
 				if (intref != null) _internalRef.Synchronize(intref);
@@ -166,6 +171,7 @@ namespace AlephNote.Plugins.StandardNote
 				ResyncTags();
 				_internalRef.Synchronize(other._internalRef);
 				_isPinned = other._isPinned;
+				_isLocked = other._isLocked;
 			}
 		}
 
@@ -185,6 +191,7 @@ namespace AlephNote.Plugins.StandardNote
 				_authHash = other.AuthHash;
 				_internalRef.Synchronize(other._internalRef);
 				_isPinned = other._isPinned;
+				_isLocked = other._isLocked;
 			}
 		}
 
@@ -196,6 +203,7 @@ namespace AlephNote.Plugins.StandardNote
 			if (_text != other._text) return false;
 			if (_internaltitle != other._internaltitle) return false;
 			if (_isPinned != other._isPinned) return false;
+			if (_isLocked != other._isLocked) return false;
 
 			return true;
 		}
@@ -216,6 +224,7 @@ namespace AlephNote.Plugins.StandardNote
 				n._authHash         = _authHash;
 				n._internalRef.Synchronize(_internalRef);
 				n._isPinned         = _isPinned;
+				n._isLocked         = _isLocked;
 				
 				return n;
 			}

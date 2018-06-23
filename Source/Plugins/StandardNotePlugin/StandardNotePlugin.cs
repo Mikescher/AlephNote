@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace AlephNote.Plugins.StandardNote
 {
@@ -13,6 +12,10 @@ namespace AlephNote.Plugins.StandardNote
 	{
 		public static readonly Version Version = GetInformationalVersion(typeof(StandardNotePlugin).GetTypeInfo().Assembly);
 		public const string Name = "StandardNotePlugin";
+
+		public override bool SupportsPinning => true;
+		public override bool SupportsLocking => true;
+		public override bool HasNativeDirectorySupport() => false;
 
 		public const string CURRENT_SCHEMA = "003";
 
@@ -54,11 +57,6 @@ namespace AlephNote.Plugins.StandardNote
 			yield return Tuple.Create("SendEncrypted", "If checked the note content is encrypted locally before being send to the server."+"\n"+
 				                                       "No one can read your notes without your password, not even the server administrator.");
 			yield return Tuple.Create("RemEmptyTags", "If checked tags that are not linked with any note are deleted on the server.");
-		}
-
-		public override bool HasNativeDirectorySupport()
-		{
-			return false;
 		}
 	}
 }

@@ -28,6 +28,11 @@
 		Background="{ext:ThemeBinding 'window.background'}"
 		Title="AlephNote" Height="350" Width="525">
 
+	<Window.Resources>
+		<conv:MultiBoolToVisibility x:Key="MB2V" />
+		<conv:MultiBoolOperator     x:Key="MBOP" />
+	</Window.Resources>
+
 	<Grid x:Name="LayoutRoot">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="{Binding OverviewListWidth, Mode=TwoWay}" MinWidth="50"/>
@@ -51,6 +56,7 @@
 				<Separator />
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Duplicate Note"            AlephAction="DuplicateNote"        Settings="{Binding Settings}" />
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Pin / Unpin Note"          AlephAction="PinUnpinNote"         Settings="{Binding Settings}" />
+				<ctrl:AutoActionMenuItem Foreground="Black" Header="Lock / Unlock Note"        AlephAction="LockUnlockNote"       Settings="{Binding Settings}" />
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Export Note"               AlephAction="ExportNote"           Settings="{Binding Settings}" />
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Delete Note"               AlephAction="DeleteNote"           Settings="{Binding Settings}" />
 				<Separator />
@@ -228,12 +234,17 @@
 			<TextBox Grid.Row="0" BorderBrush="Transparent" BorderThickness="0"  
 					 Background="Transparent"
 					 Foreground="{ext:ThemeBinding 'window.notetitle:foreground'}" 
-					 IsReadOnly="{Binding Settings.IsReadOnlyMode}"
 					 FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
 					 FontFamily="{Binding Settings.TitleFontFamily, Converter={conv:FontNameToFontFamily}}" 
 					 FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
 					 FontStyle="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontStyle}}" 
 					 Text="{Binding SelectedNote.Title, UpdateSourceTrigger=PropertyChanged}" >
+				<TextBox.IsReadOnly>
+					<MultiBinding Converter="{StaticResource MBOP}" ConverterParameter="OR">
+						<Binding Path="Settings.IsReadOnlyMode" />
+						<Binding Path="SelectedNote.IsLocked" />
+					</MultiBinding>
+				</TextBox.IsReadOnly>
 				<services:WatermarkService.Watermark>
 					<TextBlock Text="Empty Title..." VerticalAlignment="Center" Padding="6,0"
 							   FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
@@ -250,9 +261,6 @@
 				   Source="{Binding Settings.IsReadOnlyMode, Converter={conv:ReadonlyToLockIcon}}" 
 				   Height="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" >
 
-				<Image.Resources>
-					<conv:MultiBoolToVisibility x:Key="MB2V" />
-				</Image.Resources>
 				<Image.Visibility>
 					<MultiBinding Converter="{StaticResource MB2V}" ConverterParameter="OR;Visible;Collapsed">
 						<Binding Path="Settings.IsReadOnlyMode" />
@@ -266,7 +274,14 @@
 							TagSource="{Binding SelectedNote.Tags}" 
 							Repository="{Binding Repository}" 
 							Settings="{Binding Settings}" 
-							Changed="TagEditor_OnChanged"/>
+							Changed="TagEditor_OnChanged">
+				<ctrl:TagEditor.Readonly>
+					<MultiBinding Converter="{StaticResource MBOP}" ConverterParameter="OR">
+						<Binding Path="Settings.IsReadOnlyMode" />
+						<Binding Path="SelectedNote.IsLocked" />
+					</MultiBinding>
+				</ctrl:TagEditor.Readonly>
+			</ctrl:TagEditor>
 
 			<StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="8,2">
 				<TextBlock Text="*" 

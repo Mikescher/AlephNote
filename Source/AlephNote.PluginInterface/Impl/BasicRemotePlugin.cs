@@ -65,6 +65,8 @@ namespace AlephNote.PluginInterface.Impl
 		public abstract INote CreateEmptyNote(IRemoteStorageConnection conn, IRemoteStorageConfiguration cfg);
 
 		public abstract bool HasNativeDirectorySupport();
+		public abstract bool SupportsPinning{ get; }
+		public abstract bool SupportsLocking{ get; }
 
 		public virtual IEnumerable<Tuple<string, string>> CreateHelpTexts()
 		{
