@@ -20,7 +20,7 @@ namespace AlephNote.Plugins.StandardNote
 		public enum PasswordAlg { sha512, sha256 }
 		public enum PasswordFunc { pbkdf2 }
 
-		public class APIAuthParams { public string version, pw_salt; public PasswordAlg pw_alg; public PasswordFunc pw_func; public int pw_cost, pw_key_size; }
+		public class APIAuthParams { public string version, pw_salt, pw_nonce; public PasswordAlg pw_alg; public PasswordFunc pw_func; public int pw_cost, pw_key_size; }
 		public class APIResultUser { public Guid uuid; public string email; }
 		public class APIRequestUser { public string email, password; }
 		public class APIResultAuthorize { public APIResultUser user; public string token; public byte[] masterkey, masterauthkey; public string version; }
@@ -40,6 +40,9 @@ namespace AlephNote.Plugins.StandardNote
 		// ReSharper restore All
 #pragma warning restore 0649
 
+		private static readonly Tuple<string, string> APPDATA_PINNED = Tuple.Create("org.standardnotes.sn", "pinned");
+		private static readonly Tuple<string, string> APPDATA_LOCKED = Tuple.Create("org.standardnotes.sn", "locked");
+
 		public static IAlephLogger Logger;
 
 		public static APIResultAuthorize Authenticate(ISimpleJsonRest web, string mail, string password, IAlephLogger logger)
@@ -48,11 +51,19 @@ namespace AlephNote.Plugins.StandardNote
 
 			if (apiparams.version == "001") return Authenticate001(web, apiparams, mail, password, logger);
 			if (apiparams.version == "002") return Authenticate002(web, apiparams, mail, password, logger);
+			if (apiparams.version == "003") return Authenticate003(web, apiparams, mail, password, logger);
+			if (apiparams.version == "004") throw new StandardNoteAPIException("Unsupported encryption scheme 004 in auth-params");
+			if (apiparams.version == "005") throw new StandardNoteAPIException("Unsupported encryption scheme 005 in auth-params");
+			if (apiparams.version == "006") throw new StandardNoteAPIException("Unsupported encryption scheme 006 in auth-params");
+			if (apiparams.version == "007") throw new StandardNoteAPIException("Unsupported encryption scheme 007 in auth-params");
+			if (apiparams.version == "008") throw new StandardNoteAPIException("Unsupported encryption scheme 008 in auth-params");
+			if (apiparams.version == "009") throw new StandardNoteAPIException("Unsupported encryption scheme 009 in auth-params");
+			if (apiparams.version == "010") throw new StandardNoteAPIException("Unsupported encryption scheme 010 in auth-params");
 
 			throw new Exception("Unsupported auth API version: " + apiparams.version);
 		}
 
-		private static APIResultAuthorize Authenticate001(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string password, IAlephLogger logger)
+		private static APIResultAuthorize Authenticate001(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string uip, IAlephLogger logger)
 		{
 			try
 			{
@@ -64,11 +75,11 @@ namespace AlephNote.Plugins.StandardNote
 
 				if (apiparams.pw_alg == PasswordAlg.sha512)
 				{
-					bytes = PBKDF2.GenerateDerivedKey(apiparams.pw_key_size / 8, Encoding.UTF8.GetBytes(password), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+					bytes = PBKDF2.GenerateDerivedKey(apiparams.pw_key_size / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
 				}
 				else if (apiparams.pw_alg == PasswordAlg.sha512)
 				{
-					bytes = PBKDF2.GenerateDerivedKey(apiparams.pw_key_size / 8, Encoding.UTF8.GetBytes(password), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+					bytes = PBKDF2.GenerateDerivedKey(apiparams.pw_key_size / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
 				}
 				else
 				{
@@ -114,7 +125,7 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		private static APIResultAuthorize Authenticate002(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string password, IAlephLogger logger)
+		private static APIResultAuthorize Authenticate002(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string uip, IAlephLogger logger)
 		{
 			try
 			{
@@ -122,7 +133,7 @@ namespace AlephNote.Plugins.StandardNote
 
 				if (apiparams.pw_func != PasswordFunc.pbkdf2) throw new Exception("Unknown pw_func: " + apiparams.pw_func);
 
-				byte[] bytes = PBKDF2.GenerateDerivedKey(768/8, Encoding.UTF8.GetBytes(password), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+				byte[] bytes = PBKDF2.GenerateDerivedKey(768/8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
 				
 				var pw = bytes.Skip(0 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
 				var mk = bytes.Skip(1 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
@@ -148,6 +159,57 @@ namespace AlephNote.Plugins.StandardNote
 				tok.masterkey = mk;
 				tok.masterauthkey = ak;
 				tok.version = "002";
+				return tok;
+			}
+			catch (RestException)
+			{
+				throw;
+			}
+			catch (StandardNoteAPIException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				throw new StandardNoteAPIException("Authentification with StandardNoteAPI failed.", e);
+			}
+		}
+		
+		private static APIResultAuthorize Authenticate003(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string uip, IAlephLogger logger)
+		{
+			try
+			{
+				logger.Debug(StandardNotePlugin.Name, $"AutParams[version:{apiparams.version}, pw_cost:{apiparams.pw_cost}, pw_nonce:{apiparams.pw_nonce}]");
+
+				if (apiparams.pw_cost < 100000) throw new StandardNoteAPIException($"Account pw_cost is too small ({apiparams.pw_cost})");
+
+				var salt = StandardNoteCrypt.SHA256(string.Join(":", mail, "SF", "003", apiparams.pw_cost.ToString(), apiparams.pw_nonce));
+				byte[] bytes = PBKDF2.GenerateDerivedKey(768/8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+				
+				var pw = bytes.Skip(0 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+				var mk = bytes.Skip(1 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+				var ak = bytes.Skip(2 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+
+				var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
+				APIResultAuthorize tok;
+				try
+				{
+					tok = web.PostTwoWay<APIResultAuthorize>(new APIRequestUser { email = mail, password = reqpw }, "auth/sign_in");
+				}
+				catch (RestStatuscodeException e1)
+				{
+					if (e1.StatusCode / 100 == 4 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
+					{
+						var req = web.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
+						if (req != null) throw new StandardNoteAPIException($"Server returned status {e1.StatusCode}.\nMessage: '{req.error.message}'", e1);
+					}
+
+					throw;
+				}
+
+				tok.masterkey = mk;
+				tok.masterauthkey = ak;
+				tok.version = "003";
 				return tok;
 			}
 			catch (RestException)
@@ -299,12 +361,16 @@ namespace AlephNote.Plugins.StandardNote
 
 		private static void PrepareForUpload(ISimpleJsonRest web, APIBodySync body, StandardFileNote note, List<StandardFileTag> tags, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
 		{
+			var appdata = new Dictionary<string, Dictionary<string, object>>();
+
+			SetAppDataBool(appdata, APPDATA_PINNED, note.IsPinned);
+
 			var jsnContent = new ContentNote
 			{
 				title = note.InternalTitle,
 				text = note.Text,
 				references = new List<APIResultContentRef>(),
-				appData = new Dictionary<string, Dictionary<string, object>>{ { "org.standardnotes.sn", new Dictionary<string, object> { { "pinned", note.IsPinned } } } },
+				appData = appdata,
 			};
 
 			foreach (var itertag in note.InternalTags.ToList())
@@ -415,7 +481,7 @@ namespace AlephNote.Plugins.StandardNote
 				InternalTitle = content.title,
 				AuthHash = encNote.auth_hash,
 				ContentVersion = StandardNoteCrypt.GetSchemaVersion(encNote.content),
-				IsPinned = GetAppDataBool(content.appData, "org.standardnotes.sn", "pinned", false),
+				IsPinned = GetAppDataBool(content.appData, APPDATA_PINNED, false),
 			};
 
 			var refTags = new List<StandardFileTag>();
@@ -494,18 +560,26 @@ namespace AlephNote.Plugins.StandardNote
 				enc_item_key = encTag.enc_item_key,
 			};
 		}
-
-		private static bool GetAppDataBool(Dictionary<string, Dictionary<string, object>> appData, string ns, string ident, bool defValue)
+		
+		private static bool GetAppDataBool(Dictionary<string, Dictionary<string, object>> appData, Tuple<string, string> path, bool defValue)
 		{
 			if (appData == null) return defValue;
 
-			if (!appData.TryGetValue(ns, out var values)) return defValue;
+			if (!appData.TryGetValue(path.Item1, out var values)) return defValue;
 
-			if (!values.TryGetValue(ident, out var value)) return defValue;
+			if (!values.TryGetValue(path.Item2, out var value)) return defValue;
 
 			if (value is bool bvalue) return bvalue;
 
 			return XElementExtensions.TryParseBool(value?.ToString()) ?? defValue;
+		}
+
+		private static void SetAppDataBool(Dictionary<string, Dictionary<string, object>> appData, Tuple<string, string> path, bool value)
+		{
+			if (!appData.TryGetValue(path.Item1, out var dictNamespace)) 
+				appData[path.Item1] = dictNamespace = new Dictionary<string, object>();
+
+			dictNamespace[path.Item2] = value;
 		}
 	}
 }

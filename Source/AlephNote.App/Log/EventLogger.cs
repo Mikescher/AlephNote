@@ -32,6 +32,15 @@ namespace AlephNote.Log
 				return;
 			}
 
+			#if DEBUG
+			Console.Out.WriteLine($"[{e.Type}]===== {e.Source} =====");
+			Console.Out.WriteLine(e.Text);
+			if (!string.IsNullOrWhiteSpace(e.LongText)) Console.Out.WriteLine();
+			if (!string.IsNullOrWhiteSpace(e.LongText)) Console.Out.WriteLine(e.LongText);
+			Console.Out.WriteLine("===============");
+			Console.Out.WriteLine();
+			#endif
+
 			var disp = curr.Dispatcher;
 
 			if (disp.CheckAccess())
@@ -39,6 +48,7 @@ namespace AlephNote.Log
 			else
 				disp.BeginInvoke(new Action(() => Events.Add(e)));
 		}
+
 		void IAlephLogger.Trace(string src, string text, string longtext)
 		{
 			Trace(src, text, longtext);

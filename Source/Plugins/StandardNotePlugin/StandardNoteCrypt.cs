@@ -18,7 +18,7 @@ namespace AlephNote.Plugins.StandardNote
 			if (encContent.StartsWith("000")) return DecryptContent000(encContent);
 			if (encContent.StartsWith("001")) return DecryptContent001(encContent, encItemKey, authHash, masterMK);
 			if (encContent.StartsWith("002")) return DecryptContent002(encContent, encItemKey, masterMK, masterAK);
-			if (encContent.StartsWith("003")) throw new StandardNoteAPIException("Unsupported encryption scheme 003 in note content");
+			if (encContent.StartsWith("003")) return DecryptContent003(encContent, encItemKey, masterMK, masterAK);
 			if (encContent.StartsWith("004")) throw new StandardNoteAPIException("Unsupported encryption scheme 004 in note content");
 			if (encContent.StartsWith("005")) throw new StandardNoteAPIException("Unsupported encryption scheme 005 in note content");
 			if (encContent.StartsWith("006")) throw new StandardNoteAPIException("Unsupported encryption scheme 006 in note content");
@@ -43,7 +43,8 @@ namespace AlephNote.Plugins.StandardNote
 			var ak = itemKey.Skip(itemKey.Length / 2).ToArray();
 
 			var realHash = EncodingConverter.ByteToHexBitFiddleLowercase(AuthSHA256(Encoding.UTF8.GetBytes(encContent), ak));
-
+			
+			if (authHash == null) throw new ArgumentNullException(nameof(authHash));
 			if (realHash.ToLower() != authHash.ToLower()) throw new StandardNoteAPIException("Decrypting content failed - hash mismatch");
 
 			var c = AESEncryption.DecryptCBC256(Convert.FromBase64String(encContent.Substring(3)), ek, null);
@@ -61,6 +62,16 @@ namespace AlephNote.Plugins.StandardNote
 			return Decrypt002(encContent, EncodingConverter.StringToByteArrayCaseInsensitive(item_ek), EncodingConverter.StringToByteArrayCaseInsensitive(item_ak));
 		}
 
+		private static string DecryptContent003(string encContent, string encItemKey, byte[] masterMK, byte[] masterAK)
+		{
+			var item_key = Decrypt003(encItemKey, masterMK, masterAK);
+
+			var item_ek = item_key.Substring(0, item_key.Length / 2);
+			var item_ak = item_key.Substring(item_key.Length / 2, item_key.Length / 2);
+
+			return Decrypt003(encContent, EncodingConverter.StringToByteArrayCaseInsensitive(item_ek), EncodingConverter.StringToByteArrayCaseInsensitive(item_ak));
+		}
+
 		private static string Encrypt002(string string_to_encrypt, Guid uuid, byte[] encryption_key, byte[] auth_key)
 		{
 			byte[] IV = new byte[128 / 8];
@@ -75,7 +86,42 @@ namespace AlephNote.Plugins.StandardNote
 			return $"002:{auth_hash}:{uuid:D}:{EncodingConverter.ByteToHexBitFiddleLowercase(IV)}:{Convert.ToBase64String(ciphertext)}";
 		}
 
+		private static string Encrypt003(string string_to_encrypt, Guid uuid, byte[] encryption_key, byte[] auth_key)
+		{
+			byte[] IV = new byte[128 / 8];
+			RNG.GetBytes(IV);
+
+			var ciphertext = AESEncryption.EncryptCBC256(Encoding.UTF8.GetBytes(string_to_encrypt), encryption_key, IV);
+
+			var string_to_auth = $"003:{uuid:D}:{EncodingConverter.ByteToHexBitFiddleLowercase(IV)}:{Convert.ToBase64String(ciphertext)}";
+
+			var auth_hash = EncodingConverter.ByteToHexBitFiddleLowercase(AuthSHA256(Encoding.UTF8.GetBytes(string_to_auth), auth_key));
+
+			return $"003:{auth_hash}:{uuid:D}:{EncodingConverter.ByteToHexBitFiddleLowercase(IV)}:{Convert.ToBase64String(ciphertext)}";
+		}
+
 		private static string Decrypt002(string string_to_decrypt, byte[] encryption_key, byte[] auth_key)
+		{
+			var components = string_to_decrypt.Split(':');
+			var version = components[0];
+			var auth_hash = components[1];
+			var uuid = components[2];
+			var IV = components[3];
+			var ciphertext = components[4];
+
+			if (auth_key != null && auth_key.Length > 0)
+			{
+				var string_to_auth = $"{version}:{uuid}:{IV}:{ciphertext}";
+				var local_auth_hash = EncodingConverter.ByteToHexBitFiddleLowercase(AuthSHA256(Encoding.UTF8.GetBytes(string_to_auth), auth_key));
+				if (local_auth_hash.ToUpper() != auth_hash.ToUpper()) throw new Exception("Item auth-hash mismatch");
+			}
+
+			var result = AESEncryption.DecryptCBC256(Convert.FromBase64String(ciphertext), encryption_key, EncodingConverter.StringToByteArrayCaseInsensitive(IV));
+
+			return Encoding.UTF8.GetString(result);
+		}
+
+		private static string Decrypt003(string string_to_decrypt, byte[] encryption_key, byte[] auth_key)
 		{
 			var components = string_to_decrypt.Split(':');
 			var version = components[0];
@@ -103,11 +149,21 @@ namespace AlephNote.Plugins.StandardNote
 				return hmac.ComputeHash(content);
 			}
 		}
+
+		public static string SHA256(string data)
+		{
+			using(var sha = System.Security.Cryptography.SHA256.Create())
+			{
+				var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(data));
+				return EncodingConverter.ByteToHexBitFiddleLowercase(hash);
+			}
+		}
 		
 		public static EncryptResult EncryptContent(string scheme, string content, Guid uuid, byte[] globalMK, byte[] globalAK)
 		{
 			if (scheme == "001") return EncryptContent001(content, globalMK);
 			if (scheme == "002") return EncryptContent002(content, uuid, globalMK, globalAK);
+			if (scheme == "003") return EncryptContent003(content, uuid, globalMK, globalAK);
 
 			throw new Exception("Unsupported encryption scheme: " + scheme);
 		}
@@ -146,6 +202,26 @@ namespace AlephNote.Plugins.StandardNote
 			var encContent = Encrypt002(rawContent, uuid, item_ek, item_ak);
 
 			var encItemKey = Encrypt002(EncodingConverter.ByteToHexBitFiddleLowercase(itemKey), uuid, masterMK, masterAK);
+
+			return new EncryptResult
+			{
+				enc_item_key = encItemKey,
+				enc_content = encContent,
+				auth_hash = null,
+			};
+		}
+
+		private static EncryptResult EncryptContent003(string rawContent, Guid uuid, byte[] masterMK, byte[] masterAK)
+		{
+			byte[] itemKey = new byte[512 / 8];
+			RNG.GetBytes(itemKey);
+
+			var item_ek = itemKey.Take(itemKey.Length / 2).ToArray();
+			var item_ak = itemKey.Skip(itemKey.Length / 2).ToArray();
+
+			var encContent = Encrypt003(rawContent, uuid, item_ek, item_ak);
+
+			var encItemKey = Encrypt003(EncodingConverter.ByteToHexBitFiddleLowercase(itemKey), uuid, masterMK, masterAK);
 
 			return new EncryptResult
 			{

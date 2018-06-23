@@ -14,7 +14,7 @@ namespace AlephNote.Plugins.StandardNote
 		public static readonly Version Version = GetInformationalVersion(typeof(StandardNotePlugin).GetTypeInfo().Assembly);
 		public const string Name = "StandardNotePlugin";
 
-		public const string CURRENT_SCHEMA = "002";
+		public const string CURRENT_SCHEMA = "003";
 
 		private IAlephLogger _logger;
 
