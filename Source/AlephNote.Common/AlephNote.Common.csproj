@@ -28,7 +28,9 @@
 		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.4.0" />
 		<PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
 		<PackageReference Include="System.Threading.Thread" Version="4.3.0" />
+		<PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
 		<PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
+		<PackageReference Include="System.Net.Requests" Version="4.3.0" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">

@@ -48,7 +48,7 @@ namespace AlephNote.AutoUpdater
 				.ToList();
 
 			int max = 0;
-			max += 1;           // stop runnign progresses
+			max += 1;           // stop running progresses
 			max += 1;           // migrating
 			max += files.Count; // copy
 			max += 1;           // repo-migration
@@ -89,7 +89,7 @@ namespace AlephNote.AutoUpdater
 				: null;
 
 			_setState(progress++, max, "Migrate repository");
-			RepoMigrate();
+			RepoMigrate(versionOld, versionNew);
 
 			_setState(progress++, max, "Restarting");
 			Process.Start(Path.Combine(_targetPath, "AlephNote.exe"), $"--updated --migration_from={versionOld?.ToString()??"NULL"} --migration_to={versionNew?.ToString()??"NULL"}");
@@ -172,7 +172,7 @@ namespace AlephNote.AutoUpdater
 			}
 		}
 
-		private void RepoMigrate()
+		private void RepoMigrate(Version vOld, Version vNew)
 		{
 			if (_deleteNotesFolder)
 			{
@@ -181,6 +181,31 @@ namespace AlephNote.AutoUpdater
 				if (!di.Exists) return;
 
 				di.Delete(true);
+			}
+
+			if (vOld != null && vOld <= new Version("1.6.18.0"))
+			{
+				try
+				{
+					// remove old dll's from plugins folder
+					var files = new[]
+					{
+						Path.Combine(_targetPath, "Plugins", "System.Diagnostics.FileVersionInfo.dll"),
+						Path.Combine(_targetPath, "Plugins", "System.Reflection.TypeExtensions.dll"),
+						Path.Combine(_targetPath, "Plugins", "System.Threading.Thread.dll"),
+						Path.Combine(_targetPath, "Plugins", "System.Threading.ThreadPool.dll"),
+					};
+
+					foreach (var file in files)
+					{
+						if (File.Exists(file)) File.Delete(file);
+					}
+
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e);
+				}
 			}
 		}
 
