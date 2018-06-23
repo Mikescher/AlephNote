@@ -15,12 +15,10 @@ using System.Collections.Specialized;
 using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Media;
-using AlephNote.Common.MVVM;
 using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.MVVM;
 using AlephNote.WPF.Shortcuts;
 using AlephNote.Common.Util.Search;
-using Microsoft.VisualBasic.CompilerServices;
 
 namespace AlephNote.WPF.Controls
 {

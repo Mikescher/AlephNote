@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net46;netstandard1.6</TargetFrameworks>
+		<TargetFrameworks>net46</TargetFrameworks>
 
 		<AssemblyVersion>0.0.0.0</AssemblyVersion>
 		<FileVersion>0.0.0.0</FileVersion>
@@ -14,11 +14,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
-		<PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.3.0" />
+		<PackageReference Include="System.Xml.XDocument" Version="4.3.0">
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</PackageReference>
+		
+		<PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.3.0">
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</PackageReference>
 	</ItemGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
+	<ItemGroup>
 		<Reference Include="System" />
 		<Reference Include="Microsoft.CSharp" />
 	</ItemGroup>

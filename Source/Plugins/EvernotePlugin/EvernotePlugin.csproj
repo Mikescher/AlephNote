@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net46;netstandard1.6</TargetFrameworks>
+		<TargetFrameworks>net46</TargetFrameworks>
 
 		<AssemblyName>EvernotePlugin</AssemblyName>
 		<PackageId>EvernotePlugin</PackageId>
@@ -26,7 +26,7 @@
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageReference>
 
-		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.4.0">
+		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.5.0">
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageReference>
 
@@ -43,13 +43,9 @@
 		</PackageReference>
 	</ItemGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
+	<ItemGroup>
 		<Reference Include="System" />
 		<Reference Include="Microsoft.CSharp" />
-	</ItemGroup>
-
-	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
 	</ItemGroup>
 
 	<ItemGroup>
