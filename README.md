@@ -35,6 +35,9 @@ Simply download the latest [release](https://github.com/Mikescher/AlephNote/rele
 By default the program automatically searches for new versions and downloads them.
 If there is demand for an installer I could make one, but personally I like portable programs more.
 
+> **Attention**  
+> Sometimes Windows marks the zip-file as untrusted because you downloaded it from the web, and after extraction [all .exe and .dll files will be blocked](https://weblogs.asp.net/dixin/understanding-the-internet-file-blocking-and-unblocking). To prevent this please right-click on the zip file, go to the file properties and click there "Unblock". Then extract the archive.  
+If you do the extraction first you have to do the unblocking on every single dll and exe file ([see also here for a better explanation wiht images](https://weblogs.asp.net/dixin/understanding-the-internet-file-blocking-and-unblocking))
 
 ## Contribution
 
