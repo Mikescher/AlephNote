@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using AlephNote.Common.AlephXMLSerialization;
 using AlephNote.Common.MVVM;
-using AlephNote.Common.Plugins;
 using AlephNote.Common.Settings.Types;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
@@ -21,6 +17,13 @@ namespace AlephNote.Common.Settings
 	// ReSharper disable CompareOfFloatsByEqualityOperator
 	public class AppSettings : ObservableObject, IAlephSerializable
 	{
+		public static readonly string PATH_SETTINGS    = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.config");
+		public static readonly string PATH_SCROLLCACHE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.scrollcache.config");
+		public static readonly string PATH_GCCACHE     = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.gitcleancache.config");
+		public static readonly string PATH_LOCALDB     = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".notes");
+		public static readonly string APPNAME_REG      = "AlephNoteApp_{0:N}";
+		public static readonly string PATH_EXECUTABLE  = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
 		public const string ENCRYPTION_KEY = @"jcgkZJvoykjpoGkDWHqiNoXoLZRJxpdb";
 
 		public const string TAG_MARKDOWN = "markdown";
@@ -233,6 +236,10 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public bool GitMirrorDoPush { get { return _gitMirrorDoPush; } set { _gitMirrorDoPush = value; OnPropertyChanged(); } }
 		private bool _gitMirrorDoPush = false;
+
+		[AlephXMLField]
+		public int GitMirrorAutoGC { get { return _gitMirrorAutoGC; } set { _gitMirrorAutoGC = value; OnPropertyChanged(); } }
+		private int _gitMirrorAutoGC = 0;
 
 		[AlephXMLField]
 		public bool GitMirrorSubfolders { get { return _gitMirrorSubfolders; } set { _gitMirrorSubfolders = value; OnPropertyChanged(); } }

@@ -103,10 +103,10 @@ namespace AlephNote.WPF.Windows
 			_settings = settings;
 			_invSaveSettings = DelayedCombiningInvoker.Create(() => Application.Current.Dispatcher.BeginInvoke(new Action(SaveSettings)), 8 * 1000, 60 * 1000);
 
-			_repository = new NoteRepository(App.PATH_LOCALDB, this, settings, settings.ActiveAccount, dispatcher);
+			_repository = new NoteRepository(AppSettings.PATH_LOCALDB, this, settings, settings.ActiveAccount, dispatcher);
 			Repository.Init();
 
-			_scrollCache = Settings.RememberScroll ? ScrollCache.LoadFromFile(App.PATH_SCROLLCACHE) : ScrollCache.CreateEmpty(App.PATH_SCROLLCACHE);
+			_scrollCache = Settings.RememberScroll ? ScrollCache.LoadFromFile(AppSettings.PATH_SCROLLCACHE) : ScrollCache.CreateEmpty(AppSettings.PATH_SCROLLCACHE);
 
 			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
 
@@ -189,7 +189,7 @@ namespace AlephNote.WPF.Windows
 
 				if (reconnectRepo)
 				{
-					_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.ActiveAccount, dispatcher);
+					_repository = new NoteRepository(AppSettings.PATH_LOCALDB, this, Settings, Settings.ActiveAccount, dispatcher);
 					_repository.Init();
 
 					OnExplicitPropertyChanged("Repository");
@@ -206,12 +206,12 @@ namespace AlephNote.WPF.Windows
 				if (Settings.LaunchOnBoot)
 				{
 					var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-					registryKey?.SetValue(string.Format(App.APPNAME_REG, Settings.ClientID), App.PATH_EXECUTABLE);
+					registryKey?.SetValue(string.Format(AppSettings.APPNAME_REG, Settings.ClientID), AppSettings.PATH_EXECUTABLE);
 				}
 				else
 				{
 					var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-					if (registryKey?.GetValue(string.Format(App.APPNAME_REG, Settings.ClientID)) != null) registryKey.DeleteValue(string.Format(App.APPNAME_REG, Settings.ClientID));
+					if (registryKey?.GetValue(string.Format(AppSettings.APPNAME_REG, Settings.ClientID)) != null) registryKey.DeleteValue(string.Format(AppSettings.APPNAME_REG, Settings.ClientID));
 				}
 
 				// refresh Template

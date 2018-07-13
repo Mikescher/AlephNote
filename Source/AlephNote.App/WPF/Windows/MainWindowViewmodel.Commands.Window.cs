@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using AlephNote.Common.Operations;
 using AlephNote.Common.Repository;
+using AlephNote.Common.Settings;
 using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.MVVM;
 using AlephNote.WPF.Util;
@@ -131,7 +132,7 @@ namespace AlephNote.WPF.Windows
 
 				Repository.DeleteLocalData();
 
-				_repository = new NoteRepository(App.PATH_LOCALDB, this, Settings, Settings.ActiveAccount, dispatcher);
+				_repository = new NoteRepository(AppSettings.PATH_LOCALDB, this, Settings, Settings.ActiveAccount, dispatcher);
 				_repository.Init();
 
 				OnExplicitPropertyChanged("Repository");
@@ -149,7 +150,7 @@ namespace AlephNote.WPF.Windows
 		{
 			var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
 
-			Settings.LaunchOnBoot = registryKey?.GetValue(string.Format(App.APPNAME_REG, Settings.ClientID)) != null;
+			Settings.LaunchOnBoot = registryKey?.GetValue(string.Format(AppSettings.APPNAME_REG, Settings.ClientID)) != null;
 
 			new SettingsWindow(this, Settings) {Owner = Owner}.ShowDialog();
 		}

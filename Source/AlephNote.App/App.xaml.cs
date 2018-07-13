@@ -21,12 +21,6 @@ namespace AlephNote
 {
 	public partial class App
 	{
-		public static readonly string PATH_SETTINGS    = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.config");
-		public static readonly string PATH_SCROLLCACHE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.scrollcache.config");
-		public static readonly string PATH_LOCALDB     = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".notes");
-		public static readonly string APPNAME_REG      = "AlephNoteApp_{0:N}";
-		public static readonly string PATH_EXECUTABLE  = System.Reflection.Assembly.GetExecutingAssembly().Location;
-
 		public static readonly Version APP_VERSION = GetInformationalVersion();
 
 		public static string AppVersionProperty { get { return APP_VERSION.Revision == 0 ? APP_VERSION.ToString(3) : (APP_VERSION.ToString(4) + " BETA"); } }
@@ -82,9 +76,9 @@ namespace AlephNote
 			AppSettings settings;
 			try
 			{
-				if (File.Exists(PATH_SETTINGS))
+				if (File.Exists(AppSettings.PATH_SETTINGS))
 				{
-					settings = AppSettings.Load(PATH_SETTINGS);
+					settings = AppSettings.Load(AppSettings.PATH_SETTINGS);
 					if (IsUpdateMigration)
 					{
 						settings.Migrate(UpdateMigrationFrom, UpdateMigrationTo);
@@ -93,7 +87,7 @@ namespace AlephNote
 				}
 				else
 				{
-					settings = AppSettings.CreateEmpty(PATH_SETTINGS);
+					settings = AppSettings.CreateEmpty(AppSettings.PATH_SETTINGS);
 					settings.Save();
 
 					IsFirstLaunch = true;
@@ -101,8 +95,8 @@ namespace AlephNote
 			}
 			catch (Exception e)
 			{
-				ExceptionDialog.Show(null, "Could not load settings", "Could not load settings from " + PATH_SETTINGS, e);
-				settings = AppSettings.CreateEmpty(App.PATH_SETTINGS);
+				ExceptionDialog.Show(null, "Could not load settings", "Could not load settings from " + AppSettings.PATH_SETTINGS, e);
+				settings = AppSettings.CreateEmpty(AppSettings.PATH_SETTINGS);
 			}
 
 			if (settings.LockOnStartup && !settings.IsReadOnlyMode) settings.IsReadOnlyMode = true;

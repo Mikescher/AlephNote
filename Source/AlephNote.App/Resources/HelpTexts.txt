@@ -301,3 +301,8 @@ Be aware that this suppresses all errors and you can only notice synchronization
 [UseNaturalNoteSort]
 Uses instead of a per-character alphabetical sort order an ordering where multi-digit numbers are treated as a single character.
 This way numbers (e.g. '1', '2', '10') are ordered by their numerical values.
+
+[GitMirrorAutoGC]
+Automatically call 'git gc' after x commits.
+The git garbage collector cleans up and compresses the repository.
+Set this to 0 to never call 'git gc'

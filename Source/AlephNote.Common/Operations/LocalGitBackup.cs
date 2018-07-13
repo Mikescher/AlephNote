@@ -48,7 +48,7 @@ namespace AlephNote.Common.Operations
 			{
 				lock(_gitAccessLock)
 				{
-					var notes = GetNotes(nrepo, config);
+					var notes = GetNotes(nrepo);
 
 					if (!NeedsUpdate(notes, config))
 					{
@@ -80,7 +80,7 @@ namespace AlephNote.Common.Operations
 						targetFolder = subfolder;
 					}
 
-					var changed = SyncNotesToFolder(notes, config, targetFolder);
+					var changed = SyncNotesToFolder(notes, targetFolder);
 
 					if (!changed)
 					{
@@ -91,7 +91,7 @@ namespace AlephNote.Common.Operations
 
 				new Thread(() =>
 				{
-					CommitRepository(
+					var succ = CommitRepository(
 						nrepo.ConnectionName + " (" + nrepo.ConnectionUUID + ")",
 						nrepo.ProviderID,
 						config.GitMirrorPath, 
@@ -99,6 +99,12 @@ namespace AlephNote.Common.Operations
 						config.GitMirrorLastName, 
 						config.GitMirrorMailAddress, 
 						config.GitMirrorDoPush);
+
+					if (succ && config.GitMirrorAutoGC > 0)
+					{
+						CollectGarbage(config.GitMirrorPath, config.GitMirrorAutoGC);
+					}
+
 				}).Start();
 
 			}
@@ -109,7 +115,68 @@ namespace AlephNote.Common.Operations
 			}
 		}
 
-		private static List<AugmentedNote> GetNotes(NoteRepository repo, AppSettings config)
+		private static void CollectGarbage(string repoPath, int gcCount)
+		{
+			try
+			{
+				var cache = LoadGitGCCache();
+				
+				if (!cache.ContainsKey(repoPath)) cache[repoPath] = 0;
+
+				cache[repoPath] = cache[repoPath] + 1;
+
+				if (cache[repoPath] >= gcCount)
+				{
+					cache[repoPath] = 0;
+					LoggerSingleton.Inst.Debug("LocalGitMirror", $"Resetting GC counter to {cache[repoPath]}/{gcCount}", "");
+					SaveGitGCCache(cache);
+					
+					// https://stackoverflow.com/a/18006967/1761622
+					// stupid git - supressing output if stderr is not a tty
+					var o1 = ProcessHelper.ProcExecute("git", "gc", repoPath);
+					LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git gc]", o1.ToString());
+				}
+				else
+				{
+					LoggerSingleton.Inst.Debug("LocalGitMirror", $"Increment GC counter to {cache[repoPath]}/{gcCount}", "");
+					SaveGitGCCache(cache);
+				}
+
+			}
+			catch (Exception e)
+			{
+				LoggerSingleton.Inst.Error("LocalGitMirror", "Could not load GC_CACHE file", e);
+				LoggerSingleton.Inst.ShowExceptionDialog("Local git mirror (git gc) failed", e);
+			}
+		}
+
+		private static Dictionary<string, int> LoadGitGCCache()
+		{
+			if (!File.Exists(AppSettings.PATH_GCCACHE)) return new Dictionary<string, int>();
+				
+			var cache = new Dictionary<string, int>();
+
+			foreach (var line in FileSystemUtil.ReadAllLinesSafe(AppSettings.PATH_GCCACHE))
+			{
+				if (string.IsNullOrWhiteSpace(line)) continue;
+				var split = line.Split('\t');
+				if (split.Length != 2) continue;
+				if (split[0].Length<2 || !split[0].StartsWith("[") || !split[0].EndsWith("]")) continue;
+
+				var key = split[0].Substring(1, split[0].Length-2);
+
+				if (int.TryParse(split[1], out var val)) cache[key] = val;
+			}
+
+			return cache;
+		}
+
+		private static void SaveGitGCCache(Dictionary<string, int> data)
+		{
+			File.WriteAllLines(AppSettings.PATH_GCCACHE, data.Select(p => $"[{p.Key}]\t{p.Value}"));
+		}
+
+		private static List<AugmentedNote> GetNotes(NoteRepository repo)
 		{
 			var result = new List<AugmentedNote>();
 
@@ -150,7 +217,7 @@ namespace AlephNote.Common.Operations
 			return result;
 		}
 
-		private static bool SyncNotesToFolder(List<AugmentedNote> reponotes, AppSettings config, string targetFolder)
+		private static bool SyncNotesToFolder(List<AugmentedNote> reponotes, string targetFolder)
 		{
 			var dataRepo   = reponotes.ToList();
 			var dataSystem = new List<Tuple<string, string>>(); // <rel_path, content>
@@ -307,7 +374,7 @@ namespace AlephNote.Common.Operations
 			return false;
 		}
 
-		private static void CommitRepository(string provname, string provid, string repoPath, string firstname, string lastname, string mail, bool pushremote)
+		private static bool CommitRepository(string provname, string provid, string repoPath, string firstname, string lastname, string mail, bool pushremote)
 		{
 			try
 			{
@@ -321,7 +388,7 @@ namespace AlephNote.Common.Operations
 					if (o2.StdOut.Contains("nothing to commit") || o2.StdErr.Contains("nothing to commit"))
 					{
 						LoggerSingleton.Inst.Debug("LocalGitMirror", "Local git mirror not updated ('nothing to commit')");
-						return;
+						return false;
 					}
 					var msg =
 						"Automatic Mirroring of AlephNote notes" + "\n" +
@@ -341,12 +408,14 @@ namespace AlephNote.Common.Operations
 					}
 
 					LoggerSingleton.Inst.Info("LocalGitMirror", "Local git mirror updated" + (pushremote ? " (+ pushed)":""));
+					return true;
 				}
 			}
 			catch (Exception e)
 			{
 				LoggerSingleton.Inst.Error("PluginManager", "Local git mirroring (commit) failed with exception:\n" + e.Message, e.ToString());
 				LoggerSingleton.Inst.ShowExceptionDialog("Local git mirror (commit) failed", e);
+				return false;
 			}
 		}
 	}

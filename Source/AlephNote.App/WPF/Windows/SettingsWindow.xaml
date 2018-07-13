@@ -9,6 +9,7 @@
 		xmlns:ctrl="clr-namespace:AlephNote.WPF.Controls"
 		xmlns:mext="clr-namespace:AlephNote.WPF.MarkupExtensions"
 		xmlns:shortcuts="clr-namespace:AlephNote.WPF.Shortcuts"
+		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
 		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance windows:SettingsWindowViewmodel}"
 		WindowStartupLocation="CenterOwner"
@@ -609,6 +610,7 @@
 									<RowDefinition Height="Auto"/>
 									<RowDefinition Height="Auto"/>
 									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
 									<RowDefinition/>
 								</Grid.RowDefinitions>
 								<Grid.ColumnDefinitions>
@@ -625,19 +627,23 @@
 								<CheckBox  Grid.Row="1" Grid.Column="1" IsChecked="{Binding Settings.GitMirrorDoPush}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
 								<ctrl:PHelpBtn Grid.Row="1" Grid.Column="3" HelpProperty="GitMirrorDoPush" Margin="2,0" VerticalAlignment="Center" />
 
-								<TextBlock    Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Path" />
-								<ctrl:PathBox Grid.Row="2" Grid.Column="1" PathText="{Binding Settings.GitMirrorPath}" Margin="0,1" Grid.ColumnSpan="2" />
+								<TextBlock Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Automatic git garbage collect" />
+								<xctk:IntegerUpDown  Grid.Row="2" Grid.Column="1" Value="{Binding Settings.GitMirrorAutoGC}" Minimum="0" Maximum="99999" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+								<ctrl:PHelpBtn Grid.Row="2" Grid.Column="3" HelpProperty="GitMirrorAutoGC" Margin="2,0" VerticalAlignment="Center" />
 
-								<TextBlock     Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Separate folders per account" />
-								<CheckBox      Grid.Row="3" Grid.Column="1" IsChecked="{Binding Settings.GitMirrorSubfolders}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
-								<ctrl:PHelpBtn Grid.Row="3" Grid.Column="3" HelpProperty="GitMirrorSubfolders" Margin="2,0" VerticalAlignment="Center" />
+								<TextBlock    Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Path" />
+								<ctrl:PathBox Grid.Row="3" Grid.Column="1" PathText="{Binding Settings.GitMirrorPath}" Margin="0,1" Grid.ColumnSpan="2" />
 
-								<TextBlock Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Authorname" />
-								<TextBox   Grid.Row="4" Grid.Column="1" Text="{Binding Settings.GitMirrorFirstName}" Margin="0,1,1,1" />
-								<TextBox   Grid.Row="4" Grid.Column="2" Text="{Binding Settings.GitMirrorLastName}"  Margin="1,1,0,1" />
+								<TextBlock     Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Separate folders per account" />
+								<CheckBox      Grid.Row="4" Grid.Column="1" IsChecked="{Binding Settings.GitMirrorSubfolders}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+								<ctrl:PHelpBtn Grid.Row="4" Grid.Column="3" HelpProperty="GitMirrorSubfolders" Margin="2,0" VerticalAlignment="Center" />
 
-								<TextBlock Grid.Row="5" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Authormail" />
-								<TextBox   Grid.Row="5" Grid.Column="1" Text="{Binding Settings.GitMirrorMailAddress}" Margin="0,1" Grid.ColumnSpan="2" />
+								<TextBlock Grid.Row="5" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Authorname" />
+								<TextBox   Grid.Row="5" Grid.Column="1" Text="{Binding Settings.GitMirrorFirstName}" Margin="0,1,1,1" />
+								<TextBox   Grid.Row="5" Grid.Column="2" Text="{Binding Settings.GitMirrorLastName}"  Margin="1,1,0,1" />
+
+								<TextBlock Grid.Row="6" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Authormail" />
+								<TextBox   Grid.Row="6" Grid.Column="1" Text="{Binding Settings.GitMirrorMailAddress}" Margin="0,1" Grid.ColumnSpan="2" />
 
 							</Grid>
 						</GroupBox>
