@@ -19,7 +19,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj">
-			<ExcludeAssets>runtime</ExcludeAssets>
+			<Private>false</Private>
 		</ProjectReference>
 
 		<PackageReference Include="System.Net.Requests" Version="4.3.0">

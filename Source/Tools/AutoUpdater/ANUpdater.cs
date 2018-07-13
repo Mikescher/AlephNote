@@ -207,6 +207,28 @@ namespace AlephNote.AutoUpdater
 					Console.WriteLine(e);
 				}
 			}
+
+			if (vOld != null && vOld <= new Version("1.6.20.0"))
+			{
+				try
+				{
+					// remove old dll from plugins folder
+					var files = new[]
+					{
+						Path.Combine(_targetPath, "Plugins", "AlephNote.PluginInterface.dll"),
+					};
+
+					foreach (var file in files)
+					{
+						if (File.Exists(file)) File.Delete(file);
+					}
+
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e);
+				}
+			}
 		}
 
 		private String MakeRelative(String fromPath, String baseDir)
