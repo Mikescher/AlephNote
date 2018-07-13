@@ -43,5 +43,9 @@ namespace AlephNote.Plugins.StandardNote
 			if (other == null) return false;
 			return UUID == other.UUID && Title == other.Title;
 		}
+		
+		public static bool operator ==(StandardFileTag left, StandardFileTag right) => left?.Equals(right) ?? ReferenceEquals(right, null);
+
+		public static bool operator !=(StandardFileTag left, StandardFileTag right) => !(left?.Equals(right) ?? ReferenceEquals(right, null));
 	}
 }

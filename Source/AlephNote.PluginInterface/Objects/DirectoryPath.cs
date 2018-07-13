@@ -117,6 +117,10 @@ namespace AlephNote.PluginInterface.Util
 		{
 			if (obj is DirectoryPath d) return EqualsWithCase(d); else return false;
 		}
+		
+		public static bool operator ==(DirectoryPath left, DirectoryPath right) => left?.Equals(right) ?? ReferenceEquals(right, null);
+
+		public static bool operator !=(DirectoryPath left, DirectoryPath right) => !(left?.Equals(right) ?? ReferenceEquals(right, null));
 
 		public override int GetHashCode()
 		{

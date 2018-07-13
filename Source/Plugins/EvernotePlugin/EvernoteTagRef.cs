@@ -43,5 +43,9 @@ namespace AlephNote.Plugins.Evernote
 			if (other == null) return false;
 			return UUID == other.UUID && Title == other.Title;
 		}
+		
+		public static bool operator ==(EvernoteTagRef left, EvernoteTagRef right) => left?.Equals(right) ?? ReferenceEquals(right, null);
+
+		public static bool operator !=(EvernoteTagRef left, EvernoteTagRef right) => !(left?.Equals(right) ?? ReferenceEquals(right, null));
 	}
 }

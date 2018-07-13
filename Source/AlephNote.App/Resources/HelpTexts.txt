@@ -305,4 +305,13 @@ This way numbers (e.g. '1', '2', '10') are ordered by their numerical values.
 [GitMirrorAutoGC]
 Automatically call 'git gc' after x commits.
 The git garbage collector cleans up and compresses the repository.
-Set this to 0 to never call 'git gc'
+Set this to 0 to never call 'git gc'.
+
+[RememberPositionAndSize]
+Save the current window position and size when closing the window.
+This has the effect that the app starts at the same position it was last time.
+
+[RememberState]
+Save the current window state (minimized, normal, maximized) when closing the window.
+This has the effect that the app starts in the same state it was last time.
+

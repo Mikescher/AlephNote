@@ -13,20 +13,15 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using AlephNote.Common.MVVM;
 using AlephNote.Common.Operations;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Threading;
 using AlephNote.Impl;
 using AlephNote.PluginInterface.Util;
-using AlephNote.WPF.Dialogs;
-using AlephNote.Common.Themes;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface.Exceptions;
 
@@ -408,6 +403,12 @@ namespace AlephNote.WPF.Windows
 			}
 
 			if (Settings.RememberScroll) _scrollCache.ForceSaveNow();
+
+			if (Settings.RememberPositionAndSize || Settings.RememberWindowState)
+			{
+				SettingsHelper.ApplyWindowState(Owner, Settings, Settings.RememberPositionAndSize, Settings.RememberPositionAndSize, Settings.RememberWindowState);
+				RequestSettingsSave();
+			}
 
 			if (_invSaveSettings.HasPendingRequests())
 			{

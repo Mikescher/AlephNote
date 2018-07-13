@@ -15,7 +15,7 @@
 		WindowStartupLocation="CenterOwner"
 		Closed="DialogWindow_Closed"
 		Icon="/Resources/IconMain.png"
-		Title="AlephNote - Configuration" MinHeight="300" MinWidth="300" Height="700" Width="555">
+		Title="AlephNote - Configuration" MinHeight="300" MinWidth="300" Height="735" Width="555">
 	<Window.Resources>
 		<converter:CreatePluginSettingsGrid x:Key="CreateGridConv" />
 	</Window.Resources>
@@ -402,6 +402,8 @@
 									<RowDefinition Height="Auto"/>
 									<RowDefinition Height="Auto"/>
 									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
 								</Grid.RowDefinitions>
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="Auto" MinWidth="200"/>
@@ -410,20 +412,25 @@
 									<ColumnDefinition Width="1*"/>
 								</Grid.ColumnDefinitions>
 
+								<CheckBox      Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="2,2,32,2" Grid.ColumnSpan="3" Content="Remember position and size on close"  IsChecked="{Binding Settings.RememberPositionAndSize}" />
+								<ctrl:PHelpBtn Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" Margin="2,0" HelpProperty="RememberPositionAndSize" HorizontalAlignment="Right" />
 
-								<TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window position" />
-								<TextBox   Grid.Row="0" Grid.Column="1" Margin="3" Text="{Binding Settings.StartupPositionX}" />
-								<TextBox   Grid.Row="0" Grid.Column="3" Margin="3" Text="{Binding Settings.StartupPositionY}" />
+								<CheckBox      Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="2,2,32,2" Grid.ColumnSpan="3" Content="Remember window state on close"  IsChecked="{Binding Settings.RememberWindowState}" />
+								<ctrl:PHelpBtn Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Margin="2,0" HelpProperty="RememberState" HorizontalAlignment="Right" />
 
-								<TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window size" />
-								<TextBox   Grid.Row="1" Grid.Column="1" Margin="3" Text="{Binding Settings.StartupPositionWidth}" />
-								<TextBox   Grid.Row="1" Grid.Column="3" Margin="3" Text="{Binding Settings.StartupPositionHeight}" />
+								<TextBlock Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window position" />
+								<TextBox   Grid.Row="2" Grid.Column="1" Margin="3" Text="{Binding Settings.StartupPositionX}" />
+								<TextBox   Grid.Row="2" Grid.Column="3" Margin="3" Text="{Binding Settings.StartupPositionY}" />
 
-								<TextBlock Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window state" />
-								<ComboBox  Grid.Row="2" Grid.Column="1" Margin="3" ItemsSource="{mext:EnumSource settings:ExtendedWindowState}" SelectedValue="{Binding Settings.StartupState}" />
-								<ComboBox  Grid.Row="2" Grid.Column="3" Margin="3" ItemsSource="{mext:EnumSource settings:ExtendedWindowStartupLocation}" SelectedValue="{Binding Settings.StartupLocation}" />
+								<TextBlock Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window size" />
+								<TextBox   Grid.Row="3" Grid.Column="1" Margin="3" Text="{Binding Settings.StartupPositionWidth}" />
+								<TextBox   Grid.Row="3" Grid.Column="3" Margin="3" Text="{Binding Settings.StartupPositionHeight}" />
 
-								<Button    Grid.Row="3" Grid.Column="1" Margin="3" Grid.ColumnSpan="3" Content="Use current" Command="{Binding InsertCurrentWindowStateCommand}" />
+								<TextBlock Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Window state" />
+								<ComboBox  Grid.Row="4" Grid.Column="1" Margin="3" ItemsSource="{mext:EnumSource settings:ExtendedWindowState}" SelectedValue="{Binding Settings.StartupState}" />
+								<ComboBox  Grid.Row="4" Grid.Column="3" Margin="3" ItemsSource="{mext:EnumSource settings:ExtendedWindowStartupLocation}" SelectedValue="{Binding Settings.StartupLocation}" />
+
+								<Button    Grid.Row="5" Grid.Column="1" Margin="3" Grid.ColumnSpan="3" Content="Use current" Command="{Binding InsertCurrentWindowStateCommand}" />
 
 							</Grid>
 						</GroupBox>

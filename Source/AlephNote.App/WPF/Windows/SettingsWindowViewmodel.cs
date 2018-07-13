@@ -11,6 +11,7 @@ using AlephNote.WPF.Shortcuts;
 using System.Collections.Generic;
 using AlephNote.Common.Themes;
 using AlephNote.Common.Util;
+using AlephNote.WPF.Util;
 
 namespace AlephNote.WPF.Windows
 {
@@ -69,33 +70,7 @@ namespace AlephNote.WPF.Windows
 
 		private void InsertCurrentWindowState()
 		{
-			if (mainWindow.WindowState == WindowState.Maximized)
-			{
-				Settings.StartupLocation = ExtendedWindowStartupLocation.CenterScreen;
-				Settings.StartupState = ExtendedWindowState.Maximized;
-				Settings.StartupPositionX = (int)mainWindow.Left;
-				Settings.StartupPositionY = (int)mainWindow.Top;
-				Settings.StartupPositionWidth = (int)mainWindow.Width;
-				Settings.StartupPositionHeight = (int)mainWindow.Height;
-			}
-			else if (mainWindow.WindowState == WindowState.Minimized)
-			{
-				Settings.StartupLocation = ExtendedWindowStartupLocation.Manual;
-				Settings.StartupState = ExtendedWindowState.Minimized;
-				Settings.StartupPositionX = (int)mainWindow.Left;
-				Settings.StartupPositionY = (int)mainWindow.Top;
-				Settings.StartupPositionWidth = (int)mainWindow.Width;
-				Settings.StartupPositionHeight = (int)mainWindow.Height;
-			}
-			else if (mainWindow.WindowState == WindowState.Normal)
-			{
-				Settings.StartupLocation = ExtendedWindowStartupLocation.Manual;
-				Settings.StartupState = ExtendedWindowState.Normal;
-				Settings.StartupPositionX = (int)mainWindow.Left;
-				Settings.StartupPositionY = (int)mainWindow.Top;
-				Settings.StartupPositionWidth = (int)mainWindow.Width;
-				Settings.StartupPositionHeight = (int)mainWindow.Height;
-			}
+			SettingsHelper.ApplyWindowState(mainWindow, Settings);
 		}
 
 		public void AddAccount(IRemotePlugin p)

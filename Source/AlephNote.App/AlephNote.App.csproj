@@ -220,6 +220,7 @@
     <Compile Include="WPF\Extensions\ThemeSlaveBinding.cs" />
     <Compile Include="WPF\Util\CaptureMouseWheelWhenUnfocusedBehavior.cs" />
     <Compile Include="WPF\Util\CheckableTag.cs" />
+    <Compile Include="WPF\Util\SettingsHelper.cs" />
     <Compile Include="WPF\Util\SideBySideDiffModelVisualizer.cs" />
     <Compile Include="WPF\Windows\ConflictWindow.xaml.cs">
       <DependentUpon>ConflictWindow.xaml</DependentUpon>
@@ -234,6 +235,9 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Windows\MainWindowViewmodel.Commands.Window.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Windows\MainWindowViewmodel.Commands.Settings.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Windows\MainWindowViewmodel.Commands.Debug.cs">
@@ -485,9 +489,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <Compile Include="WPF\Windows\MainWindowViewmodel.Commands.Settings.cs">
-      <Generator>SettingsSingleFileGenerator</Generator>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="IconMain.ico" />

@@ -148,6 +148,14 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public int StartupPositionHeight { get { return _startupPositionHeight; } set { _startupPositionHeight = value; OnPropertyChanged(); } }
 		private int _startupPositionHeight = 565;
+		
+		[AlephXMLField]
+		public bool RememberPositionAndSize { get { return _rememberPositionAndSize; } set { _rememberPositionAndSize = value; OnPropertyChanged(); } }
+		private bool _rememberPositionAndSize = false;
+
+		[AlephXMLField]
+		public bool RememberWindowState { get { return _rememberWindowState; } set { _rememberWindowState = value; OnPropertyChanged(); } }
+		private bool _rememberWindowState = false;
 
 		[AlephXMLField]
 		public ExtendedWindowStartupLocation StartupLocation { get { return _startupLocation; } set { _startupLocation = value; OnPropertyChanged(); } }
