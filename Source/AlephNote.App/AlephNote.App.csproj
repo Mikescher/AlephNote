@@ -198,6 +198,7 @@
     <Compile Include="WPF\Converter\EmptyToVisibility.cs" />
     <Compile Include="WPF\Converter\BrushRefToBrush.cs" />
     <Compile Include="WPF\Converter\ColorRefToBrush.cs" />
+    <Compile Include="WPF\Converter\EnumValueToBoolean.cs" />
     <Compile Include="WPF\Converter\MultiBoolOperator.cs" />
     <Compile Include="WPF\Converter\MultiBoolToVisibility.cs" />
     <Compile Include="WPF\Converter\HierachicalWrapperToIcon.cs" />

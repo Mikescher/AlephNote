@@ -95,6 +95,19 @@
 
 			</MenuItem>
 			<MenuItem Header="_View">
+				<MenuItem Header="Note preview style">
+					<ctrl:AutoActionMenuItem Foreground="Black" Header="Simple one line"             AlephAction="SetPreviewStyleSimple"            IsChecked="{Binding Settings.NotePreviewStyle, Converter={conv:EnumValueToBoolean}, ConverterParameter='Simple'}"             Settings="{Binding Settings}"  />
+					<ctrl:AutoActionMenuItem Foreground="Black" Header="One line with date"          AlephAction="SetPreviewStyleExtended"          IsChecked="{Binding Settings.NotePreviewStyle, Converter={conv:EnumValueToBoolean}, ConverterParameter='Extended'}"           Settings="{Binding Settings}"  />
+					<ctrl:AutoActionMenuItem Foreground="Black" Header="Title and first line"        AlephAction="SetPreviewStyleSingleLinePreview" IsChecked="{Binding Settings.NotePreviewStyle, Converter={conv:EnumValueToBoolean}, ConverterParameter='SingleLinePreview'}"  Settings="{Binding Settings}"  />
+					<ctrl:AutoActionMenuItem Foreground="Black" Header="Multiple lines with preview" AlephAction="SetPreviewStyleFullPreview"       IsChecked="{Binding Settings.NotePreviewStyle, Converter={conv:EnumValueToBoolean}, ConverterParameter='FullPreview'}"        Settings="{Binding Settings}"  />
+				</MenuItem>
+				<MenuItem Header="Note sorting">
+					<ctrl:AutoActionMenuItem Foreground="Black" Header="None"               AlephAction="SetNoteSortingNone"               IsChecked="{Binding Settings.NoteSorting, Converter={conv:EnumValueToBoolean}, ConverterParameter='None'}"               Settings="{Binding Settings}"  />
+					<ctrl:AutoActionMenuItem Foreground="Black" Header="Title"              AlephAction="SetNoteSortingByName"             IsChecked="{Binding Settings.NoteSorting, Converter={conv:EnumValueToBoolean}, ConverterParameter='ByName'}"             Settings="{Binding Settings}"  />
+					<ctrl:AutoActionMenuItem Foreground="Black" Header="Creation date"      AlephAction="SetNoteSortingByCreationDate"     IsChecked="{Binding Settings.NoteSorting, Converter={conv:EnumValueToBoolean}, ConverterParameter='ByCreationDate'}"     Settings="{Binding Settings}"  />
+					<ctrl:AutoActionMenuItem Foreground="Black" Header="Last modified date" AlephAction="SetNoteSortingByModificationDate" IsChecked="{Binding Settings.NoteSorting, Converter={conv:EnumValueToBoolean}, ConverterParameter='ByModificationDate'}" Settings="{Binding Settings}"  />
+
+				</MenuItem>
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Always on Top"        AlephAction="ToggleAlwaysOnTop" IsChecked="{Binding Settings.AlwaysOnTop}"    Settings="{Binding Settings}"  />
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Display Line Numbers" AlephAction="ToggleLineNumbers" IsChecked="{Binding Settings.SciLineNumbers}" Settings="{Binding Settings}"  />
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Word Wrap"            AlephAction="ToggleWordWrap"    IsChecked="{Binding Settings.SciWordWrap}"    Settings="{Binding Settings}"  />
