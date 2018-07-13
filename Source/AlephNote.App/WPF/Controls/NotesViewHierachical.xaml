@@ -135,17 +135,28 @@
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="3" />
 							</Grid.ColumnDefinitions>
-							<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" 
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+
+							<Separator Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" 
+							           Background="{ext:ThemeBinding 'window.notesview.hierachical.list.vborder:foreground'}" 
+							           Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.vborder:background'}" 
+							           Margin="{ext:ThemeBinding     'window.notesview.hierachical.list.vborder:margin'}"  />
+
+							<Image     Grid.Row="1" Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" 
 							           Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
-							<Image     Grid.Column="1" Source="/Resources/lock_small.png" VerticalAlignment="Center" 
+							<Image     Grid.Row="1" Grid.Column="1" Source="/Resources/lock_small.png" VerticalAlignment="Center" 
 							           Visibility="{Binding IsLocked, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
 
-							<TextBlock Grid.Column="2" 
+							<TextBlock Grid.Row="1" Grid.Column="2" 
 									   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list:foreground'}"
 									   Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" 
 									   TextTrimming="CharacterEllipsis" />
 
-							<TextBlock Grid.Column="3" 
+							<TextBlock Grid.Row="1" Grid.Column="3" 
 									   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.datetime1:foreground'}"
 									   Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" 
 									   VerticalAlignment="Center">
@@ -153,6 +164,11 @@
 									<ScaleTransform ScaleX="0.9" ScaleY="0.9" />
 								</TextBlock.LayoutTransform>
 							</TextBlock>
+
+							<Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" 
+							           Background="{ext:ThemeBinding 'window.notesview.hierachical.list.vborder:foreground'}" 
+							           Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.vborder:background'}" 
+							           Margin="{ext:ThemeBinding     'window.notesview.hierachical.list.vborder:margin'}"  />
 						</Grid>
 					</DataTemplate>
 				</services:ConditionalDataTemplate>

@@ -94,6 +94,9 @@ namespace AlephNote.Common.Themes
 			Tuple.Create("window.notesview.flat.datetime2:foreground"            , AlephThemePropType.Brush     ),
 			Tuple.Create("window.notesview.flat.preview:foreground"              , AlephThemePropType.Brush     ),
 			Tuple.Create("window.notesview.flat.separator"                       , AlephThemePropType.Brush     ),
+			Tuple.Create("window.notesview.flat.vborder:foreground"              , AlephThemePropType.Brush     ),
+			Tuple.Create("window.notesview.flat.vborder:background"              , AlephThemePropType.Brush     ),
+			Tuple.Create("window.notesview.flat.vborder:margin"                  , AlephThemePropType.Thickness ),
 
 			Tuple.Create("window.notesview.hierachical.list:background"          , AlephThemePropType.Brush     ),
 			Tuple.Create("window.notesview.hierachical.list:foreground"          , AlephThemePropType.Brush     ),
@@ -103,6 +106,9 @@ namespace AlephNote.Common.Themes
 			Tuple.Create("window.notesview.hierachical.list.datetime2:foreground", AlephThemePropType.Brush     ),
 			Tuple.Create("window.notesview.hierachical.list.preview:foreground"  , AlephThemePropType.Brush     ),
 			Tuple.Create("window.notesview.hierachical.list.separator"           , AlephThemePropType.Brush     ),
+			Tuple.Create("window.notesview.hierachical.list.vborder:foreground"  , AlephThemePropType.Brush     ),
+			Tuple.Create("window.notesview.hierachical.list.vborder:background"  , AlephThemePropType.Brush     ),
+			Tuple.Create("window.notesview.hierachical.list.vborder:margin"      , AlephThemePropType.Thickness ),
 			Tuple.Create("window.notesview.hierachical.splitter"                 , AlephThemePropType.Brush     ),
 			Tuple.Create("window.notesview.hierachical.tree:background"          , AlephThemePropType.Brush     ),
 			Tuple.Create("window.notesview.hierachical.tree:foreground"          , AlephThemePropType.Brush     ),
@@ -204,13 +210,13 @@ namespace AlephNote.Common.Themes
 
 		public readonly bool IsFallback;
 
-		public string Name { get; set; }
-		public Version Version { get; set; }
-		public CompatibilityVersionRange Compatibility { get; set; }
-		public string SourceFilename { get; set; }
-		public string Source { get; set; }
+		public string Name { get; }
+		public Version Version { get; }
+		public CompatibilityVersionRange Compatibility { get; }
+		public string SourceFilename { get; }
+		public string Source { get; }
 
-		private Dictionary<string, object> AllProperties = new Dictionary<string, object>();
+		private readonly Dictionary<string, object> allProperties = new Dictionary<string, object>();
 
 		public AlephTheme(string n, Version v, CompatibilityVersionRange c, string fn, string src, bool fb)
 		{
@@ -223,7 +229,7 @@ namespace AlephNote.Common.Themes
 			IsFallback = fb;
 		}
 
-		public void AddProperty(string name, object prop) => AllProperties.Add(name.ToLower(), prop);
+		public void AddProperty(string name, object prop) => allProperties.Add(name.ToLower(), prop);
 
 		public T Get<T>(string name)
 		{
@@ -234,13 +240,13 @@ namespace AlephNote.Common.Themes
 
 		public object Get(string name)
 		{
-			if (AllProperties.TryGetValue(name.ToLower(), out var obj)) return obj;
+			if (allProperties.TryGetValue(name.ToLower(), out var obj)) return obj;
 			throw new Exception($"ThemeProperty not found: {name}");
 		}
 
 		public string GetStrRepr(string name)
 		{
-			if (!AllProperties.TryGetValue(name.ToLower(), out var obj)) return "N/A";
+			if (!allProperties.TryGetValue(name.ToLower(), out var obj)) return "N/A";
 
 			if (obj == null) return "NULL";
 

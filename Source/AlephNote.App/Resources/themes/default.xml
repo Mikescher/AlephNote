@@ -252,6 +252,9 @@ Repository: https://github.com/Mikescher/AlephNote
 					<property name="window.notesview.flat.datetime2:foreground" value="@Brown"/>
 					<property name="window.notesview.flat.preview:foreground"   value="@DarkGray"/>
 					<property name="window.notesview.flat.separator"            value="@Transparent"/>
+					<property name="window.notesview.flat.vborder:foreground"   value="@Transparent"/>
+					<property name="window.notesview.flat.vborder:background"   value="@Transparent"/>
+					<property name="window.notesview.flat.vborder:margin"       value="6,1,6,0"/>
 				</group>
 				
 				<group name="hierachical">
@@ -263,6 +266,9 @@ Repository: https://github.com/Mikescher/AlephNote
 					<property name="window.notesview.hierachical.list.datetime2:foreground" value="$window.notesview.flat.datetime2:foreground"/>
 					<property name="window.notesview.hierachical.list.preview:foreground"   value="$window.notesview.flat.preview:foreground"/>
 					<property name="window.notesview.hierachical.list.separator"            value="@Transparent"/>
+					<property name="window.notesview.hierachical.list.vborder:foreground"   value="@Transparent"/>
+					<property name="window.notesview.hierachical.list.vborder:background"   value="@Transparent"/>
+					<property name="window.notesview.hierachical.list.vborder:margin"       value="6,1,6,0"/>
 					
 					<property name="window.notesview.hierachical.splitter"                  value="$window.splitter"/>
 
