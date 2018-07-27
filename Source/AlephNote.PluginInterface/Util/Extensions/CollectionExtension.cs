@@ -167,7 +167,7 @@ namespace AlephNote.PluginInterface.Util
 		/// <summary>
 		/// Both lists have the same elements after this (+ same order)
 		/// </summary>
-		public static void SynchronizeCollection<T>(this IList<T> target, IEnumerable<T> esource, Func<T, T, bool> comp, Func<T, T> copy)
+		public static void SynchronizeCollection<TTarget, TSource>(this IList<TTarget> target, IEnumerable<TSource> esource, Func<TSource, TTarget, bool> comp, Func<TSource, TTarget> copy)
 		{
 			var source = esource.ToList();
 
@@ -210,7 +210,7 @@ namespace AlephNote.PluginInterface.Util
 			return true;
 		}
 
-		public static bool CollectionEquals<T>(this IList<T> target, IEnumerable<T> esource, Func<T, T, bool> comp)
+		public static bool CollectionEquals<TTarget, TSource>(this IList<TTarget> target, IEnumerable<TSource> esource, Func<TSource, TTarget, bool> comp)
 		{
 			var source = esource.ToList();
 

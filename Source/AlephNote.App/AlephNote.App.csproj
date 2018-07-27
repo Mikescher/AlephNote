@@ -119,6 +119,12 @@
     <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\Lib\System.Security.Cryptography.X509Certificates.4.3.2\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Controls.Input.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\Lib\WPFToolkit.3.5.50211.1\lib\System.Windows.Controls.Input.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Controls.Layout.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\Lib\WPFToolkit.3.5.50211.1\lib\System.Windows.Controls.Layout.Toolkit.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -135,6 +141,9 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsFormsIntegration" />
+    <Reference Include="WPFToolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\Lib\WPFToolkit.3.5.50211.1\lib\WPFToolkit.dll</HintPath>
+    </Reference>
     <Reference Include="Xceed.Wpf.AvalonDock, Version=3.3.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <HintPath>..\..\Lib\Extended.Wpf.Toolkit.3.3.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
     </Reference>
@@ -191,14 +200,21 @@
       <DependentUpon>PHelpBtn.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Controls\ShortcutBox.cs" />
-    <Compile Include="WPF\Controls\TagEditor.xaml.cs">
+    <Compile Include="WPF\Controls\TagCtrl\TagEditor.xaml.cs">
       <DependentUpon>TagEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Controls\TagCtrl\TagEditor2.xaml.cs">
+      <DependentUpon>TagEditor2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Controls\TagCtrl\TokenizedTagControl.cs" />
+    <Compile Include="WPF\Controls\TagCtrl\TokenizedTagEventArgs.cs" />
+    <Compile Include="WPF\Controls\TagCtrl\TokenizedTagItem.cs" />
     <Compile Include="WPF\Converter\BoolToColor.cs" />
     <Compile Include="WPF\Converter\EmptyToVisibility.cs" />
     <Compile Include="WPF\Converter\BrushRefToBrush.cs" />
     <Compile Include="WPF\Converter\ColorRefToBrush.cs" />
     <Compile Include="WPF\Converter\EnumValueToBoolean.cs" />
+    <Compile Include="WPF\Converter\InvertedBoolToVisibility.cs" />
     <Compile Include="WPF\Converter\MultiBoolOperator.cs" />
     <Compile Include="WPF\Converter\MultiBoolToVisibility.cs" />
     <Compile Include="WPF\Converter\HierachicalWrapperToIcon.cs" />
@@ -403,7 +419,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WPF\Controls\TagEditor.xaml">
+    <Page Include="WPF\Controls\TagCtrl\TagEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\Controls\TagCtrl\TagEditor2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

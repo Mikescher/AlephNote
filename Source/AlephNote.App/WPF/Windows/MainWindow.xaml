@@ -14,6 +14,7 @@
 		xmlns:mext="clr-namespace:AlephNote.WPF.MarkupExtensions"
 		xmlns:util="clr-namespace:AlephNote.WPF.Util"
 		xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
+		xmlns:system="clr-namespace:System;assembly=mscorlib"
 		mc:Ignorable="d" 
 		Icon="/Resources/IconMain.png"
 		WindowState="{Binding WindowState}"
@@ -283,18 +284,18 @@
 				
 			</Image>
 
-			<ctrl:TagEditor Grid.Row="1" Grid.Column="0" 
-							TagSource="{Binding SelectedNote.Tags}" 
-							Repository="{Binding Repository}" 
-							Settings="{Binding Settings}" 
-							Changed="TagEditor_OnChanged">
-				<ctrl:TagEditor.Readonly>
+			<ctrl:TagEditor2 Grid.Row="1" Grid.Column="0" 
+			                TagSource="{Binding SelectedNote.Tags}" 
+			                Repository="{Binding Repository}" 
+			                Settings="{Binding Settings}" 
+			                Changed="TagEditor_OnChanged">
+				<ctrl:TagEditor2.Readonly>
 					<MultiBinding Converter="{StaticResource MBOP}" ConverterParameter="OR">
 						<Binding Path="Settings.IsReadOnlyMode" />
 						<Binding Path="SelectedNote.IsLocked" />
 					</MultiBinding>
-				</ctrl:TagEditor.Readonly>
-			</ctrl:TagEditor>
+				</ctrl:TagEditor2.Readonly>
+			</ctrl:TagEditor2>
 
 			<StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="8,2">
 				<TextBlock Text="*" 
