@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace AlephNote.PluginInterface.Util
 {
@@ -106,6 +107,7 @@ namespace AlephNote.PluginInterface.Util
 
 				foreach (var rec in EnumerateEmptyDirectories(dir, remainingDepth-1))
 				{
+					yield return rec;
 					subdirs.Remove(rec);
 				}
 
@@ -128,6 +130,25 @@ namespace AlephNote.PluginInterface.Util
 					return file.ToArray();
 				}
 			}
+		}
+
+		public static void DeleteDirectoryWithRetry(IAlephLogger logger, string path)
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				try
+				{
+					Directory.Delete(path);
+					return;
+				}
+				catch (IOException e)
+				{
+					logger.Debug("DeleteDirectoryWithRetry", "Retry Directory delete", "Retry directory delete, exception thrown:\r\n"+e);
+					Thread.Sleep(5);
+				}
+			}
+			
+			Directory.Delete(path); // Do it again and throw Exception if it fails
 		}
 	}
 }

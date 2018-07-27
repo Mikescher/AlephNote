@@ -314,7 +314,7 @@ namespace AlephNote.Common.Operations
 			foreach (var dir in FileSystemUtil.EnumerateEmptyDirectories(targetFolder, 16).ToList())
 			{
 				dir_deleted.Add(dir);
-				Directory.Delete(dir);
+				FileSystemUtil.DeleteDirectoryWithRetry(LoggerSingleton.Inst, dir);
 				
 				var rpath = FileSystemUtil.MakePathRelative(dir, targetFolder);
 				LoggerSingleton.Inst.Info("LocalGitMirror", $"Directory dleted: '{rpath}'", dir);
