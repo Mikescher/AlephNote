@@ -200,6 +200,7 @@
       <DependentUpon>PHelpBtn.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Controls\ShortcutBox.cs" />
+    <Compile Include="WPF\Controls\TagCtrl\ITagEditor.cs" />
     <Compile Include="WPF\Controls\TagCtrl\TagEditor.xaml.cs">
       <DependentUpon>TagEditor.xaml</DependentUpon>
     </Compile>

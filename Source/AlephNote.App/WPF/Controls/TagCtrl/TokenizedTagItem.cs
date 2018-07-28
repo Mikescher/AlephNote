@@ -16,17 +16,17 @@ namespace AlephNote.WPF.Controls
 	[TemplatePart(Name = "PART_TagButton", Type = typeof(Button))]
 	public class TokenizedTagItem : Control
 	{
-
 		static TokenizedTagItem()
 		{
 			// lookless control, get default style from generic.xaml
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(TokenizedTagItem), new FrameworkPropertyMetadata(typeof(TokenizedTagItem)));
 		}
 
-		public TokenizedTagItem() { }
-		public TokenizedTagItem(string text)
-			: this()
+		private readonly TokenizedTagControl _parent;
+
+		public TokenizedTagItem(string text, TokenizedTagControl parent)
 		{
+			_parent = parent;
 			this.Text = text;
 		}
 
@@ -85,35 +85,25 @@ namespace AlephNote.WPF.Controls
 
 				btn.Click += (s, e) => //btn.Click 
 				{
-					var parent = GetParent();
-					if (parent != null)
-					{
-						parent.RaiseTagClick(this); // raise the TagClick event of the TokenizedTagControl
+					_parent.RaiseTagClick(this); // raise the TagClick event of the TokenizedTagControl
 
-						if (parent.IsSelectable)
-						{
-							//e.Handled = true;
-							parent.SelectedItem = this;
-						}
-						//parent.SelectedItem = this;
+					if (_parent.IsSelectable)
+					{
+						//e.Handled = true;
+						_parent.SelectedItem = this;
 					}
+					//parent.SelectedItem = this;
 					//PART_TagBorder
 				};
 
 				btn.MouseDoubleClick += (s, e) =>
 				{
-					var parent = GetParent();
-					if (parent != null)
+					_parent.RaiseTagDoubleClick(this); // raise the TagClick event of the TokenizedTagControl
+					if (_parent.IsSelectable)
 					{
-						parent.RaiseTagDoubleClick(this); // raise the TagClick event of the TokenizedTagControl
-
-						if (parent.IsSelectable)
-						{
-							//e.Handled = true;
-							parent.SelectedItem = this;
-						}
+						//e.Handled = true;
+						_parent.SelectedItem = this;
 					}
-						
 				};
 
 			}
@@ -128,24 +118,10 @@ namespace AlephNote.WPF.Controls
 		/// </summary>
 		void btnDelete_Click(object sender, RoutedEventArgs e)
 		{
-
 			var item = FindUpVisualTree<TokenizedTagItem>(sender as FrameworkElement);
-			var parent = GetParent();
-			if (item != null && parent != null)
-				parent.RemoveTag(item);
+			if (item != null) _parent.RemoveTag(item);
 
 			e.Handled = true; // bubbling would raise the tag click event
-		}
-
-		static bool isDuplicate(TokenizedTagControl tagControl, string compareTo)
-		{
-			var duplicateCount = (from TokenizedTagItem item in (IList)tagControl.ItemsSource
-								   where item.Text.ToLower() == compareTo.ToLower()
-								   select item).Count();
-			if (duplicateCount > 1)
-				return true;
-
-			return false;
 		}
 
 		/// <summary>
@@ -176,43 +152,39 @@ namespace AlephNote.WPF.Controls
 				// PreviewKeyDown, because KeyDown does not bubble up for Enter
 				acb.PreviewKeyDown += (s, e1) =>
 				{
-					var parent = GetParent();
-					if (parent != null)
+					switch (e1.Key)
 					{
-						switch (e1.Key)
-						{
-							case (Key.Enter):  // accept tag
-								if (!string.IsNullOrWhiteSpace(this.Text))
-								{
-									if (isDuplicate(parent, this.Text))
-										break;
-									parent.OnApplyTemplate(this);
-									parent.SelectedItem = parent.InitializeNewTag();//creates another tag
-								}
-								else
-									parent.Focus();
-								break;
-							case (Key.Escape): // reject tag
-								parent.Focus();
-								//parent.RemoveTag(this, true); // do not raise RemoveTag event
-								break;
-							case (Key.Back):
-								if (string.IsNullOrWhiteSpace(this.Text))
-								{
-									inputBox_LostFocus(this, new RoutedEventArgs());
-									var previousTagIndex = ((IList)parent.ItemsSource).Count - 1;
-									if (previousTagIndex < 0) break;
+						case (Key.Enter):  // accept tag
+							if (!string.IsNullOrWhiteSpace(this.Text))
+							{
+								_parent.OnApplyTemplate(this);
+								_parent.SelectedItem = _parent.InitializeNewTag(); //creates another tag
+							}
+							else
+								_parent.Focus();
+							break;
 
-									//parent.RemoveTag((((IList)parent.ItemsSource)[previousTagIndex] as TokenizedTagItem));
-									var previousTag = (((IList)parent.ItemsSource)[previousTagIndex] as TokenizedTagItem);
-									previousTag.Focus();
-									previousTag.IsEditing = true;
-								}
-								//parent.Focus();
-								//parent.RemoveTag(this, true); // do not raise RemoveTag event
-								//((IList)parent.ItemsSource).RemoveAt(((IList)parent.ItemsSource).Count - 2);
-								break;
-						}
+						case (Key.Escape): // reject tag
+							_parent.Focus();
+							//parent.RemoveTag(this, true); // do not raise RemoveTag event
+							break;
+
+						case (Key.Back):
+							if (string.IsNullOrWhiteSpace(this.Text))
+							{
+								inputBox_LostFocus(this, new RoutedEventArgs());
+								var previousTagIndex = ((IList)_parent.ItemsSource).Count - 1;
+								if (previousTagIndex < 0) break;
+
+								//parent.RemoveTag((((IList)parent.ItemsSource)[previousTagIndex] as TokenizedTagItem));
+								var previousTag = (((IList)_parent.ItemsSource)[previousTagIndex] as TokenizedTagItem);
+								previousTag.Focus();
+								previousTag.IsEditing = true;
+							}
+							//parent.Focus();
+							//parent.RemoveTag(this, true); // do not raise RemoveTag event
+							//((IList)parent.ItemsSource).RemoveAt(((IList)parent.ItemsSource).Count - 2);
+							break;
 					}
 				};
 			}
@@ -224,29 +196,20 @@ namespace AlephNote.WPF.Controls
 		/// </summary>
 		void inputBox_LostFocus(object sender, RoutedEventArgs e)
 		{
-			var parent = GetParent();
 			if (!string.IsNullOrWhiteSpace(this.Text))
 			{
-				if (parent != null)
-				{
-					if (isDuplicate(parent, this.Text))
-						parent.RemoveTag(this, true); // do not raise RemoveTag event
-				}
-				if (!(sender as AutoCompleteBox).IsDropDownOpen)
+				if (!((AutoCompleteBox) sender).IsDropDownOpen)
 				{
 					this.IsEditing = false;
 					//e.Handled = true;
 				}
 			}
 			else
-				if (parent != null)
-					parent.RemoveTag(this, true); // do not raise RemoveTag event
-
-			if (parent != null)
 			{
-				parent.IsEditing = false;
-				//parent.SelectedItem = this;
+				_parent.RemoveTag(this, true); // do not raise RemoveTag event
 			}
+
+			_parent.IsEditing = false;
 		}
 		/*
 		private void inputBox_DropDownClosed(object sender, RoutedPropertyChangedEventArgs<bool> e)
@@ -262,11 +225,6 @@ namespace AlephNote.WPF.Controls
 //        void inputBox_SelectionChanged(object sender, RoutedPropertyChangedEventArgs e)
 //        {
 //        }
-
-		private TokenizedTagControl GetParent()
-		{
-			return FindUpVisualTree<TokenizedTagControl>(this);
-		}
 
 		/// <summary>
 		/// Walks up the visual tree to find object of type T, starting from initial object

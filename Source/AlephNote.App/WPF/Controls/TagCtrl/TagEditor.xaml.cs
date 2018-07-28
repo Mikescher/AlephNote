@@ -17,9 +17,9 @@ namespace AlephNote.WPF.Controls
 	/// <summary>
 	/// Interaction logic for TagEditor.xaml
 	/// </summary>
-	public partial class TagEditor : INotifyPropertyChanged
+	public partial class TagEditor : INotifyPropertyChanged, ITagEditor
 	{
-		public delegate void TagsSourceChanged(TagEditor source);
+		public delegate void TagsSourceChanged(ITagEditor source);
 
 		public static readonly DependencyProperty TagSourceProperty =
 			DependencyProperty.Register(

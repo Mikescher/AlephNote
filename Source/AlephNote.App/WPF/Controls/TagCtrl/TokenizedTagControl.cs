@@ -11,6 +11,10 @@ using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.WPF.Controls
 {
+	/// <summary>
+	/// https://github.com/niieani/TokenizedInputCs
+	/// https://stackoverflow.com/a/15314094/1761622
+	/// </summary>
 	[TemplatePart(Name = "PART_CreateTagButton", Type = typeof(Button))]
 	public class TokenizedTagControl : ListBox, INotifyPropertyChanged
 	{
@@ -24,6 +28,8 @@ namespace AlephNote.WPF.Controls
 
 		protected virtual void OnExplicitPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+		private int suppressItemsRefresh = 0;
+
 		static TokenizedTagControl()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(TokenizedTagControl), new FrameworkPropertyMetadata(typeof(TokenizedTagControl)));
@@ -34,7 +40,6 @@ namespace AlephNote.WPF.Controls
 		public TokenizedTagControl()
 		{
 			if (this.ItemsSource == null) this.ItemsSource = new ObservableCollection<TokenizedTagItem>();
-			if (this.AllTags == null) this.AllTags = new List<string>();
 			if (this.EnteredTags == null) this.EnteredTags = new ObservableCollection<string>();
 
 			this.LostKeyboardFocus += TokenizedTagControl_LostKeyboardFocus;
@@ -72,18 +77,31 @@ namespace AlephNote.WPF.Controls
 				}
 			}
 		}
+		public static readonly DependencyProperty DropDownTagsProperty = 
+			DependencyProperty.Register(
+				"DropDownTags", 
+				typeof(List<string>), 
+				typeof(TokenizedTagControl), 
+				new PropertyMetadata(new List<string>()));
 
-		public IList<string> EnteredTags
+		public List<string> DropDownTags
 		{
-			get => (IList<string>) GetValue(EnteredTagsProperty);
-			set => SetValue(EnteredTagsProperty, value);
+			get => (List<string>) GetValue(DropDownTagsProperty);
+			set => SetValue(DropDownTagsProperty, value);
 		}
+		
 		public static readonly DependencyProperty EnteredTagsProperty = 
 			DependencyProperty.Register(
 				"EnteredTags", 
 				typeof(IList<string>), 
 				typeof(TokenizedTagControl), 
 				new PropertyMetadata(null, (d,e) => ((TokenizedTagControl)d).OnEnteredTagsChanged(e)));
+
+		public IList<string> EnteredTags
+		{
+			get => (IList<string>) GetValue(EnteredTagsProperty);
+			set => SetValue(EnteredTagsProperty, value);
+		}
 
 		private void OnEnteredTagsChanged(DependencyPropertyChangedEventArgs e)
 		{
@@ -94,53 +112,37 @@ namespace AlephNote.WPF.Controls
 			if (vnew != null) vnew.CollectionChanged += OnEnteredTagsCollectionChanged;
 
 			if (ItemsSource == null) ItemsSource = new ObservableCollection<TokenizedTagItem>();
-			((IList<TokenizedTagItem>)ItemsSource).SynchronizeCollection(((IEnumerable<string>)e.NewValue) ?? new List<string>(), (s,t) => s==t.Text, s => new TokenizedTagItem(s));
+			((IList<TokenizedTagItem>)ItemsSource).SynchronizeCollection(((IEnumerable<string>)e.NewValue) ?? new List<string>(), (s,t) => s==t.Text, s => new TokenizedTagItem(s, this));
 			OnExplicitPropertyChanged("FormattedText");
 			Items.Refresh();
 		}
 
 		private void OnEnteredTagsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{			
+		{
+			if (suppressItemsRefresh>0) return;
+
 			if (ItemsSource == null) ItemsSource = new ObservableCollection<TokenizedTagItem>();
 
 			var ni = EnteredTags?.ToList() ?? new List<string>();
 
-			((IList<TokenizedTagItem>)ItemsSource).SynchronizeCollection(ni, (s,t) => s==t.Text, s => new TokenizedTagItem(s));
+			((IList<TokenizedTagItem>)ItemsSource).SynchronizeCollection(ni, (s,t) => s==t.Text, s => new TokenizedTagItem(s, this));
 			OnExplicitPropertyChanged("FormattedText");
 			Items.Refresh();
 		}
 
 		private void UpdateEnteredTags()
 		{
-			var newvalue = (ItemsSource as IEnumerable<TokenizedTagItem>)?.Where(p => !p.IsEditing)?.Select(p => p.Text)?.ToList() ?? new List<string>();
-			EnteredTags.SynchronizeCollection(newvalue);
-			OnExplicitPropertyChanged("FormattedText");
-			Items.Refresh();
-		}
-
-		private List<string> _allTags = new List<string>();
-		public static readonly DependencyProperty AllTagsProperty = 
-			DependencyProperty.Register(
-				"AllTags", 
-				typeof(List<string>), 
-				typeof(TokenizedTagControl), 
-				new PropertyMetadata(new List<string>()));
-
-		public List<string> AllTags
-		{
-			get
+			try
 			{
-				if (!object.ReferenceEquals(this.ItemsSource, null))
-				{
-					var typedTags = ((IEnumerable<TokenizedTagItem>)ItemsSource).Select(i => i.Text).ToList();
-					return _allTags.Except(typedTags).ToList();
-				}
-				return _allTags;
+				suppressItemsRefresh++;
+				
+				var newvalue = (ItemsSource as IEnumerable<TokenizedTagItem>)?.Where(p => !p.IsEditing)?.Select(p => p.Text)?.ToList() ?? new List<string>();
+				EnteredTags.SynchronizeCollection(newvalue);
+				OnExplicitPropertyChanged("FormattedText");
 			}
-			set
+			finally
 			{
-				SetValue(AllTagsProperty, value);
-				_allTags = value;
+				suppressItemsRefresh--;
 			}
 		}
 
@@ -161,11 +163,6 @@ namespace AlephNote.WPF.Controls
 				typeof(string), 
 				typeof(TokenizedTagControl), 
 				new PropertyMetadata("Click here to enter tags..."));
-
-		private void UpdateAllTagsProperty()
-		{
-			SetValue(AllTagsProperty, AllTags);
-		}
 
 		public static readonly DependencyProperty IsSelectableProperty = 
 			DependencyProperty.Register(
@@ -219,9 +216,8 @@ namespace AlephNote.WPF.Controls
 
 		internal TokenizedTagItem InitializeNewTag(bool suppressEditing = false)
 		{
-			var newItem = new TokenizedTagItem() { IsEditing = !suppressEditing };
+			var newItem = new TokenizedTagItem("", this) { IsEditing = !suppressEditing };
 			AddTag(newItem);
-			UpdateAllTagsProperty();
 			this.IsEditing = !suppressEditing;
 			if (suppressEditing) UpdateEnteredTags();
 			return newItem;
@@ -300,7 +296,6 @@ namespace AlephNote.WPF.Controls
 		/// </summary>
 		internal void RaiseTagDoubleClick(TokenizedTagItem tag)
 		{
-			UpdateAllTagsProperty();
 			tag.IsEditing = true;
 		}
 	}

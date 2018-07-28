@@ -43,7 +43,7 @@
 				<Setter Property="FocusVisualStyle" Value="{x:Null}" />
 				<Setter Property="VerticalAlignment" Value="Top" />
 				<Setter Property="Margin" Value="0" />
-				<Setter Property="MinHeight" Value="20" />
+				<Setter Property="MinHeight" Value="24" />
 				<!--<Setter Property="VerticalContentAlignment" Value="Center" />-->
 				<Setter Property="SnapsToDevicePixels" Value="True" />
 				<Setter Property="Template">
@@ -124,6 +124,7 @@
 							<Setter Property="FocusVisualStyle" Value="{x:Null}" />
 							<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 							<Setter Property="VerticalContentAlignment" Value="Stretch"/>
+							<Setter Property="Padding" Value="2"/>
 							<!--<Setter Property="VerticalAlignment" Value="Top"/>-->
 
 							<!--<Setter Property="DockPanel.Dock" Value="Left"/>-->
@@ -223,7 +224,7 @@
 									<tkInput:AutoCompleteBox x:Name="PART_InputBox"
 													 Margin="0" Padding="0" VerticalAlignment="Center"
 													 Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
-													 ItemsSource="{Binding AllTags, RelativeSource={RelativeSource AncestorType={x:Type self:TokenizedTagControl}}}"
+													 ItemsSource="{Binding DropDownTags, RelativeSource={RelativeSource AncestorType={x:Type self:TokenizedTagControl}}}"
 													 BorderBrush="Transparent"
 													 BorderThickness="0"
 													 IsTextCompletionEnabled="False"
@@ -241,7 +242,10 @@
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid x:Name="MainGrid" d:DataContext="{d:DesignInstance self:TagEditor2}">
-		<self:TokenizedTagControl EnteredTags="{Binding TagSource, Mode=TwoWay}" />
+		<self:TokenizedTagControl x:Name="TagCtrl"
+			                      EnteredTags="{Binding TagSource, Mode=TwoWay}" 
+		                          TagRemoved="TokenizedTagControl_OnChange" 
+		                          TagApplied="TokenizedTagControl_OnChange" />
 	</Grid>
 </UserControl>
 

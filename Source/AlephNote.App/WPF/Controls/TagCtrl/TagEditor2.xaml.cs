@@ -1,21 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Documents;
 using AlephNote.Common.Repository;
 using AlephNote.Common.Settings;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.WPF.Controls
 {
-	public partial class TagEditor2
+	public partial class TagEditor2 : ITagEditor
 	{
-		
+		public delegate void TagsSourceChanged(ITagEditor source);
+
 		public static readonly DependencyProperty TagSourceProperty =
 			DependencyProperty.Register(
 				"TagSource",
 				typeof(IList<string>),
 				typeof(TagEditor2),
-				new FrameworkPropertyMetadata(TagsChanged));
+				new FrameworkPropertyMetadata((d,e) => ((TagEditor2)d).TagsChanged(e)));
 
 		public IList<string> TagSource
 		{
@@ -28,7 +29,7 @@ namespace AlephNote.WPF.Controls
 				"Repository",
 				typeof(NoteRepository),
 				typeof(TagEditor2),
-				new FrameworkPropertyMetadata(null));
+				new FrameworkPropertyMetadata((d,e) => ((TagEditor2)d).RepositoryChanged(e)));
 
 		public NoteRepository Repository
 		{
@@ -62,15 +63,7 @@ namespace AlephNote.WPF.Controls
 			set { SetValue(ReadonlyProperty, value); }
 		}
 		
-		public string FormattedText
-		{
-			get
-			{
-				return ((TagSource != null) ? string.Join(" ", TagSource.Select(t => $"[{t}]")) : string.Empty);
-			}
-		}
-
-		public event TagEditor.TagsSourceChanged Changed;
+		public event TagsSourceChanged Changed;
 
 		public TagEditor2()
 		{
@@ -79,9 +72,37 @@ namespace AlephNote.WPF.Controls
 			MainGrid.DataContext = this;
 		}
 
-		private static void TagsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		private void TagsChanged(DependencyPropertyChangedEventArgs e)
 		{
-			//
+			UpdateHintTags();
+		}
+
+		private void RepositoryChanged(DependencyPropertyChangedEventArgs e)
+		{
+			UpdateHintTags();
+		}
+
+		private void TokenizedTagControl_OnChange(object sender, TokenizedTagEventArgs e)
+		{
+			Changed?.Invoke(this);
+
+			UpdateHintTags();
+		}
+		
+
+		private void UpdateHintTags()
+		{
+			if (Repository == null) return;
+
+			var hints = Repository
+				.EnumerateAllTags()
+				.Concat(new[] { AppSettings.TAG_MARKDOWN, AppSettings.TAG_LIST })
+				.OrderBy(p => p)
+				.Distinct()
+				.Except(TagCtrl.EnteredTags)
+				.ToList();
+
+			TagCtrl.DropDownTags.SynchronizeCollection(hints);
 		}
 	}
 }

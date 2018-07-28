@@ -442,7 +442,7 @@ namespace AlephNote.WPF.Windows
 			FocusScintilla();
 		}
 
-		private void TagEditor_OnChanged(TagEditor source)
+		private void TagEditor_OnChanged(ITagEditor source)
 		{
 			ForceNewHighlighting(Settings);
 			UpdateMargins(Settings);
