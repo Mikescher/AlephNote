@@ -13,19 +13,26 @@ namespace AlephNote.WPF.Util
 {
 	public static class WPFHelper
 	{
-		public static DependencyObject GetChildOfType<T>(this DependencyObject depObj)
+		public static T GetChildOfType<T>(this DependencyObject depObj) where T : DependencyObject
 		{
 			if (depObj == null) return null;
 
 			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
 			{
 				var child = VisualTreeHelper.GetChild(depObj, i);
-				if (child is T) return child;
+				if (child is T c) return c;
 
 				var result = GetChildOfType<T>(child);
 				if (result != null) return result;
 			}
 			return null;
+		}
+		
+		public static T GetParentOfType<T>(DependencyObject initial) where T : DependencyObject
+		{
+			DependencyObject current = initial;
+			while (current != null && current.GetType() != typeof(T)) current = VisualTreeHelper.GetParent(current);
+			return current as T;
 		}
 
 		public static TreeViewItem VisualTVUpwardSearch(DependencyObject source)

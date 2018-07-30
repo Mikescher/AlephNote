@@ -28,62 +28,13 @@ namespace AlephNote.WPF.Controls
 
 		protected virtual void OnExplicitPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-		private int suppressItemsRefresh = 0;
-
-		static TokenizedTagControl()
-		{
-			DefaultStyleKeyProperty.OverrideMetadata(typeof(TokenizedTagControl), new FrameworkPropertyMetadata(typeof(TokenizedTagControl)));
-		}
-
-		//private TextBlock _placeholderTextBlock;
-
-		public TokenizedTagControl()
-		{
-			if (this.ItemsSource == null) this.ItemsSource = new ObservableCollection<TokenizedTagItem>();
-			if (this.EnteredTags == null) this.EnteredTags = new ObservableCollection<string>();
-
-			this.LostKeyboardFocus += TokenizedTagControl_LostKeyboardFocus;
-		}
-
-		void TokenizedTagControl_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
-		{
-			if (!IsSelectable)
-			{
-				this.SelectedItem = null;
-				return;
-			}
-
-			TokenizedTagItem itemToSelect = null;
-			if (this.Items.Count > 0 && !object.ReferenceEquals((TokenizedTagItem)this.Items.CurrentItem, null))
-			{
-				if (this.SelectedItem != null && ((TokenizedTagItem) this.SelectedItem).Text != null && !((TokenizedTagItem) this.SelectedItem).IsEditing)
-				{
-					itemToSelect = (TokenizedTagItem) this.SelectedItem;
-				}
-				else if (!String.IsNullOrWhiteSpace(((TokenizedTagItem)this.Items.CurrentItem).Text))
-				{
-					itemToSelect = (TokenizedTagItem) this.Items.CurrentItem;
-				}
-			}
-			
-			// select the previous item
-			if (!object.ReferenceEquals(itemToSelect, null))
-			{
-				e.Handled = true;
-				RaiseTagApplied(itemToSelect);
-				if (this.IsSelectable)
-				{
-					this.SelectedItem = itemToSelect;
-				}
-			}
-		}
 		public static readonly DependencyProperty DropDownTagsProperty = 
 			DependencyProperty.Register(
 				"DropDownTags", 
 				typeof(List<string>), 
 				typeof(TokenizedTagControl), 
 				new PropertyMetadata(new List<string>()));
-
+		
 		public List<string> DropDownTags
 		{
 			get => (List<string>) GetValue(DropDownTagsProperty);
@@ -96,20 +47,115 @@ namespace AlephNote.WPF.Controls
 				typeof(IList<string>), 
 				typeof(TokenizedTagControl), 
 				new PropertyMetadata(null, (d,e) => ((TokenizedTagControl)d).OnEnteredTagsChanged(e)));
-
+		
 		public IList<string> EnteredTags
 		{
 			get => (IList<string>) GetValue(EnteredTagsProperty);
 			set => SetValue(EnteredTagsProperty, value);
 		}
 
+		public static readonly DependencyProperty PlaceholderProperty = 
+			DependencyProperty.Register(
+				"Placeholder", 
+				typeof(string), 
+				typeof(TokenizedTagControl), 
+				new PropertyMetadata("Click here to enter tags..."));
+		
+		public string Placeholder
+		{
+			get => (string)GetValue(PlaceholderProperty); 
+			set => SetValue(PlaceholderProperty, value);
+		}
+		
+		public static readonly DependencyProperty IsSelectableProperty = 
+			DependencyProperty.Register(
+				"IsSelectable", 
+				typeof(bool), 
+				typeof(TokenizedTagControl), 
+				new PropertyMetadata(false));
+		
+		public bool IsSelectable 
+		{ 
+			get => (bool)GetValue(IsSelectableProperty);
+			set => SetValue(IsSelectableProperty, value);
+		}
+		
+		private static readonly DependencyPropertyKey IsEditingPropertyKey = 
+			DependencyProperty.RegisterReadOnly(
+				"IsEditing", 
+				typeof(bool), 
+				typeof(TokenizedTagControl), 
+				new FrameworkPropertyMetadata(false));
+
+		public static readonly DependencyProperty IsEditingProperty = IsEditingPropertyKey.DependencyProperty;
+		
+		public bool IsEditing 
+		{
+			get => (bool)GetValue(IsEditingProperty);
+			internal set => SetValue(IsEditingPropertyKey, value);
+		}
+
+		public static readonly DependencyProperty IsReadonlyProperty = 
+			DependencyProperty.Register(
+				"IsReadonly", 
+				typeof(bool), 
+				typeof(TokenizedTagControl), 
+				new PropertyMetadata(false));
+		
+		public bool IsReadonly
+		{
+			get => (bool)GetValue(IsReadonlyProperty); 
+			set => SetValue(IsReadonlyProperty, value);
+		}
+
+		private int suppressItemsRefresh = 0;
+
+		static TokenizedTagControl()
+		{
+			DefaultStyleKeyProperty.OverrideMetadata(typeof(TokenizedTagControl), new FrameworkPropertyMetadata(typeof(TokenizedTagControl)));
+		}
+
+		public TokenizedTagControl()
+		{
+			if (ItemsSource == null) ItemsSource = new ObservableCollection<TokenizedTagItem>();
+			if (EnteredTags == null) EnteredTags = new ObservableCollection<string>();
+
+			LostKeyboardFocus += TokenizedTagControl_LostKeyboardFocus;
+		}
+
+		void TokenizedTagControl_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+		{
+			if (!IsSelectable)
+			{
+				SelectedItem = null;
+				return;
+			}
+
+			TokenizedTagItem itemToSelect = null;
+			if (Items.Count > 0 && !object.ReferenceEquals((TokenizedTagItem)Items.CurrentItem, null))
+			{
+				if (SelectedItem != null && ((TokenizedTagItem) SelectedItem).Text != null && !((TokenizedTagItem) SelectedItem).IsEditing)
+				{
+					itemToSelect = (TokenizedTagItem) SelectedItem;
+				}
+				else if (!String.IsNullOrWhiteSpace(((TokenizedTagItem)Items.CurrentItem).Text))
+				{
+					itemToSelect = (TokenizedTagItem) Items.CurrentItem;
+				}
+			}
+			
+			if (!(itemToSelect is null))
+			{
+				e.Handled = true;
+				RaiseTagApplied(itemToSelect);
+				if (IsSelectable) SelectedItem = itemToSelect;
+			}
+		}
+
 		private void OnEnteredTagsChanged(DependencyPropertyChangedEventArgs e)
 		{
-			var vold = e.OldValue as INotifyCollectionChanged;
-			var vnew = e.NewValue as INotifyCollectionChanged;
-
-			if (vold != null) vold.CollectionChanged -= OnEnteredTagsCollectionChanged;
-			if (vnew != null) vnew.CollectionChanged += OnEnteredTagsCollectionChanged;
+			if (e.OldValue is INotifyCollectionChanged vold) vold.CollectionChanged -= OnEnteredTagsCollectionChanged;
+			if (e.NewValue is INotifyCollectionChanged vnew) vnew.CollectionChanged += OnEnteredTagsCollectionChanged;
 
 			if (ItemsSource == null) ItemsSource = new ObservableCollection<TokenizedTagItem>();
 			((IList<TokenizedTagItem>)ItemsSource).SynchronizeCollection(((IEnumerable<string>)e.NewValue) ?? new List<string>(), (s,t) => s==t.Text, s => new TokenizedTagItem(s, this));
@@ -146,55 +192,17 @@ namespace AlephNote.WPF.Controls
 			}
 		}
 
-		public string Placeholder
-		{
-			get 
-			{ 
-				return (string)GetValue(PlaceholderProperty); 
-			}
-			set
-			{
-				SetValue(PlaceholderProperty, value);
-			}
-		}
-		public static readonly DependencyProperty PlaceholderProperty = 
-			DependencyProperty.Register(
-				"Placeholder", 
-				typeof(string), 
-				typeof(TokenizedTagControl), 
-				new PropertyMetadata("Click here to enter tags..."));
-
-		public static readonly DependencyProperty IsSelectableProperty = 
-			DependencyProperty.Register(
-				"IsSelectable", 
-				typeof(bool), 
-				typeof(TokenizedTagControl), 
-				new PropertyMetadata(false));
-
-		public bool IsSelectable { get { return (bool)GetValue(IsSelectableProperty); } set { SetValue(IsSelectableProperty, value); } }
-
-		public bool IsEditing { get { return (bool)GetValue(IsEditingProperty); } internal set { SetValue(IsEditingPropertyKey, value); } }
-
-		private static readonly DependencyPropertyKey IsEditingPropertyKey = 
-			DependencyProperty.RegisterReadOnly(
-				"IsEditing", 
-				typeof(bool), 
-				typeof(TokenizedTagControl), 
-				new FrameworkPropertyMetadata(false));
-
-		public static readonly DependencyProperty IsEditingProperty = IsEditingPropertyKey.DependencyProperty;
-
 		public override void OnApplyTemplate()
 		{
-			this.OnApplyTemplate();
+			OnApplyTemplate(null);
 		}
 
 		public void OnApplyTemplate(TokenizedTagItem appliedTag = null)
 		{
 			if (GetTemplateChild("PART_CreateTagButton") is Button createBtn)
 			{
-				createBtn.Click -= createBtn_Click;
-				createBtn.Click += createBtn_Click;
+				createBtn.Click -= CreateBtn_Click;
+				createBtn.Click += CreateBtn_Click;
 			}
 
 			base.OnApplyTemplate();
@@ -205,43 +213,38 @@ namespace AlephNote.WPF.Controls
 			}
 		}
 
-		/// <summary>
-		/// Executed when create new tag button is clicked.
-		/// Adds an TokenizedTagItem to the collection and puts it in edit mode.
-		/// </summary>
-		void createBtn_Click(object sender, RoutedEventArgs e)
+		private void CreateBtn_Click(object sender, RoutedEventArgs e)
 		{
+			if (IsReadonly) return;
 			this.SelectedItem = InitializeNewTag();
 		}
 
-		internal TokenizedTagItem InitializeNewTag(bool suppressEditing = false)
+		public TokenizedTagItem InitializeNewTag(bool suppressEditing = false)
 		{
-			var newItem = new TokenizedTagItem("", this) { IsEditing = !suppressEditing };
+			var newItem = new TokenizedTagItem(string.Empty, this) { IsEditing = !suppressEditing };
 			AddTag(newItem);
-			this.IsEditing = !suppressEditing;
+			IsEditing = !suppressEditing;
 			if (suppressEditing) UpdateEnteredTags();
 			return newItem;
 		}
 
-		/// <summary>
-		/// Adds a tag to the collection
-		/// </summary>
-		internal void AddTag(TokenizedTagItem tag)
+		public void AddTag(TokenizedTagItem tag)
 		{
-			TokenizedTagItem itemToSelect = null;
-			if (this.SelectedItem == null && this.Items.Count > 0)
-			{
-				 itemToSelect = (TokenizedTagItem)this.SelectedItem;
-			}
-			((IList)this.ItemsSource).Add(tag); // assume IList for convenience
-			this.Items.Refresh();
+			if (IsReadonly) return;
 
-			// select the previous item
-			if (!object.ReferenceEquals(itemToSelect, null))
+			TokenizedTagItem itemToSelect = null;
+			if (SelectedItem == null && Items.Count > 0)
+			{
+				 itemToSelect = (TokenizedTagItem)SelectedItem;
+			}
+
+			((IList)ItemsSource).Add(tag);
+			Items.Refresh();
+
+			if (!(itemToSelect is null))
 			{
 				RaiseTagClick(itemToSelect);
-				if (this.IsSelectable)
-					this.SelectedItem = itemToSelect;
+				if (IsSelectable) SelectedItem = itemToSelect;
 			}
 
 			TagAdded?.Invoke(this, new TokenizedTagEventArgs(tag));
@@ -249,30 +252,24 @@ namespace AlephNote.WPF.Controls
 			UpdateEnteredTags();
 		}
 
-		/// <summary>
-		/// Removes a tag from the collection
-		/// </summary>
-		internal void RemoveTag(TokenizedTagItem tag, bool cancelEvent = false)
+		public void RemoveTag(TokenizedTagItem tag, bool cancelEvent = false)
 		{
-			if (this.ItemsSource != null)
+			if (IsReadonly) return;
+
+			if (ItemsSource != null)
 			{
-				((IList)this.ItemsSource).Remove(tag); // assume IList for convenience
-				this.Items.Refresh();
+				((IList)ItemsSource).Remove(tag);
+				Items.Refresh();
 
-				if (TagRemoved != null && !cancelEvent)
-				{
-					TagRemoved(this, new TokenizedTagEventArgs(tag));
-				}
+				if (TagRemoved != null && !cancelEvent) TagRemoved(this, new TokenizedTagEventArgs(tag));
 
-				// select the last item
-				if (this.SelectedItem == null && this.Items.Count > 0)
+				if (SelectedItem == null && Items.Count > 0)
 				{
 					TokenizedTagItem itemToSelect = Items.GetItemAt(Items.Count - 1) as TokenizedTagItem;
-					if (!object.ReferenceEquals(itemToSelect, null))
+					if (!(itemToSelect is null))
 					{
 						RaiseTagClick(itemToSelect);
-						if (this.IsSelectable)
-							this.SelectedItem = itemToSelect;
+						if (IsSelectable) SelectedItem = itemToSelect;
 					}
 				}
 			}
@@ -280,21 +277,18 @@ namespace AlephNote.WPF.Controls
 			UpdateEnteredTags();
 		}
 
-		internal void RaiseTagClick(TokenizedTagItem tag)
+		public void RaiseTagClick(TokenizedTagItem tag)
 		{
 			TagClick?.Invoke(this, new TokenizedTagEventArgs(tag));
 		}
 
-		internal void RaiseTagApplied(TokenizedTagItem tag)
+		public void RaiseTagApplied(TokenizedTagItem tag)
 		{
 			TagApplied?.Invoke(this, new TokenizedTagEventArgs(tag));
-
 			UpdateEnteredTags();
 		}
-		/// <summary>
-		/// Raises the TagDoubleClick event
-		/// </summary>
-		internal void RaiseTagDoubleClick(TokenizedTagItem tag)
+
+		public void RaiseTagDoubleClick(TokenizedTagItem tag)
 		{
 			tag.IsEditing = true;
 		}

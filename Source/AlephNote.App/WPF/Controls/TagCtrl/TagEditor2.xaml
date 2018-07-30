@@ -4,8 +4,8 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:self="clr-namespace:AlephNote.WPF.Controls"
-			 xmlns:system="clr-namespace:System;assembly=mscorlib"
 			 xmlns:converter="clr-namespace:AlephNote.WPF.Converter"
+			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 			 mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary xmlns:tkInput="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit">
@@ -26,11 +26,10 @@
 						   x:Name="PART_Placeholder" 
 						   Padding="3,0,0,0"
 						   Content="{Binding Path=Placeholder, RelativeSource={RelativeSource AncestorType={x:Type self:TokenizedTagControl}} }" 
-						   FontSize="12" Foreground="LightGray" />
+						   FontSize="12" Foreground="{ext:ThemeBinding 'window.tageditor.placeholder'}" />
 				</StackPanel>
 			</Grid>
 
-			<!-- TagControl default style -->
 			<Style TargetType="{x:Type self:TokenizedTagControl}">
 				<Style.Resources>
 					<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="White"/>
@@ -44,7 +43,6 @@
 				<Setter Property="VerticalAlignment" Value="Top" />
 				<Setter Property="Margin" Value="0" />
 				<Setter Property="MinHeight" Value="24" />
-				<!--<Setter Property="VerticalContentAlignment" Value="Center" />-->
 				<Setter Property="SnapsToDevicePixels" Value="True" />
 				<Setter Property="Template">
 					<Setter.Value>
@@ -62,7 +60,6 @@
 											<Button.Template>
 												<ControlTemplate TargetType="Button">
 													<ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-													<!--Width="{Binding ElementName=btnB, Path=ActualWidth}" Height="{Binding ElementName=btnB, Path=ActualHeight}" -->
 													<ControlTemplate.Triggers>
 														<Trigger Property="IsMouseOver" Value="True">
 															<Setter Property="Cursor" Value="IBeam" />
@@ -75,44 +72,10 @@
 									</Grid>
 								</Border>
 							</Grid>
-							<!--<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-						</Grid.ColumnDefinitions>-->
-							<!--<DockPanel VerticalAlignment="Top" LastChildFill="False">
-						~1~LastChildFill="True" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"@1@
-						~1~ LastChildFill="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"@1@
-						
-						~1~<Path Margin="2" Fill="{StaticResource IconBrush}" Height="19" Stretch="Uniform" Data="M 50.535714,0.44196425 0.00446427,34.754464 l 0,106.906246 100.71874573,0 0,-107.124996 L 50.535714,0.44196425 z m 0.1875,21.21874975 c 6.311826,0 11.40625,5.094424 11.40625,11.40625 0,6.311826 -5.094424,11.4375 -11.40625,11.4375 -6.311826,0 -11.4375,-5.125674 -11.4375,-11.4375 0,-6.311826 5.125674,-11.40625 11.4375,-11.40625 z" />@1@
-						
-						~1~Grid.Column="0"@1@
-						~1~<ItemsPresenter Grid.Column="1"  />@1@
-						
-						<ItemsPresenter HorizontalAlignment="Left" />
-						~1~<Button DockPanel.Dock="Bottom" Margin="5,0,0,0" Content="Click to add..." x:Name="PART_CreateTagButton">@1@
-						
-						<Button Margin="5,0,0,0" Content="Add..." x:Name="PART_CreateTagButton">
-								~1~Grid.Column="2" @1@
-							<Button.Template>
-								<ControlTemplate TargetType="Button">
-									<ContentPresenter TextElement.Foreground="#FF555555" VerticalAlignment="Center" />
-									<ControlTemplate.Triggers>
-										<Trigger Property="IsMouseOver" Value="True">
-											<Setter Property="Cursor" Value="Hand" />
-										</Trigger>
-									</ControlTemplate.Triggers>
-								</ControlTemplate>
-							</Button.Template>
-						</Button>
-					</DockPanel>-->
-							<!--</Grid>-->
 							<ControlTemplate.Triggers>
 								<Trigger Property="IsEditing" Value="True">
 									<Setter TargetName="PART_CreateTagButton" Property="Visibility" Value="Collapsed" />
 									<Setter TargetName="PART_ControlBorder" Property="BorderBrush" Value="Black" />
-									<!--{StaticResource HighlightBrush}-->
 								</Trigger>
 							</ControlTemplate.Triggers>
 						</ControlTemplate>
@@ -125,49 +88,33 @@
 							<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 							<Setter Property="VerticalContentAlignment" Value="Stretch"/>
 							<Setter Property="Padding" Value="2"/>
-							<!--<Setter Property="VerticalAlignment" Value="Top"/>-->
-
-							<!--<Setter Property="DockPanel.Dock" Value="Left"/>-->
 						</Style>
 					</Setter.Value>
 				</Setter>
 				<Setter Property="ItemsPanel" >
 					<Setter.Value>
 						<ItemsPanelTemplate>
-							<!--<StackPanel Orientation="Horizontal" />-->
-							<!--                    <Grid>-->
 							<WrapPanel/>
-							<!--                    </Grid>-->
-							<!--VerticalAlignment="Stretch" HorizontalAlignment="Stretch"-->
-							<!--Width="200" Height="130" LastChildFill="True" VerticalAlignment="Top"-->
-							<!--<DockPanel LastChildFill="True" VerticalAlignment="Top" />-->
-							<!--<StackPanel Orientation="Vertical" />-->
 						</ItemsPanelTemplate>
 					</Setter.Value>
 				</Setter>
 			</Style>
 
-			<!-- EvernoteTagItem default style -->
 			<Style TargetType="{x:Type self:TokenizedTagItem}">
 				<Setter Property="FocusVisualStyle" Value="{x:Null}" />
-				<!--<Setter Property="MinWidth" Value="60" />-->
-				<!--<Setter Property="Margin" Value="0,0,2,0" />
-		<Setter Property="Padding" Value="5,2,0,2" />-->
 				<Setter Property="Margin" Value="0" />
 				<Setter Property="Padding" Value="0" />
-				<!--<Setter Property="HorizontalAlignment" Value="Stretch" />
-		<Setter Property="VerticalAlignment" Value="Stretch" />
-		<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-		<Setter Property="VerticalContentAlignment" Value="Stretch" />-->
+				<Setter Property="VerticalAlignment" Value="Stretch" />
+				<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+				<Setter Property="VerticalContentAlignment" Value="Stretch" />
 				<Setter Property="Template">
 					<Setter.Value>
 						<ControlTemplate TargetType="{x:Type self:TokenizedTagItem}">
 							<Button x:Name="PART_TagButton" Content="{TemplateBinding Text}" Margin="0" Padding="0">
-								<!-- Margin="{TemplateBinding Margin}" Padding="{TemplateBinding Padding}"-->
 								<Button.Template>
 									<ControlTemplate TargetType="Button">
 										<Border x:Name="PART_TagBorder" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="Gray" BorderThickness="1" Margin="{TemplateBinding Margin}" Padding="3,0,0,0" Background="#01FFFFFF" CornerRadius="2">
-											
+
 											<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
 												<Grid.ColumnDefinitions>
 													<ColumnDefinition Width="*" />
@@ -178,7 +125,6 @@
 													<Button.Template>
 														<ControlTemplate>
 															<Grid Height="10" Width="10" Background="#01FFFFFF">
-																<!--Height="10" Width="10" Background="#01FFFFFF" -->
 																<Path Stretch="Uniform" ClipToBounds="True" Stroke="{StaticResource HighlightBrush}" StrokeThickness="2" Data="M 85.364473,6.9977109 6.0640998,86.29808 6.5333398,85.76586 M 6.9926698,7.4977169 86.293043,86.79809 85.760823,86.32885"  />
 															</Grid>
 														</ControlTemplate>
@@ -195,12 +141,6 @@
 									</ControlTemplate>
 								</Button.Template>
 							</Button>
-							<!--<ControlTemplate.Triggers>
-						<Trigger Property="IsMouseOver" Value="True">
-							<Setter Property="Foreground" Value="{StaticResource HighlightBrush}" />
-							<Setter TargetName="PART_DeleteTagButton" Property="Visibility" Value="Visible" />
-						</Trigger>
-					</ControlTemplate.Triggers>-->
 						</ControlTemplate>
 					</Setter.Value>
 				</Setter>
@@ -209,18 +149,6 @@
 						<Setter Property="Template">
 							<Setter.Value>
 								<ControlTemplate TargetType="{x:Type self:TokenizedTagItem}">
-									<!--<ComboBox
-								x:Name="PART_InputBox"
-								Margin="0"
-								IsEditable="True"
-								ShouldPreserveUserEnteredPrefix="True"
-								IsTextSearchCaseSensitive="False"
-								StaysOpenOnEdit="False"
-								IsEnabled="True"
-								ItemsSource="{Binding AllTags, RelativeSource={RelativeSource AncestorType={x:Type local:TokenizedTagControl}}}"
-								Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-								/>-->
-									<!-- DisplayMemberPath="Name"-->
 									<tkInput:AutoCompleteBox x:Name="PART_InputBox"
 													 Margin="0" Padding="0" VerticalAlignment="Center"
 													 Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
@@ -230,8 +158,6 @@
 													 IsTextCompletionEnabled="False"
 													 FilterMode="ContainsOrdinal"
 													 />
-									<!--                            ShouldPreserveUserEnteredPrefix="True"-->
-									<!--                    IsTextSearchCaseSensitive="True"-->
 								</ControlTemplate>
 							</Setter.Value>
 						</Setter>
@@ -243,7 +169,8 @@
 	</UserControl.Resources>
 	<Grid x:Name="MainGrid" d:DataContext="{d:DesignInstance self:TagEditor2}">
 		<self:TokenizedTagControl x:Name="TagCtrl"
-			                      EnteredTags="{Binding TagSource, Mode=TwoWay}" 
+		                          IsReadonly="{Binding Readonly}"
+		                          EnteredTags="{Binding TagSource, Mode=TwoWay}" 
 		                          TagRemoved="TokenizedTagControl_OnChange" 
 		                          TagApplied="TokenizedTagControl_OnChange" />
 	</Grid>

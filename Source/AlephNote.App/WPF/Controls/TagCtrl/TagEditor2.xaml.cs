@@ -88,11 +88,14 @@ namespace AlephNote.WPF.Controls
 
 			UpdateHintTags();
 		}
-		
 
 		private void UpdateHintTags()
 		{
 			if (Repository == null) return;
+
+			var enteredTags = TagCtrl?.EnteredTags;
+
+			if (enteredTags == null) return;
 
 			var hints = Repository
 				.EnumerateAllTags()
@@ -101,6 +104,8 @@ namespace AlephNote.WPF.Controls
 				.Distinct()
 				.Except(TagCtrl.EnteredTags)
 				.ToList();
+
+			if (TagCtrl?.DropDownTags == null) return;
 
 			TagCtrl.DropDownTags.SynchronizeCollection(hints);
 		}

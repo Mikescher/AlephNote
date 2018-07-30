@@ -160,7 +160,7 @@ Repository: https://github.com/Mikescher/AlephNote
 				<property name="window.tageditor.popup:bordercolor"           value="@LightGray"/>
 				<property name="window.tageditor.popup:foreground"            value="$window.foreground"/>
 
-				<property name="window.tageditor.placeholder"                 value="#888888"/>
+				<property name="window.tageditor.placeholder"                 value="@LightGray"/>
 				<property name="window.tageditor.foreground"                  value="$window.foreground"/>
 
 				<property name="window.tageditor.tag:background"              value="@SeaShell"/>
