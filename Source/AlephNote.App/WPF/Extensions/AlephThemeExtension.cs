@@ -30,5 +30,10 @@ namespace AlephNote.WPF.Extensions
 		{
 			return new System.Windows.Thickness(tref.Left, tref.Top, tref.Right, tref.Bottom);
 		}
+
+		public static System.Windows.CornerRadius ToCornerRad(this CornerRadiusRef tref)
+		{
+			return new System.Windows.CornerRadius(tref.Left, tref.Top, tref.Right, tref.Bottom);
+		}
 	}
 }

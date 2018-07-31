@@ -4,15 +4,13 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:self="clr-namespace:AlephNote.WPF.Controls"
-			 xmlns:converter="clr-namespace:AlephNote.WPF.Converter"
+			 xmlns:conv="clr-namespace:AlephNote.WPF.Converter"
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 			 mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary xmlns:tkInput="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit">
 
-			<SolidColorBrush x:Key="HighlightBrush" Color="DodgerBlue" />
-
-			<converter:InvertedBoolToVisibility x:Key="InvertedBoolToVisibility"/>
+			<SolidColorBrush x:Key="HighlightBrush" Color="{ext:ThemeBinding 'window.tageditor.tag:highlight', Convert='ToColor'}" />
 
 			<Grid Background="Transparent" x:Key="PlaceholderPanel" x:Shared="false" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 				<Grid.ColumnDefinitions>
@@ -22,7 +20,7 @@
 					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
 				<StackPanel Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center">
-					<Label Visibility="{Binding Path=HasItems, Converter={StaticResource InvertedBoolToVisibility}, RelativeSource={RelativeSource AncestorType={x:Type self:TokenizedTagControl}} }" 
+					<Label Visibility="{Binding Path=HasItems, Converter={conv:InvertedBoolToVisibility}, RelativeSource={RelativeSource AncestorType={x:Type self:TokenizedTagControl}}}" 
 						   x:Name="PART_Placeholder" 
 						   Padding="3,0,0,0"
 						   Content="{Binding Path=Placeholder, RelativeSource={RelativeSource AncestorType={x:Type self:TokenizedTagControl}} }" 
@@ -48,7 +46,11 @@
 					<Setter.Value>
 						<ControlTemplate TargetType="{x:Type self:TokenizedTagControl}">
 							<Grid>
-								<Border x:Name="PART_ControlBorder" Margin="0,1" Padding="0" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+								<Border x:Name="PART_ControlBorder" 
+										Margin="0,1" Padding="0" 
+										BorderBrush="{TemplateBinding BorderBrush}" 
+										BorderThickness="{TemplateBinding BorderThickness}" 
+										Background="{TemplateBinding Background}">
 									<Grid>
 										<Grid.ColumnDefinitions>
 											<ColumnDefinition Width="*" />
@@ -56,7 +58,10 @@
 										<Grid.RowDefinitions>
 											<RowDefinition Height="*" />
 										</Grid.RowDefinitions>
-										<Button Content="{StaticResource PlaceholderPanel}" Grid.Row="0" Grid.Column="0" x:Name="PART_CreateTagButton" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+										<Button Content="{StaticResource PlaceholderPanel}" Grid.Row="0" Grid.Column="0" x:Name="PART_CreateTagButton" 
+												HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
 											<Button.Template>
 												<ControlTemplate TargetType="Button">
 													<ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
@@ -67,7 +72,9 @@
 													</ControlTemplate.Triggers>
 												</ControlTemplate>
 											</Button.Template>
+
 										</Button>
+
 										<ItemsPresenter Grid.Row="0" Grid.Column="0"/>
 									</Grid>
 								</Border>
@@ -114,21 +121,39 @@
 					<Setter.Value>
 						<ControlTemplate TargetType="{x:Type self:TokenizedTagItem}">
 							<Button x:Name="PART_TagButton" Content="{TemplateBinding Text}" Margin="0" Padding="0">
+								<Button.Style>
+									<Style TargetType="Button">
+										<Setter Property="Foreground" Value="{ext:ThemeBinding 'window.tageditor.tag:foreground', Proxy=True}" />
+									</Style>
+								</Button.Style>
 								<Button.Template>
 									<ControlTemplate TargetType="Button">
-										<Border x:Name="PART_TagBorder" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="Gray" BorderThickness="1" Margin="{TemplateBinding Margin}" Padding="3,0,0,0" Background="#01FFFFFF" CornerRadius="2">
+										<Border x:Name="PART_TagBorder" 
+												VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+												BorderBrush="{ext:ThemeSlaveBinding {Binding ., Converter={conv:TagToBorderBrush}}}" 
+												BorderThickness="1" 
+												Margin="{TemplateBinding Margin}" 
+												Padding="3,0,0,0" Background="{ext:ThemeBinding 'window.tageditor.tag:background'}" 
+												CornerRadius="{ext:ThemeBinding 'window.tageditor.tag:borderradius'}">
 
 											<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
 												<Grid.ColumnDefinitions>
 													<ColumnDefinition Width="*" />
 													<ColumnDefinition Width="Auto" />
 												</Grid.ColumnDefinitions>
-												<ContentPresenter Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0" />
+
+												<ContentPresenter Grid.Column="0" 
+																  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0" />
+
 												<Button x:Name="PART_DeleteTagButton" Grid.Column="1"  Margin="3,0" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="Hidden"  >
 													<Button.Template>
 														<ControlTemplate>
 															<Grid Height="10" Width="10" Background="#01FFFFFF">
-																<Path Stretch="Uniform" ClipToBounds="True" Stroke="{StaticResource HighlightBrush}" StrokeThickness="2" Data="M 85.364473,6.9977109 6.0640998,86.29808 6.5333398,85.76586 M 6.9926698,7.4977169 86.293043,86.79809 85.760823,86.32885"  />
+																<Path Stretch="Uniform" 
+																	  ClipToBounds="True" 
+																	  Stroke="{StaticResource HighlightBrush}" 
+																	  StrokeThickness="2" 
+																	  Data="M 85.364473,6.9977109 6.0640998,86.29808 6.5333398,85.76586 M 6.9926698,7.4977169 86.293043,86.79809 85.760823,86.32885"  />
 															</Grid>
 														</ControlTemplate>
 													</Button.Template>
@@ -160,6 +185,7 @@
 								<ControlTemplate TargetType="{x:Type self:TokenizedTagItem}">
 									<tkInput:AutoCompleteBox x:Name="PART_InputBox"
 													 Margin="0" Padding="0" VerticalAlignment="Center"
+													 Foreground="{ext:ThemeBinding 'window.tageditor.tag:foreground'}"
 													 Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
 													 ItemsSource="{Binding DropDownTags, RelativeSource={RelativeSource AncestorType={x:Type self:TokenizedTagControl}}}"
 													 BorderBrush="Transparent"
@@ -176,8 +202,8 @@
 
 		</ResourceDictionary>
 	</UserControl.Resources>
-	
-	
+
+
 	<Grid x:Name="MainGrid" d:DataContext="{d:DesignInstance self:TagEditor2}">
 		<self:TokenizedTagControl x:Name="TagCtrl"
 		                          IsReadonly="{Binding Readonly}"
@@ -191,7 +217,7 @@
 					<Setter Property="VerticalContentAlignment" Value="Center" />
 				</Style>
 			</self:TokenizedTagControl.Resources>
-			
+
 			<self:TokenizedTagControl.ItemContainerStyle>
 				<Style TargetType="ListBoxItem">
 					<Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -201,7 +227,7 @@
 
 		</self:TokenizedTagControl>
 	</Grid>
-	
+
 </UserControl>
 
 

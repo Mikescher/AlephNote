@@ -186,6 +186,7 @@ namespace AlephNote.WPF.Extensions
 				if (obj is ColorRef cref) return ColorRefToBrush.Convert(cref);
 				if (obj is BrushRef bref) return BrushRefToBrush.Convert(bref);
 				if (obj is ThicknessRef tref) return tref.ToWThickness();
+				if (obj is CornerRadiusRef rref) return rref.ToCornerRad();
 
 				throw new Exception($"Cannot convert {obj?.GetType()} to 'brush'");
 			}

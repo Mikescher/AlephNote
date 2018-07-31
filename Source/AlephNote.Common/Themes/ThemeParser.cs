@@ -136,6 +136,10 @@ namespace AlephNote.Common.Themes
 						t.AddProperty(propdef.Item1, XElementExtensions.ParseBool(GetProperty(propdef.Item1)));
 						break;
 
+					case AlephTheme.AlephThemePropType.CornerRadius:
+						t.AddProperty(propdef.Item1, CornerRadiusRef.Parse(GetProperty(propdef.Item1)));
+						break;
+
 					default:
 						throw new NotSupportedException();
 				}
@@ -178,6 +182,10 @@ namespace AlephNote.Common.Themes
 
 					case AlephTheme.AlephThemePropType.Boolean:
 						t.AddProperty(propdef.Item1, r.Next()%2 == 0);
+						break;
+
+					case AlephTheme.AlephThemePropType.CornerRadius:
+						t.AddProperty(propdef.Item1, CornerRadiusRef.Create(r.Next(6)));
 						break;
 
 					default:

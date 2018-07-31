@@ -67,8 +67,8 @@
 				<ListView x:Name="AutocompleteContent" Focusable="False" Background="{ext:ThemeBinding 'window.tageditor.popup:background'}" SelectionChanged="AutocompleteContent_Selected">
 					<ListView.ItemContainerStyle>
 						<Style TargetType="{x:Type ListViewItem}">
-							<Setter Property="BorderBrush" Value="{ext:ThemeBinding 'window.tageditor.popup:bordercolor'}" />
-							<Setter Property="Foreground" Value="{ext:ThemeBinding 'window.tageditor.popup:foreground'}" />
+							<Setter Property="BorderBrush" Value="{ext:ThemeBinding 'window.tageditor.popup:bordercolor', Proxy=true}" />
+							<Setter Property="Foreground" Value="{ext:ThemeBinding 'window.tageditor.popup:foreground', Proxy=true}" />
 							<Setter Property="Background" Value="Transparent" />
 							<Setter Property="BorderThickness" Value="0,0,0,1" />
 						</Style>

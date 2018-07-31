@@ -40,6 +40,7 @@ Repository: https://github.com/Mikescher/AlephNote
 		<valueref key="DimGray"        type="color">#696969</valueref>
 		<valueref key="Brown"          type="color">#A52A2A</valueref>
 		<valueref key="Snow"           type="color">#FFFAFA</valueref>
+		<valueref key="DodgerBlue"     type="color">#1E90FF</valueref>
 	</ref>
 
 	<data>
@@ -167,6 +168,8 @@ Repository: https://github.com/Mikescher/AlephNote
 				<property name="window.tageditor.tag:bordercolor_default"     value="@LightGray"/>
 				<property name="window.tageditor.tag:bordercolor_highlighted" value="@Black"/>
 				<property name="window.tageditor.tag:foreground"              value="$window.foreground"/>
+				<property name="window.tageditor.tag:borderradius"            value="0"/>
+				<property name="window.tageditor.tag:highlight"               value="@DodgerBlue"/>
 			</group>
 
 			<group name="pathdisplay">
