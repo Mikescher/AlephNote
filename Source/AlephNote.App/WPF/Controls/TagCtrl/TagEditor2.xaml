@@ -176,13 +176,32 @@
 
 		</ResourceDictionary>
 	</UserControl.Resources>
+	
+	
 	<Grid x:Name="MainGrid" d:DataContext="{d:DesignInstance self:TagEditor2}">
 		<self:TokenizedTagControl x:Name="TagCtrl"
 		                          IsReadonly="{Binding Readonly}"
 		                          EnteredTags="{Binding TagSource, Mode=TwoWay}" 
 		                          TagRemoved="TokenizedTagControl_OnChange" 
-		                          TagApplied="TokenizedTagControl_OnChange" />
+		                          TagApplied="TokenizedTagControl_OnChange" >
+
+			<self:TokenizedTagControl.Resources>
+				<Style TargetType="ListBoxItem">
+					<Setter Property="HorizontalContentAlignment" Value="Left" />
+					<Setter Property="VerticalContentAlignment" Value="Center" />
+				</Style>
+			</self:TokenizedTagControl.Resources>
+			
+			<self:TokenizedTagControl.ItemContainerStyle>
+				<Style TargetType="ListBoxItem">
+					<Setter Property="HorizontalContentAlignment" Value="Left" />
+					<Setter Property="VerticalContentAlignment" Value="Center" />
+				</Style>
+			</self:TokenizedTagControl.ItemContainerStyle>
+
+		</self:TokenizedTagControl>
 	</Grid>
+	
 </UserControl>
 
 
