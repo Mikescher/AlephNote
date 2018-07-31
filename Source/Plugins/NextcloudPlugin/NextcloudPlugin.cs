@@ -13,9 +13,10 @@ namespace AlephNote.Plugins.Nextcloud
 		public static readonly Version Version = GetInformationalVersion(typeof(NextcloudPlugin).GetTypeInfo().Assembly);
 		public const string Name = "NextcloudPlugin";
 
-		public override bool SupportsPinning => false;
-		public override bool SupportsLocking => false;
-		public override bool HasNativeDirectorySupport() => true;
+		public override bool SupportsPinning           => false;
+		public override bool SupportsLocking           => false;
+		public override bool SupportsNativeDirectories => true;
+		public override bool SupportsTags              => true;
 
 		private IAlephLogger _logger;
 

@@ -290,6 +290,7 @@ namespace AlephNote.WPF.Controls
 
 		public void RaiseTagDoubleClick(TokenizedTagItem tag)
 		{
+			if (IsReadonly) return;
 			tag.IsEditing = true;
 		}
 	}

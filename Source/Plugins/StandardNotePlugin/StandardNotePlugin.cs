@@ -13,9 +13,10 @@ namespace AlephNote.Plugins.StandardNote
 		public static readonly Version Version = GetInformationalVersion(typeof(StandardNotePlugin).GetTypeInfo().Assembly);
 		public const string Name = "StandardNotePlugin";
 
-		public override bool SupportsPinning => true;
-		public override bool SupportsLocking => true;
-		public override bool HasNativeDirectorySupport() => false;
+		public override bool SupportsPinning           => true;
+		public override bool SupportsLocking           => true;
+		public override bool SupportsNativeDirectories => false;
+		public override bool SupportsTags              => true;
 
 		public const string CURRENT_SCHEMA = "003";
 

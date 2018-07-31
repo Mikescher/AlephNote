@@ -12,9 +12,10 @@ namespace AlephNote.Plugins.Evernote
 		public static readonly Version Version = GetInformationalVersion(typeof(EvernotePlugin).GetTypeInfo().Assembly);
 		public const string Name = "EvernotePlugin";
 
-		public override bool SupportsPinning => false;
-		public override bool SupportsLocking => false;
-		public override bool HasNativeDirectorySupport() => false;
+		public override bool SupportsPinning           => false;
+		public override bool SupportsLocking           => false;
+		public override bool SupportsNativeDirectories => false;
+		public override bool SupportsTags              => false;
 
 		private IAlephLogger _logger;
 

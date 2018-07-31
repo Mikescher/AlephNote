@@ -77,6 +77,9 @@
 									<Setter TargetName="PART_CreateTagButton" Property="Visibility" Value="Collapsed" />
 									<Setter TargetName="PART_ControlBorder" Property="BorderBrush" Value="Black" />
 								</Trigger>
+								<Trigger Property="IsReadonly" Value="True">
+									<Setter TargetName="PART_CreateTagButton" Property="Visibility" Value="Collapsed" />
+								</Trigger>
 							</ControlTemplate.Triggers>
 						</ControlTemplate>
 					</Setter.Value>
@@ -133,10 +136,16 @@
 											</Grid>
 										</Border>
 										<ControlTemplate.Triggers>
-											<Trigger Property="IsMouseOver" Value="True">
-												<Setter Property="Foreground" Value="{StaticResource HighlightBrush}" />
-												<Setter TargetName="PART_DeleteTagButton" Property="Visibility" Value="Visible" />
-											</Trigger>
+											<MultiDataTrigger>
+												<MultiDataTrigger.Conditions>
+													<Condition Binding="{Binding Path=DataContext.Readonly, RelativeSource={RelativeSource AncestorType={x:Type self:TokenizedTagControl}}}" Value="False" />
+													<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+												</MultiDataTrigger.Conditions>
+												<MultiDataTrigger.Setters>
+													<Setter Property="Foreground" Value="{StaticResource HighlightBrush}" />
+													<Setter TargetName="PART_DeleteTagButton" Property="Visibility" Value="Visible" />
+												</MultiDataTrigger.Setters>
+											</MultiDataTrigger>
 										</ControlTemplate.Triggers>
 									</ControlTemplate>
 								</Button.Template>

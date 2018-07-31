@@ -16,9 +16,10 @@ namespace AlephNote.PluginInterface
 		string GetName();
 		Version GetVersion(); //SemVer. set last digit <> 0 to create a debug version (will not be loaded in RELEASE)
 
-		bool HasNativeDirectorySupport();
-		bool SupportsPinning { get; }
-		bool SupportsLocking { get; }
+		bool SupportsNativeDirectories { get; }
+		bool SupportsPinning           { get; }
+		bool SupportsLocking           { get; }
+		bool SupportsTags              { get; }
 
 		IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
 		IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hierachicalConfig);

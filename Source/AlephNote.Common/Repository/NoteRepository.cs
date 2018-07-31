@@ -44,7 +44,6 @@ namespace AlephNote.Common.Repository
 		private readonly DelayedCombiningInvoker invSaveNotesRemote;
 		private readonly DelayedCombiningInvoker invSaveNotesGitBackup;
 
-
 		public IRemoteStorageConnection Connection { get { return conn; } }
 		
 		public string ConnectionName { get { return account.Plugin.DisplayTitleShort; } }
@@ -55,8 +54,12 @@ namespace AlephNote.Common.Repository
 		public Guid ProviderUID { get { return account.Plugin.GetUniqueID(); } }
 
 		public bool SupportsPinning => account.Plugin.SupportsPinning;
-
 		public bool SupportsLocking => account.Plugin.SupportsLocking;
+		public bool SupportsTags    => account.Plugin.SupportsTags;
+
+		public bool NotSupportsPinning => !SupportsPinning;
+		public bool NotSupportsLocking => !SupportsLocking;
+		public bool NotSupportsTags    => !SupportsTags;
 
 		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, RemoteStorageAccount acc, IAlephDispatcher disp)
 		{

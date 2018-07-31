@@ -293,6 +293,7 @@
 					<MultiBinding Converter="{StaticResource MBOP}" ConverterParameter="OR">
 						<Binding Path="Settings.IsReadOnlyMode" />
 						<Binding Path="SelectedNote.IsLocked" />
+						<Binding Path="Repository.NotSupportsTags" />
 					</MultiBinding>
 				</ctrl:TagEditor2.Readonly>
 			</ctrl:TagEditor2>

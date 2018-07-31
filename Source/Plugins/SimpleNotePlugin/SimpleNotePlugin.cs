@@ -13,9 +13,10 @@ namespace AlephNote.Plugins.SimpleNote
 		public static readonly Version Version = GetInformationalVersion(typeof(SimpleNotePlugin).GetTypeInfo().Assembly);
 		public const string Name = "SimpleNotePlugin";
 
-		public override bool SupportsPinning => true;
-		public override bool SupportsLocking => false;
-		public override bool HasNativeDirectorySupport() => false;
+		public override bool SupportsPinning           => true;
+		public override bool SupportsLocking           => false;
+		public override bool SupportsNativeDirectories => false;
+		public override bool SupportsTags              => true;
 
 		private IAlephLogger _logger;
 
