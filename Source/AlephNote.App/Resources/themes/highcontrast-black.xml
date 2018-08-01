@@ -74,6 +74,7 @@ Repository: https://github.com/Mikescher/AlephNote
 		<property name="window.tageditor.tag:background"              value="@Secondary" />
 		<property name="window.tageditor.tag:bordercolor_default"     value="@Primary" />
 		<property name="window.tageditor.tag:bordercolor_highlighted" value="@Primary" />
+		<property name="window.tageditor.tag:highlight"               value="@Primary"/>
 
 		<property name="window.tageditor.popup:background"            value="@Secondary" />
 		<property name="window.tageditor.popup:bordercolor"           value="@Primary" />

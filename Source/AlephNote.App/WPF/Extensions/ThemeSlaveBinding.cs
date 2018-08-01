@@ -48,7 +48,7 @@ namespace AlephNote.WPF.Extensions
 					var dependencyObject = target as FrameworkElement;
 					if (target is FrameworkElement fe)
 					{
-						fe.GetBindingExpression(dp).UpdateTarget();
+						fe.GetBindingExpression(dp)?.UpdateTarget();
 					}
 				}
 			}

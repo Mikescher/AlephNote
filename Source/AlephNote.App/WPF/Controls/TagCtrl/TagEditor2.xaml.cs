@@ -42,7 +42,7 @@ namespace AlephNote.WPF.Controls
 				"Settings",
 				typeof(AppSettings),
 				typeof(TagEditor2),
-				new FrameworkPropertyMetadata(null));
+				new FrameworkPropertyMetadata((d,e) => ((TagEditor2)d).SettingsChanged(e)));
 
 		public AppSettings Settings
 		{
@@ -82,6 +82,11 @@ namespace AlephNote.WPF.Controls
 			UpdateHintTags();
 		}
 
+		private void SettingsChanged(DependencyPropertyChangedEventArgs e)
+		{
+			UpdateHintTags();
+		}
+
 		private void TokenizedTagControl_OnChange(object sender, TokenizedTagEventArgs e)
 		{
 			Changed?.Invoke(this);
@@ -96,18 +101,26 @@ namespace AlephNote.WPF.Controls
 			var enteredTags = TagCtrl?.EnteredTags;
 
 			if (enteredTags == null) return;
-
-			var hints = Repository
-				.EnumerateAllTags()
-				.Concat(new[] { AppSettings.TAG_MARKDOWN, AppSettings.TAG_LIST })
-				.OrderBy(p => p)
-				.Distinct()
-				.Except(TagCtrl.EnteredTags)
-				.ToList();
-
+			
 			if (TagCtrl?.DropDownTags == null) return;
 
-			TagCtrl.DropDownTags.SynchronizeCollection(hints);
+			if (Settings != null && Settings.TagAutocomplete)
+			{
+				var hints = Repository
+					.EnumerateAllTags()
+					.Concat(new[] { AppSettings.TAG_MARKDOWN, AppSettings.TAG_LIST })
+					.OrderBy(p => p)
+					.Distinct()
+					.Except(TagCtrl.EnteredTags)
+					.ToList();
+
+
+				TagCtrl.DropDownTags.SynchronizeCollection(hints);
+			}
+			else
+			{
+				TagCtrl.DropDownTags.Clear();
+			}
 		}
 	}
 }

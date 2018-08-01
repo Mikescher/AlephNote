@@ -115,6 +115,7 @@ License:    Copyright (c) 2011 Ethan Schoonover
 			<property name="window.tageditor.tag:background"              value="$window.background"/>
 			<property name="window.tageditor.tag:bordercolor_default"     value="@violet"/>
 			<property name="window.tageditor.tag:bordercolor_highlighted" value="@violet"/>
+			<property name="window.tageditor.tag:highlight"               value="@blue"/>
 
 			<property name="window.tageditor.tag:bordercolor_default"     value="@base0"/>
 			<property name="window.tageditor.tag:bordercolor_highlighted" value="@cyan"/>
