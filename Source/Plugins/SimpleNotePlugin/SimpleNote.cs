@@ -40,7 +40,7 @@ namespace AlephNote.Plugins.SimpleNote
 		public override bool IsLocked { get { return false; } set { /* no */ } }
 
 		private string _content = "";
-		public string Content { get { return _content; } set { _content = value; OnPropertyChanged(); } }
+		public string Content { get { return _content ?? string.Empty; } set { _content = value ?? string.Empty; OnPropertyChanged(); } }
 
 		private DateTimeOffset _creationDate = DateTimeOffset.Now;
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
