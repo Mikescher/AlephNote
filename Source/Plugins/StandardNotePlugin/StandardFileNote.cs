@@ -18,10 +18,10 @@ namespace AlephNote.Plugins.StandardNote
 		public Guid ID { get { return _id; } set { _id = value; OnPropertyChanged(); } }
 
 		private string _text = "";
-		public override string Text { get { return _text; } set { _text = value; OnPropertyChanged(); } }
+		public override string Text { get { return _text ?? string.Empty; } set { _text = value; OnPropertyChanged(); } }
 
 		private string _internaltitle = "";
-		public override string InternalTitle { get { return _internaltitle; } set { _internaltitle = value; OnPropertyChanged(); } }
+		public override string InternalTitle { get { return _internaltitle ?? string.Empty; } set { _internaltitle = value; OnPropertyChanged(); } }
 
 		private DateTimeOffset _creationDate;
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
