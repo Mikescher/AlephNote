@@ -89,8 +89,8 @@ namespace AlephNote.WPF.Util
 			{
 				int enumNumLen = 0;
 
-				bool isDoubleStar = (i + 2 < text.Length) && text[i] == '*' && text[i + 1] == '*' && (text[i + 2] != ' ' && text[i + 2] != '\t');
-				bool isSingleStar = (i + 1 < text.Length) && text[i] == '*' && (text[i + 1] != ' ' && text[i + 1] != '\t');
+				bool isDoubleStar = (i + 2 < text.Length) && text[i] == '*' && text[i + 1] == '*';
+				bool isSingleStar = !isDoubleStar && (i + 1 < text.Length) && text[i] == '*';
 				bool isBacktick   = text[i] == '`';
 				bool isOpenBrace  = text[i] == '[';
 				bool isEnumStar   = isLineStart && (i + 1 < text.Length) && text[i] == '*' && (text[i + 1] == ' ' || text[i + 1] == '\t');
