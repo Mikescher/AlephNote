@@ -438,6 +438,10 @@ namespace AlephNote.Common.Settings
 		private bool _useNaturalNoteSort = true;
 		
 		[AlephXMLField]
+		public bool CaseInsensitiveSort { get { return _caseInsensitiveSort; } set { _caseInsensitiveSort = value; OnPropertyChanged(); } }
+		private bool _caseInsensitiveSort = true;
+		
+		[AlephXMLField]
 		public bool SingleInstanceMode { get { return _singleInstanceMode; } set { _singleInstanceMode = value; OnPropertyChanged(); } }
 		private bool _singleInstanceMode = true;
 
@@ -565,28 +569,44 @@ namespace AlephNote.Common.Settings
 			}
 		}
 
-		public static readonly IComparer<INote> COMPARER_PIN_NONE           = ProjectionComparer.CreateExtended<INote, string>(n => n.UniqueName, n => n.IsPinned);
-		public static readonly IComparer<INote> COMPARER_PIN_NAME_RAW       = ProjectionComparer.CreateExtendedStr<INote>(n => n.Title, n => n.IsPinned, false, false);
-		public static readonly IComparer<INote> COMPARER_PIN_NAME_NATURAL   = ProjectionComparer.CreateExtendedStr<INote>(n => n.Title, n => n.IsPinned, false,  true);
-		public static readonly IComparer<INote> COMPARER_PIN_CDATE          = ProjectionComparer.CreateExtended<INote, DateTimeOffset>(n => n.CreationDate, n => n.IsPinned, true);
-		public static readonly IComparer<INote> COMPARER_PIN_MDATE          = ProjectionComparer.CreateExtended<INote, DateTimeOffset>(n => n.ModificationDate, n => n.IsPinned, true);
-		public static readonly IComparer<INote> COMPARER_NOPIN_NONE         = ProjectionComparer.Create<INote, string>(n => n.UniqueName);
-		public static readonly IComparer<INote> COMPARER_NOPIN_NAME_RAW     = ProjectionComparer.CreateStr<INote>(n => n.Title, false, false);
-		public static readonly IComparer<INote> COMPARER_NOPIN_NAME_NATURAL = ProjectionComparer.CreateStr<INote>(n => n.Title, false, true);
-		public static readonly IComparer<INote> COMPARER_NOPIN_CDATE        = ProjectionComparer.Create<INote, DateTimeOffset>(n => n.CreationDate, true);
-		public static readonly IComparer<INote> COMPARER_NOPIN_MDATE        = ProjectionComparer.Create<INote, DateTimeOffset>(n => n.ModificationDate, true);
+		public static readonly IComparer<INote> COMPARER_PIN_NONE              = ProjectionComparer.CreateExtended<INote, string>(n => n.UniqueName, n => n.IsPinned);
+		public static readonly IComparer<INote> COMPARER_PIN_NAME_CS_RAW       = ProjectionComparer.CreateExtendedStr<INote>(n => n.Title, n => n.IsPinned, false, false);
+		public static readonly IComparer<INote> COMPARER_PIN_NAME_CS_NATURAL   = ProjectionComparer.CreateExtendedStr<INote>(n => n.Title, n => n.IsPinned, false,  true);
+		public static readonly IComparer<INote> COMPARER_PIN_NAME_CI_RAW       = ProjectionComparer.CreateExtendedStr<INote>(n => n.Title.ToLower(), n => n.IsPinned, false, false);
+		public static readonly IComparer<INote> COMPARER_PIN_NAME_CI_NATURAL   = ProjectionComparer.CreateExtendedStr<INote>(n => n.Title.ToLower(), n => n.IsPinned, false,  true);
+		public static readonly IComparer<INote> COMPARER_PIN_CDATE             = ProjectionComparer.CreateExtended<INote, DateTimeOffset>(n => n.CreationDate, n => n.IsPinned, true);
+		public static readonly IComparer<INote> COMPARER_PIN_MDATE             = ProjectionComparer.CreateExtended<INote, DateTimeOffset>(n => n.ModificationDate, n => n.IsPinned, true);
+		public static readonly IComparer<INote> COMPARER_NOPIN_NONE            = ProjectionComparer.Create<INote, string>(n => n.UniqueName);
+		public static readonly IComparer<INote> COMPARER_NOPIN_NAME_CS_RAW     = ProjectionComparer.CreateStr<INote>(n => n.Title, false, false);
+		public static readonly IComparer<INote> COMPARER_NOPIN_NAME_CS_NATURAL = ProjectionComparer.CreateStr<INote>(n => n.Title, false, true);
+		public static readonly IComparer<INote> COMPARER_NOPIN_NAME_CI_RAW     = ProjectionComparer.CreateStr<INote>(n => n.Title.ToLower(), false, false);
+		public static readonly IComparer<INote> COMPARER_NOPIN_NAME_CI_NATURAL = ProjectionComparer.CreateStr<INote>(n => n.Title.ToLower(), false, true);
+		public static readonly IComparer<INote> COMPARER_NOPIN_CDATE           = ProjectionComparer.Create<INote, DateTimeOffset>(n => n.CreationDate, true);
+		public static readonly IComparer<INote> COMPARER_NOPIN_MDATE           = ProjectionComparer.Create<INote, DateTimeOffset>(n => n.ModificationDate, true);
 
 		public IComparer<INote> GetNoteComparator()
 		{
 			switch (NoteSorting)
 			{
 				case SortingMode.None:
-					return SortByPinned ? COMPARER_PIN_NONE  : COMPARER_NOPIN_NONE;
+					return SortByPinned ? COMPARER_PIN_NONE : COMPARER_NOPIN_NONE;
 
 				case SortingMode.ByName:
-					return SortByPinned 
-						? (UseNaturalNoteSort ? COMPARER_PIN_NAME_NATURAL   : COMPARER_PIN_NAME_RAW) 
-						: (UseNaturalNoteSort ? COMPARER_NOPIN_NAME_NATURAL : COMPARER_NOPIN_NAME_RAW);
+					return SortByPinned
+						   ? (UseNaturalNoteSort
+						      ? (CaseInsensitiveSort
+						         ? COMPARER_PIN_NAME_CI_NATURAL
+						         : COMPARER_PIN_NAME_CS_NATURAL)
+						      : (CaseInsensitiveSort
+						         ? COMPARER_PIN_NAME_CI_RAW
+						         : COMPARER_PIN_NAME_CS_RAW))
+						   : (UseNaturalNoteSort
+						      ? (CaseInsensitiveSort
+						         ? COMPARER_NOPIN_NAME_CI_NATURAL
+						         : COMPARER_NOPIN_NAME_CS_NATURAL)
+						      : (CaseInsensitiveSort
+						         ? COMPARER_NOPIN_NAME_CI_RAW
+						         : COMPARER_NOPIN_NAME_CS_RAW));
 
 				case SortingMode.ByCreationDate:
 					return SortByPinned ? COMPARER_PIN_CDATE : COMPARER_NOPIN_CDATE;
