@@ -158,9 +158,14 @@ namespace AlephNote.Plugins.SimpleNote
 				if (remote != null)
 				{
 					if (_config.PermanentlyDeleteNotes)
-						SimpleNoteAPI.DeleteNotePermanently(web, note);
-					else
+					{
 						SimpleNoteAPI.DeleteNote(web, note);
+						SimpleNoteAPI.DeleteNotePermanently(web, note);
+					}
+					else
+					{
+						SimpleNoteAPI.DeleteNote(web, note);
+					}
 
 					_data.AddDeletedNote(note.ID, note.LocalVersion);
 				}
