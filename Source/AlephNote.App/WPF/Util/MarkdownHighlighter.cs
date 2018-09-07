@@ -144,7 +144,7 @@ namespace AlephNote.WPF.Util
 
 						sci.SetStyling(2, STYLE_MD_LIST);
 						position += 2;
-						i = position;
+						i = position-1;
 
 						mode = ParserMode.None;
 						continue;
@@ -156,7 +156,7 @@ namespace AlephNote.WPF.Util
 
 						sci.SetStyling(enumNumLen, STYLE_MD_LIST);
 						position += enumNumLen;
-						i = position;
+						i = position-1;
 						continue;
 					}
 				}
