@@ -252,13 +252,24 @@ namespace AlephNote.WPF.Controls
 			UpdateEnteredTags();
 		}
 
+		private bool _lockRemoveTag = false;
 		public void RemoveTag(TokenizedTagItem tag, bool cancelEvent = false)
 		{
 			if (IsReadonly) return;
+			if (_lockRemoveTag) return;
 
 			if (ItemsSource != null)
 			{
-				((IList)ItemsSource).Remove(tag);
+				try
+				{
+					_lockRemoveTag = true;
+					((IList)ItemsSource).Remove(tag);
+				}
+				finally
+				{
+					_lockRemoveTag = false;
+				}
+				
 				Items.Refresh();
 
 				if (TagRemoved != null && !cancelEvent) TagRemoved(this, new TokenizedTagEventArgs(tag));
