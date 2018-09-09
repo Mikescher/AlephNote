@@ -22,7 +22,7 @@ namespace AlephNote.Common.Settings
 		public static readonly string PATH_GCCACHE     = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.gitcleancache.config");
 		public static readonly string PATH_LOCALDB     = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".notes");
 		public static readonly string APPNAME_REG      = "AlephNoteApp_{0:N}";
-		public static readonly string PATH_EXECUTABLE  = System.Reflection.Assembly.GetExecutingAssembly().Location;
+		public static readonly string PATH_EXECUTABLE  = GetExePath();
 
 		public const string ENCRYPTION_KEY = @"jcgkZJvoykjpoGkDWHqiNoXoLZRJxpdb";
 
@@ -719,6 +719,13 @@ namespace AlephNote.Common.Settings
 		public static List<AXMLFieldInfo> Diff(AppSettings a, AppSettings b)
 		{
 			return _serializer.Diff(a, b).ToList();
+		}
+
+		private static string GetExePath()
+		{
+			var p = System.Reflection.Assembly.GetExecutingAssembly().Location;
+			if (!p.ToLower().EndsWith(".exe")) p = Path.Combine(Path.GetDirectoryName(p), "AlephNote.exe");
+			return p;
 		}
 	}
 }
