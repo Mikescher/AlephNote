@@ -70,6 +70,7 @@ Linux version
  - [X] Sort notes into folders
  - [X] simulate folders for notes with remote provider that do not support folders (path is encoded in filename)
  - [X] Customizable shortcuts
+ - [X] Readonly mode
 
 ## Planned  features
 
@@ -78,11 +79,8 @@ Linux version
  - [ ] Get history from provider that support it (SimpleNote + Standard Notes)
  - [ ] Installer (if there is demand)
  - [ ] Linux version (UI mit Eto.Forms, .Net core)
- - [ ] readonly mode
  - [ ] edit tags without deleting (F2 ?)
- - [ ] Sync with multiple provider (eg sync with SimpleNote but also with local plaintext version of notes), see [#7](https://github.com/Mikescher/AlephNote/issues/7)
  - [ ] unit tests (+ CI)
- - [ ] github wiki
 
 ## License
 
