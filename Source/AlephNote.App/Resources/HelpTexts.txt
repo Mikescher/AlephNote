@@ -66,8 +66,9 @@ The following data are send:
 I only use this data to motivate me and estimate how many people are actually using AlephNote.
 
 [RememberScroll]
-If checked we remember the current scroll position per note.
-When switching between notes, or when restarting the application the scroll position is kept persistent.
+If checked we remember the current scroll position and cursor position per note.
+When switching between notes, or when restarting the application the scroll/cursor position is kept persistent.
+Can be useful for really long notes or when using only the keyboard for navigation.
 
 [CloseToTray]
 Minimize to tray bar instead of closing the main window.

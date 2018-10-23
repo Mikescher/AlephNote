@@ -10,16 +10,16 @@ namespace AlephNote.Common.Repository
 {
 	public class ScrollCache
 	{
-		private Dictionary<string, int> _cache;
-		private string _filepath;
+		private readonly Dictionary<string, Tuple<int, int?>> _cache;
+		private readonly string _filepath;
 
-		private object _masterLock = new object();
+		private readonly object _masterLock = new object();
 
 		private readonly DelayedCombiningInvoker invSave;
 
 		private ScrollCache(string fp)
 		{
-			_cache = new Dictionary<string, int>();
+			_cache = new Dictionary<string, Tuple<int, int?>>();
 			_filepath = fp;
 
 			invSave = DelayedCombiningInvoker.Create(SaveDirect, 15 * 1000, 2 * 60 * 1000);
@@ -37,7 +37,10 @@ namespace AlephNote.Common.Repository
 					if (string.IsNullOrWhiteSpace(line)) continue;
 					var split = line.Split('\t');
 
-					sc._cache.Add(split[0], int.Parse(split[1]));
+					if (split.Length==2)
+						sc._cache.Add(split[0], Tuple.Create(int.Parse(split[1]), (int?)null));
+					else
+						sc._cache.Add(split[0], Tuple.Create(int.Parse(split[1]), (int?)int.Parse(split[2])));
 				}
 
 				return sc;
@@ -54,25 +57,21 @@ namespace AlephNote.Common.Repository
 			return new ScrollCache(path);
 		}
 
-		public int? Get(INote n)
+		public Tuple<int, int?> Get(INote n)
 		{
 			if (n == null) return null;
 			lock (_masterLock)
 			{
-				if (_cache.TryGetValue(n.UniqueName, out int pos))
-				{
-					return pos;
-				}
-				return null;
+				return _cache.TryGetValue(n.UniqueName, out var pos) ? pos : null;
 			}
 		}
 
-		public void Set(INote n, int pos)
+		public void Set(INote n, int scrollpos, int cursorpos)
 		{
 			if (n == null) return;
 			lock (_masterLock)
 			{
-				_cache[n.UniqueName] = pos;
+				_cache[n.UniqueName] = new Tuple<int, int?>(scrollpos, cursorpos);
 			}
 			SetDirty();
 		}
@@ -95,7 +94,7 @@ namespace AlephNote.Common.Repository
 				try
 				{
 					StringBuilder b = new StringBuilder();
-					foreach (var ci in _cache) b.AppendLine($"{ci.Key}\t{ci.Value}");
+					foreach (var ci in _cache) b.AppendLine($"{ci.Key}\t{ci.Value.Item1}\t{ci.Value.Item2}");
 					File.WriteAllText(_filepath, b.ToString(), Encoding.UTF8);
 				}
 				catch (Exception e)

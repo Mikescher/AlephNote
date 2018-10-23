@@ -467,9 +467,9 @@ namespace AlephNote.WPF.Windows
 			_invSaveSettings.Request();
 		}
 
-		public void OnScroll(int yoffset)
+		public void OnScroll(int yoffset, int cursorPos)
 		{
-			if (Settings.RememberScroll) _scrollCache.Set(SelectedNote, yoffset);
+			if (Settings.RememberScroll) _scrollCache.Set(SelectedNote, yoffset, cursorPos);
 		}
 
 		public void ForceUpdateUIScroll()

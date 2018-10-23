@@ -314,6 +314,19 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.FirstVisibleLine = v.Value;
 		}
 
+		public void ScrollScintilla(Tuple<int, int?> v)
+		{
+			if (v == null) return;
+
+			NoteEdit.FirstVisibleLine = v.Item1;
+			if (v.Item2 != null)
+			{
+				NoteEdit.CurrentPosition = v.Item2.Value;
+				NoteEdit.SelectionStart  = NoteEdit.CurrentPosition;
+				NoteEdit.SelectionEnd    = NoteEdit.CurrentPosition;
+			}
+		}
+
 		public void FocusScintillaDelayed(int d = 50)
 		{
 			new Thread(() => { Thread.Sleep(d); System.Windows.Application.Current.Dispatcher.Invoke(FocusScintilla); }).Start();
@@ -563,9 +576,9 @@ namespace AlephNote.WPF.Windows
 
 		private void NoteEdit_UpdateUI(object sender, UpdateUIEventArgs e)
 		{
-			if (e.Change == UpdateChange.VScroll)
+			if (e.Change == UpdateChange.VScroll || e.Change == UpdateChange.Selection)
 			{
-				VM.OnScroll(NoteEdit.FirstVisibleLine);
+				VM.OnScroll(NoteEdit.FirstVisibleLine, NoteEdit.CurrentPosition);
 			}
 		}
 
