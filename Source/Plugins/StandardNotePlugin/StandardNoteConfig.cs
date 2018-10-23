@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using AlephNote.PluginInterface.Objects;
 using AlephNote.PluginInterface.Objects.AXML;
@@ -12,7 +13,9 @@ namespace AlephNote.Plugins.StandardNote
 	public class StandardNoteConfig : IRemoteStorageConfiguration
 	{
 		private const string ENCRYPTION_KEY = @"HuIpJachKuRyJuOmVelThufCeck"; // https://duckduckgo.com/?q=random+password+32+characters
-		
+
+		public static readonly Regex REX_LINEBREAK = new Regex(@"\r?\n", RegexOptions.Compiled);
+
 		private const int ID_EMAIL    = 6251;
 		private const int ID_PASSWORD = 6252;
 		private const int ID_SERVER   = 6253;

@@ -369,7 +369,7 @@ namespace AlephNote.Plugins.StandardNote
 			var jsnContent = new ContentNote
 			{
 				title = note.InternalTitle,
-				text = note.Text,
+				text = note.Text.Replace("\r\n", "\n"),
 				references = new List<APIResultContentRef>(),
 				appData = appdata,
 			};
@@ -478,7 +478,7 @@ namespace AlephNote.Plugins.StandardNote
 
 			var n = new StandardFileNote(encNote.uuid, cfg, conn.HConfig)
 			{
-				Text = content.text,
+				Text = StandardNoteConfig.REX_LINEBREAK.Replace(content.text, Environment.NewLine),
 				InternalTitle = content.title,
 				AuthHash = encNote.auth_hash,
 				ContentVersion = StandardNoteCrypt.GetSchemaVersion(encNote.content),
