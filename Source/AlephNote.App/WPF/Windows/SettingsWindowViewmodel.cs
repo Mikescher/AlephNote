@@ -34,6 +34,9 @@ namespace AlephNote.WPF.Windows
 
 		private AlephTheme _selectedTheme;
 		public AlephTheme SelectedTheme { get { return _selectedTheme; } set { _selectedTheme = value; OnPropertyChanged(); UpdateThemePreview(); } }
+		
+		private Visibility _hideAdvancedVisibility = Visibility.Visible;
+		public Visibility HideAdvancedVisibility { get { return _hideAdvancedVisibility; } set { _hideAdvancedVisibility = value; OnPropertyChanged(); } }
 
 		private AlephTheme _oldTheme = null;
 		private bool _isThemePreview = false;

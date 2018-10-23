@@ -71,5 +71,10 @@ namespace AlephNote.WPF.Windows
 		{
 			Process.Start("explorer.exe", '"'+App.Themes.BasePath+'"');
 		}
+
+		private void Button_Advanced_Click(object sender, RoutedEventArgs e)
+		{
+			viewmodel.HideAdvancedVisibility = Visibility.Hidden;
+		}
 	}
 }
