@@ -17,6 +17,17 @@ namespace AlephNote.WPF.Windows
 {
 	class SettingsWindowViewmodel : ObservableObject
 	{
+		public class CheckableAlephTheme : ObservableObject
+		{
+			public SettingsWindowViewmodel Owner;
+
+			private AlephTheme _theme;
+			public AlephTheme Theme { get { return _theme; } set { _theme = value; OnPropertyChanged(); } }
+
+			private bool _checked;
+			public bool Checked { get { return _checked; } set { _checked = value; OnPropertyChanged(); Owner.UpdateThemePreview(); } }
+		}
+
 		private readonly MainWindow mainWindow;
 
 		public AppSettings Settings { get; private set; }
@@ -29,8 +40,10 @@ namespace AlephNote.WPF.Windows
 
 		private ObservableShortcutConfig _selectedShortcut;
 		public ObservableShortcutConfig SelectedShortcut { get { return _selectedShortcut; } set { _selectedShortcut = value; OnPropertyChanged(); } }
-
+		
 		public List<AlephTheme> AvailableThemes { get; set; }
+
+		public List<CheckableAlephTheme> AvailableModifier { get; set; }
 
 		private AlephTheme _selectedTheme;
 		public AlephTheme SelectedTheme { get { return _selectedTheme; } set { _selectedTheme = value; OnPropertyChanged(); UpdateThemePreview(); } }
@@ -38,8 +51,8 @@ namespace AlephNote.WPF.Windows
 		private Visibility _hideAdvancedVisibility = Visibility.Visible;
 		public Visibility HideAdvancedVisibility { get { return _hideAdvancedVisibility; } set { _hideAdvancedVisibility = value; OnPropertyChanged(); } }
 
-		private AlephTheme _oldTheme = null;
-		private List<AlephTheme> _oldModifiers = new List<AlephTheme>();
+		private AlephTheme _oldTheme;
+		private List<AlephTheme> _oldModifiers;
 		private bool _isThemePreview = false;
 
 		public SettingsWindowViewmodel(MainWindow main, AppSettings data)
@@ -49,6 +62,7 @@ namespace AlephNote.WPF.Windows
 
 			ShortcutList = ShortcutManager.ListObservableShortcuts(data);
 			AvailableThemes = App.Themes.GetAllAvailableThemes();
+			AvailableModifier = App.Themes.GetAllAvailableModifier().Select(m => new CheckableAlephTheme{Theme=m,Owner=this,Checked=data.ThemeModifier.Contains(m.SourceFilename)}).ToList();
 
 			_selectedTheme = App.Themes.GetThemeByFilename(Settings.Theme, out _) 
 						  ?? App.Themes.GetDefault()
@@ -73,6 +87,7 @@ namespace AlephNote.WPF.Windows
 			Settings.Shortcuts = new KeyValueFlatCustomList<ShortcutDefinition>(sdata, ShortcutDefinition.DEFAULT);
 
 			Settings.Theme = SelectedTheme.SourceFilename;
+			Settings.ThemeModifier = new HashSet<string>(GetCheckedModifier().Select(p => p.SourceFilename));
 		}
 
 		private void InsertCurrentWindowState()
@@ -94,6 +109,8 @@ namespace AlephNote.WPF.Windows
 			Settings.RemoveAccount(Settings.ActiveAccount);
 		}
 
+		private IEnumerable<AlephTheme> GetCheckedModifier() => AvailableModifier.Where(p => p.Checked).Select(p => p.Theme);
+
 		private void UpdateThemePreview()
 		{
 			if (SelectedTheme == null || SelectedTheme.ThemeType==AlephThemeType.Fallback) return;
@@ -101,10 +118,8 @@ namespace AlephNote.WPF.Windows
 			_isThemePreview = true;
 
 			if (_oldTheme == null) _oldTheme = ThemeManager.Inst.CurrentBaseTheme;
-			ThemeManager.Inst.ChangeTheme(SelectedTheme, new AlephTheme[0]);//TODO
-			#if Release
-			TODO ME
-			#endif
+			if (_oldModifiers == null) _oldModifiers = ThemeManager.Inst.CurrentModifers.ToList();
+			ThemeManager.Inst.ChangeTheme(SelectedTheme, GetCheckedModifier());
 		}
 	}
 }

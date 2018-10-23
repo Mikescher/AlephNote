@@ -459,15 +459,29 @@
 								<Button    Grid.Row="1" Grid.Column="3" Margin="5,0,5,5" Grid.ColumnSpan="2" HorizontalAlignment="Right" Content="Open folder" FontStyle="Italic" Padding="5,1" Click="Button_OpenThemeFolder_Click" />
 
 								<TextBlock Grid.Row="2" Grid.Column="0" Margin="5" Text="Theme Author:" Grid.ColumnSpan="2" />
-								<TextBox   Grid.Row="2" Grid.Column="3" Margin="5" Grid.ColumnSpan="2" Text="{Binding SelectedTheme.Author, Mode=OneWay}" IsReadOnly="True" />
+								<TextBox   Grid.Row="2" Grid.Column="3" Margin="5" Grid.ColumnSpan="2" Text="{Binding SelectedTheme.Author, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
 
 								<TextBlock Grid.Row="3" Grid.Column="0" Margin="5" Text="Theme Version:" Grid.ColumnSpan="2" />
-								<TextBox   Grid.Row="3" Grid.Column="3" Margin="5" Grid.ColumnSpan="2" Text="{Binding SelectedTheme.Version, Mode=OneWay}" IsReadOnly="True" />
+								<TextBox   Grid.Row="3" Grid.Column="3" Margin="5" Grid.ColumnSpan="2" Text="{Binding SelectedTheme.Version, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
 
 								<TextBlock Grid.Row="4" Grid.Column="0" Margin="5" Text="Theme Compatbility:" Grid.ColumnSpan="2" />
-								<TextBox   Grid.Row="4" Grid.Column="3" Margin="5" Grid.ColumnSpan="2" Text="{Binding SelectedTheme.Compatibility, Mode=OneWay}" IsReadOnly="True" />
+								<TextBox   Grid.Row="4" Grid.Column="3" Margin="5" Grid.ColumnSpan="2" Text="{Binding SelectedTheme.Compatibility, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
 
 							</Grid>
+						</GroupBox>
+						<GroupBox Header="Modifiers" Padding="4">
+							<ItemsControl ItemsSource="{Binding AvailableModifier}">
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<StackPanel Orientation="Vertical" />
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<CheckBox Content="{Binding Theme.Name, Mode=OneWay}" IsChecked="{Binding Checked}" Margin="2" />
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
 						</GroupBox>
 					</StackPanel>
 				</ScrollViewer>

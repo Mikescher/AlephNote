@@ -148,10 +148,7 @@ namespace AlephNote.WPF.Windows
 
 				ThemeManager.Inst.Cache.ReplaceTheme(theme);
 
-				ThemeManager.Inst.ChangeTheme(theme.SourceFilename, new string[0]);//TODO
-				#if Release
-				TODO ME
-				#endif
+				ThemeManager.Inst.ChangeTheme(theme.SourceFilename, new string[0]);
 
 				UpdateSelected();
 			}
