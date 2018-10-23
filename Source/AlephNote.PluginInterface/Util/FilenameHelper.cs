@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -19,23 +21,23 @@ namespace AlephNote.PluginInterface.Util
 
 		public static string ConvertStringForFilename(string input)
 		{
-			StringBuilder output = new StringBuilder(input.Length);
+			var output = new StringBuilder(input.Length);
 
 			foreach (var c in input)
 			{
 				if (c == CONVERT_ESCAPE_CHARACTER)
 				{
 					output.Append(CONVERT_ESCAPE_CHARACTER);
-					output.Append(string.Format("{0:X4}", (int)c));
+					output.Append($"{(int) c:X4}");
 				}
-				else if (ALLOWED_CHARACTER.Contains(c))
+				else if (IsValidChar(c))
 				{
 					output.Append(c);
 				}
 				else
 				{
 					output.Append(CONVERT_ESCAPE_CHARACTER);
-					output.Append(string.Format("{0:X4}", (int)c));
+					output.Append($"{(int) c:X4}");
 				}
 			}
 
@@ -43,12 +45,12 @@ namespace AlephNote.PluginInterface.Util
 
 			if (fileName.EndsWith("."))
 			{
-				fileName = fileName.Substring(0, fileName.Length-1) + CONVERT_ESCAPE_CHARACTER + string.Format("{0:X4}", (int)'.');
+				fileName = fileName.Substring(0, fileName.Length-1) + CONVERT_ESCAPE_CHARACTER + $"{(int) '.':X4}";
 			}
 
-			if (RESERVED_FILENAMES.Any(r => r.ToLower() == fileName.ToLower())) 
+			if (RESERVED_FILENAMES.Any(r => string.Equals(r, fileName, StringComparison.CurrentCultureIgnoreCase))) 
 			{
-				fileName = CONVERT_ESCAPE_CHARACTER + string.Format("{0:X4}", (int)fileName[0]) + fileName.Substring(1);
+				fileName = CONVERT_ESCAPE_CHARACTER + $"{(int) fileName[0]:X4}" + fileName.Substring(1);
 			}
 
 			return fileName;
@@ -56,15 +58,15 @@ namespace AlephNote.PluginInterface.Util
 
 		public static string ConvertStringFromFilenameBack(string input)
 		{
-			StringBuilder output = new StringBuilder(input.Length);
+			var output = new StringBuilder(input.Length);
 
-			for (int i = 0; i < input.Length; i++)
+			for (var i = 0; i < input.Length; i++)
 			{
 				var c = input[i];
 
 				if (c == CONVERT_ESCAPE_CHARACTER && i + 4 < input.Length)
 				{
-					string n = "";
+					var n = "";
 					n += input[++i];
 					n += input[++i];
 					n += input[++i];
@@ -82,11 +84,11 @@ namespace AlephNote.PluginInterface.Util
 
 		public static string StripStringForFilename(string input, char? repl = null)
 		{
-			StringBuilder output = new StringBuilder(input.Length);
+			var output = new StringBuilder(input.Length);
 
 			foreach (var c in input)
 			{
-				if (ALLOWED_CHARACTER.Contains(c))
+				if (IsValidChar(c))
 				{
 					output.Append(c);
 				}
@@ -98,10 +100,34 @@ namespace AlephNote.PluginInterface.Util
 
 			var fileName = output.ToString();
 
-			if (RESERVED_FILENAMES.Any(r => r.ToLower() == fileName.ToLower())) fileName = "_" + fileName;
+			if (RESERVED_FILENAMES.Any(r => string.Equals(r, fileName, StringComparison.CurrentCultureIgnoreCase))) fileName = "_" + fileName;
 			if (RESERVED_FILENAMES.Any(r => fileName.ToLower().StartsWith(r.ToLower() + "."))) fileName = "_" + fileName;
 
 			return fileName;
+		}
+
+		private static bool IsValidChar(char chr)
+		{
+			var allowUnicodeLetters = AlephAppContext.Settings.AllowAllLettersInFilename;
+			var allowAllCharacters  = AlephAppContext.Settings.AllowAllCharactersInFilename;
+
+			if (allowAllCharacters)
+			{
+				return !Path.GetInvalidFileNameChars().Contains(chr);
+			}
+			else if (allowUnicodeLetters)
+			{
+				return ALLOWED_CHARACTER.Contains(chr) 
+				    || char.GetUnicodeCategory(chr) == UnicodeCategory.LetterNumber
+				    || char.GetUnicodeCategory(chr) == UnicodeCategory.OtherLetter
+				    || char.GetUnicodeCategory(chr) == UnicodeCategory.DecimalDigitNumber
+				    || char.GetUnicodeCategory(chr) == UnicodeCategory.UppercaseLetter
+				    || char.GetUnicodeCategory(chr) == UnicodeCategory.LowercaseLetter;
+			}
+			else
+			{
+				return ALLOWED_CHARACTER.Contains(chr);
+			}
 		}
 	}
 }

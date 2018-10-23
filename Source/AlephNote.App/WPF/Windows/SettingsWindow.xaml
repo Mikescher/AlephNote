@@ -874,10 +874,10 @@
 					</Grid>
 				</Grid>
 			</TabItem>
-			<TabItem Header="Local sync">
+			<TabItem Header="Advanced">
 				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 					<StackPanel Orientation="Vertical">
-						<Grid>
+						<Grid Margin="8">
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto"/>
 								<RowDefinition Height="Auto"/>
@@ -889,26 +889,27 @@
 								<RowDefinition/>
 							</Grid.RowDefinitions>
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="1*" />
 								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="5" />
+								<ColumnDefinition Width="1*" />
 								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
 
 							<TextBlock     Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Support for international characters in filenames" />
-							<CheckBox      Grid.Row="0" Grid.Column="1" IsChecked="{Binding Settings.AllowAllLettersInFilename}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
-							<ctrl:PHelpBtn Grid.Row="1" Grid.Column="2" HelpProperty="AllowAllLettersInFilename" Margin="2,0" VerticalAlignment="Center" />
+							<CheckBox      Grid.Row="0" Grid.Column="2" IsChecked="{Binding Settings.AllowAllLettersInFilename}" VerticalAlignment="Center"/>
+							<ctrl:PHelpBtn Grid.Row="0" Grid.Column="3" HelpProperty="AllowAllLettersInFilename" Margin="2,0" VerticalAlignment="Center" />
 
 							<TextBlock     Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Allow all not explicitly forbidden characters in filenames" />
-							<CheckBox      Grid.Row="1" Grid.Column="1" IsChecked="{Binding Settings.AllowAllCharactersInFilename}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
-							<ctrl:PHelpBtn Grid.Row="1" Grid.Column="2" HelpProperty="AllowAllCharactersInFilename" Margin="2,0" VerticalAlignment="Center" />
+							<CheckBox      Grid.Row="1" Grid.Column="2" IsChecked="{Binding Settings.AllowAllCharactersInFilename}" VerticalAlignment="Center"/>
+							<ctrl:PHelpBtn Grid.Row="1" Grid.Column="3" HelpProperty="AllowAllCharactersInFilename" Margin="2,0" VerticalAlignment="Center" />
 
 							<TextBlock     Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Only run a single instance of AlephNote in parallel" />
-							<CheckBox      Grid.Row="2" Grid.Column="1" IsChecked="{Binding Settings.SingleInstanceMode}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
-							<ctrl:PHelpBtn Grid.Row="2" Grid.Column="2" HelpProperty="SingleInstanceMode" Margin="2,0" VerticalAlignment="Center" />
+							<CheckBox      Grid.Row="2" Grid.Column="2" IsChecked="{Binding Settings.SingleInstanceMode}" VerticalAlignment="Center"/>
+							<ctrl:PHelpBtn Grid.Row="2" Grid.Column="3" HelpProperty="SingleInstanceMode" Margin="2,0" VerticalAlignment="Center" />
 
 							<TextBlock     Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Use pre-release update channel" />
-							<CheckBox      Grid.Row="3" Grid.Column="1" IsChecked="{Binding Settings.UpdateToPrerelease}" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
-							<ctrl:PHelpBtn Grid.Row="3" Grid.Column="2" HelpProperty="UpdateToPrerelease" Margin="2,0" VerticalAlignment="Center" />
+							<CheckBox      Grid.Row="3" Grid.Column="2" IsChecked="{Binding Settings.UpdateToPrerelease}" VerticalAlignment="Center"/>
+							<ctrl:PHelpBtn Grid.Row="3" Grid.Column="3" HelpProperty="UpdateToPrerelease" Margin="2,0" VerticalAlignment="Center" />
 						</Grid>
 					</StackPanel>
 				</ScrollViewer>
