@@ -29,13 +29,13 @@ namespace AlephNote.Common.MVVM
 
 			if (!table.TryGetValue(x, out var x1))
 			{
-				x1 = Regex.Split(x.Replace(" ", ""), "([0-9]+)");
+				x1 = Regex.Split(x, "([0-9]+)");
 				table.Add(x, x1);
 			}
 
 			if (!table.TryGetValue(y, out var y1))
 			{
-				y1 = Regex.Split(y.Replace(" ", ""), "([0-9]+)");
+				y1 = Regex.Split(y, "([0-9]+)");
 				table.Add(y, y1);
 			}
 
