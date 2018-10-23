@@ -157,7 +157,7 @@ namespace AlephNote.WPF.Windows
 
 		public void SetupScintilla(AppSettings s)
 		{
-			var theme = ThemeManager.Inst.CurrentTheme;
+			var theme = ThemeManager.Inst.CurrentThemeSet;
 
 			NoteEdit.Lexer = Lexer.Container;
 
@@ -282,7 +282,7 @@ namespace AlephNote.WPF.Windows
 		{
 			if (s == null) return;
 
-			var theme = ThemeManager.Inst.CurrentTheme;
+			var theme = ThemeManager.Inst.CurrentThemeSet;
 
 			bool listHighlight = 
 				(s.ListMode == ListHighlightMode.Always) || 

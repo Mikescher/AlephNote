@@ -39,6 +39,7 @@ namespace AlephNote.WPF.Windows
 		public Visibility HideAdvancedVisibility { get { return _hideAdvancedVisibility; } set { _hideAdvancedVisibility = value; OnPropertyChanged(); } }
 
 		private AlephTheme _oldTheme = null;
+		private List<AlephTheme> _oldModifiers = new List<AlephTheme>();
 		private bool _isThemePreview = false;
 
 		public SettingsWindowViewmodel(MainWindow main, AppSettings data)
@@ -47,17 +48,20 @@ namespace AlephNote.WPF.Windows
 			Settings = data;
 
 			ShortcutList = ShortcutManager.ListObservableShortcuts(data);
-			AvailableThemes = App.Themes.GetAllAvailable();
+			AvailableThemes = App.Themes.GetAllAvailableThemes();
 
-			_selectedTheme = App.Themes.GetByFilename(Settings.Theme, out _) 
-						  ?? App.Themes.GetByFilename("default.xml", out _)
+			_selectedTheme = App.Themes.GetThemeByFilename(Settings.Theme, out _) 
+						  ?? App.Themes.GetDefault()
 						  ?? AvailableThemes.FirstOrDefault()
 						  ?? App.Themes.GetFallback();
+
+			_oldTheme = ThemeManager.Inst.CurrentBaseTheme;
+			_oldModifiers = ThemeManager.Inst.CurrentModifers.ToList();
 		}
 
 		public void OnBeforeClose()
 		{
-			if (_isThemePreview) ThemeManager.Inst.ChangeTheme(_oldTheme);
+			if (_isThemePreview) ThemeManager.Inst.ChangeTheme(_oldTheme, _oldModifiers);
 		}
 
 		public void OnBeforeApply()
@@ -92,12 +96,15 @@ namespace AlephNote.WPF.Windows
 
 		private void UpdateThemePreview()
 		{
-			if (SelectedTheme == null || SelectedTheme.IsFallback) return;
+			if (SelectedTheme == null || SelectedTheme.ThemeType==AlephThemeType.Fallback) return;
 
 			_isThemePreview = true;
 
-			if (_oldTheme == null) _oldTheme = ThemeManager.Inst.CurrentTheme;
-			ThemeManager.Inst.ChangeTheme(SelectedTheme);
+			if (_oldTheme == null) _oldTheme = ThemeManager.Inst.CurrentBaseTheme;
+			ThemeManager.Inst.ChangeTheme(SelectedTheme, new AlephTheme[0]);//TODO
+			#if Release
+			TODO ME
+			#endif
 		}
 	}
 }

@@ -14,8 +14,6 @@ namespace AlephNote.Common.Themes
 		private List<string> _filesInBasePath;         // <path>
 		private Dictionary<string, AlephTheme> _cache; // <filename+ext, theme>
 
-		private Dictionary<string, string> _themeDefaultValues; // <name, value>
-
 		public string BasePath => _baseThemePath;
 
 		public void Init(string basePath)
@@ -42,8 +40,22 @@ namespace AlephNote.Common.Themes
 				LoggerSingleton.Inst.ShowExceptionDialog($"No default.xml theme found in {_baseThemePath}", null);
 			}
 		}
+		
+		public AlephTheme GetThemeByFilename(string fn, out Exception ex)
+		{
+			var t = GetByFilename(fn, out ex);
+			if (t != null && (t.ThemeType == AlephThemeType.Theme || t.ThemeType == AlephThemeType.Default || t.ThemeType == AlephThemeType.Fallback)) return t;
+			return null;
+		}
+		
+		public AlephTheme GetModifierByFilename(string fn, out Exception ex)
+		{
+			var t = GetByFilename(fn, out ex);
+			if (t != null && t.ThemeType == AlephThemeType.Modifier) return t;
+			return null;
+		}
 
-		public AlephTheme GetByFilename(string fn, out Exception ex)
+		private AlephTheme GetByFilename(string fn, out Exception ex)
 		{
 			ex = null;
 
@@ -66,7 +78,7 @@ namespace AlephNote.Common.Themes
 				return null;
 			}
 		}
-
+		
 		public List<AlephTheme> GetAllAvailable()
 		{
 			return _filesInBasePath
@@ -76,56 +88,61 @@ namespace AlephNote.Common.Themes
 				.Distinct()
 				.Where(p => p != null)
 				.Where(p => p.Compatibility.Includes(AlephAppContext.AppVersion))
+				.Where(p => p.ThemeType == AlephThemeType.Theme || p.ThemeType == AlephThemeType.Default)
 				.ToList();
 		}
 
+		public List<AlephTheme> GetAllAvailableThemes()
+		{
+			return _filesInBasePath
+				.Select(p => Path.GetFileName(p))
+				.Select(p => GetByFilename(p, out _))
+				.Concat(_cache.Values)
+				.Distinct()
+				.Where(p => p != null)
+				.Where(p => p.Compatibility.Includes(AlephAppContext.AppVersion))
+				.Where(p => p.ThemeType == AlephThemeType.Theme || p.ThemeType == AlephThemeType.Default)
+				.ToList();
+		}
+		
+		public List<AlephTheme> GetAllAvailableModifier()
+		{
+			return _filesInBasePath
+				.Select(p => Path.GetFileName(p))
+				.Select(p => GetByFilename(p, out _))
+				.Concat(_cache.Values)
+				.Distinct()
+				.Where(p => p != null)
+				.Where(p => p.Compatibility.Includes(AlephAppContext.AppVersion))
+				.Where(p => p.ThemeType == AlephThemeType.Modifier)
+				.ToList();
+		}
+		
 		public AlephTheme GetFallback()
 		{
 			return ThemeParser.GetFallback();
 		}
 
-		public Dictionary<string, string> GetDefaultParserProperties()
+		public AlephTheme GetDefault()
 		{
-			if (_themeDefaultValues == null)
-			{
-				var dpath = Path.Combine(_baseThemePath, "default.xml");
-				var dparser = new ThemeParser();
-				dparser.Load(dpath);
-				dparser.Parse(new Dictionary<string, string>());
-				_themeDefaultValues = dparser.GetProperties();
+			return GetThemeByFilename("default.xml", out _);
+		}
 
-				LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded {_themeDefaultValues.Count} default values from '{dpath}'", $"{string.Join("\n", dparser.GetProperties().Select(p => $"{p.Key.PadRight(48, ' ')} {p.Value}"))}");
-			}
-
-			return _themeDefaultValues;
+		public AlephTheme GetDefaultOrFallback()
+		{
+			return GetDefault() ?? GetFallback();
 		}
 
 		private AlephTheme LoadFromFile(string file)
 		{
-			if (Path.GetFileName(file)?.ToLower() == "default.xml")
-			{
-				var parser = new ThemeParser();
-				parser.Load(file);
-				parser.Parse(new Dictionary<string, string>());
-				_themeDefaultValues = parser.GetProperties();
+			var parser = new ThemeParser();
+			parser.Load(file);
+			parser.Parse();
+			var t = parser.Generate();
+			
+			LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded theme {t.Name} v{t.Version} from '{file}'", $"{string.Join("\n", parser.GetProperties().Select(p => $"{p.Key.PadRight(48, ' ')} {p.Value}"))}");
 
-				var t = parser.Generate();
-
-				LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded (default) theme {t.Name} v{t.Version} from '{file}'", $"{string.Join("\n", parser.GetProperties().Select(p => $"{p.Key.PadRight(48, ' ')} {p.Value}"))}");
-
-				return t;
-			}
-			else
-			{
-				var parser = new ThemeParser();
-				parser.Load(file);
-				parser.Parse(GetDefaultParserProperties());
-				var t = parser.Generate();
-
-				LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded theme {t.Name} v{t.Version} from '{file}'", $"{string.Join("\n", parser.GetProperties().Select(p => $"{p.Key.PadRight(48, ' ')} {p.Value}"))}");
-
-				return t;
-			}
+			return t;
 		}
 
 		public void ReplaceTheme(AlephTheme theme)

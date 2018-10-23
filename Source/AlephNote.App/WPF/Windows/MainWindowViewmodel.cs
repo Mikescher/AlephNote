@@ -180,7 +180,7 @@ namespace AlephNote.WPF.Windows
 				Settings.Save();
 				App.Logger.Trace("Main", $"Settings saved in {sw2.ElapsedMilliseconds}ms");
 
-				if (refreshNotesTheme) ThemeManager.Inst.ChangeTheme(Settings.Theme);
+				if (refreshNotesTheme) ThemeManager.Inst.ChangeTheme(Settings.Theme, Settings.ThemeModifier);
 
 				if (reconnectRepo)
 				{

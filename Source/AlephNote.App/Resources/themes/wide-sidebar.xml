@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<theme>
+	<meta>
+		<name>Wide sidebar</name>
+		<version>1.0</version>
+		<compatibility>*</compatibility>
+		<author>Mike Schwörer</author>
+		<type>modifier</type>
+	</meta>
+
+	<data>
+		<property name="window.notesview.flat.vborder:margin"             value="6,3,6,0"/>
+		<property name="window.notesview.hierachical.list.vborder:margin" value="6,3,6,0"/>
+	</data>
+</theme>

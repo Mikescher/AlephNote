@@ -365,6 +365,10 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField(RefreshNotesTheme=true)]
 		public string Theme { get { return _theme; } set { _theme = value; OnPropertyChanged(); } }
 		private string _theme = "default.xml";
+		
+		[AlephXMLField(RefreshNotesTheme=true)]
+		public HashSet<string> ThemeModifier { get { return _themeModifier; } set { _themeModifier = value; OnPropertyChanged(); } }
+		private HashSet<string> _themeModifier = new HashSet<string>();
 
 		[AlephXMLField]
 		public bool IsReadOnlyMode { get { return _isReadonlyMode; } set { _isReadonlyMode = value; OnPropertyChanged(); } }

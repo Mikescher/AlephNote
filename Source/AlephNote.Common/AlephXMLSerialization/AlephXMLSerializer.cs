@@ -60,6 +60,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 			if (prop.PropertyType == typeof(DirectoryPath)) return AXMLFieldInfo.SettingObjectTypeEnum.DirectoryPath;
 			if (typeof(IList<RemoteStorageAccount>).IsAssignableFrom(prop.PropertyType)) return AXMLFieldInfo.SettingObjectTypeEnum.ListRemoteStorageAccount;
 			if (typeof(IAlephCustomSerializableField).IsAssignableFrom(prop.PropertyType)) return AXMLFieldInfo.SettingObjectTypeEnum.CustomSerializable;
+			if (prop.PropertyType == typeof(HashSet<string>)) return AXMLFieldInfo.SettingObjectTypeEnum.StringSet;
 
 			throw new NotSupportedException("Setting of type " + prop.PropertyType + " not supported");
 		}

@@ -25,6 +25,8 @@ namespace AlephNote.Common.AlephXMLSerialization
 			EncryptedString,
 			String,
 			Enum,
+			
+			StringSet,
 
 			DirectoryPath,
 			RemoteStorageAccount,
@@ -107,6 +109,11 @@ namespace AlephNote.Common.AlephXMLSerialization
 					x3.Add(new XAttribute("path", ((DirectoryPath)objdata).StrSerialize()));
 					return x3;
 
+				case SettingObjectTypeEnum.StringSet:
+					var x4 = CreateXElem(PropInfo.Name, SettingObjectTypeEnum.StringSet, null, opt);
+					x4.Add(((ISet<string>)objdata).Select(val => new XElement("Entry", val)));
+					return x4;
+
 				default:
 					throw new ArgumentOutOfRangeException(nameof(objdata), _objectType, null);
 			}
@@ -167,7 +174,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 					if (child != null)
 					{
 						list.Clear();
-						foreach (var elem in XHelper.GetChildOrThrow(root, PropInfo.Name).Elements())
+						foreach (var elem in child.Elements())
 						{
 							list.Add(DeserializeRemoteStorageAccount(elem, opt));
 						}
@@ -183,6 +190,16 @@ namespace AlephNote.Common.AlephXMLSerialization
 				case SettingObjectTypeEnum.DirectoryPath:
 					var dp = DirectoryPath.Deserialize(XHelper.GetChildrenOrEmpty(root, PropInfo.Name, "PathComponent"));
 					PropInfo.SetValue(obj, dp);
+					break;
+
+				case SettingObjectTypeEnum.StringSet:
+					var set = (ISet<string>)current;
+					var setchild = XHelper.GetChildOrNull(root, PropInfo.Name);
+					if (setchild != null)
+					{
+						set.Clear();
+						foreach (var elem in setchild.Elements()) set.Add(elem.Value);
+					}
 					break;
 
 				default:

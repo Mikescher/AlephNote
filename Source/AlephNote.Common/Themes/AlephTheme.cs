@@ -210,18 +210,17 @@ namespace AlephNote.Common.Themes
 
 		#endregion
 
-		public readonly bool IsFallback;
-
 		public string Name { get; }
 		public Version Version { get; }
 		public string Author { get; }
 		public CompatibilityVersionRange Compatibility { get; }
 		public string SourceFilename { get; }
 		public string Source { get; }
+		public AlephThemeType ThemeType { get; }
+		
+		private readonly Dictionary<string, AlephThemePropertyValue> allProperties = new Dictionary<string, AlephThemePropertyValue>();
 
-		private readonly Dictionary<string, object> allProperties = new Dictionary<string, object>();
-
-		public AlephTheme(string n, Version v, CompatibilityVersionRange c, string fn, string src, bool fb, string a)
+		public AlephTheme(string n, Version v, CompatibilityVersionRange c, string fn, string src, string a, AlephThemeType att)
 		{
 			Name = n;
 			Version = v;
@@ -229,34 +228,24 @@ namespace AlephNote.Common.Themes
 			Compatibility = c;
 			SourceFilename = fn;
 			Source = src;
-
-			IsFallback = fb;
+			ThemeType = att;
 		}
 
-		public void AddProperty(string name, object prop) => allProperties.Add(name.ToLower(), prop);
-
-		public T Get<T>(string name)
+		public void AddProperty(string name, AlephThemePropertyValue value)
 		{
-			var obj = Get(name);
-			if (obj is T result) return result;
-			throw new Exception($"ThemeProperty has wrong type: {name} (Expected: {typeof(T)}, Actual: {obj?.GetType()})");
+			allProperties.Add(name.ToLower(), value);
 		}
 
-		public object Get(string name)
+		public AlephThemePropertyValue TryGet(string name)
 		{
-			if (allProperties.TryGetValue(name.ToLower(), out var obj)) return obj;
-			throw new Exception($"ThemeProperty not found: {name}");
+			return allProperties.TryGetValue(name.ToLower(), out var result) ? result : null;
 		}
-
-		public string GetStrRepr(string name)
+		
+		public string GetXmlStr(string name)
 		{
-			if (!allProperties.TryGetValue(name.ToLower(), out var obj)) return "N/A";
-
-			if (obj == null) return "NULL";
-
-			if (obj is double objDouble) return objDouble.ToString(CultureInfo.InvariantCulture);
-
-			return obj.ToString();
+			var obj = TryGet(name);
+			return obj?.XmlDirectValue ?? "N/A";
 		}
+
 	}
 }

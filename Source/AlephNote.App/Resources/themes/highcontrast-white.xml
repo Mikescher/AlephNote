@@ -13,8 +13,10 @@ Repository: https://github.com/Mikescher/AlephNote
 <theme>
 	<meta>
 		<name>High Contrast (White)</name>
-		<version>1.0</version>
+		<version>1.1</version>
 		<compatibility>*</compatibility>
+		<author>Mike Schwörer</author>
+		<type>theme</type>
 	</meta>
 
 	<ref>

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using AlephNote.Common.Themes;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Util;
@@ -61,14 +62,14 @@ namespace AlephNote.WPF.Windows
 
 		private void DebugShowDefaultTheme()
 		{
-			ThemeManager.Inst.ChangeTheme(ThemeManager.Inst.Cache.GetFallback());
+			ThemeManager.Inst.ChangeTheme(ThemeManager.Inst.Cache.GetFallback(), new AlephTheme[0]);
 		}
 
 		private void DebugDiscoTheme()
 		{
 			var tmr = new DispatcherTimer(TimeSpan.FromSeconds(0.05), DispatcherPriority.Normal, (a, e) =>
 			{
-				ThemeManager.Inst.ChangeTheme(ThemeManager.Inst.Cache.GetFallback());
+				ThemeManager.Inst.ChangeTheme(ThemeManager.Inst.Cache.GetFallback(), new AlephTheme[0]);
 			}, Application.Current.Dispatcher);
 
 			tmr.Start();

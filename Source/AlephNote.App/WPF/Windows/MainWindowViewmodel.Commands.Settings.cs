@@ -59,9 +59,9 @@ namespace AlephNote.WPF.Windows
 
 		private void ChangeSettingTheme()
 		{
-			var themes = ThemeManager.Inst.Cache.GetAllAvailable();
+			var themes = ThemeManager.Inst.Cache.GetAllAvailableThemes();
 
-			var idx = themes.IndexOf(ThemeManager.Inst.CurrentTheme);
+			var idx = themes.IndexOf(ThemeManager.Inst.CurrentBaseTheme);
 			if (idx < 0) return;
 
 			idx = (idx + 1) % themes.Count;

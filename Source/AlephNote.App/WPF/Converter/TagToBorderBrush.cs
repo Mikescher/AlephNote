@@ -8,11 +8,11 @@ namespace AlephNote.WPF.Converter
 {
 	class TagToBorderBrush : OneWayConverter<string, Brush>
 	{
-		private static AlephTheme _currTheme = null;
+		private static AlephThemeSet _currTheme = null;
 		private static Brush StandardBrush   = null;
 		private static Brush HighlightBrush  = null;
 
-		private static void CreateBrushes(AlephTheme t)
+		private static void CreateBrushes(AlephThemeSet t)
 		{
 			StandardBrush = BrushRefToBrush.Convert(t.Get<BrushRef>("window.tageditor.tag:bordercolor_default"));
 
@@ -43,7 +43,7 @@ namespace AlephNote.WPF.Converter
 
 		protected override Brush Convert(string value, object parameter)
 		{
-			var theme = ThemeManager.Inst.CurrentTheme;
+			var theme = ThemeManager.Inst.CurrentThemeSet;
 			if (theme != _currTheme) CreateBrushes(theme);
 
 			value = value ?? "";

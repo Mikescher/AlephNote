@@ -179,7 +179,7 @@ namespace AlephNote.WPF.Extensions
 			if (Application.Current.MainWindow == null) return null; // designmode
 #endif
 
-			var obj = ThemeManager.Inst.CurrentTheme.Get(key);
+			var obj = ThemeManager.Inst.CurrentThemeSet.Get(key);
 
 			if (string.IsNullOrWhiteSpace(converter))
 			{

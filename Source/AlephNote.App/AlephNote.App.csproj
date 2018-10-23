@@ -597,15 +597,21 @@
       <TargetPath>Themes\highcontrast-black.xml</TargetPath>
       <SubType>Designer</SubType>
     </ContentWithTargetPath>
+		<ContentWithTargetPath Include="Resources\themes\compact-sidebar.xml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>Themes\compact-sidebar.xml</TargetPath>
+			<SubType>Designer</SubType>
+		</ContentWithTargetPath>
+		<ContentWithTargetPath Include="Resources\themes\wide-sidebar.xml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>Themes\wide-sidebar.xml</TargetPath>
+			<SubType>Designer</SubType>
+		</ContentWithTargetPath>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\lock.png" />
     <Resource Include="Resources\lock_open.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\tag.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\lock_small.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

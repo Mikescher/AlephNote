@@ -38,7 +38,7 @@ namespace AlephNote.WPF.Util
 
 		public void SetUpStyles(Scintilla sci, AppSettings s)
 		{
-			var theme = ThemeManager.Inst.CurrentTheme;
+			var theme = ThemeManager.Inst.CurrentThemeSet;
 
 			sci.Styles[Style.Default].BackColor = theme.Get<ColorRef>("scintilla.background").ToDCol();
 

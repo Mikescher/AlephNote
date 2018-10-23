@@ -42,6 +42,7 @@ namespace AlephNote.Common.Themes
 		private string _filename;
 		private string _source;
 		private string _author;
+		private AlephThemeType _themetype;
 
 		private Dictionary<string, ValueRef> _references;
 		private Dictionary<string, string> _properties;
@@ -59,12 +60,13 @@ namespace AlephNote.Common.Themes
 			_filename = Path.GetFileName(filepath).ToLower();
 		}
 
-		public void Parse(Dictionary<string, string> baseValues)
+		public void Parse()
 		{
 			_name          = _xdoc.XListSingle("theme", "meta", "name");
 			_version       = Version.Parse(_xdoc.XListSingle("theme", "meta", "version"));
 			_compatibility = CompatibilityVersionRange.Parse(_xdoc.XListSingle("theme", "meta", "compatibility"));
 			_author        = _xdoc.XListSingleOrDefault("theme", "meta", "author") ?? "Unknown";
+			_themetype     = AlephThemeTypeHelper.Parse(_xdoc.XListSingleOrDefault("theme", "meta", "type") ?? "theme");
 
 			_references = new Dictionary<string, ValueRef>();
 			foreach (var vr in _xdoc.XElemList("theme", "ref", "valueref@key=~&type=~"))
@@ -86,7 +88,7 @@ namespace AlephNote.Common.Themes
 				_references.Add(key.ToLower(), new ValueRef(key, typ, value));
 			}
 
-			_properties = new Dictionary<string, string>(baseValues);
+			_properties = new Dictionary<string, string>();
 			foreach (var prop in _xdoc.XElemList("theme", "data", "*group*", "property@name=~&value=~"))
 			{
 				var name  = prop.Attribute("name").Value.ToLower();
@@ -108,43 +110,50 @@ namespace AlephNote.Common.Themes
 
 		public AlephTheme Generate()
 		{
-			var t = new AlephTheme(_name, _version, _compatibility, _filename, _source, false, _author);
+			var t = new AlephTheme(_name, _version, _compatibility, _filename, _source, _author, _themetype);
 
 			foreach (var propdef in AlephTheme.THEME_PROPERTIES)
 			{
+				var v = TryGetProperty(propdef.Item1);
+				if (v == null) continue;
+
+				if (v.IsIndirect) { t.AddProperty(propdef.Item1, v); continue; }
+
 				switch (propdef.Item2)
 				{
 					case AlephTheme.AlephThemePropType.Color:
-						t.AddProperty(propdef.Item1, ColorRef.Parse(GetProperty(propdef.Item1)));
+						v.DirectValue = ColorRef.Parse(v.XmlDirectValue);
 						break;
 
 					case AlephTheme.AlephThemePropType.Brush:
-						t.AddProperty(propdef.Item1, BrushRef.Parse(GetProperty(propdef.Item1)));
+						v.DirectValue = BrushRef.Parse(v.XmlDirectValue);
 						break;
 
 					case AlephTheme.AlephThemePropType.Thickness:
-						t.AddProperty(propdef.Item1, ThicknessRef.Parse(GetProperty(propdef.Item1)));
+						v.DirectValue = ThicknessRef.Parse(v.XmlDirectValue);
 						break;
 
 					case AlephTheme.AlephThemePropType.Integer:
-						t.AddProperty(propdef.Item1, int.Parse(GetProperty(propdef.Item1)));
+						v.DirectValue = int.Parse(v.XmlDirectValue);
 						break;
 
 					case AlephTheme.AlephThemePropType.Double:
-						t.AddProperty(propdef.Item1, double.Parse(GetProperty(propdef.Item1), NumberStyles.Float, CultureInfo.InvariantCulture));
+						v.DirectValue = double.Parse(v.XmlDirectValue, NumberStyles.Float, CultureInfo.InvariantCulture);
 						break;
 
 					case AlephTheme.AlephThemePropType.Boolean:
-						t.AddProperty(propdef.Item1, XElementExtensions.ParseBool(GetProperty(propdef.Item1)));
+						v.DirectValue = XElementExtensions.ParseBool(v.XmlDirectValue);
 						break;
 
 					case AlephTheme.AlephThemePropType.CornerRadius:
-						t.AddProperty(propdef.Item1, CornerRadiusRef.Parse(GetProperty(propdef.Item1)));
+						v.DirectValue = CornerRadiusRef.Parse(v.XmlDirectValue);
 						break;
 
 					default:
 						throw new NotSupportedException();
 				}
+				
+				t.AddProperty(propdef.Item1, v);
 			}
 			
 			return t;
@@ -154,7 +163,7 @@ namespace AlephNote.Common.Themes
 
 		public static AlephTheme GetFallback()
 		{
-			var t = new AlephTheme("DEFAULT_THEME_FALLBACK", new Version(0, 0, 0, 0), CompatibilityVersionRange.ANY, "NULL", "<!-- fallback -->", true, "auto generated");
+			var t = new AlephTheme("DEFAULT_THEME_FALLBACK", new Version(0, 0, 0, 0), CompatibilityVersionRange.ANY, "NULL", "<!-- fallback -->", "auto generated", AlephThemeType.Fallback);
 
 			var r = new Random();
 
@@ -163,31 +172,31 @@ namespace AlephNote.Common.Themes
 				switch (propdef.Item2)
 				{
 					case AlephTheme.AlephThemePropType.Color:
-						t.AddProperty(propdef.Item1, ColorRef.GetRandom(r));
+						t.AddProperty(propdef.Item1, new AlephThemePropertyValue{IsIndirect=false,DirectValue=ColorRef.GetRandom(r),XmlDirectValue="random",IndirectionTarget=null});
 						break;
 
 					case AlephTheme.AlephThemePropType.Brush:
-						t.AddProperty(propdef.Item1, BrushRef.CreateSolid(ColorRef.GetRandom(r)));
+						t.AddProperty(propdef.Item1, new AlephThemePropertyValue{IsIndirect=false,DirectValue=BrushRef.CreateSolid(ColorRef.GetRandom(r)),XmlDirectValue="random",IndirectionTarget=null});
 						break;
 
 					case AlephTheme.AlephThemePropType.Thickness:
-						t.AddProperty(propdef.Item1, ThicknessRef.Create(r.Next(16), r.Next(16), r.Next(16), r.Next(16)));
+						t.AddProperty(propdef.Item1, new AlephThemePropertyValue{IsIndirect=false,DirectValue=ThicknessRef.Create(r.Next(16), r.Next(16), r.Next(16), r.Next(16)),XmlDirectValue="random",IndirectionTarget=null});
 						break;
 
 					case AlephTheme.AlephThemePropType.Integer:
-						t.AddProperty(propdef.Item1, r.Next(16));
+						t.AddProperty(propdef.Item1, new AlephThemePropertyValue{IsIndirect=false,DirectValue=r.Next(16),XmlDirectValue="random",IndirectionTarget=null});
 						break;
 
 					case AlephTheme.AlephThemePropType.Double:
-						t.AddProperty(propdef.Item1, r.NextDouble()*16);
+						t.AddProperty(propdef.Item1, new AlephThemePropertyValue{IsIndirect=false,DirectValue=r.NextDouble()*16,XmlDirectValue="random",IndirectionTarget=null});
 						break;
 
 					case AlephTheme.AlephThemePropType.Boolean:
-						t.AddProperty(propdef.Item1, r.Next()%2 == 0);
+						t.AddProperty(propdef.Item1, new AlephThemePropertyValue{IsIndirect=false,DirectValue=(r.Next()%2 == 0),XmlDirectValue="random",IndirectionTarget=null});
 						break;
 
 					case AlephTheme.AlephThemePropType.CornerRadius:
-						t.AddProperty(propdef.Item1, CornerRadiusRef.Create(r.Next(6)));
+						t.AddProperty(propdef.Item1, new AlephThemePropertyValue{IsIndirect=false,DirectValue=CornerRadiusRef.Create(r.Next(6)),XmlDirectValue="random",IndirectionTarget=null});
 						break;
 
 					default:
@@ -198,19 +207,33 @@ namespace AlephNote.Common.Themes
 			return t;
 		}
 		
-		private string GetProperty(string name, int depth=0, string origName=null)
+		private AlephThemePropertyValue TryGetProperty(string name)
 		{
-			if (depth >= 4) throw new Exception($"Max recursion depth reached for property '{origName}'");
-
 			if (_properties.TryGetValue(name.ToLower(), out var v))
 			{
-				if (v.StartsWith("$")) return GetProperty(v.Substring(1), depth + 1, origName ?? name);
-
-				return v;
+				if (v.StartsWith("$"))
+				{
+					return new AlephThemePropertyValue
+					{
+						IsIndirect        = true,
+						IndirectionTarget = v.Substring(1),
+						DirectValue       = null,
+						XmlDirectValue    = v,
+					};
+				}
+				else
+				{
+					return new AlephThemePropertyValue
+					{
+						IsIndirect        = false,
+						IndirectionTarget = null,
+						DirectValue       = null,
+						XmlDirectValue    = v,
+					};
+				}
 			}
 
-			throw new Exception($"Value for property '{name}' not found");
+			return null;
 		}
-
 	}
 }

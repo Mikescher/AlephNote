@@ -29,7 +29,8 @@ namespace AlephNote.WPF.Windows
 			private string _sourceFilename = "";
 			public string SourceFilename { get { return _sourceFilename; } set { if (_sourceFilename != value) { _sourceFilename = value; OnPropertyChanged(); } } }
 
-			public AlephTheme Parsed = null;
+			public AlephTheme ParsedTheme = null;
+			public AlephThemeSet ParsedSet = null;
 		}
 
 		public class ThemeEditorDV : ObservableObject
@@ -70,33 +71,35 @@ namespace AlephNote.WPF.Windows
 		public ThemeEditorViewmodel(ThemeEditor owner)
 		{
 			Owner = owner;
+			
+			var dt  = ThemeManager.Inst.Cache.GetDefault();
 
 			foreach (var at in ThemeManager.Inst.Cache.GetAllAvailable())
 			{
-				var newEntry = new ThemeEditorEntry()
+				var newEntry = new ThemeEditorEntry
 				{
 					SourceFilename = at.SourceFilename,
 					Name = at.Name,
 					Source = at.Source,
 					OriginalSource = at.Source,
-					Parsed = at,
+					ParsedTheme = at,
+					ParsedSet = new AlephThemeSet(dt, at, new AlephTheme[0]),
 				};
 				Entries.Add(newEntry);
-				if (at == ThemeManager.Inst.CurrentTheme) _selectedEntry = newEntry;
+				if (at == ThemeManager.Inst.CurrentBaseTheme) _selectedEntry = newEntry;
 			}
 
-			var dprop = ThemeManager.Inst.Cache.GetDefaultParserProperties();
-			var def = ThemeManager.Inst.Cache.GetByFilename("default.xml", out _);
+			var def = new AlephThemeSet(dt, dt, new AlephTheme[0]);
 
 			foreach (var prop in AlephTheme.THEME_PROPERTIES)
 			{
-				DefaultValues.Add(new ThemeEditorDV()
+				DefaultValues.Add(new ThemeEditorDV
 				{
 					Key     = prop.Item1,
-					Default = dprop[prop.Item1.ToLower()],
+					Default = dt.GetXmlStr(prop.Item1.ToLower()),
 					TypeStr = prop.Item2.ToString(),
-					Value   = SelectedEntry?.Parsed?.GetStrRepr(prop.Item1),
-					Changed = SelectedEntry?.Parsed?.GetStrRepr(prop.Item1) != def?.GetStrRepr(prop.Item1)
+					Value   = SelectedEntry?.ParsedSet?.GetStrRepr(prop.Item1),
+					Changed = SelectedEntry?.ParsedSet?.GetStrRepr(prop.Item1) != def?.GetStrRepr(prop.Item1)
 				});
 			}
 		}
@@ -140,12 +143,15 @@ namespace AlephNote.WPF.Windows
 			{
 				var parser = new ThemeParser();
 				parser.LoadFromString(SelectedEntry.Source, SelectedEntry.SourceFilename);
-				parser.Parse(ThemeManager.Inst.Cache.GetDefaultParserProperties());
+				parser.Parse();
 				var theme = parser.Generate();
 
 				ThemeManager.Inst.Cache.ReplaceTheme(theme);
 
-				ThemeManager.Inst.ChangeTheme(theme.SourceFilename);
+				ThemeManager.Inst.ChangeTheme(theme.SourceFilename, new string[0]);//TODO
+				#if Release
+				TODO ME
+				#endif
 
 				UpdateSelected();
 			}
@@ -187,19 +193,23 @@ namespace AlephNote.WPF.Windows
 			if (SelectedEntry == null) return;
 			try
 			{
-				var def = ThemeManager.Inst.Cache.GetByFilename("default.xml", out _);
+				var def = ThemeManager.Inst.Cache.GetDefaultOrFallback();
+				var defset = new AlephThemeSet(def, def, new AlephTheme[0]);
 
 				var parser = new ThemeParser();
 				parser.LoadFromString(SelectedEntry.Source, SelectedEntry.SourceFilename);
-				parser.Parse(ThemeManager.Inst.Cache.GetDefaultParserProperties());
+				parser.Parse();
 				var theme = parser.Generate();
+				var set   = new AlephThemeSet(def, theme, new AlephTheme[0]);
 
-				SelectedEntry.Name = theme.Name;
+				SelectedEntry.Name        = theme.Name;
+				SelectedEntry.ParsedSet   = set;
+				SelectedEntry.ParsedTheme = theme;
 
 				foreach (var dv in DefaultValues)
 				{
-					dv.Value   = theme.GetStrRepr(dv.Key);
-					dv.Changed = theme.GetStrRepr(dv.Key) != def?.GetStrRepr(dv.Key);
+					dv.Value   = set.GetStrRepr(dv.Key);
+					dv.Changed = set.GetStrRepr(dv.Key) != defset.GetStrRepr(dv.Key);
 				}
 			}
 			catch (Exception e)
