@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AlephNote.PluginInterface;
 
 namespace AlephNote.Common.Util
 {
@@ -44,9 +45,9 @@ namespace AlephNote.Common.Util
 				LoggerSingleton.Inst.ShowExceptionDialog($"Could not load theme {settings.Theme}", cte);
 				theme = Cache.GetFallback();
 			}
-			else if (!theme.Compatibility.Includes(LoggerSingleton.Inst.AppVersion))
+			else if (!theme.Compatibility.Includes(AlephAppContext.AppVersion))
 			{
-				LoggerSingleton.Inst.ShowExceptionDialog($"Could not load theme {settings.Theme}\r\nThe theme does not support the current version of AlephNote ({LoggerSingleton.Inst.AppVersion})", null);
+				LoggerSingleton.Inst.ShowExceptionDialog($"Could not load theme {settings.Theme}\r\nThe theme does not support the current version of AlephNote ({AlephAppContext.AppVersion.Item1}.{AlephAppContext.AppVersion.Item2}.{AlephAppContext.AppVersion.Item3}.{AlephAppContext.AppVersion.Item4})", null);
 				theme = Cache.GetFallback();
 			}
 

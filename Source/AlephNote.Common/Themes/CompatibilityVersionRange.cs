@@ -20,8 +20,8 @@ namespace AlephNote.Common.Themes
 			Min = v1;
 			Max = v2;
 		}
-
-		public override string ToString() => $"[{Min?.ToString()??"*"}]-[{Max?.ToString()??"*"}]";
+		
+		public bool Includes(Tuple<int, int, int, int> v) => Includes(new Version(v.Item1, v.Item2, v.Item3, v.Item4));
 
 		public bool Includes(Version v)
 		{
@@ -121,6 +121,15 @@ namespace AlephNote.Common.Themes
 				throw new Exception($"Parsing version range '{v}' failed", e);
 			}
 
+		}
+
+		public override string ToString()
+		{
+			if ((Min == null || Min == ANY.Min) && (Max == null || Max == ANY.Max)) return "*";
+
+			if (Min != null && Min != ANY.Min && (Max == null || Max == ANY.Max)) return $"[{Min?.ToString()??"*"}]+";
+
+			return $"[{Min?.ToString()??"*"}]-[{Max?.ToString()??"*"}]";
 		}
 	}
 }

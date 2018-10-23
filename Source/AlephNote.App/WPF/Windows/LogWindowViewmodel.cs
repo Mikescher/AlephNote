@@ -4,6 +4,7 @@ using AlephNote.WPF.MVVM;
 using System.Windows.Data;
 using System.Windows.Input;
 using AlephNote.Common.MVVM;
+using AlephNote.PluginInterface;
 
 namespace AlephNote.WPF.Windows
 {
@@ -39,7 +40,7 @@ namespace AlephNote.WPF.Windows
 		{
 			if (!ShowTrace && p.Type == LogEventType.Trace) return false;
 
-			if (App.Logger.DebugEnabled) return true;
+			if (AlephAppContext.DebugMode) return true;
 			return p.Type > LogEventType.Debug;
 		}
 	}

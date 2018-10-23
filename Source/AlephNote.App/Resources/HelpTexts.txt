@@ -257,7 +257,7 @@ Activate the readonly-mode on startup (you cannot change notes until you manuall
 Activate the readonly-mode when minimizing the main window (either to taskbar or to the trayarea)
 
 [RawFolderRepo]
-The "synchronize witj local folder" options synchronizes all your notes with a local folder.
+The "synchronize with local folder" options synchronizes all your notes with a local folder.
 First enable this option and choose an empty folder, the folder will be filled with a textfile for each of your notes.
 Every change in AlephNote will (with the next synchronization) be reflected in the folder.
 If you enable "Synchronize modifications" etc changes in the folder will also be reflected in AlephNote.
@@ -316,3 +316,21 @@ This has the effect that the app starts at the same position it was last time.
 Save the current window state (minimized, normal, maximized) when closing the window.
 This has the effect that the app starts in the same state it was last time.
 
+[AllowAllLettersInFilename]
+If set to true all characters in the Unicode [Letter, Other] category will be  used verbatim in filenames.
+Otherwise they will either be stripped away or encoded as '%+codepoint'
+This is experimental - in some cases (or some filesystems) this can lead to invalid filenames
+
+[AllowAllCharactersInFilename]
+If set to true all characters that are not explicitly forbidden will be used verbatim in filenames.
+Otherwise they will either be stripped away or encoded as '%+codepoint'
+This is not recommended - with this setting you can definitely create invalid files and/or exceptions in AlephNote
+
+[SingleInstanceMode]
+If enabled only a single AlephNote process per repository is allowed.
+Even with this setting you can launch AlephNote from two different locations.
+Its is not recommended to disable this - two processes that try to write to the same local files will probably result in data corruption.
+
+[UpdateToPrerelease]
+Also show updates that are marked as "prerelease".
+Be careful - these versions are normally not tested and can include fatal bugs and "features".

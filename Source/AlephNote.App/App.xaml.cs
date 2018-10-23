@@ -16,6 +16,8 @@ using System.Globalization;
 using System.Threading;
 using AlephNote.Common.Settings.Types;
 using AlephNote.Native;
+using AlephNote.PluginInterface;
+using AlephNote.WPF.Util;
 
 namespace AlephNote
 {
@@ -40,8 +42,7 @@ namespace AlephNote
 		public static bool IsUpdateMigration = false;
 		public static Version UpdateMigrationFrom;
 		public static Version UpdateMigrationTo;
-
-
+		
 		public App()
 		{
 			//NOP
@@ -51,6 +52,8 @@ namespace AlephNote
 		{
 			DispatcherUnhandledException += AppDispatcherUnhandledException;
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+			
+			AlephAppContext.Init(new AlephWPFContext());
 
 			LoggerSingleton.Register(Logger);
 			PluginManagerSingleton.Register(PluginMan);
@@ -68,8 +71,6 @@ namespace AlephNote
 #if DEBUG
 			DebugMode = true;
 #endif
-			Logger.DebugEnabled = DebugMode;
-			
 			PluginManager.Inst.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory);
 			App.Themes.Init(Args.GetStringDefault("themes", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "themes")));
 
@@ -120,7 +121,7 @@ namespace AlephNote
 			}
 			
 			var mw = new MainWindow(settings);
-
+			
 			if (!(settings.MinimizeToTray && settings.StartupState == ExtendedWindowState.Minimized)) mw.Show();
 		}
 		

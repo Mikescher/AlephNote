@@ -14,10 +14,6 @@ namespace AlephNote.Log
 	{
 		public readonly ObservableCollection<LogEvent> Events = new ObservableCollection<LogEvent>();
 
-		public bool DebugEnabled = false;
-
-		public Version AppVersion => App.APP_VERSION;
-
 		private void Log(LogEvent e)
 		{
 			var curr = Application.Current;

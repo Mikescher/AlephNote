@@ -41,6 +41,7 @@ namespace AlephNote.Common.Themes
 		private CompatibilityVersionRange _compatibility;
 		private string _filename;
 		private string _source;
+		private string _author;
 
 		private Dictionary<string, ValueRef> _references;
 		private Dictionary<string, string> _properties;
@@ -63,6 +64,7 @@ namespace AlephNote.Common.Themes
 			_name          = _xdoc.XListSingle("theme", "meta", "name");
 			_version       = Version.Parse(_xdoc.XListSingle("theme", "meta", "version"));
 			_compatibility = CompatibilityVersionRange.Parse(_xdoc.XListSingle("theme", "meta", "compatibility"));
+			_author        = _xdoc.XListSingleOrDefault("theme", "meta", "author") ?? "Unknown";
 
 			_references = new Dictionary<string, ValueRef>();
 			foreach (var vr in _xdoc.XElemList("theme", "ref", "valueref@key=~&type=~"))
@@ -106,7 +108,7 @@ namespace AlephNote.Common.Themes
 
 		public AlephTheme Generate()
 		{
-			var t = new AlephTheme(_name, _version, _compatibility, _filename, _source, false);
+			var t = new AlephTheme(_name, _version, _compatibility, _filename, _source, false, _author);
 
 			foreach (var propdef in AlephTheme.THEME_PROPERTIES)
 			{
@@ -152,7 +154,7 @@ namespace AlephNote.Common.Themes
 
 		public static AlephTheme GetFallback()
 		{
-			var t = new AlephTheme("DEFAULT_THEME_FALLBACK", new Version(0, 0, 0, 0), CompatibilityVersionRange.ANY, "NULL", "<!-- fallback -->", true);
+			var t = new AlephTheme("DEFAULT_THEME_FALLBACK", new Version(0, 0, 0, 0), CompatibilityVersionRange.ANY, "NULL", "<!-- fallback -->", true, "auto generated");
 
 			var r = new Random();
 

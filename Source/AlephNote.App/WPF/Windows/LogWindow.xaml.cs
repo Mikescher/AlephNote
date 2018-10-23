@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Windows;
 using System.Xml.Linq;
+using AlephNote.PluginInterface;
 using Microsoft.Win32;
 
 namespace AlephNote.WPF.Windows
@@ -16,14 +17,14 @@ namespace AlephNote.WPF.Windows
 		{
 			InitializeComponent();
 
-			CheckBoxDebug.IsChecked = App.Logger.DebugEnabled;
+			CheckBoxDebug.IsChecked = AlephAppContext.DebugMode;
 
 			DataContext = VM = new LogWindowViewmodel();
 		}
 
 		private void OnChangedDebugLog(object sender, RoutedEventArgs e)
 		{
-			App.Logger.DebugEnabled = CheckBoxDebug.IsChecked ?? false;
+			AlephAppContext.DebugMode = CheckBoxDebug.IsChecked ?? false;
 
 			VM?.LogView?.Refresh();
 		}

@@ -8,6 +8,7 @@ using AlephNote.Common.MVVM;
 using AlephNote.Common.Settings.Types;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.AppContext;
 using AlephNote.PluginInterface.Objects.AXML;
 using AlephNote.PluginInterface.Util;
 
@@ -15,7 +16,7 @@ namespace AlephNote.Common.Settings
 {
 	// ReSharper disable RedundantThisQualifier
 	// ReSharper disable CompareOfFloatsByEqualityOperator
-	public class AppSettings : ObservableObject, IAlephSerializable
+	public class AppSettings : ObservableObject, IAlephSerializable, IReadonlyAlephSettings
 	{
 		public static readonly string PATH_SETTINGS    = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.config");
 		public static readonly string PATH_SCROLLCACHE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.scrollcache.config");
@@ -444,6 +445,14 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public bool SingleInstanceMode { get { return _singleInstanceMode; } set { _singleInstanceMode = value; OnPropertyChanged(); } }
 		private bool _singleInstanceMode = true;
+
+		[AlephXMLField]
+		public bool AllowAllLettersInFilename { get { return _allowAllLettersInFilename; } set { _allowAllLettersInFilename = value; OnPropertyChanged(); } }
+		private bool _allowAllLettersInFilename = false;
+
+		[AlephXMLField]
+		public bool AllowAllCharactersInFilename { get { return _allowAllCharactersInFilename; } set { _allowAllCharactersInFilename = value; OnPropertyChanged(); } }
+		private bool _allowAllCharactersInFilename = false;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

@@ -107,7 +107,6 @@
 					<ctrl:AutoActionMenuItem Foreground="Black" Header="Title"              AlephAction="SetNoteSortingByName"             IsChecked="{Binding Settings.NoteSorting, Converter={conv:EnumValueToBoolean}, ConverterParameter='ByName'}"             Settings="{Binding Settings}"  />
 					<ctrl:AutoActionMenuItem Foreground="Black" Header="Creation date"      AlephAction="SetNoteSortingByCreationDate"     IsChecked="{Binding Settings.NoteSorting, Converter={conv:EnumValueToBoolean}, ConverterParameter='ByCreationDate'}"     Settings="{Binding Settings}"  />
 					<ctrl:AutoActionMenuItem Foreground="Black" Header="Last modified date" AlephAction="SetNoteSortingByModificationDate" IsChecked="{Binding Settings.NoteSorting, Converter={conv:EnumValueToBoolean}, ConverterParameter='ByModificationDate'}" Settings="{Binding Settings}"  />
-
 				</MenuItem>
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Always on Top"        AlephAction="ToggleAlwaysOnTop" IsChecked="{Binding Settings.AlwaysOnTop}"    Settings="{Binding Settings}"  />
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Display Line Numbers" AlephAction="ToggleLineNumbers" IsChecked="{Binding Settings.SciLineNumbers}" Settings="{Binding Settings}"  />

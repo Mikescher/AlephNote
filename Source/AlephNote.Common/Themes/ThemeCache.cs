@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AlephNote.PluginInterface;
 
 namespace AlephNote.Common.Themes
 {
@@ -74,7 +75,7 @@ namespace AlephNote.Common.Themes
 				.Concat(_cache.Values)
 				.Distinct()
 				.Where(p => p != null)
-				.Where(p => p.Compatibility.Includes(LoggerSingleton.Inst.AppVersion))
+				.Where(p => p.Compatibility.Includes(AlephAppContext.AppVersion))
 				.ToList();
 		}
 

@@ -393,7 +393,7 @@ namespace AlephNote.Common.Operations
 					var msg =
 						"Automatic Mirroring of AlephNote notes" + "\n" +
 						"" + "\n" +
-						"# AlephNote Version: " + LoggerSingleton.Inst.AppVersion + "\n" +
+						"# AlephNote Version: " + $"{AlephAppContext.AppVersion.Item1}.{AlephAppContext.AppVersion.Item2}.{AlephAppContext.AppVersion.Item3}.{AlephAppContext.AppVersion.Item4}" + "\n" +
 						"# Timestamp(UTC): " + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + "\n" +
 						"# Provider: " + provname + "\n" +
 						"# Provider (ID): " + provid + "\n";

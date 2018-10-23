@@ -214,16 +214,18 @@ namespace AlephNote.Common.Themes
 
 		public string Name { get; }
 		public Version Version { get; }
+		public string Author { get; }
 		public CompatibilityVersionRange Compatibility { get; }
 		public string SourceFilename { get; }
 		public string Source { get; }
 
 		private readonly Dictionary<string, object> allProperties = new Dictionary<string, object>();
 
-		public AlephTheme(string n, Version v, CompatibilityVersionRange c, string fn, string src, bool fb)
+		public AlephTheme(string n, Version v, CompatibilityVersionRange c, string fn, string src, bool fb, string a)
 		{
 			Name = n;
 			Version = v;
+			Author = a;
 			Compatibility = c;
 			SourceFilename = fn;
 			Source = src;

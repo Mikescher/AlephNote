@@ -237,6 +237,7 @@
       <DependentUpon>GenericInputDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Extensions\ThemeSlaveBinding.cs" />
+    <Compile Include="WPF\Util\AlephWPFContext.cs" />
     <Compile Include="WPF\Util\CaptureMouseWheelWhenUnfocusedBehavior.cs" />
     <Compile Include="WPF\Util\CheckableTag.cs" />
     <Compile Include="WPF\Util\SettingsHelper.cs" />
