@@ -72,16 +72,6 @@ Linux version
  - [X] Customizable shortcuts
  - [X] Readonly mode
 
-## Planned  features
-
- - [ ] Synchronization with [Evernote](https://evernote.com)
- - [ ] Client side encryption (for all plugins)
- - [ ] Get history from provider that support it (SimpleNote + Standard Notes)
- - [ ] Installer (if there is demand)
- - [ ] Linux version (UI mit Eto.Forms, .Net core)
- - [ ] edit tags without deleting (F2 ?)
- - [ ] unit tests (+ CI)
-
 ## License
 
 [MIT](https://github.com/Mikescher/AlephNote/blob/master/LICENSE)
