@@ -6,6 +6,7 @@
 		<compatibility>*</compatibility>
 		<author>Mike Schwörer</author>
 		<type>modifier</type>
+		<description>Use less space between the elements in the note sidebar (together with the "one line with date" option)</description>
 	</meta>
 
 	<data>
