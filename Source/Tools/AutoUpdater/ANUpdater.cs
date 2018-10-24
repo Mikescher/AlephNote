@@ -80,7 +80,7 @@ namespace AlephNote.AutoUpdater
 					_fail("Could not copy " + Path.GetFileName(file.Item1));
 				}
 
-				var delta = 333 - (Environment.TickCount - start);
+				var delta = 111 - (Environment.TickCount - start);
 				if (delta > 0) Thread.Sleep(delta);
 			}
 
