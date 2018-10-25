@@ -17,6 +17,7 @@ using System.Threading;
 using AlephNote.Common.Settings.Types;
 using AlephNote.Native;
 using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.AppContext;
 using AlephNote.WPF.Util;
 
 namespace AlephNote
@@ -99,6 +100,8 @@ namespace AlephNote
 				ExceptionDialog.Show(null, "Could not load settings", "Could not load settings from " + AppSettings.PATH_SETTINGS, e);
 				settings = AppSettings.CreateEmpty(AppSettings.PATH_SETTINGS);
 			}
+
+			AlephAppContext.SetFallbackSettings(settings);
 
 			if (settings.LockOnStartup && !settings.IsReadOnlyMode) settings.IsReadOnlyMode = true;
 

@@ -8,7 +8,7 @@ namespace AlephNote.WPF.Util
 {
 	public class AlephWPFContext : IAlephAppContext
 	{
-		IReadonlyAlephSettings IAlephAppContext.GetSettings() => MainWindow.Instance.Settings;
+		IReadonlyAlephSettings IAlephAppContext.GetSettings() => MainWindow.Instance?.Settings;
 
 		IAlephLogger IAlephAppContext.GetLogger() => LoggerSingleton.Inst;
 

@@ -925,6 +925,10 @@
 								<TextBlock     Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Use pre-release update channel" />
 								<CheckBox      Grid.Row="3" Grid.Column="2" IsChecked="{Binding Settings.UpdateToPrerelease}" VerticalAlignment="Center"/>
 								<ctrl:PHelpBtn Grid.Row="3" Grid.Column="3" HelpProperty="UpdateToPrerelease" Margin="2,0" VerticalAlignment="Center" />
+
+								<TextBlock     Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Used mode for URL matching" />
+								<ComboBox      Grid.Row="4" Grid.Column="2" Margin="4" ItemsSource="{mext:EnumSource {x:Type settings:URLMatchingMode}}" SelectedValue="{Binding Settings.UsedURLMatcher}" />
+
 							</Grid>
 						</StackPanel>
 					</ScrollViewer>

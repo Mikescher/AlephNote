@@ -5,6 +5,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using AlephNote.Common.MVVM;
 using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.AppContext;
 
 namespace AlephNote.WPF.Windows
 {

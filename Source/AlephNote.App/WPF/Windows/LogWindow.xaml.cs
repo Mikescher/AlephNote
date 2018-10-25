@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Xml.Linq;
 using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.AppContext;
 using Microsoft.Win32;
 
 namespace AlephNote.WPF.Windows

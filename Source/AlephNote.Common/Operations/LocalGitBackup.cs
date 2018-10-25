@@ -10,6 +10,7 @@ using AlephNote.Common.Settings;
 using AlephNote.PluginInterface.Util;
 using AlephNote.Common.Util;
 using System.Collections.Generic;
+using AlephNote.PluginInterface.AppContext;
 
 namespace AlephNote.Common.Operations
 {

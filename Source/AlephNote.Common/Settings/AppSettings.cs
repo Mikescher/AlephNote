@@ -457,6 +457,11 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public bool AllowAllCharactersInFilename { get { return _allowAllCharactersInFilename; } set { _allowAllCharactersInFilename = value; OnPropertyChanged(); } }
 		private bool _allowAllCharactersInFilename = false;
+		
+		[AlephXMLField]
+		public URLMatchingMode UsedURLMatcher { get { return _usedURLMatcher; } set { _usedURLMatcher = value; OnPropertyChanged(); } }
+		private URLMatchingMode _usedURLMatcher = URLMatchingMode.Tolerant;
+		int IReadonlyAlephSettings.UsedURLMatchingMode => (int)UsedURLMatcher;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

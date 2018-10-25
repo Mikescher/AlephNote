@@ -7,5 +7,6 @@ namespace AlephNote.PluginInterface.AppContext
 		bool AllowAllCharactersInFilename { get; }
 		bool AllowAllLettersInFilename { get; }
 		Guid ClientID { get; }
+		int UsedURLMatchingMode { get; }
 	}
 }

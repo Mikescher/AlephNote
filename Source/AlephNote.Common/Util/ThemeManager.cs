@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.AppContext;
 
 namespace AlephNote.Common.Util
 {

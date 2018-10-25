@@ -10,12 +10,17 @@ using AlephNote.Common.Settings;
 using AlephNote.Common.Themes;
 using AlephNote.WPF.Extensions;
 using AlephNote.Common.Util;
+using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.AppContext;
+using AlephNote.WPF.Windows;
 
 namespace AlephNote.WPF.Util
 {
 	public abstract class ScintillaHighlighter
 	{
-		public static readonly Regex REX_URL = new Regex(@"(?:(?:(?:(?:(?:http|https|ftp|file|irc)://[\w\.\-_äöü]+\.\w\w+)|(?:www\.[\w\.\-_äöü]+\.\w\w+))[/\w\?=\&\-\#\%\.\+\~\@\!\$\'\*\,\;\`\(\)]*)|(?:mailto:(?:[äöü\w]+(?:[._\-][äöü\w]+)*)@(?:[äöü\w\-]+(?:[.-][äöü\w]+)*\.[a-z]{2,})))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		public static readonly Regex REX_URL_STANDARD = new Regex(@"(?:(?:(?:(?:(?:http|https|ftp|file|irc)://[\w\.\-]+\.\w\w+)|(?:www\.[\w\.\-]+\.\w\w+))[/\w\?=\&\-_\.\+\!\*\'\(\)\%]*)|(?:mailto:(?:[\w]+(?:[._\-][\w]+)*)@(?:[\w\-]+(?:[.-][\w]+)*\.[a-z]{2,})))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		public static readonly Regex REX_URL_EXTENDED = new Regex(@"(?:(?:(?:(?:(?:http|https|ftp|file|irc)://[\w\.\-_äöü]+\.\w\w+)|(?:www\.[\w\.\-_äöü]+\.\w\w+))[/\w\?=\&\-\#\%\.\+\~\@\!\$\'\*\,\;\`\p{Pd}]*)|(?:mailto:(?:[äöü\w]+(?:[._\-][äöü\w]+)*)@(?:[äöü\w\-]+(?:[.-][äöü\w]+)*\.[a-z]{2,})))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		public static readonly Regex REX_URL_TOLERANT = new Regex(@"(?:(?:(?:(?:(?:http|https|ftp|file|irc)://[^\.\s]+\.\w\w+)|(?:www\.[^\s]+\.\w\w+))[^\s]*)|(?:mailto:(?:[^\s]+(?:[._\-][^\s]+)*)@(?:[^\s-]+(?:[.-][^\s]+)*\.[a-z]{2,})))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		public const int STYLE_DEFAULT    = 0;
 		public const int STYLE_URL        = 1;
@@ -144,7 +149,7 @@ namespace AlephNote.WPF.Util
 
 		protected void LinkHighlight(Scintilla sci, int start, string text)
 		{
-			var m = REX_URL.Matches(text);
+			var m = GetURLMatchingRegex().Matches(text);
 
 			var urlAreas = ExtractRanges(m);
 
@@ -206,7 +211,7 @@ namespace AlephNote.WPF.Util
 
 		public List<Tuple<string, int, int>> FindAllLinks(Scintilla noteEdit)
 		{
-			var matched = REX_URL.Matches(noteEdit.Text);
+			var matched = GetURLMatchingRegex().Matches(noteEdit.Text);
 
 			return matched.OfType<Match>().Select(m => Tuple.Create(m.Groups[0].Value, m.Index, m.Index + m.Length)).ToList();
 		}
@@ -302,6 +307,20 @@ namespace AlephNote.WPF.Util
 			}
 
 			return null;
+		}
+
+		private Regex GetURLMatchingRegex()
+		{
+			var v = (URLMatchingMode)AlephAppContext.Settings.UsedURLMatchingMode;
+
+			switch (v)
+			{
+				case URLMatchingMode.StandardConform:  return REX_URL_STANDARD;
+				case URLMatchingMode.ExtendedMatching: return REX_URL_EXTENDED;
+				case URLMatchingMode.Tolerant:         return REX_URL_TOLERANT;
+
+				default: throw new Exception("Invalid enum value: " + v);
+			}
 		}
 	}
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.AppContext;
 
 namespace AlephNote.Common.Themes
 {
