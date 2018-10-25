@@ -141,9 +141,8 @@
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
 
-							<Separator Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" 
-							           Background="{ext:ThemeBinding 'window.notesview.hierachical.list.vborder:foreground'}" 
-							           Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.vborder:background'}" 
+							<Rectangle Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Height="2"
+							           Fill="{ext:ThemeBinding   'window.notesview.flat.vborder:background'}" 
 							           Margin="{ext:ThemeBinding     'window.notesview.hierachical.list.vborder:margin'}"  />
 
 							<Image     Grid.Row="1" Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" 
@@ -165,9 +164,8 @@
 								</TextBlock.LayoutTransform>
 							</TextBlock>
 
-							<Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" 
-							           Background="{ext:ThemeBinding 'window.notesview.hierachical.list.vborder:foreground'}" 
-							           Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.vborder:background'}" 
+							<Rectangle Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" Height="2"
+							           Fill="{ext:ThemeBinding   'window.notesview.flat.vborder:background'}" 
 							           Margin="{ext:ThemeBinding     'window.notesview.hierachical.list.vborder:margin'}"  />
 						</Grid>
 					</DataTemplate>
