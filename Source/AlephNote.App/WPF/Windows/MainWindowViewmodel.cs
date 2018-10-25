@@ -39,6 +39,7 @@ namespace AlephNote.WPF.Windows
 		private NoteRepository _repository;
 		public NoteRepository Repository { get { return _repository; } private set { _repository = value; OnPropertyChanged(); } }
 
+		private INote _lastSelectedNote = null;
 		private INote _selectedNote;
 		public INote SelectedNote { get { return _selectedNote; } set { if (_selectedNote != value) { _selectedNote = value; OnPropertyChanged(); SelectedNoteChanged(); } } }
 
@@ -240,6 +241,8 @@ namespace AlephNote.WPF.Windows
 
 		private void SelectedNoteChanged()
 		{
+			if (_lastSelectedNote != null) {_lastSelectedNote.PropertyChanged -= SelectedNotePropertyChanged; _lastSelectedNote=null; }
+
 			if (SelectedNote != null && Settings != null && Settings.AutoSortTags)
 			{
 				SelectedNote.Tags.SynchronizeCollectionSafe(SelectedNote.Tags.OrderBy(p => p));
@@ -259,6 +262,13 @@ namespace AlephNote.WPF.Windows
 				Settings.LastSelectedFolder = SelectedFolderPath ?? DirectoryPath.Root();
 			}
 			RequestSettingsSave();
+
+			if (SelectedNote != null) { SelectedNote.PropertyChanged += SelectedNotePropertyChanged; _lastSelectedNote = SelectedNote; }
+		}
+
+		private void SelectedNotePropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(INote.IsLocked)) Owner.SetupScintilla(Settings);
 		}
 
 		private void SelectedFolderPathChanged()

@@ -1,11 +1,12 @@
 ﻿using AlephNote.PluginInterface.Util;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Xml.Linq;
 
 namespace AlephNote.PluginInterface
 {
-	public interface INote
+	public interface INote : INotifyPropertyChanged
 	{
 		event NoteChangedEventHandler OnChanged;
 
