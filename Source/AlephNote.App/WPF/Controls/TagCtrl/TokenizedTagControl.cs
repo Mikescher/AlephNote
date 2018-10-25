@@ -22,6 +22,8 @@ namespace AlephNote.WPF.Controls
 		public event EventHandler<TokenizedTagEventArgs> TagAdded;
 		public event EventHandler<TokenizedTagEventArgs> TagApplied;
 		public event EventHandler<TokenizedTagEventArgs> TagRemoved;
+		
+		public event EventHandler<TokenizedTagEventArgs> TagListChanged;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -85,7 +87,7 @@ namespace AlephNote.WPF.Controls
 				"IsEditing", 
 				typeof(bool), 
 				typeof(TokenizedTagControl), 
-				new FrameworkPropertyMetadata(false));
+				new FrameworkPropertyMetadata(false, (d,e) => ((TokenizedTagControl)d).IsEditingChanged(e)));
 
 		public static readonly DependencyProperty IsEditingProperty = IsEditingPropertyKey.DependencyProperty;
 		
@@ -109,6 +111,8 @@ namespace AlephNote.WPF.Controls
 		}
 
 		private int suppressItemsRefresh = 0;
+
+		private List<string> _tagsBeforeEdit = null;
 
 		static TokenizedTagControl()
 		{
@@ -197,7 +201,7 @@ namespace AlephNote.WPF.Controls
 			OnApplyTemplate(null);
 		}
 
-		public void OnApplyTemplate(TokenizedTagItem appliedTag = null)
+		public void OnApplyTemplate(TokenizedTagItem appliedTag)
 		{
 			if (GetTemplateChild("PART_CreateTagButton") is Button createBtn)
 			{
@@ -304,6 +308,28 @@ namespace AlephNote.WPF.Controls
 			if (IsReadonly) return;
 			tag.IsEditing = true;
 		}
+		
+		private void IsEditingChanged(DependencyPropertyChangedEventArgs e)
+		{
+			if (IsEditing)
+			{
+				_tagsBeforeEdit = EnteredTags.ToList();
+			}
+			else
+			{
+				if (_tagsBeforeEdit == null) return;
+
+				var tbe = _tagsBeforeEdit;
+				_tagsBeforeEdit = null;
+
+				Application.Current?.Dispatcher.BeginInvoke(new Action(() =>
+				{
+					if (!tbe.UnorderedCollectionEquals(EnteredTags.ToList())) TagListChanged?.Invoke(this, new TokenizedTagEventArgs(null));
+				}));
+			}
+			
+		}
+
 	}
 
 }

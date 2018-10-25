@@ -283,10 +283,10 @@
 				
 			</Image>
 
-			<ctrl:TagEditor2 Grid.Row="1" Grid.Column="0" 
-			                TagSource="{Binding SelectedNote.Tags}" 
-			                Repository="{Binding Repository}" 
-			                Settings="{Binding Settings}" 
+			<ctrl:TagEditor2 Grid.Row="1" Grid.Column="0"
+			                TagSource="{Binding SelectedNote.Tags}"
+			                Repository="{Binding Repository}"
+			                Settings="{Binding Settings}"
 			                Changed="TagEditor_OnChanged">
 				<ctrl:TagEditor2.Readonly>
 					<MultiBinding Converter="{StaticResource MBOP}" ConverterParameter="OR">

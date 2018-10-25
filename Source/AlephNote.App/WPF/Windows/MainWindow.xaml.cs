@@ -24,6 +24,7 @@ using AlephNote.WPF.Extensions;
 using AlephNote.Common.Util;
 using AlephNote.Common.Util.Search;
 using AlephNote.Native;
+using Application = System.Windows.Application;
 
 namespace AlephNote.WPF.Windows
 {
@@ -453,8 +454,11 @@ namespace AlephNote.WPF.Windows
 
 		private void TagEditor_OnChanged(ITagEditor source)
 		{
-			ForceNewHighlighting(Settings);
-			UpdateMargins(Settings);
+			Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+			{
+				ForceNewHighlighting(Settings);
+				UpdateMargins(Settings);
+			}));
 		}
 
 		private void NotesList_Drop(object sender, System.Windows.DragEventArgs e)

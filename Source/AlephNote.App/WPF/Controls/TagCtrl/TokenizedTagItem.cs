@@ -41,6 +41,8 @@ namespace AlephNote.WPF.Controls
 
 		private readonly TokenizedTagControl _parent;
 
+		private bool _ignoreLostFocus = false;
+
 		static TokenizedTagItem()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(TokenizedTagItem), new FrameworkPropertyMetadata(typeof(TokenizedTagItem)));
@@ -142,7 +144,9 @@ namespace AlephNote.WPF.Controls
 						{
 							if (string.IsNullOrWhiteSpace(this.Text))
 							{
+								_ignoreLostFocus = true;
 								InputBox_LostFocus(this, new RoutedEventArgs());
+								_ignoreLostFocus = false;
 								var previousTagIndex = ((IList)_parent.ItemsSource).Count - 1;
 								if (previousTagIndex < 0) break;
 								
@@ -168,7 +172,7 @@ namespace AlephNote.WPF.Controls
 				_parent.RemoveTag(this, true);
 			}
 
-			_parent.IsEditing = false;
+			if (!_ignoreLostFocus) _parent.IsEditing = false;
 		}
 	}
 }

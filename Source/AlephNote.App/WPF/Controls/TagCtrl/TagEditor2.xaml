@@ -221,8 +221,7 @@
 		<self:TokenizedTagControl x:Name="TagCtrl"
 		                          IsReadonly="{Binding Readonly}"
 		                          EnteredTags="{Binding TagSource, Mode=TwoWay}" 
-		                          TagRemoved="TokenizedTagControl_OnChange" 
-		                          TagApplied="TokenizedTagControl_OnChange" >
+		                          TagListChanged="TokenizedTagControl_OnChange" >
 
 			<self:TokenizedTagControl.Resources>
 				<Style TargetType="ListBoxItem">
