@@ -20,7 +20,7 @@ namespace AlephNote.WPF.Util
 	{
 		public static readonly Regex REX_URL_STANDARD = new Regex(@"(?:(?:(?:(?:(?:http|https|ftp|file|irc)://[\w\.\-]+\.\w\w+)|(?:www\.[\w\.\-]+\.\w\w+))[/\w\?=\&\-_\.\+\!\*\'\(\)\%]*)|(?:mailto:(?:[\w]+(?:[._\-][\w]+)*)@(?:[\w\-]+(?:[.-][\w]+)*\.[a-z]{2,})))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		public static readonly Regex REX_URL_EXTENDED = new Regex(@"(?:(?:(?:(?:(?:http|https|ftp|file|irc)://[\w\.\-_äöü]+\.\w\w+)|(?:www\.[\w\.\-_äöü]+\.\w\w+))[/\w\?=\&\-\#\%\.\+\~\@\!\$\'\*\,\;\`\p{Pd}]*)|(?:mailto:(?:[äöü\w]+(?:[._\-][äöü\w]+)*)@(?:[äöü\w\-]+(?:[.-][äöü\w]+)*\.[a-z]{2,})))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-		public static readonly Regex REX_URL_TOLERANT = new Regex(@"(?:(?:(?:(?:(?:http|https|ftp|file|irc)://[^\.\s]+\.\w\w+)|(?:www\.[^\s]+\.\w\w+))[^\s]*)|(?:mailto:(?:[^\s]+(?:[._\-][^\s]+)*)@(?:[^\s-]+(?:[.-][^\s]+)*\.[a-z]{2,})))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		public static readonly Regex REX_URL_TOLERANT = new Regex(@"(?<=(\s|^))(?:(?:(?:(?:(?:http|https|ftp|file|irc)://[^\.\s]+\.\w\w+)|(?:www\.[^\s]+\.\w\w+))[^\s]*)|(?:mailto:(?:[^\s]+(?:[._\-][^\s]+)*)@(?:[^\s-]+(?:[.-][^\s]+)*\.[a-z]{2,})))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		public const int STYLE_DEFAULT    = 0;
 		public const int STYLE_URL        = 1;
