@@ -278,7 +278,7 @@ If enabled you can craete new notes (= new files) in the filesystem and with the
 
 [RawFolderRepoAllowDeletion]
 Allow the deletion of notes in the filesystem.
-If anebaled you can delete files in the filesystem and the corresponding notes in AlepHNote will also be deleted on the next synchronization.
+If enabled you can delete files in the filesystem and the corresponding notes in AlepHNote will also be deleted on the next synchronization.
 
 (!) This is kinda dangerous, because this setting makes it easy to accidentally delete all your notes.
     It is my advise to use some kind of backup/history for your data:
@@ -338,4 +338,4 @@ Be careful - these versions are normally not tested and can include fatal bugs a
 [RawFolderRepoSubfolders]
 Create a sub-folder for every remote.
 This is useful if you plan to occasionally change your active remote,
-but want to keep the local synchronization ebaled for all ow them
+but want to keep the local synchronization enabled for all ow them
