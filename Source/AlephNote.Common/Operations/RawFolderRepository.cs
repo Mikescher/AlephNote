@@ -56,10 +56,10 @@ namespace AlephNote.Common.Operations
 
 		private bool _isSyncing = false;
 
-		private List<Tuple<string, DateTimeOffset>> _repoDeletedNotes = new List<Tuple<string, DateTimeOffset>>();
-		private ConcurrentDictionary<string, string> _pathMapping = new ConcurrentDictionary<string, string>(); // UUID -> lowercase(path)
+		private readonly List<Tuple<string, DateTimeOffset>> _repoDeletedNotes = new List<Tuple<string, DateTimeOffset>>();
+		private readonly ConcurrentDictionary<string, string> _pathMapping = new ConcurrentDictionary<string, string>(); // UUID -> lowercase(path)
 
-		private IAlephDispatcher _dispatcher;
+		private readonly IAlephDispatcher _dispatcher;
 
 		public RawFolderRepository(NoteRepository r, IAlephDispatcher disp, AppSettings s)
 		{
@@ -68,7 +68,7 @@ namespace AlephNote.Common.Operations
 			_invSyncRequest = DelayedCombiningInvoker.Create(() => disp.BeginInvoke(SyncNow), 5 * 1000, 30 * 1000);
 
 			_enabled = s.UseRawFolderRepo;
-			_path = s.RawFolderRepoPath;
+			_path = s.RawFolderRepoSubfolders ? Path.Combine(s.RawFolderRepoPath, s.ActiveAccount.ID.ToString("B")) : s.RawFolderRepoPath;
 
 			_filewatcherEnabled = s.RawFolderRepoUseFileWatcher;
 			_encoding = EncodingEnumHelper.ToEncoding(s.RawFolderRepoEncoding);

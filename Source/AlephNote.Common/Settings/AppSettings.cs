@@ -423,6 +423,10 @@ namespace AlephNote.Common.Settings
 		private bool _rawFolderRepoUseFileWatcher = true;
 		
 		[AlephXMLField(ReconnectRepo=true)]
+		public bool RawFolderRepoSubfolders { get { return _rawFolderRepoSubfolders; } set { _rawFolderRepoSubfolders = value; OnPropertyChanged(); } }
+		private bool _rawFolderRepoSubfolders = false;
+		
+		[AlephXMLField(ReconnectRepo=true)]
 		public int RawFolderRepoMaxDirectoryDepth { get { return _rawFolderRepoMaxDirectoryDepth; } set { _rawFolderRepoMaxDirectoryDepth = value; OnPropertyChanged(); } }
 		private int _rawFolderRepoMaxDirectoryDepth = 5;
 		

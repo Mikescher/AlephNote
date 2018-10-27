@@ -177,7 +177,7 @@ should always be possible.
 After committing the changes execute a `git push` in the repository to push the changed to the default remote.
 
 [GitMirrorSubfolders]
-Create a sub-folder for every Remote.
+Create a sub-folder for every remote.
 This is useful if you plan to occasionally change your active remote,
 otherwise every change will look in the git history as an deletion of all notes and inserting of a whole bunch of new notes.
 
@@ -334,3 +334,8 @@ Its is not recommended to disable this - two processes that try to write to the 
 [UpdateToPrerelease]
 Also show updates that are marked as "prerelease".
 Be careful - these versions are normally not tested and can include fatal bugs and "features".
+
+[RawFolderRepoSubfolders]
+Create a sub-folder for every remote.
+This is useful if you plan to occasionally change your active remote,
+but want to keep the local synchronization ebaled for all ow them

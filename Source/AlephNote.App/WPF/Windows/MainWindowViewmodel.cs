@@ -144,7 +144,8 @@ namespace AlephNote.WPF.Windows
 			{
 				var sw = Stopwatch.StartNew();
 
-				if (!Settings.ActiveAccount.IsEqual(newSettings.ActiveAccount)) newSettings.UseRawFolderRepo = false; // disable LocalSync when changing account
+				// disable LocalSync when changing account
+				if (!Settings.ActiveAccount.IsEqual(newSettings.ActiveAccount) && !newSettings.RawFolderRepoSubfolders) newSettings.UseRawFolderRepo = false;
 
 				var diffs = AppSettings.Diff(Settings, newSettings);
 
