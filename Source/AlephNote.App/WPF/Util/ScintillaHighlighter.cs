@@ -5,14 +5,11 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using AlephNote.Common.Settings.Types;
 using System.Text;
-using System.Drawing;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Themes;
 using AlephNote.WPF.Extensions;
 using AlephNote.Common.Util;
-using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.AppContext;
-using AlephNote.WPF.Windows;
 
 namespace AlephNote.WPF.Util
 {
