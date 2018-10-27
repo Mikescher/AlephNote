@@ -7,7 +7,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Mikescher.com")]
 [assembly: AssemblyProduct("AlephNote.App")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -15,6 +15,6 @@ using System.Windows;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 
-[assembly: AssemblyVersion("1.6.24.0")]
-[assembly: AssemblyFileVersion("1.6.24.0")]
-[assembly: AssemblyInformationalVersion("1.6.24.0-master")]
+[assembly: AssemblyVersion("1.6.25.0")]
+[assembly: AssemblyFileVersion("1.6.25.0")]
+[assembly: AssemblyInformationalVersion("1.6.25.0-master")]
