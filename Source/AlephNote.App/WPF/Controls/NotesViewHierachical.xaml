@@ -217,9 +217,8 @@
 									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.preview:foreground'}" 
 									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=2, Mode=OneWay}" />
 							</TextBlock>
-							<Separator Grid.Row="4" 
-									   Background="{ext:ThemeBinding 'window.notesview.hierachical.list.separator'}" 
-									   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.separator'}" 
+							<Rectangle Grid.Row="4" Height="2"
+							           Fill="{ext:ThemeBinding 'window.notesview.hierachical.list.separator'}" 
 									   Margin="6,7,6,7" />
 						</Grid>
 					</DataTemplate>
@@ -257,9 +256,8 @@
 									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.preview:foreground'}" 
 									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
 							</TextBlock>
-							<Separator Grid.Row="2" 
-									   Background="{ext:ThemeBinding 'window.notesview.hierachical.list.separator'}" 
-									   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.separator'}" 
+							<Rectangle Grid.Row="2" Height="2"
+							           Fill="{ext:ThemeBinding 'window.notesview.hierachical.list.separator'}" 
 									   Margin="6,7,6,7" />
 						</Grid>
 					</DataTemplate>

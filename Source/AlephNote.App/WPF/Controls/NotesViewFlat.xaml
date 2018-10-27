@@ -167,9 +167,8 @@
 									 Foreground="{ext:ThemeBinding 'window.notesview.flat.preview:foreground'}" 
 									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=2, Mode=OneWay}" />
 							</TextBlock>
-							<Separator Grid.Row="4" 
-									   Background="{ext:ThemeBinding 'window.notesview.flat.separator'}" 
-									   Foreground="{ext:ThemeBinding 'window.notesview.flat.separator'}" 
+							<Rectangle Grid.Row="4" Height="2"
+							           Fill="{ext:ThemeBinding 'window.notesview.flat.separator'}" 
 									   Margin="6,7,6,7" />
 						</Grid>
 					</DataTemplate>
@@ -186,6 +185,7 @@
 
 							<Grid Grid.Row="0">
 								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto"/>
 									<ColumnDefinition Width="Auto"/>
 									<ColumnDefinition Width="*"/>
 								</Grid.ColumnDefinitions>
@@ -206,9 +206,8 @@
 									 Foreground="{ext:ThemeBinding 'window.notesview.flat.preview:foreground'}" 
 									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
 							</TextBlock>
-							<Separator Grid.Row="2" 
-									   Background="{ext:ThemeBinding 'window.notesview.flat.separator'}" 
-									   Foreground="{ext:ThemeBinding 'window.notesview.flat.separator'}" 
+							<Rectangle Grid.Row="2" Height="2"
+							           Fill="{ext:ThemeBinding 'window.notesview.flat.separator'}" 
 									   Margin="6,7,6,7" />
 						</Grid>
 					</DataTemplate>
