@@ -467,6 +467,10 @@ namespace AlephNote.Common.Settings
 		private URLMatchingMode _usedURLMatcher = URLMatchingMode.Tolerant;
 		int IReadonlyAlephSettings.UsedURLMatchingMode => (int)UsedURLMatcher;
 
+		[AlephXMLField]
+		public bool RememberScrollPerSession { get { return _rememberScrollPerSession; } set { _rememberScrollPerSession = value; OnPropertyChanged(); } }
+		private bool _rememberScrollPerSession = false;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

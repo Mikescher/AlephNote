@@ -256,7 +256,7 @@ namespace AlephNote.WPF.Windows
 
 			if (SelectedNote != null) ScintillaSearcher.Highlight(Owner.NoteEdit, SelectedNote, SearchText);
 
-			if (Settings != null && Settings.RememberScroll) Owner.ScrollScintilla(_scrollCache.Get(SelectedNote));
+			if (Settings != null && (Settings.RememberScroll || Settings.RememberScrollPerSession)) Owner.ScrollScintilla(_scrollCache.Get(SelectedNote));
 
 			if (Settings != null && Settings.RememberLastSelectedNote)
 			{
@@ -481,7 +481,10 @@ namespace AlephNote.WPF.Windows
 
 		public void OnScroll(int yoffset, int cursorPos)
 		{
-			if (Settings.RememberScroll) _scrollCache.Set(SelectedNote, yoffset, cursorPos);
+			if (Settings.RememberScroll) 
+				_scrollCache.Set(SelectedNote, yoffset, cursorPos);
+			else if (Settings.RememberScrollPerSession) 
+				_scrollCache.SetNoSave(SelectedNote, yoffset, cursorPos);
 		}
 
 		public void ForceUpdateUIScroll()

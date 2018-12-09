@@ -76,6 +76,15 @@ namespace AlephNote.Common.Repository
 			SetDirty();
 		}
 
+		public void SetNoSave(INote n, int scrollpos, int cursorpos)
+		{
+			if (n == null) return;
+			lock (_masterLock)
+			{
+				_cache[n.UniqueName] = new Tuple<int, int?>(scrollpos, cursorpos);
+			}
+		}
+
 		public void SetDirty()
 		{
 			invSave.Request();

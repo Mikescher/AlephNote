@@ -339,3 +339,8 @@ Be careful - these versions are normally not tested and can include fatal bugs a
 Create a sub-folder for every remote.
 This is useful if you plan to occasionally change your active remote,
 but want to keep the local synchronization enabled for all ow them
+
+[RememberScrollPerSession]
+This setting is similiar to "Remember scroll position per note (permanent)",
+but the scroll position is only kept until the program is restarted.
+Setting this option when the permanent option is already active has no effect
