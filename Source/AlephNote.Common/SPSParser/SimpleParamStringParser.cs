@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using AlephNote.Common.Repository;
+using AlephNote.PluginInterface;
 
 namespace AlephNote.Common.SPSParser
 {
@@ -11,23 +13,71 @@ namespace AlephNote.Common.SPSParser
 		private abstract class SPSException : Exception { }
 		private class SyntaxException : SPSException { }
 
-		private readonly Dictionary<string, Func<string, string, string>> _keywords = new Dictionary<string, Func<string, string, string>>();
+		private class Context { public NoteRepository R; public INote N; }
+
+		private static readonly Random RND = new Random();
+
+		private readonly Dictionary<string, Func<string, string, Context, string>> _keywords = new Dictionary<string, Func<string, string, Context, string>>();
 
 		// ReSharper disable FormatStringProblem
 		public SimpleParamStringParser()
 		{
-			_keywords.Add("now",    (k, p) => string.Format("{0:" + (p ?? "yyyy-MM-dd HH:mm:ss") + "}", DateTime.Now));
-			_keywords.Add("utcnow", (k, p) => string.Format("{0:" + (p ?? "yyyy-MM-dd HH:mm:ss") + "}", DateTime.UtcNow));
-			_keywords.Add("time",   (k, p) => string.Format("{0:" + (p ?? "HH:mm") + "}", DateTime.Now));
-			_keywords.Add("date",   (k, p) => string.Format("{0:" + (p ?? "yyyy-MM-dd") + "}", DateTime.Now));
+			_keywords.Add("now",        (k, p, c) => string.Format("{0:" + (p ?? "yyyy-MM-dd HH:mm:ss") + "}", DateTime.Now));
+			_keywords.Add("utcnow",     (k, p, c) => string.Format("{0:" + (p ?? "yyyy-MM-dd HH:mm:ss") + "}", DateTime.UtcNow));
+			_keywords.Add("time",       (k, p, c) => string.Format("{0:" + (p ?? "HH:mm") + "}",               DateTime.Now));
+			_keywords.Add("date",       (k, p, c) => string.Format("{0:" + (p ?? "yyyy-MM-dd") + "}",          DateTime.Now));
+
+			_keywords.Add("uuid",       (k, p, c) => Guid.NewGuid().ToString(p ?? ""));
+			_keywords.Add("guid",       (k, p, c) => Guid.NewGuid().ToString(p ?? ""));
+
+			_keywords.Add("linebreak",  (k, p, c) => Environment.NewLine);
+			_keywords.Add("tab",        (k, p, c) => "\t");
+
+			_keywords.Add("random",     (k, p, c) =>
+			{
+				if (p == null)   return RND.Next().ToString();
+				var s = p.Split(',');
+				if (s.Length==1) return RND.Next(int.Parse(s[0])).ToString();
+				if (s.Length==2) return RND.Next(int.Parse(s[0]), int.Parse(s[1])).ToString();
+				throw new Exception("Invalid parameter for {random}");
+			});
+			
+			_keywords.Add("plugin",     (k, p, c) =>
+			{
+				if (p == null)   return c.R.ConnectionName;
+				if (p == "id" || p == "uuid")   return c.R.ProviderID;
+				if (p == "name")   return c.R.ConnectionName;
+				throw new Exception("Invalid parameter for {plugin}");
+			});
+
+			_keywords.Add("account",    (k, p, c) =>
+			{
+				if (p == null)   return c.R.ConnectionDisplayTitle;
+				if (p == "id" || p == "uuid")   return c.R.ConnectionUUID;
+				if (p == "name")   return c.R.ConnectionDisplayTitle;
+				throw new Exception("Invalid parameter for {account}");
+			});
+
+			_keywords.Add("note",       (k, p, c) =>
+			{
+				if (c.N == null) return string.Empty;
+				if (p == null)   return c.N.Title;
+				if (p == "id" || p == "uuid") return c.N.UniqueName;
+				if (p == "name" || p == "title") return c.N.Title;
+				if (p == "cdate") return c.N.CreationDate.ToString("yyyy-MM-dd HH:mm:ss");
+				if (p == "mdate") return c.N.ModificationDate.ToString("yyyy-MM-dd HH:mm:ss");
+				throw new Exception("Invalid parameter for {note}");
+			});
 		}
 		// ReSharper restore FormatStringProblem
 
-		public string Parse(string input, out bool success)
+		public string Parse(string input, NoteRepository r, INote n, out bool success)
 		{
 			try
 			{
-				var str = ParsInternal(input);
+				var c = new Context { R = r, N = n };
+
+				var str = ParseInternal(input, c);
 				success = true;
 				return str;
 			}
@@ -38,7 +88,7 @@ namespace AlephNote.Common.SPSParser
 			}
 		}
 
-		private string ParsInternal(string input)
+		private string ParseInternal(string input, Context c)
 		{
 			input = input.Replace(@"\r\n", @"\n");
 			input = input.Replace(@"\n", Environment.NewLine);
@@ -80,14 +130,14 @@ namespace AlephNote.Common.SPSParser
 					}
 					else if (mode == ParseMode.Keyword)
 					{
-						builderOut.Append(Evaluate(builderMain.ToString(), null));
+						builderOut.Append(Evaluate(builderMain.ToString(), null, c));
 						mode = ParseMode.Plain;
 						builderMain.Clear();
 						lastKeyword = string.Empty;
 					}
 					else if (mode == ParseMode.Parameter)
 					{
-						builderOut.Append(Evaluate(lastKeyword, builderMain.ToString()));
+						builderOut.Append(Evaluate(lastKeyword, builderMain.ToString(), c));
 						mode = ParseMode.Plain;
 						builderMain.Clear();
 						lastKeyword = string.Empty;
@@ -130,9 +180,9 @@ namespace AlephNote.Common.SPSParser
 			return builderOut.ToString();
 		}
 
-		private string Evaluate(string keyword, string param)
+		private string Evaluate(string keyword, string param, Context c)
 		{
-			if (_keywords.TryGetValue(keyword.ToLower(), out var func)) return func(keyword, param);
+			if (_keywords.TryGetValue(keyword.ToLower(), out var func)) return func(keyword, param, c);
 
 			throw new SyntaxException();
 		}

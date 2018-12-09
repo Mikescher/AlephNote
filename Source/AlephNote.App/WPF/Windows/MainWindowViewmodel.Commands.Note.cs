@@ -222,7 +222,7 @@ namespace AlephNote.WPF.Windows
 		{
 			if (SelectedNote == null) return;
 			
-			snip = _spsParser.Parse(snip, out bool succ);
+			snip = _spsParser.Parse(snip, Repository, SelectedNote, out bool succ);
 
 			if (!succ)
 			{
