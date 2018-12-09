@@ -44,6 +44,8 @@ namespace AlephNote.WPF.Windows
 
 		public INotesViewControl NotesViewControl { get; private set; }
 
+		public bool IsClosed = false;
+
 		public MainWindow(AppSettings settings)
 		{
 			InitializeComponent();
@@ -442,6 +444,8 @@ namespace AlephNote.WPF.Windows
 
 		public void MainWindow_OnClosed(EventArgs args)
 		{
+			IsClosed = true;
+
 			_scManager.Close();
 
 			App.Current.Shutdown();

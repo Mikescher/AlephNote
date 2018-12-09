@@ -18,6 +18,7 @@ using AlephNote.Common.Settings.Types;
 using AlephNote.Native;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.AppContext;
+using AlephNote.WPF.Dialogs;
 using AlephNote.WPF.Util;
 
 namespace AlephNote

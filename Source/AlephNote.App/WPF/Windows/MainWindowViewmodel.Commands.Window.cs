@@ -7,6 +7,7 @@ using AlephNote.Common.Operations;
 using AlephNote.Common.Repository;
 using AlephNote.Common.Settings;
 using AlephNote.PluginInterface.Util;
+using AlephNote.WPF.Dialogs;
 using AlephNote.WPF.MVVM;
 using AlephNote.WPF.Util;
 using Microsoft.Win32;

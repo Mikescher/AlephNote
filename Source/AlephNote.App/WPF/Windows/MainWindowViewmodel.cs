@@ -24,6 +24,7 @@ using AlephNote.Impl;
 using AlephNote.PluginInterface.Util;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface.Exceptions;
+using AlephNote.WPF.Dialogs;
 
 namespace AlephNote.WPF.Windows
 {

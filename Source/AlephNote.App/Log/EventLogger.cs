@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Xml.Linq;
 using AlephNote.PluginInterface.Util;
+using AlephNote.WPF.Dialogs;
 using AlephNote.WPF.Windows;
 
 namespace AlephNote.Log

@@ -9,6 +9,7 @@ using System.Net;
 using System.Windows;
 using System.Windows.Input;
 using AlephNote.Common.MVVM;
+using AlephNote.WPF.Dialogs;
 
 namespace AlephNote.WPF.Windows
 {

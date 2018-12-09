@@ -5,11 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
+using AlephNote.Common.Util;
+using AlephNote.WPF.Windows;
 using Microsoft.Win32;
 
-namespace AlephNote.WPF.Windows
+namespace AlephNote.WPF.Dialogs
 {
 	/// <summary>
 	/// Interaction logic for SyncErrorDialog.xaml
@@ -28,11 +29,8 @@ namespace AlephNote.WPF.Windows
 			dlg.Title = "Error in AlephNote v" + App.APP_VERSION;
 			dlg.ErrorMessage.Text = title;
 			dlg.ErrorTrace.Text = (FormatException(e, additionalInfo) ?? FormatStacktrace(additionalInfo));
-
-			if (owner != null && owner.IsLoaded)
-				dlg.Owner = owner;
-			else
-				dlg.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+			
+			SetOwnerSafe(owner, dlg);
 
 			dlg.ShowDialog();
 		}
@@ -43,23 +41,30 @@ namespace AlephNote.WPF.Windows
 
 			var dlg = new ExceptionDialog
 			{
-				ErrorMessage =
-				{
-					Text = message
-				},
-				ErrorTrace   =
-				{
-					Text = string.Join(split, new List<Exception> {e}.Concat(additionalExceptions).Select(ex => FormatException(ex, "")))
-				},
+				ErrorMessage = { Text = message },
+				ErrorTrace   = { Text = string.Join(split, new List<Exception> {e}.Concat(additionalExceptions).Select(ex => FormatException(ex, ""))) },
 				Title        = title,
 			};
 			
-			if (owner != null && owner.IsLoaded)
-				dlg.Owner = owner;
-			else
-				dlg.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+			SetOwnerSafe(owner, dlg);
 
 			dlg.ShowDialog();
+		}
+
+		private static void SetOwnerSafe(Window owner, Window dlg)
+		{
+			try
+			{
+				if (owner == null) { dlg.WindowStartupLocation = WindowStartupLocation.CenterScreen; return; }
+				if (!owner.IsLoaded) { dlg.WindowStartupLocation = WindowStartupLocation.CenterScreen; return; }
+				if (owner is MainWindow mw && mw.IsClosed) { dlg.WindowStartupLocation = WindowStartupLocation.CenterScreen; return; }
+
+				dlg.Owner = owner;
+			}
+			catch (InvalidOperationException ex)
+			{
+				LoggerSingleton.Inst.Warn("ExceptionDialog", ex.Message, ex.ToString());
+			}
 		}
 
 		private static string FormatException(Exception e, string suffix)
