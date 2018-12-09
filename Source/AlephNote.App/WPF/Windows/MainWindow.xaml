@@ -93,7 +93,12 @@
 						</util:MenuItemContainerTemplateSelector>
 					</MenuItem.ItemContainerTemplateSelector>
 				</MenuItem>
-
+				<MenuItem Foreground="Black" Header="Insert" UsesItemContainerTemplate="True">
+					<ctrl:AutoActionMenuItem Foreground="Black" Header="Hyperlink"                 AlephAction="InsertHyperlink"           Settings="{Binding Settings}" />
+					<ctrl:AutoActionMenuItem Foreground="Black" Header="Link to local file"        AlephAction="InsertFilelink"            Settings="{Binding Settings}" />
+					<ctrl:AutoActionMenuItem Foreground="Black" Header="Shortcut to another note"  AlephAction="InsertNotelink"            Settings="{Binding Settings}" />
+					<ctrl:AutoActionMenuItem Foreground="Black" Header="Clickable mail address"    AlephAction="InsertMaillink"            Settings="{Binding Settings}" />
+				</MenuItem>
 			</MenuItem>
 			<MenuItem Header="_View">
 				<MenuItem Foreground="Black" Header="Note preview style">

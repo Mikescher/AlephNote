@@ -27,6 +27,10 @@ namespace AlephNote.WPF.Windows
 		public ICommand DuplicateNoteCommand { get { return new RelayCommand(DuplicateNote); } }
 		public ICommand PinUnpinNoteCommand { get { return new RelayCommand(PinUnpinNote); } }
 		public ICommand LockUnlockNoteCommand { get { return new RelayCommand(LockUnlockNote); } }
+		public ICommand InsertHyperlinkCommand { get { return new RelayCommand(InsertHyperlink); } }
+		public ICommand InsertFilelinkCommand { get { return new RelayCommand(InsertFilelink); } }
+		public ICommand InsertNotelinkCommand { get { return new RelayCommand(InsertNotelink); } }
+		public ICommand InsertMaillinkCommand { get { return new RelayCommand(InsertMaillink); } }
 		
 		private void ExportNote()
 		{
@@ -230,5 +234,65 @@ namespace AlephNote.WPF.Windows
 			Owner.FocusScintilla();
 		}
 
+		private void InsertHyperlink()
+		{
+			if (SelectedNote == null) return;
+
+			if (!GenericInputDialog.ShowInputDialog(Owner, "Insert website address", "Hyperlink location", "", out var url)) return;
+			if (string.IsNullOrWhiteSpace(url)) return;
+
+			if (!(url.ToLower().StartsWith("http://") || url.ToLower().StartsWith("https://"))) url = "https://" + url;
+
+			Owner.NoteEdit.ReplaceSelection(url);
+			Owner.FocusScintilla();
+		}
+		
+		private void InsertFilelink()
+		{
+			if (SelectedNote == null) return;
+
+			var ofd = new OpenFileDialog();
+
+			var inst = MainWindow.Instance;
+
+			if (inst != null && inst.IsVisible && inst.IsActive && !inst.IsClosed)
+			{
+				if (ofd.ShowDialog(inst) != true) return;
+			}
+			else
+			{
+				if (ofd.ShowDialog() != true) return;
+			}
+
+			var uri = new Uri(ofd.FileName).AbsoluteUri;
+			
+			Owner.NoteEdit.ReplaceSelection(uri);
+			Owner.FocusScintilla();
+		}
+		
+		private void InsertMaillink()
+		{
+			if (SelectedNote == null) return;
+			
+			if (!GenericInputDialog.ShowInputDialog(Owner, "Insert mail address", "Email address", "", out var url)) return;
+			if (string.IsNullOrWhiteSpace(url)) return;
+
+			url = "mailto:" + url;
+
+			Owner.NoteEdit.ReplaceSelection(url);
+			Owner.FocusScintilla();
+		}
+		
+		private void InsertNotelink()
+		{
+			if (SelectedNote == null) return;
+			
+			if (!NoteChooserDialog.ShowInputDialog(Owner, "Choose note to link", Repository, null, out var note)) return;
+
+			var uri = "note://" + note.UniqueName;
+
+			Owner.NoteEdit.ReplaceSelection(uri);
+			Owner.FocusScintilla();
+		}
 	}
 }

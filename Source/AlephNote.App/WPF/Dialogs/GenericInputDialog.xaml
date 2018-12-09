@@ -6,7 +6,7 @@
         xmlns:conv="clr-namespace:AlephNote.WPF.Converter"
         xmlns:self="clr-namespace:AlephNote.WPF.Dialogs"
         mc:Ignorable="d" ResizeMode="NoResize"
-		WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterOwner"
         Title="__TITLE__" MinWidth="100" MinHeight="100" Height="150" Width="425">
 	<Grid Name="RootGrid" d:DataContext="{self:GenericInputDialog}" >
 		<Grid.RowDefinitions>

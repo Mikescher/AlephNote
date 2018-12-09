@@ -231,13 +231,13 @@ namespace AlephNote.WPF.Windows
 			{
 				var links = _highlighterDefault.FindAllLinks(NoteEdit);
 				var link = links.FirstOrDefault(l => l.Item2 <= e.Position && e.Position <= l.Item3);
-				if (link != null) Process.Start(link.Item1);
+				if (link != null) OpenLink(link.Item1);
 			}
 			else if (Settings.LinkMode == LinkHighlightMode.ControlClick && e.Modifiers.HasFlag(Keys.Control))
 			{
 				var links = _highlighterDefault.FindAllLinks(NoteEdit);
 				var link = links.FirstOrDefault(l => l.Item2 <= e.Position && e.Position <= l.Item3);
-				if (link != null) Process.Start(link.Item1);
+				if (link != null) OpenLink(link.Item1);
 			}
 		}
 
@@ -247,7 +247,27 @@ namespace AlephNote.WPF.Windows
 			{
 				var links = _highlighterDefault.FindAllLinks(NoteEdit);
 				var link = links.FirstOrDefault(l => l.Item2 <= e.Position && e.Position <= l.Item3);
-				if (link != null) Process.Start(link.Item1);
+				if (link != null) OpenLink(link.Item1);
+			}
+		}
+
+		private void OpenLink(string link)
+		{
+			if (link.ToLower().StartsWith("note://"))
+			{
+				var n = VM.Repository.FindNoteByID(link.Substring("note://".Length));
+				if (n != null)
+					VM.SelectedNote = n;
+				else
+					System.Windows.MessageBox.Show("Note not found");
+			}
+			else if (link.ToLower().StartsWith("file://"))
+			{
+				Process.Start(link);
+			}
+			else
+			{
+				Process.Start(link);
 			}
 		}
 

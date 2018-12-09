@@ -50,6 +50,11 @@ namespace AlephNote.WPF.Shortcuts
 			AddCommand("PinUnpinNote",                     vm => vm.PinUnpinNoteCommand,                     "Pin the note to the top (or un-pin the note)",             ActionModifier.AccessControl);
 			AddCommand("LockUnlockNote",                   vm => vm.LockUnlockNoteCommand,                   "Lock/Unlock the note (prevent editing)",                   ActionModifier.AccessControl);
 
+			AddCommand("InsertHyperlink",                  vm => vm.InsertHyperlinkCommand,                  "Insert a Hyperlink",                                       ActionModifier.AccessControl);
+			AddCommand("InsertFilelink",                   vm => vm.InsertFilelinkCommand,                   "Insert a link to a local file",                            ActionModifier.AccessControl);
+			AddCommand("InsertNotelink",                   vm => vm.InsertNotelinkCommand,                   "Insert a link to another note",                            ActionModifier.AccessControl);
+			AddCommand("InsertMaillink",                   vm => vm.InsertMaillinkCommand,                   "Insert a clickable mail address",                          ActionModifier.AccessControl);
+
 			AddCommand("SaveAndSync",                      vm => vm.SaveAndSyncCommand,                      "Save current note and synchronize");
 			AddCommand("Resync",                           vm => vm.ResyncCommand,                           "Start synchronization with remote");
 			AddCommand("FullResync",                       vm => vm.FullResyncCommand,                       "Delete local data and do a full resync",                   ActionModifier.AccessControl);

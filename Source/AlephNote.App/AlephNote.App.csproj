@@ -218,6 +218,8 @@
     <Compile Include="WPF\Converter\ColorRefToBrush.cs" />
     <Compile Include="WPF\Converter\EnumValueToBoolean.cs" />
     <Compile Include="WPF\Converter\InvertedBoolToVisibility.cs" />
+    <Compile Include="WPF\Converter\IsNotNull.cs" />
+    <Compile Include="WPF\Converter\IsNull.cs" />
     <Compile Include="WPF\Converter\MultiBoolOperator.cs" />
     <Compile Include="WPF\Converter\MultiBoolToVisibility.cs" />
     <Compile Include="WPF\Converter\HierachicalWrapperToIcon.cs" />
@@ -235,6 +237,9 @@
     <Compile Include="WPF\Converter\TagToBorderBrush.cs" />
     <Compile Include="WPF\Dialogs\GenericInputDialog.xaml.cs">
       <DependentUpon>GenericInputDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\Dialogs\NoteChooserDialog.xaml.cs">
+      <DependentUpon>NoteChooserDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Extensions\ThemeSlaveBinding.cs" />
     <Compile Include="WPF\Util\AlephWPFContext.cs" />
@@ -435,6 +440,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="WPF\Dialogs\NoteChooserDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WPF\Windows\ConflictWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -597,16 +606,16 @@
       <TargetPath>Themes\highcontrast-black.xml</TargetPath>
       <SubType>Designer</SubType>
     </ContentWithTargetPath>
-		<ContentWithTargetPath Include="Resources\themes\compact-sidebar.xml">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<TargetPath>Themes\compact-sidebar.xml</TargetPath>
-			<SubType>Designer</SubType>
-		</ContentWithTargetPath>
-		<ContentWithTargetPath Include="Resources\themes\wide-sidebar.xml">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<TargetPath>Themes\wide-sidebar.xml</TargetPath>
-			<SubType>Designer</SubType>
-		</ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\themes\compact-sidebar.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Themes\compact-sidebar.xml</TargetPath>
+      <SubType>Designer</SubType>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\themes\wide-sidebar.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Themes\wide-sidebar.xml</TargetPath>
+      <SubType>Designer</SubType>
+    </ContentWithTargetPath>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\lock.png" />
