@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Xml.Linq;
 using System.Runtime.CompilerServices;
+using AlephNote.PluginInterface.Datatypes;
 using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.PluginInterface.Impl
@@ -64,7 +65,7 @@ namespace AlephNote.PluginInterface.Impl
 		{
 			_hConfig = hcfg;
 			PropertyChanged += Changed;
-			Tags.CollectionChanged += TagsChanged;
+			Tags.OnChanged += TagsChanged;
 		}
 
 		private void Changed(object sender, PropertyChangedEventArgs e)
@@ -134,7 +135,7 @@ namespace AlephNote.PluginInterface.Impl
 
 		public abstract void OnAfterUpload(INote clonenote);
 
-		public abstract ObservableCollection<string> Tags { get; }
+		public abstract TagList Tags { get; }
 		public abstract string Text { get; set; }
 		public abstract bool IsPinned { get; set; }
 		public abstract bool IsLocked { get; set; }

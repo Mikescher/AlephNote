@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.Datatypes;
 using AlephNote.PluginInterface.Impl;
 using AlephNote.PluginInterface.Util;
 
@@ -38,8 +39,8 @@ namespace AlephNote.Plugins.StandardNote
 		private List<StandardFileTag> _internalTags = new List<StandardFileTag>();
 		public List<StandardFileTag> InternalTags { get { return _internalTags; } }
 
-		private readonly ObservableCollection<string> _tags = new ObservableCollection<string>();
-		public override ObservableCollection<string> Tags { get { return _tags; } }
+		private readonly SimpleTagList _tags = new SimpleTagList();
+		public override TagList Tags { get { return _tags; } }
 
 		private bool _isPinned = false;
 		public override bool IsPinned { get { return _isPinned; } set { _isPinned = value; OnPropertyChanged(); } }
@@ -60,7 +61,7 @@ namespace AlephNote.Plugins.StandardNote
 			_config = cfg;
 			_creationDate = DateTimeOffset.Now;
 
-			_tags.CollectionChanged += TagsChanged;
+			_tags.OnChanged += TagsChanged;
 		}
 
 		public override XElement Serialize()

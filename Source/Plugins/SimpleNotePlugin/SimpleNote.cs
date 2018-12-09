@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.Datatypes;
 using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.SimpleNote
@@ -60,8 +61,8 @@ namespace AlephNote.Plugins.SimpleNote
 			_config = cfg;
 		}
 
-		private readonly ObservableCollection<string> _tags = new ObservableCollection<string>();
-		public override ObservableCollection<string> Tags { get { return _tags; } }
+		private readonly SimpleTagList _tags = new SimpleTagList();
+		public override TagList Tags { get { return _tags; } }
 
 		public override string Text
 		{

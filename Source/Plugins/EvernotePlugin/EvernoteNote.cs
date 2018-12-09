@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.Datatypes;
 using AlephNote.PluginInterface.Util;
 using AlephNote.PluginInterface.Impl;
 
@@ -26,8 +27,8 @@ namespace AlephNote.Plugins.Evernote
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
 		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
 
-		private readonly ObservableCollection<string> _tags = new VoidObservableCollection<string>();
-		public override ObservableCollection<string> Tags { get { return _tags; } }
+		private readonly VoidTagList _tags = new VoidTagList();
+		public override TagList Tags { get { return _tags; } }
 
 		public override bool IsPinned { get { return false; } set  { /* no */ } }
 

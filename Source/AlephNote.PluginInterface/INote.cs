@@ -3,6 +3,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.Datatypes;
 
 namespace AlephNote.PluginInterface
 {
@@ -26,7 +27,7 @@ namespace AlephNote.PluginInterface
 
 		string UniqueName { get; }
 
-		ObservableCollection<string> Tags { get; }
+		TagList Tags { get; }
 		string Text { get; set; }
 		string Title { get; set; }
 		bool IsPinned { get; set; }

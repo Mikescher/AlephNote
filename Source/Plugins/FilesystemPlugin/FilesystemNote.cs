@@ -7,6 +7,7 @@ using System.Text;
 using System.Xml.Linq;
 using AlephNote.PluginInterface.Util;
 using System.Linq;
+using AlephNote.PluginInterface.Datatypes;
 
 namespace AlephNote.Plugins.Filesystem
 {
@@ -33,8 +34,8 @@ namespace AlephNote.Plugins.Filesystem
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
 		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
 
-		private readonly ObservableCollection<string> _tags = new VoidObservableCollection<string>();
-		public override ObservableCollection<string> Tags { get { return _tags; } }
+		private readonly VoidTagList _tags = new VoidTagList();
+		public override TagList Tags { get { return _tags; } }
 
 		public override bool IsPinned { get { return false; } set { /* no */ } }
 

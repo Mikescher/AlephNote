@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.Datatypes;
 using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.Headless
@@ -33,9 +34,9 @@ namespace AlephNote.Plugins.Headless
 		private bool _isLocked = false;
 		public override bool IsLocked { get { return _isLocked; } set { _isLocked = value; OnPropertyChanged(); } }
 
-		private readonly ObservableCollection<string> _tags = new ObservableCollection<string>();
+		private readonly SimpleTagList _tags = new SimpleTagList();
 
-		public override ObservableCollection<string> Tags { get { return _tags; } }
+		public override TagList Tags { get { return _tags; } }
 
 		public HeadlessNote(Guid uid)
 		{

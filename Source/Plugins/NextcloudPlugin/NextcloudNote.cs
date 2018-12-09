@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.Datatypes;
 using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.Nextcloud
@@ -25,8 +26,8 @@ namespace AlephNote.Plugins.Nextcloud
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
 		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
 
-		private readonly ObservableCollection<string> _tags = new VoidObservableCollection<string>();
-		public override ObservableCollection<string> Tags { get { return _tags; } }
+		private readonly VoidTagList _tags = new VoidTagList();
+		public override TagList Tags { get { return _tags; } }
 
 		private DirectoryPath _path = DirectoryPath.Root();
 		public override DirectoryPath Path { get { return _path; } set { _path = value; OnPropertyChanged(); } }

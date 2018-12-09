@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using AlephNote.PluginInterface.Datatypes;
 
 namespace AlephNote.PluginInterface.Util
 {
@@ -145,6 +146,46 @@ namespace AlephNote.PluginInterface.Util
 					if (EqualityComparer<T>.Default.Equals(ins, target[i])) continue;
 					
 					var match = i + target.Skip(i).FirstOrDefaultIndex(p => EqualityComparer<T>.Default.Equals(ins, p));
+					if (match == null)
+					{
+						target.Insert(i, ins);
+					}
+					else
+					{
+						target.Move(match.Value, i);
+					}
+				}
+			}
+
+			while (target.Count > source.Count)
+			{
+				target.RemoveAt(target.Count-1);
+			}
+
+			Debug.Assert(target.CollectionEquals(esource));
+		}
+		
+		/// <summary>
+		/// Both lists have the same elements after this (+ same order)
+		/// Uses Move() to prevent removing and inserting same element
+		/// </summary>
+		public static void SynchronizeCollectionSafe(this TagList target, IEnumerable<string> esource)
+		{
+			var source = esource.ToList();
+
+			for (int i = 0; i < source.Count; i++)
+			{
+				var ins = source[i];
+
+				if (i >= target.Count)
+				{
+					target.Add(ins);
+				}
+				else
+				{
+					if (ins == target[i]) continue;
+					
+					var match = i + target.Skip(i).FirstOrDefaultIndex(p => ins == p);
 					if (match == null)
 					{
 						target.Insert(i, ins);
