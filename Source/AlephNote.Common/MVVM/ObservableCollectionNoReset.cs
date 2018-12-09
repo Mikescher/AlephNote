@@ -34,5 +34,11 @@ namespace AlephNote.Common.MVVM
 		{
 			RangeActionsSupported = rangeActionsSupported;
 		}
+
+		public ObservableCollectionNoReset(IEnumerable<T> data)
+		{
+			RangeActionsSupported = false;
+			foreach (var d in data) Add(d);
+		}
 	}
 }

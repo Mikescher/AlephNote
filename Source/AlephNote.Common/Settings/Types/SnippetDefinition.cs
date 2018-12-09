@@ -11,6 +11,9 @@ namespace AlephNote.Common.Settings.Types
 
 		public readonly string DisplayName;
 		public readonly string Value;
+		
+		public string PropertyName => DisplayName;
+		public string PropertyValue => Value;
 
 		public SnippetDefinition(string displ, string val)
 		{

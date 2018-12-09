@@ -290,15 +290,8 @@ namespace AlephNote.WPF.Windows
 		private void SettingsChanged()
 		{
 			if (Settings == null) return;
-
-			foreach (var snip in Settings.Snippets.Data)
-			{
-				var snipactionkey = "Snippet::" + snip.Key;
-				if (!ShortcutManager.Contains(snipactionkey))
-				{
-					ShortcutManager.AddSnippetCommand(snipactionkey, snip.Value.Value, snip.Value.DisplayName);
-				}
-			}
+			
+			ShortcutManager.UpdateSnippetCommands(Settings.Snippets.Data);
 		}
 
 		public void OnNoteChanged(NoteChangedEventArgs e)

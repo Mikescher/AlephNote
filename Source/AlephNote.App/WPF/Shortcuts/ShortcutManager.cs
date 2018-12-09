@@ -1,6 +1,7 @@
 ﻿using AlephNote.WPF.Windows;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using AlephNote.Common.MVVM;
 using AlephNote.Common.Settings;
@@ -149,7 +150,22 @@ namespace AlephNote.WPF.Shortcuts
 			return _actions.ContainsKey(snipkey);
 		}
 
-		public static void AddSnippetCommand(string snippetactionkey, string snippetvalue, string displayname)
+		public static void UpdateSnippetCommands(IReadOnlyDictionary<string, SnippetDefinition> snippetsData)
+		{
+			foreach (var a in _actions.ToList())
+			{
+				if (!a.Key.StartsWith("Snippet::")) continue;
+				RemoveSnippetCommand(a.Key);
+			}
+
+			foreach (var snip in snippetsData)
+			{
+				var snipactionkey = "Snippet::" + snip.Key;
+				AddSnippetCommand(snipactionkey, snip.Value.Value, snip.Value.DisplayName);
+			}
+		}
+
+		private static void AddSnippetCommand(string snippetactionkey, string snippetvalue, string displayname)
 		{
 			bool Exec(AlephAction src, MainWindow w)
 			{
@@ -164,6 +180,11 @@ namespace AlephNote.WPF.Shortcuts
 			}
 
 			_actions.Add(snippetactionkey, new AlephAction(Exec, $"Inserts the snippet '{displayname}'", ActionModifier.FromSnippet | ActionModifier.AccessControl));
+		}
+
+		private static void RemoveSnippetCommand(string snippetactionkey)
+		{
+			_actions.Remove(snippetactionkey);
 		}
 
 		public static ObservableCollectionNoReset<ObservableShortcutConfig> ListObservableShortcuts(AppSettings settings)

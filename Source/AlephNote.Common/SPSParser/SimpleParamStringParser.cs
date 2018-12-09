@@ -31,6 +31,9 @@ namespace AlephNote.Common.SPSParser
 			_keywords.Add("guid",       (k, p, c) => Guid.NewGuid().ToString(p ?? ""));
 
 			_keywords.Add("linebreak",  (k, p, c) => Environment.NewLine);
+			_keywords.Add("crlf",       (k, p, c) => "\r\n");
+			_keywords.Add("cr",         (k, p, c) => "\r");
+			_keywords.Add("lf",         (k, p, c) => "\n");
 			_keywords.Add("tab",        (k, p, c) => "\t");
 
 			_keywords.Add("random",     (k, p, c) =>

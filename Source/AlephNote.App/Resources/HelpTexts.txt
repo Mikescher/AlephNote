@@ -344,3 +344,25 @@ but want to keep the local synchronization enabled for all ow them
 This setting is similiar to "Remember scroll position per note (permanent)",
 but the scroll position is only kept until the program is restarted.
 Setting this option when the permanent option is already active has no effect
+
+[SnippetHelp]
+The text to be inserted, you can use the following keywords for dynamic content:
+ - {now}              // the current datetime
+ - {now:yyyy-MM-dd}   // the current datetime with a custom format string
+ - {utcnow}           // the current UTC datetime (also supports format strings)
+ - {time}             // the current time
+ - {date}             // the current date
+ - {uuid}             // a random UUID
+ - {linebreak}        // a linebreak
+ - {tab}              // a tab
+ - {random}           // a random integer
+ - {random,100}       // a random integer between 0 and 100
+ - {random:2,100}     // a random integer between 2 and 100
+ - {plugin:id}        // the currently used plugin ID
+ - {plugin:name}      // the currently used plugin name
+ - {account:id}       // the currently selected account ID
+ - {account:name}     // the currently selected account name
+ - {note:id}          // the currently selected note ID
+ - {note:title}       // the currently selected note title
+ - {note:cdate}       // the currently selected note creation date
+ - {note:mdate}       // the currently selected note modification date

@@ -4,6 +4,8 @@ using System.Windows.Controls;
 using AlephNote.Common.Settings;
 using AlephNote.Impl;
 using System.Diagnostics;
+using System.Windows.Data;
+using System.Windows.Input;
 
 namespace AlephNote.WPF.Windows
 {
@@ -75,6 +77,26 @@ namespace AlephNote.WPF.Windows
 		private void Button_Advanced_Click(object sender, RoutedEventArgs e)
 		{
 			viewmodel.HideAdvancedVisibility = Visibility.Hidden;
+		}
+
+		private void AddSnippet_Click(object sender, RoutedEventArgs e)
+		{
+			viewmodel.AddSnippet();
+		}
+
+		private void RemoveSnippet_Click(object sender, RoutedEventArgs e)
+		{
+			viewmodel.RemoveSnippet();
+		}
+
+		private void UIElement_OnKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter)
+			{
+				if (e.Source is UIElement elt) BindingOperations.GetBindingExpression(elt, TextBox.TextProperty)?.UpdateSource();
+
+				viewmodel.SelectedSnippet?.Update();
+			}
 		}
 	}
 }
