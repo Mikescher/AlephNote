@@ -43,9 +43,10 @@ namespace AlephNote.Impl
 
 		public void Invoke(Action a)
 		{
+			var app = Application.Current;
 			if (mode == DispatcherMode.AppDispatcher)
 			{
-				Application.Current.Dispatcher.Invoke(a);
+				app?.Dispatcher.Invoke(a);
 			}
 			else if (mode == DispatcherMode.CustomDispatcher)
 			{
@@ -57,9 +58,10 @@ namespace AlephNote.Impl
 
 		public void BeginInvoke(Action a)
 		{
+			var app = Application.Current;
 			if (mode == DispatcherMode.AppDispatcher)
 			{
-				Application.Current.Dispatcher.BeginInvoke(a);
+				app?.Dispatcher.BeginInvoke(a);
 			}
 			else if (mode == DispatcherMode.CustomDispatcher)
 			{
