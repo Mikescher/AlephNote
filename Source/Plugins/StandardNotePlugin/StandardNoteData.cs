@@ -48,15 +48,12 @@ namespace AlephNote.Plugins.StandardNote
 					var r = Tags.FirstOrDefault(p => p.UUID == tag.uuid);
 					if (r != null)
 					{
-						if (r.Title != tag.title)
-						{
-							Tags.Remove(r);
-							Tags.Add(new StandardFileTag(tag.uuid, tag.title));
-						}
+						Tags.Remove(r);
+						Tags.Add(new StandardFileTag(tag.uuid, tag.title, tag.references.Where(rf => rf.content_type == "Note").Select(rf => rf.uuid)));
 					}
 					else
 					{
-						Tags.Add(new StandardFileTag(tag.uuid, tag.title));
+						Tags.Add(new StandardFileTag(tag.uuid, tag.title, tag.references.Where(rf => rf.content_type == "Note").Select(rf => rf.uuid)));
 					}
 				}
 			}

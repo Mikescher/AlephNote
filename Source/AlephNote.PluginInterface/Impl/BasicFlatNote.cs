@@ -10,7 +10,7 @@ using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.PluginInterface.Impl
 {
-	public abstract class BasicFlatNote : INotifyPropertyChanged, INote
+	public abstract class BasicFlatNote : INote
 	{
 		private int _dirtySupressor = 0;
 

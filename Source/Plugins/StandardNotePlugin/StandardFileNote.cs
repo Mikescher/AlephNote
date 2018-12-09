@@ -36,8 +36,8 @@ namespace AlephNote.Plugins.StandardNote
 		private string _authHash = "";
 		public string AuthHash { get { return _authHash; } set { _authHash = value; OnPropertyChanged(); } }
 
-		private List<StandardFileTag> _internalTags = new List<StandardFileTag>();
-		public List<StandardFileTag> InternalTags { get { return _internalTags; } }
+		private List<StandardFileTagRef> _internalTags = new List<StandardFileTagRef>();
+		public List<StandardFileTagRef> InternalTags { get { return _internalTags; } }
 
 		private readonly SimpleTagList _tags = new SimpleTagList();
 		public override TagList Tags { get { return _tags; } }
@@ -92,7 +92,7 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			using (SuppressDirtyChanges())
 			{
-				_internalTags = XHelper.GetChildOrThrow(input, "Tags").Elements().Select(StandardFileTag.Deserialize).ToList();
+				_internalTags = XHelper.GetChildOrThrow(input, "Tags").Elements().Select(StandardFileTagRef.Deserialize).ToList();
 
 				_id = XHelper.GetChildValueGUID(input, "ID");
 				_tags.Synchronize(_internalTags.Select(it => it.Title));
@@ -118,7 +118,7 @@ namespace AlephNote.Plugins.StandardNote
 				foreach (var item in e.NewItems.Cast<string>())
 				{
 					if (_internalTags.All(it => it.Title != item))
-						_internalTags.Add(new StandardFileTag(null, item));
+						_internalTags.Add(new StandardFileTagRef(null, item));
 				}
 
 			if (e.OldItems != null)
@@ -128,15 +128,27 @@ namespace AlephNote.Plugins.StandardNote
 				}
 		}
 
-		public void UpgradeTag(StandardFileTag told, StandardFileTag tnew)
+		public void UpgradeTag(StandardFileTagRef told, StandardFileTagRef tnew)
 		{
 			int idx = _internalTags.IndexOf(told);
 			_internalTags[idx] = tnew;
 		}
 
-		public void SetTags(IEnumerable<StandardFileTag> newtags)
+		public void SetTags(IEnumerable<StandardFileTagRef> newtags)
 		{
 			_internalTags = newtags.ToList();
+			ResyncTags();
+		}
+
+		public void AddTag(StandardFileTagRef newtag)
+		{
+			_internalTags.Add(newtag);
+			ResyncTags();
+		}
+
+		public void RemoveTag(StandardFileTagRef newtag)
+		{
+			_internalTags.Remove(newtag);
 			ResyncTags();
 		}
 
@@ -200,7 +212,7 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			if (_id != other._id) return false;
 			if (_creationDate != other._creationDate) return false;
-			if (!new HashSet<StandardFileTag>(_internalTags).SetEquals(other._internalTags)) return false;
+			if (!new HashSet<StandardFileTagRef>(_internalTags).SetEquals(other._internalTags)) return false;
 			if (_text != other._text) return false;
 			if (_internaltitle != other._internaltitle) return false;
 			if (_isPinned != other._isPinned) return false;
@@ -230,5 +242,7 @@ namespace AlephNote.Plugins.StandardNote
 				return n;
 			}
 		}
+
+		public bool ContainsTag(Guid tagID) => _internalTags.Any(t => t.UUID == tagID);
 	}
 }

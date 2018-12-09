@@ -264,6 +264,19 @@ namespace AlephNote.PluginInterface.Util
 			return true;
 		}
 		
+		public static bool ListEquals<TTarget, TSource>(this IReadOnlyList<TTarget> target, IReadOnlyList<TSource> esource, Func<TSource, TTarget, bool> comp)
+		{
+			var source = esource.ToList();
+
+			if (source.Count != target.Count) return false;
+			for (int i = 0; i < source.Count; i++)
+			{
+				if (!comp(source[i], target[i])) return false;
+			}
+
+			return true;
+		}
+		
 		public static bool ListEquals(this IList target, IList source)
 		{
 			if (source.Count != target.Count) return false;
@@ -323,6 +336,18 @@ namespace AlephNote.PluginInterface.Util
 					throw new ArgumentException("The array capacity is insufficient to copy all items from the source sequence");
 				array[startIndex + i] = item;
 				i++;
+			}
+		}
+
+		public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+		{
+			HashSet<TKey> seenKeys = new HashSet<TKey>();
+			foreach (TSource element in source)
+			{
+				if (seenKeys.Add(keySelector(element)))
+				{
+					yield return element;
+				}
 			}
 		}
 	}

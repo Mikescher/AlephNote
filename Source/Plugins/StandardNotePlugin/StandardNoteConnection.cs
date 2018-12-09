@@ -21,6 +21,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		private StandardNoteAPI.APIResultAuthorize _token = null;
 		private StandardNoteAPI.SyncResult _syncResult = null;
+		private List<Guid> _lastUploadBatch = new List<Guid>();
 
 		public readonly HierachyEmulationConfig HConfig;
 
@@ -96,11 +97,12 @@ namespace AlephNote.Plugins.StandardNote
 
 				var localnotes = ilocalnotes.Cast<StandardFileNote>().ToList();
 
-				var upNotes = localnotes.Where(NeedsUpload).ToList();
+				var upNotes = localnotes.Where(NeedsUploadReal).ToList();
 				var delNotes = localdeletednotes.Cast<StandardFileNote>().ToList();
 				var delTags = data.GetUnusedTags(localnotes.ToList());
 
 				_syncResult = StandardNoteAPI.Sync(web, this, _token, _config, data, localnotes, upNotes, delNotes, delTags);
+				_lastUploadBatch = upNotes.Select(p => p.ID).ToList();
 
 				_logger.Debug(StandardNotePlugin.Name, "StandardFile sync finished.",
 					string.Format("upload:[notes={8} deleted={9}]" + "\r\n" + "download:[note:[retrieved={0} deleted={1} saved={2} conflicts={3} errors={4}] tags:[retrieved={5} saved={6} unsaved={7}]]",
@@ -219,8 +221,13 @@ namespace AlephNote.Plugins.StandardNote
 				.Select(p => p.ID.ToString("N"))
 				.ToList();
 		}
-
+		
 		public override bool NeedsUpload(INote note)
+		{
+			return _lastUploadBatch.Contains(((StandardFileNote)note).ID);
+		}
+		
+		private bool NeedsUploadReal(INote note)
 		{
 			return !note.IsConflictNote && !note.IsRemoteSaved;
 		}

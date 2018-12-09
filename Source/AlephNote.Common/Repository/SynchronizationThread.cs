@@ -219,7 +219,7 @@ namespace AlephNote.Common.Repository
 
 				try
 				{
-					if (!clonenote.IsLocalSaved)
+					if (!realnote.IsLocalSaved)
 					{
 						dispatcher.Invoke(() =>
 						{
@@ -388,7 +388,7 @@ namespace AlephNote.Common.Repository
 
 				try
 				{
-					if (!clonenote.IsLocalSaved)
+					if (!realnote.IsLocalSaved)
 					{
 						_log.Warn("Sync", "Downloading note skipped (unsaved changes)");
 						continue;

@@ -294,7 +294,7 @@ namespace AlephNote.WPF.Windows
 			ShortcutManager.UpdateSnippetCommands(Settings.Snippets.Data);
 		}
 
-		public void OnNoteChanged(NoteChangedEventArgs e)
+		public void OnNoteChanged(NoteChangedEventArgs e) // only local changes
 		{
 			if (Settings.NoteSorting == SortingMode.ByModificationDate && !Owner.NotesViewControl.IsTopSortedNote(e.Note))
 			{

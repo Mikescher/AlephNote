@@ -32,7 +32,7 @@ namespace AlephNote.Plugins.StandardNote
 		public class APIResultSync { public List<APIResultItem> retrieved_items, saved_items; public List<APIResultErrorItem> unsaved; public string sync_token, cursor_token; }
 		public class APIBadRequest { public APIError error; }
 		public class APIError { public string message; public int status; }
-		public class SyncResultTag { public Guid uuid; public string title; public bool deleted; public string enc_item_key, item_key; }
+		public class SyncResultTag { public Guid uuid; public string title; public bool deleted; public string enc_item_key, item_key; public List<APIResultContentRef> references; }
 		public class SyncResult { public List<StandardFileNote> retrieved_notes, saved_notes, conflict_notes, error_notes, deleted_notes; public List<SyncResultTag> retrieved_tags, saved_tags, unsaved_tags, deleted_tags; }
 		public class APIResultContentRef { public Guid uuid; public string content_type; }
 		public class ContentNote { public string title, text; public List<APIResultContentRef> references; public Dictionary<string, Dictionary<string, object>> appData; }
@@ -239,19 +239,19 @@ namespace AlephNote.Plugins.StandardNote
 			// Upload new notes
 			foreach (var mvNote in notesUpload)
 			{
-				PrepareForUpload(web, d, mvNote, allTags, authToken, cfg, false);
+				PrepareNoteForUpload(web, d, mvNote, allTags, authToken, cfg, false);
 			}
 
 			// Delete deleted notes
 			foreach (var rmNote in notesDelete)
 			{
-				PrepareForUpload(web, d, rmNote, allTags, authToken, cfg, true);
+				PrepareNoteForUpload(web, d, rmNote, allTags, authToken, cfg, true);
 			}
 
 			// Update references on tags (from changed notes)
-			foreach (var upTag in notesUpload.SelectMany(n => n.InternalTags).Concat(notesDelete.SelectMany(n => n.InternalTags)).Except(tagsDelete))
+			foreach (var upTag in GetTagsInNeedOfUpdate(dat.Tags, notesUpload, notesDelete))
 			{
-				PrepareForUpload(web, d, upTag, allNotes, authToken, cfg, false);
+				PrepareTagForUpload(web, d, upTag, authToken, false);
 			}
 
 			// Remove unused tags
@@ -259,7 +259,7 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				foreach (var rmTag in tagsDelete)
 				{
-					PrepareForUpload(web, d, rmTag, allNotes, authToken, cfg, true);
+					PrepareTagForUpload(web, d, rmTag, authToken, true);
 				}
 			}
 			
@@ -294,14 +294,14 @@ namespace AlephNote.Plugins.StandardNote
 				.ToList();
 
 			dat.UpdateTags(syncresult.retrieved_tags, syncresult.saved_tags, syncresult.unsaved_tags, syncresult.deleted_tags);
-
+			
 			syncresult.retrieved_notes = result
 				.retrieved_items
 				.Where(p => p.content_type.ToLower() == "note")
 				.Where(p => !p.deleted)
 				.Select(n => CreateNote(web, conn, n, authToken, cfg, dat))
 				.ToList();
-
+			
 			syncresult.deleted_notes = result
 				.retrieved_items
 				.Where(p => p.content_type.ToLower() == "note")
@@ -329,7 +329,218 @@ namespace AlephNote.Plugins.StandardNote
 				.Select(n => CreateNote(web, conn, n.item, authToken, cfg, dat))
 				.ToList();
 
+			syncresult.retrieved_notes.AddRange(GetMissingNoteUpdates(syncresult.retrieved_tags.Concat(syncresult.saved_tags), dat.Tags, allNotes, syncresult.retrieved_notes));
+
 			return syncresult;
+		}
+
+		private static IEnumerable<StandardFileTag> GetTagsInNeedOfUpdate(List<StandardFileTag> _allTags, List<StandardFileNote> notesUpload, List<StandardFileNote> notesDeleted)
+		{
+			var result = new List<StandardFileTag>();
+			var allTags = _allTags.ToList();
+
+			// [1] New Tags in Note
+			foreach (var note in notesUpload)
+			{
+				foreach (var noteTag in note.InternalTags)
+				{
+					if (noteTag.UUID == null) continue;
+
+					var realTag = allTags.FirstOrDefault(t => t.UUID == noteTag.UUID);
+
+					if (realTag == null) // create new tag
+					{
+						var addtag = new StandardFileTag(noteTag.UUID, noteTag.Title, Enumerable.Repeat(note.ID, 1));
+						allTags.Add(addtag);
+						result.Add(addtag);
+					}
+					else
+					{
+						if (realTag.ContainsReference(note))
+						{
+							// tag already contains ref - all ok
+						}
+						else
+						{
+							// tag does not contain ref - update
+							var addtag = new StandardFileTag(realTag.UUID, realTag.Title, realTag.References.Concat(Enumerable.Repeat(note.ID, 1)));
+							ReplaceOrAdd(allTags, realTag, addtag);
+							ReplaceOrAdd(result, realTag, addtag);
+						}
+					}
+				}
+			}
+
+			// [2] Tags that ref now-deleted notes
+			foreach (var note in notesDeleted)
+			{
+				foreach (var noteTag in note.InternalTags)
+				{
+					if (noteTag.UUID == null) continue;
+
+					var realTag = allTags.FirstOrDefault(t => t.UUID == noteTag.UUID);
+
+					if (realTag != null && realTag.ContainsReference(note))
+					{
+						// tag does still refrence note - remove ref
+						var addtag = new StandardFileTag(realTag.UUID, realTag.Title, realTag.References.Except(Enumerable.Repeat(note.ID, 1)));
+						ReplaceOrAdd(allTags, realTag, addtag);
+						ReplaceOrAdd(result, realTag, addtag);
+					}
+				}
+			}
+
+			// [3] Removed Tags in note
+			foreach (var tag in allTags.ToList())
+			{
+				if (tag.UUID == null) continue;
+
+				foreach (var tagref in tag.References)
+				{
+					var note = notesUpload.FirstOrDefault(n => tagref == n.ID);
+					if (note == null)
+					{
+						// ref links to a note that was not changed -- I guess its ok (?)
+					}
+					else
+					{
+						if (note.ContainsTag(tag.UUID.Value))
+						{
+							// note contains tags (and tag contains note) -- nothing changed - all ok
+						}
+						else
+						{
+							// note no longer contains tag - update tag
+							var addtag = new StandardFileTag(tag.UUID, tag.Title, tag.References.Except(Enumerable.Repeat(note.ID, 1)));
+							ReplaceOrAdd(allTags, tag, addtag);
+							ReplaceOrAdd(result, tag, addtag);
+						}
+					}
+				}
+			}
+
+			return result;
+		}
+
+		private static void ReplaceOrAdd(List<StandardFileTag> list, StandardFileTag old, StandardFileTag repl)
+		{
+			for (var i = 0; i < list.Count; i++)
+			{
+				if (list[i] == old) { list[i] = repl; return; }
+			}
+			list.Add(repl);
+		}
+
+		private static IEnumerable<StandardFileNote> GetMissingNoteUpdates(IEnumerable<SyncResultTag> syncedTags, List<StandardFileTag> allTags, List<StandardFileNote> _oldNotes, List<StandardFileNote> newNotes)
+		{
+			// update tag ref changes in notes
+
+			List<StandardFileNote> result = new List<StandardFileNote>();
+			List<StandardFileNote> oldNotes = _oldNotes.Select(n => n.Clone()).Cast<StandardFileNote>().ToList();
+
+			// [1] added tags
+			foreach (var tag in syncedTags)
+			{
+				foreach (var tagRef in tag.references)
+				{
+					var oldnote = oldNotes.FirstOrDefault(n => n.ID == tagRef.uuid);
+					var newnote = newNotes.FirstOrDefault(n => n.ID == tagRef.uuid);
+
+					if (newnote != null) // note is already in changed-list
+					{
+						if (newnote.ContainsTag(tag.uuid))
+						{
+							// tag is in new one - all ok
+						}
+						else
+						{
+							// tag was missing, we add it
+							// tag was probably added on remote side
+							newnote.AddTag(new StandardFileTagRef(tag.uuid, tag.title));
+						}
+					}
+					else if (oldnote != null) // another note was changed that is not in the changed-list
+					{
+						
+						if (oldnote.ContainsTag(tag.uuid))
+						{
+							// tag is in it - all ok
+						}
+						else
+						{
+							// Add tag to note and add note to changed-list
+							oldnote.AddTag(new StandardFileTagRef(tag.uuid, tag.title));
+							result.Add(oldnote);
+						}
+					}
+					else // tag references non-existant note ???
+					{
+						Logger.Warn(StandardNotePlugin.Name, $"Reference from tag {tag.uuid} to missing note {tagRef.uuid}");
+					}
+				}
+			}
+
+			// [2] removed tags from notes-in-bucket
+			foreach (var note in newNotes)
+			{
+				foreach (var noteTag in note.InternalTags.ToList())
+				{
+					if (noteTag.UUID == null) continue; // unsynced
+
+					var fullTag = allTags.FirstOrDefault(t => t.UUID == noteTag.UUID);
+
+					if (fullTag == null)
+					{
+						// Note references tag that doesn't even exist -- remove it from note
+						note.RemoveTag(noteTag);
+					}
+					else
+					{
+						if (fullTag.References.Any(r => r == note.ID))
+						{
+							// all ok, tag is in note and in reference-list of tag
+						}
+						else
+						{
+							// tag is _NOT_ in reference list of tag -- remove it from note
+							note.RemoveTag(noteTag);
+						}
+					}
+				}
+			}
+
+			// [3] removed tags from old-bucket
+			foreach (var note in oldNotes.Where(n1 => newNotes.All(n2 => n1.ID != n2.ID)))
+			{
+				foreach (var noteTag in note.InternalTags.ToList())
+				{
+					if (noteTag.UUID == null) continue; // unsynced
+
+					var fullTag = allTags.FirstOrDefault(t => t.UUID == noteTag.UUID);
+
+					if (fullTag == null)
+					{
+						// Note references tag that doesn't even exist -- remove it from note
+						note.RemoveTag(noteTag);
+						result.Add(note);
+					}
+					else
+					{
+						if (fullTag.References.Any(r => r == note.ID))
+						{
+							// all ok, tag is in note and in reference-list of tag
+						}
+						else
+						{
+							// tag is _NOT_ in reference list of tag -- remove it from note
+							note.RemoveTag(noteTag);
+							result.Add(note);
+						}
+					}
+				}
+			}
+
+			return result.DistinctBy(n => n.ID);
 		}
 
 		private static APIResultSync GetCursorResult(ISimpleJsonRest web, StandardNoteData dat, APIBodySync d)
@@ -359,7 +570,7 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		private static void PrepareForUpload(ISimpleJsonRest web, APIBodySync body, StandardFileNote note, List<StandardFileTag> tags, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
+		private static void PrepareNoteForUpload(ISimpleJsonRest web, APIBodySync body, StandardFileNote note, List<StandardFileTag> allTags, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
 		{
 			var appdata = new Dictionary<string, Dictionary<string, object>>();
 
@@ -374,26 +585,30 @@ namespace AlephNote.Plugins.StandardNote
 				appData = appdata,
 			};
 
+			// Set correct tag UUID if tag already exists
 			foreach (var itertag in note.InternalTags.ToList())
 			{
 				var itag = itertag;
 
 				if (itag.UUID == null)
 				{
-					var newTag = tags.FirstOrDefault(e => e.Title == itag.Title);
+					var newTag = allTags.FirstOrDefault(e => e.Title == itag.Title)?.ToRef();
 					if (newTag == null)
 					{
-						newTag = new StandardFileTag(Guid.NewGuid(), itag.Title);
-						tags.Add(newTag);
+						newTag = new StandardFileTagRef(Guid.NewGuid(), itag.Title);
+						allTags.Add(new StandardFileTag(newTag.UUID, newTag.Title, Enumerable.Repeat(note.ID, 1)));
 					}
 
 					note.UpgradeTag(itag, newTag);
-					itag = newTag;
 				}
-
-				Debug.Assert(itag.UUID != null, "itag.UUID != null");
-				jsnContent.references.Add(new APIResultContentRef { content_type = "Tag", uuid = itag.UUID.Value });
 			}
+
+			// Notes no longer have references to their tags (see issue #88)
+			//foreach (var itertag in note.InternalTags.ToList())
+			//{
+			//	Debug.Assert(itertag.UUID != null, "itertag.UUID != null");
+			//	jsnContent.references.Add(new APIResultContentRef { content_type = "Tag", uuid = itertag.UUID.Value });
+			//}
 
 			var cdNote = StandardNoteCrypt.EncryptContent(token.version, web.SerializeJson(jsnContent), note.ID, token.masterkey, token.masterauthkey);
 
@@ -409,14 +624,14 @@ namespace AlephNote.Plugins.StandardNote
 			});
 		}
 
-		private static void PrepareForUpload(ISimpleJsonRest web, APIBodySync body, StandardFileTag tag, List<StandardFileNote> allNotes, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
+		private static void PrepareTagForUpload(ISimpleJsonRest web, APIBodySync body, StandardFileTag tag, APIResultAuthorize token, bool delete)
 		{
 			var jsnContent = new ContentTag
 			{
 				title = tag.Title,
-				references = allNotes
-					.Where(n => n.InternalTags.Any(it => it.UUID == tag.UUID))
-					.Select(n => new APIResultContentRef{content_type = "Note", uuid = n.ID})
+				references = tag
+					.References
+					.Select(n => new APIResultContentRef{content_type = "Note", uuid = n})
 					.ToList(),
 			};
 
@@ -486,7 +701,7 @@ namespace AlephNote.Plugins.StandardNote
 				IsLocked = GetAppDataBool(content.appData, APPDATA_LOCKED, false),
 			};
 
-			var refTags = new List<StandardFileTag>();
+			var refTags = new List<StandardFileTagRef>();
 			foreach (var cref in content.references)
 			{
 				if (cref.content_type == "Note")
@@ -495,7 +710,7 @@ namespace AlephNote.Plugins.StandardNote
 				}
 				else if (dat.Tags.Any(t => t.UUID == cref.uuid))
 				{
-					refTags.Add(new StandardFileTag(cref.uuid, dat.Tags.First(t => t.UUID == cref.uuid).Title));
+					refTags.Add(new StandardFileTagRef(cref.uuid, dat.Tags.First(t => t.UUID == cref.uuid).Title));
 				}
 				else if (cref.content_type == "Tag")
 				{
@@ -506,6 +721,13 @@ namespace AlephNote.Plugins.StandardNote
 					Logger.Error(StandardNotePlugin.Name, $"Downloaded note contains an unknown reference :{cref.uuid} ({cref.content_type}) in note {encNote.uuid}");
 				}
 			}
+
+			foreach (var tref in dat.Tags.Where(tag => tag.References.Any(tref => tref == encNote.uuid)))
+			{
+				refTags.Add(new StandardFileTagRef(tref.UUID, tref.Title));
+			}
+
+			refTags = refTags.DistinctBy(t => t.UUID).ToList();
 
 			n.SetTags(refTags);
 			n.SetReferences(content.references);
@@ -526,6 +748,7 @@ namespace AlephNote.Plugins.StandardNote
 					uuid = encTag.uuid,
 					enc_item_key = encTag.enc_item_key,
 					item_key = "",
+					references   = new List<APIResultContentRef>(),
 				};
 			}
 
@@ -556,10 +779,11 @@ namespace AlephNote.Plugins.StandardNote
 
 			return new SyncResultTag
 			{
-				deleted = encTag.deleted,
-				title = content.title,
-				uuid = encTag.uuid,
+				deleted      = encTag.deleted,
+				title        = content.title,
+				uuid         = encTag.uuid,
 				enc_item_key = encTag.enc_item_key,
+				references   = content.references,
 			};
 		}
 		

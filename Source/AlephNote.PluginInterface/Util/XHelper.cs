@@ -206,10 +206,15 @@ namespace AlephNote.PluginInterface.Util
 			if (child == null) throw new XMLStructureException("Node not found: " + childName);
 			return child;
 		}
-
+		
 		public static XElement GetChildOrNull(XElement parent, string childName)
 		{
 			return parent.Elements(childName).FirstOrDefault();
+		}
+
+		public static bool HasChild(XElement parent, string childName)
+		{
+			return parent.Elements(childName).Any();
 		}
 
 		public static string ConvertToStringFormatted(XDocument doc)

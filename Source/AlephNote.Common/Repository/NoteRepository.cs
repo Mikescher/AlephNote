@@ -269,7 +269,7 @@ namespace AlephNote.Common.Repository
 			}
 		}
 
-		private void NoteChanged(object sender, NoteChangedEventArgs e)
+		private void NoteChanged(object sender, NoteChangedEventArgs e) // only local changes
 		{
 			invSaveNotesLocal.Request();
 			invSaveNotesRemote.Request();
