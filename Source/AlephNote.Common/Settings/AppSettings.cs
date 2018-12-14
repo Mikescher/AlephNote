@@ -471,6 +471,10 @@ namespace AlephNote.Common.Settings
 		public bool RememberScrollPerSession { get { return _rememberScrollPerSession; } set { _rememberScrollPerSession = value; OnPropertyChanged(); } }
 		private bool _rememberScrollPerSession = false;
 
+		[AlephXMLField]
+		public bool ForceDebugMode { get { return _forceDebugMode; } set { _forceDebugMode = value; OnPropertyChanged(); } }
+		private bool _forceDebugMode = false;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

@@ -88,8 +88,8 @@
 			<Button    Grid.Column="1" Content="Export" VerticalAlignment="Top" Margin="4,1" Click="ButtonExport_Click" />
 			<Button    Grid.Column="2" Content="Import" VerticalAlignment="Top" Margin="4,1" Click="ButtonImport_Click" Visibility="{Binding IsDebugMode, Converter={conv:BoolToVisibility}}" />
 			<StackPanel Grid.Column="4" Orientation="Vertical">
-				<CheckBox Content="Show debug events" Margin="10,2,10,0" x:Name="CheckBoxDebug" Checked="OnChangedDebugLog" Unchecked="OnChangedDebugLog" />
-				<CheckBox Content="Show trace events" Margin="10,2,10,0" IsChecked="{Binding ShowTrace}" Visibility="{Binding IsDebugMode, Converter={conv:BoolToVisibility}}" />
+				<CheckBox Content="Show debug events" Margin="10,2,10,0" IsChecked="{Binding ShowDebug}"                                 Visibility="{Binding IsDebugMode, Converter={conv:BoolToVisibility}}" />
+				<CheckBox Content="Show trace events" Margin="10,2,10,0" IsChecked="{Binding ShowTrace}" IsEnabled="{Binding ShowDebug}" Visibility="{Binding IsDebugMode, Converter={conv:BoolToVisibility}}" />
 			</StackPanel>
 			<Button    Grid.Column="5" Grid.Row="0" Content="Clear" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="0" Margin="10,4" Command="{Binding ClearCommand}" />
 		</Grid>

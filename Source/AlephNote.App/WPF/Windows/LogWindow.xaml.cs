@@ -18,16 +18,9 @@ namespace AlephNote.WPF.Windows
 		{
 			InitializeComponent();
 
-			CheckBoxDebug.IsChecked = AlephAppContext.DebugMode;
-
 			DataContext = VM = new LogWindowViewmodel();
-		}
-
-		private void OnChangedDebugLog(object sender, RoutedEventArgs e)
-		{
-			AlephAppContext.DebugMode = CheckBoxDebug.IsChecked ?? false;
-
-			VM?.LogView?.Refresh();
+			
+			VM.ShowDebug=AlephAppContext.DebugMode;
 		}
 
 		private void ButtonExport_Click(object sender, RoutedEventArgs e)

@@ -102,9 +102,10 @@ namespace AlephNote
 				settings = AppSettings.CreateEmpty(AppSettings.PATH_SETTINGS);
 			}
 
-			AlephAppContext.SetFallbackSettings(settings);
+			AlephAppContext.SetFallbackSettings(settings); // [HACK] used if someone accesses Context.Settings before there is an context ...
 
 			if (settings.LockOnStartup && !settings.IsReadOnlyMode) settings.IsReadOnlyMode = true;
+			if (settings.ForceDebugMode) DebugMode = true;
 
 			ThemeManager.Inst.LoadWithErrorDialog(settings);
 

@@ -32,17 +32,20 @@ namespace AlephNote.WPF.Windows
 		private LogEvent _selectedLog = null;
 		public LogEvent SelectedLog { get { return _selectedLog; } set { _selectedLog = value; OnPropertyChanged(); } }
 
-		public bool IsDebugMode => App.DebugMode;
-
+		public bool IsDebugMode => AlephAppContext.DebugMode;
+		
 		private bool _showTrace = false;
 		public bool ShowTrace { get { return _showTrace; } set { _showTrace = value; OnPropertyChanged(); LogView.Refresh(); } }
+
+		private bool _showDebug = false;
+		public bool ShowDebug { get { return _showDebug; } set { _showDebug = value; OnPropertyChanged(); LogView.Refresh(); if (ShowTrace) ShowTrace=false; } }
 
 		private bool Filter(LogEvent p)
 		{
 			if (!ShowTrace && p.Type == LogEventType.Trace) return false;
+			if (!ShowDebug && p.Type == LogEventType.Debug) return false;
 
-			if (AlephAppContext.DebugMode) return true;
-			return p.Type > LogEventType.Debug;
+			return true;
 		}
 	}
 }

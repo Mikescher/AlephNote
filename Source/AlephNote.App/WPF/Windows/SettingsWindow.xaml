@@ -154,10 +154,8 @@
 								<CheckBox      Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Automatically check for updates" IsChecked="{Binding Settings.CheckForUpdates}" />
 								<ctrl:PHelpBtn Grid.Row="1" Grid.Column="1" HelpProperty="CheckForUpdates" Margin="2,0" VerticalAlignment="Center" />
 
-								<CheckBox      Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Use beta release channel" IsChecked="{Binding Settings.UpdateToPrerelease}" Visibility="{Binding IsAppDebugMode, Converter={converter:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
-
-								<CheckBox      Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Send anonymous statistics" IsChecked="{Binding Settings.SendAnonStatistics}" />
-								<ctrl:PHelpBtn Grid.Row="3" Grid.Column="1" HelpProperty="SendAnonStatistics" Margin="2,0" VerticalAlignment="Center" />
+								<CheckBox      Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Send anonymous statistics" IsChecked="{Binding Settings.SendAnonStatistics}" />
+								<ctrl:PHelpBtn Grid.Row="2" Grid.Column="1" HelpProperty="SendAnonStatistics" Margin="2,0" VerticalAlignment="Center" />
 							</Grid>
 						</GroupBox>
 					</Grid>
@@ -993,24 +991,30 @@
 									<ColumnDefinition Width="Auto" />
 								</Grid.ColumnDefinitions>
 
-								<TextBlock     Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Support for international characters in filenames" />
-								<CheckBox      Grid.Row="0" Grid.Column="2" IsChecked="{Binding Settings.AllowAllLettersInFilename}" VerticalAlignment="Center"/>
-								<ctrl:PHelpBtn Grid.Row="0" Grid.Column="3" HelpProperty="AllowAllLettersInFilename" Margin="2,0" VerticalAlignment="Center" />
+								<TextBlock     Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Developer Debug Mode" />
+								<CheckBox      Grid.Row="0" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.ForceDebugMode}" />
 
-								<TextBlock     Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Allow all not explicitly forbidden characters in filenames" />
-								<CheckBox      Grid.Row="1" Grid.Column="2" IsChecked="{Binding Settings.AllowAllCharactersInFilename}" VerticalAlignment="Center"/>
-								<ctrl:PHelpBtn Grid.Row="1" Grid.Column="3" HelpProperty="AllowAllCharactersInFilename" Margin="2,0" VerticalAlignment="Center" />
+								<TextBlock     Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Support for international characters in filenames" />
+								<CheckBox      Grid.Row="1" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.AllowAllLettersInFilename}"/>
+								<ctrl:PHelpBtn Grid.Row="1" Grid.Column="3" HelpProperty="AllowAllLettersInFilename" Margin="2,0" VerticalAlignment="Center" />
 
-								<TextBlock     Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Only run a single instance of AlephNote in parallel" />
-								<CheckBox      Grid.Row="2" Grid.Column="2" IsChecked="{Binding Settings.SingleInstanceMode}" VerticalAlignment="Center"/>
-								<ctrl:PHelpBtn Grid.Row="2" Grid.Column="3" HelpProperty="SingleInstanceMode" Margin="2,0" VerticalAlignment="Center" />
+								<TextBlock     Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Allow all not explicitly forbidden characters in filenames" />
+								<CheckBox      Grid.Row="2" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.AllowAllCharactersInFilename}" />
+								<ctrl:PHelpBtn Grid.Row="2" Grid.Column="3" HelpProperty="AllowAllCharactersInFilename" Margin="2,0" VerticalAlignment="Center" />
 
-								<TextBlock     Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Use pre-release update channel" />
-								<CheckBox      Grid.Row="3" Grid.Column="2" IsChecked="{Binding Settings.UpdateToPrerelease}" VerticalAlignment="Center"/>
-								<ctrl:PHelpBtn Grid.Row="3" Grid.Column="3" HelpProperty="UpdateToPrerelease" Margin="2,0" VerticalAlignment="Center" />
+								<TextBlock     Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Only run a single instance of AlephNote in parallel" />
+								<CheckBox      Grid.Row="3" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.SingleInstanceMode}" />
+								<ctrl:PHelpBtn Grid.Row="3" Grid.Column="3" HelpProperty="SingleInstanceMode" Margin="2,0" VerticalAlignment="Center" />
 
-								<TextBlock     Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Used mode for URL matching" />
-								<ComboBox      Grid.Row="4" Grid.Column="2" Margin="4" ItemsSource="{mext:EnumSource {x:Type settings:URLMatchingMode}}" SelectedValue="{Binding Settings.UsedURLMatcher}" />
+								<TextBlock     Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Use pre-release update channel" />
+								<CheckBox      Grid.Row="4" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.UpdateToPrerelease}" />
+								<ctrl:PHelpBtn Grid.Row="4" Grid.Column="3" HelpProperty="UpdateToPrerelease" Margin="2,0" VerticalAlignment="Center" />
+
+								<TextBlock     Grid.Row="5" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Used mode for URL matching" />
+								<ComboBox      Grid.Row="5" Grid.Column="2" Margin="4" ItemsSource="{mext:EnumSource {x:Type settings:URLMatchingMode}}" SelectedValue="{Binding Settings.UsedURLMatcher}" />
+
+								<TextBlock     Grid.Row="6" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Use beta release channel" />
+								<CheckBox      Grid.Row="6" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.UpdateToPrerelease}" />
 
 							</Grid>
 						</StackPanel>
