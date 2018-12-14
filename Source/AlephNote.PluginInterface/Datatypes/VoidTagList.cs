@@ -32,5 +32,7 @@ namespace AlephNote.PluginInterface.Datatypes
 		public override void RemoveAt(int index) { }
 		
 		public override void Move(int oldIndex, int newIndex) { }
+		
+		public override void CallOnCollectionChanged() { }
 	}
 }

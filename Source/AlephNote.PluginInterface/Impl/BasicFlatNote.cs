@@ -169,6 +169,7 @@ namespace AlephNote.PluginInterface.Impl
 					OnExplicitPropertyChanged("Title");
 					OnExplicitPropertyChanged("Path");
 					OnExplicitPropertyChanged("Tags");
+					Tags.CallOnCollectionChanged();
 					OnExplicitPropertyChanged("ModificationDate");
 					OnExplicitPropertyChanged("IsPinned");
 					OnExplicitPropertyChanged("IsLocked");
@@ -180,6 +181,7 @@ namespace AlephNote.PluginInterface.Impl
 				OnExplicitPropertyChanged("Title");
 				OnExplicitPropertyChanged("Path");
 				OnExplicitPropertyChanged("Tags");
+				Tags.CallOnCollectionChanged();
 				OnExplicitPropertyChanged("ModificationDate");
 				OnExplicitPropertyChanged("IsPinned");
 				OnExplicitPropertyChanged("IsLocked");

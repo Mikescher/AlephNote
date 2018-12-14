@@ -5,10 +5,12 @@ using System.Collections.Specialized;
 
 namespace AlephNote.PluginInterface.Datatypes
 {
-	public abstract class TagList : ICollection<string>, IList<string>
+	public abstract class TagList : IList<string>, INotifyCollectionChanged
 	{
 		public abstract IEnumerator<string> GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		
+		public event NotifyCollectionChangedEventHandler CollectionChanged;
 
 		public abstract void Add(string item);
 		public abstract void Clear();
@@ -28,6 +30,12 @@ namespace AlephNote.PluginInterface.Datatypes
 		protected void CallOnChanged(NotifyCollectionChangedEventArgs e)
 		{
 			OnChanged?.Invoke(this, e);
+		}
+
+		public virtual void CallOnCollectionChanged()
+		{
+			// Not sure if this is the correct ActionType for "Anything could have changed ??"
+			CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 		}
 	}
 }
