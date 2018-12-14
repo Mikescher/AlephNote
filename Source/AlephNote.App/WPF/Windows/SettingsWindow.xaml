@@ -7,7 +7,7 @@
 		xmlns:converter="clr-namespace:AlephNote.WPF.Converter"
 		xmlns:windows="clr-namespace:AlephNote.WPF.Windows"
 		xmlns:ctrl="clr-namespace:AlephNote.WPF.Controls"
-		xmlns:mext="clr-namespace:AlephNote.WPF.MarkupExtensions"
+		xmlns:mext="clr-namespace:MSHC.WPF.MarkupExtensions;assembly=CSharpUtils"
 		xmlns:shortcuts="clr-namespace:AlephNote.WPF.Shortcuts"
 		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
 		mc:Ignorable="d" 

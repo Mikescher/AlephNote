@@ -1,4 +1,4 @@
-﻿using AlephNote.WPF.MVVM;
+﻿using MSHC.WPF.MVVM;
 using System.Linq;
 using System.Text.RegularExpressions;
 

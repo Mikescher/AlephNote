@@ -9,7 +9,6 @@ using System.Windows;
 using System.Windows.Input;
 using AlephNote.WPF.Dialogs;
 using MSHC.WPF.MVVM;
-using RelayCommand = AlephNote.WPF.MVVM.RelayCommand;
 
 namespace AlephNote.WPF.Windows
 {

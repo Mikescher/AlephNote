@@ -1,7 +1,8 @@
-﻿using AlephNote.WPF.MVVM;
+﻿using MSHC.WPF.MVVM;
 using System.ComponentModel;
 using System.Linq;
 using AlephNote.Common.Settings;
+using MSHC.Lang.Attributes;
 
 namespace AlephNote.WPF.Converter
 {

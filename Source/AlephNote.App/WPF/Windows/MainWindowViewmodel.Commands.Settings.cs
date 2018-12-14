@@ -7,7 +7,7 @@ using System.Windows.Input;
 using AlephNote.Common.Settings.Types;
 using AlephNote.Common.Util;
 using AlephNote.Properties;
-using AlephNote.WPF.MVVM;
+using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.Windows
 {

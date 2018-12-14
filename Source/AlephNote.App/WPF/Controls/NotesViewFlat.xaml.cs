@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using AlephNote.Common.Settings.Types;
 using AlephNote.PluginInterface;
-using AlephNote.WPF.Util;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -9,8 +8,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using AlephNote.Common.Settings;
-using AlephNote.WPF.Extensions;
-using AlephNote.WPF.MVVM;
+using MSHC.WPF.MVVM;
 using System.Linq;
 using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.Windows;
@@ -19,11 +17,8 @@ using System.Diagnostics;
 using System.Windows.Controls;
 using System.Windows.Media;
 using AlephNote.PluginInterface.Util;
-using System;
-using System.Threading;
 using AlephNote.Common.Util.Search;
 using MSHC.WPF;
-using CollectionViewExtension = AlephNote.WPF.Extensions.CollectionViewExtension;
 
 namespace AlephNote.WPF.Controls
 {
@@ -190,7 +185,7 @@ namespace AlephNote.WPF.Controls
 
 		public INote GetTopNote()
 		{
-			return CollectionViewExtension.FirstOrDefault<INote>(NotesList.Items);
+			return NotesList.Items.FirstOrDefault<INote>();
 		}
 
 		public bool IsTopSortedNote(INote n)
@@ -198,7 +193,7 @@ namespace AlephNote.WPF.Controls
 			if (Settings?.SortByPinned == true)
 				return NotesList.Items.OfType<INote>().FirstOrDefault(p => p.IsPinned == n?.IsPinned) == n;
 			else
-				return CollectionViewExtension.FirstOrDefault<INote>(NotesList.Items) == n;
+				return NotesList.Items.FirstOrDefault<INote>() == n;
 		}
 
 		public void RefreshView()

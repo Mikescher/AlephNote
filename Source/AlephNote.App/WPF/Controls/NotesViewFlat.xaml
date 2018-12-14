@@ -5,10 +5,10 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:self="clr-namespace:AlephNote.WPF.Controls"
 			 xmlns:conv="clr-namespace:AlephNote.WPF.Converter"
-			 xmlns:services="clr-namespace:AlephNote.WPF.Services"
-			 xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
+             xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
 			 xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
 			 xmlns:settings="clr-namespace:AlephNote.Common.Settings.Types;assembly=AlephNote.Common"
+             xmlns:services="clr-namespace:MSHC.WPF.Services;assembly=CSharpUtils"
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="150">

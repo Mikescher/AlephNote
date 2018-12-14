@@ -1,4 +1,6 @@
-﻿namespace AlephNote.Common.Settings.Types
+﻿using MSHC.Lang.Attributes;
+
+namespace AlephNote.Common.Settings.Types
 {
 	public enum SortingMode
 	{

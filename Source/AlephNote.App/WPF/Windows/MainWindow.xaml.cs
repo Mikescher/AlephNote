@@ -15,7 +15,7 @@ using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
 using AlephNote.WPF.Controls;
 using AlephNote.WPF.Shortcuts;
-using AlephNote.WPF.MVVM;
+using MSHC.WPF.MVVM;
 using Hardcodet.Wpf.TaskbarNotification;
 using AlephNote.WPF.Converter;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
@@ -24,6 +24,7 @@ using AlephNote.WPF.Extensions;
 using AlephNote.Common.Util;
 using AlephNote.Common.Util.Search;
 using AlephNote.Native;
+using MSHC.Lang.Collections;
 using Application = System.Windows.Application;
 
 namespace AlephNote.WPF.Windows

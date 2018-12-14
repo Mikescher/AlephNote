@@ -9,7 +9,7 @@ using AlephNote.Common.Themes;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Util;
-using AlephNote.WPF.MVVM;
+using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.Windows
 {

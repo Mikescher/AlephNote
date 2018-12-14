@@ -1,4 +1,4 @@
-﻿using AlephNote.WPF.MVVM;
+﻿using MSHC.WPF.MVVM;
 using AlephNote.WPF.Util;
 
 namespace AlephNote.WPF.Converter

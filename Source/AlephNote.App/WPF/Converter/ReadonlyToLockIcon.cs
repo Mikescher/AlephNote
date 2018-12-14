@@ -1,4 +1,4 @@
-﻿using AlephNote.WPF.MVVM;
+﻿using MSHC.WPF.MVVM;
 using System;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;

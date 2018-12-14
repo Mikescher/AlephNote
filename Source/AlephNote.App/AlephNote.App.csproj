@@ -275,8 +275,6 @@
     </Compile>
     <Compile Include="WPF\Extensions\AlephThemeExtension.cs" />
     <Compile Include="WPF\Extensions\ThemeBindingExtension.cs" />
-    <Compile Include="WPF\Services\ConditionalControlTemplate.cs" />
-    <Compile Include="WPF\Services\MultiControlTemplateService.cs" />
     <Compile Include="WPF\Shortcuts\GlobalShortcutManager.cs" />
     <Compile Include="WPF\Shortcuts\ObservableShortcutConfig.cs" />
     <Compile Include="WPF\Shortcuts\ShortcutManager.cs" />
@@ -285,13 +283,6 @@
     <Compile Include="WPF\Util\IChangeListener.cs" />
     <Compile Include="WPF\Util\MarkdownHighlighter.cs" />
     <Compile Include="WPF\Util\DefaultHighlighter.cs" />
-    <Compile Include="WPF\BindingProxies\AbstractLegacyBinding.cs" />
-    <Compile Include="WPF\BindingProxies\AbstractRawBinding.cs" />
-    <Compile Include="WPF\BindingProxies\EventProxy.cs" />
-    <Compile Include="WPF\BindingProxies\IndirectProperty.cs" />
-    <Compile Include="WPF\BindingProxies\LegacyBindings.cs" />
-    <Compile Include="WPF\BindingProxies\RawBindings.cs" />
-    <Compile Include="WPF\BindingProxies\ReflectionPathResolver.cs" />
     <Compile Include="WPF\Controls\BindablePasswordBox.cs" />
     <Compile Include="WPF\Controls\ClickSelectTextBox.cs" />
     <Compile Include="WPF\Controls\DialogWindow.cs" />
@@ -328,18 +319,6 @@
     <Compile Include="WPF\Converter\CreatePluginSettingsGrid.cs" />
     <Compile Include="WPF\Converter\BoolToVisibility.cs" />
     <Compile Include="WPF\Converter\SmartDateTimeToDisplay.cs" />
-    <Compile Include="WPF\Extensions\CollectionViewExtension.cs" />
-    <Compile Include="WPF\Extensions\DependencyObjectExtension.cs" />
-    <Compile Include="WPF\MarkupExtensions\EnumSourceExtension.cs" />
-    <Compile Include="WPF\MarkupExtensions\EventBindingExtension.cs" />
-    <Compile Include="WPF\MVVM\OneWayConverter.cs" />
-    <Compile Include="WPF\MVVM\RelayCommand.cs" />
-    <Compile Include="WPF\MVVM\TwoWayConverter.cs" />
-    <Compile Include="WPF\MVVM\TypedRelayCommand.cs" />
-    <Compile Include="WPF\Services\ConditionalDataTemplate.cs" />
-    <Compile Include="WPF\Services\MultiDataTemplateService.cs" />
-    <Compile Include="WPF\Services\WatermarkAdorner.cs" />
-    <Compile Include="WPF\Services\WatermarkService.cs" />
     <Compile Include="WPF\Util\MenuItemContainerTemplateSelector.cs" />
     <Compile Include="WPF\Util\ScintillaHighlighter.cs" />
     <Compile Include="WPF\Util\ScintillaSearcher.cs" />

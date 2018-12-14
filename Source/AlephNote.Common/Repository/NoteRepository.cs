@@ -8,10 +8,10 @@ using System.Linq;
 using System.Xml.Linq;
 using AlephNote.Common.Operations;
 using AlephNote.Common.Settings;
-using AlephNote.Common.Threading;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Util;
+using MSHC.Util.Threads;
 using MSHC.WPF.MVVM;
 
 namespace AlephNote.Common.Repository

@@ -16,7 +16,7 @@ using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Media;
 using AlephNote.PluginInterface.Util;
-using AlephNote.WPF.MVVM;
+using MSHC.WPF.MVVM;
 using AlephNote.WPF.Shortcuts;
 using AlephNote.Common.Util.Search;
 using MSHC.WPF;

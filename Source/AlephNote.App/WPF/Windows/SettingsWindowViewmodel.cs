@@ -13,7 +13,6 @@ using AlephNote.Common.Themes;
 using AlephNote.Common.Util;
 using AlephNote.WPF.Util;
 using MSHC.WPF.MVVM;
-using RelayCommand = AlephNote.WPF.MVVM.RelayCommand;
 
 namespace AlephNote.WPF.Windows
 {

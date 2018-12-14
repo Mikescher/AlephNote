@@ -6,9 +6,9 @@
 			 xmlns:self="clr-namespace:AlephNote.WPF.Controls"
 			 xmlns:conv="clr-namespace:AlephNote.WPF.Converter"
 			 xmlns:util="clr-namespace:AlephNote.WPF.Util"
-			 xmlns:services="clr-namespace:AlephNote.WPF.Services"
-			 xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
+             xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
 			 xmlns:settings="clr-namespace:AlephNote.Common.Settings.Types;assembly=AlephNote.Common"
+             xmlns:services="clr-namespace:MSHC.WPF.Services;assembly=CSharpUtils"
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="150">

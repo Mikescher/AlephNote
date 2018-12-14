@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using AlephNote.Common.Threading;
 using AlephNote.Common.Util;
+using MSHC.Util.Threads;
 
 namespace AlephNote.Common.Repository
 {

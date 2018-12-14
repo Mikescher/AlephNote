@@ -2,10 +2,8 @@
 using AlephNote.Log;
 using System.Windows.Data;
 using System.Windows.Input;
-using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.AppContext;
 using MSHC.WPF.MVVM;
-using RelayCommand = AlephNote.WPF.MVVM.RelayCommand;
 
 namespace AlephNote.WPF.Windows
 {

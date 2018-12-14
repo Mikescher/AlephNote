@@ -1,4 +1,4 @@
-﻿using AlephNote.WPF.MVVM;
+﻿using MSHC.WPF.MVVM;
 using System.Windows.Media;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Themes;

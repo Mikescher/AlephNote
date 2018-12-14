@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using MSHC.Lang.Attributes;
 
 namespace AlephNote.Common.Settings.Types
 {
