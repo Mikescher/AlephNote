@@ -5,7 +5,7 @@ using System.Reflection.Emit;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Markup;
-using AlephNote.Common.MVVM;
+using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.MarkupExtensions
 {

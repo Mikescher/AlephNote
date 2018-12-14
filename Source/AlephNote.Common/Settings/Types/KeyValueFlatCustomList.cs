@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using System.Collections;
-using AlephNote.Common.MVVM;
 using AlephNote.PluginInterface.Objects;
 using AlephNote.PluginInterface.Objects.AXML;
+using MSHC.WPF.MVVM;
 
 namespace AlephNote.Common.Settings.Types
 {

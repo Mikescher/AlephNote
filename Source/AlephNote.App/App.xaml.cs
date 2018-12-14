@@ -3,10 +3,7 @@ using AlephNote.WPF.Windows;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows.Threading;
-using AlephNote.Commandline;
-using AlephNote.Common.Plugins;
 using AlephNote.Impl;
 using AlephNote.Common.Themes;
 using AlephNote.Common.Util;
@@ -16,10 +13,10 @@ using System.Globalization;
 using System.Threading;
 using AlephNote.Common.Settings.Types;
 using AlephNote.Native;
-using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.AppContext;
 using AlephNote.WPF.Dialogs;
 using AlephNote.WPF.Util;
+using MSHC.Util.Helper;
 
 namespace AlephNote
 {

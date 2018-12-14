@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using AlephNote.PluginInterface.Objects;
 using AlephNote.PluginInterface.Objects.AXML;
 using AlephNote.PluginInterface.Util;
+using MSHC.Encryption;
 
 namespace AlephNote.Plugins.StandardNote
 {
@@ -104,12 +105,12 @@ namespace AlephNote.Plugins.StandardNote
 
 		private string Encrypt(string data, AXMLSerializationSettings opt)
 		{
-			return AESThenHMAC.SimpleEncryptWithPassword(data, ENCRYPTION_KEY, opt);
+			return ANEncryptionHelper.SimpleEncryptWithPassword(data, ENCRYPTION_KEY, opt);
 		}
 
 		private string Decrypt(string data, AXMLSerializationSettings opt)
 		{
-			return AESThenHMAC.SimpleDecryptWithPassword(data, ENCRYPTION_KEY, opt);
+			return ANEncryptionHelper.SimpleDecryptWithPassword(data, ENCRYPTION_KEY, opt);
 		}
 
 		public string GetDisplayIdentifier()

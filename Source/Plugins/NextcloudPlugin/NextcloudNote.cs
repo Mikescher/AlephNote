@@ -6,6 +6,7 @@ using System.Linq;
 using System.Xml.Linq;
 using AlephNote.PluginInterface.Datatypes;
 using AlephNote.PluginInterface.Util;
+using MSHC.Lang.Collections;
 
 namespace AlephNote.Plugins.Nextcloud
 {

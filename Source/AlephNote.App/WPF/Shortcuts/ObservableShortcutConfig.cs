@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using AlephNote.Common.MVVM;
 using AlephNote.Common.Settings.Types;
+using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.Shortcuts
 {

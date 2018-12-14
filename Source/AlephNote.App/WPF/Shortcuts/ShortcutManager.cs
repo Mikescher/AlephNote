@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using AlephNote.Common.MVVM;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
+using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.Shortcuts
 {

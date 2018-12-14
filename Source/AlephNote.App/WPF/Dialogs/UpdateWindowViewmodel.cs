@@ -1,5 +1,4 @@
-﻿using AlephNote.WPF.MVVM;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -8,8 +7,9 @@ using System.IO.Compression;
 using System.Net;
 using System.Windows;
 using System.Windows.Input;
-using AlephNote.Common.MVVM;
 using AlephNote.WPF.Dialogs;
+using MSHC.WPF.MVVM;
+using RelayCommand = AlephNote.WPF.MVVM.RelayCommand;
 
 namespace AlephNote.WPF.Windows
 {

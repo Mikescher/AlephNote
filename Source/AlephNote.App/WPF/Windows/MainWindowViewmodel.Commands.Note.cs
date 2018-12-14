@@ -9,6 +9,7 @@ using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.Dialogs;
 using AlephNote.WPF.MVVM;
 using Microsoft.Win32;
+using MSHC.Lang.Collections;
 
 namespace AlephNote.WPF.Windows
 {

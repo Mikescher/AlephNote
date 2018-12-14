@@ -7,6 +7,7 @@ using System.Text;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Exceptions;
+using MSHC.Network;
 using Newtonsoft.Json;
 
 namespace AlephNote.Common.Network

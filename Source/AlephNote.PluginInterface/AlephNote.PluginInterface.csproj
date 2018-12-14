@@ -21,6 +21,13 @@
 		<PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.3.0">
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageReference>
+
+		<ProjectReference Include="..\External\CSharpUtils\CSharpUtils.csproj" >
+			<Private>false</Private>
+		</ProjectReference>
+</ItemGroup>
+
+	<ItemGroup>
 	</ItemGroup>
 
 	<ItemGroup>

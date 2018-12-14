@@ -1,5 +1,5 @@
-﻿using AlephNote.Common.MVVM;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.Windows
 {

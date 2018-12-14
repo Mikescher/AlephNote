@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AlephNote.Common.MVVM;
 using AlephNote.WPF.Windows;
+using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.Util
 {

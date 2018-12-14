@@ -2,7 +2,6 @@
 using AlephNote.Common.Settings.Types;
 using AlephNote.Common.SPSParser;
 using AlephNote.PluginInterface;
-using AlephNote.WPF.MVVM;
 using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.Util;
 using Hardcodet.Wpf.TaskbarNotification;
@@ -16,7 +15,6 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using AlephNote.Common.MVVM;
 using AlephNote.Common.Operations;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Threading;
@@ -25,14 +23,17 @@ using AlephNote.PluginInterface.Util;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface.Exceptions;
 using AlephNote.WPF.Dialogs;
+using MSHC.Lang.Collections;
+using MSHC.Lang.Special;
+using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.Windows
 {
 	public partial class MainWindowViewmodel : ObservableObject, ISynchronizationFeedback, IThemeListener
 	{
-		public ICommand ClosingEvent { get { return new RelayCommand<CancelEventArgs>(OnClosing); } }
-		public ICommand CloseEvent { get { return new RelayCommand<EventArgs>(OnClose); } }
-		public ICommand StateChangedEvent { get { return new RelayCommand<EventArgs>(OnStateChanged); } }
+		public ICommand ClosingEvent { get { return new MVVM.RelayCommand<CancelEventArgs>(OnClosing); } }
+		public ICommand CloseEvent { get { return new MVVM.RelayCommand<EventArgs>(OnClose); } }
+		public ICommand StateChangedEvent { get { return new MVVM.RelayCommand<EventArgs>(OnStateChanged); } }
 
 		private AppSettings _settings;
 		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); SettingsChanged(); } }

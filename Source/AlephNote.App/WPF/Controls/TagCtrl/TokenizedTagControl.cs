@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using AlephNote.PluginInterface.Util;
+using MSHC.Lang.Collections;
 
 namespace AlephNote.WPF.Controls
 {

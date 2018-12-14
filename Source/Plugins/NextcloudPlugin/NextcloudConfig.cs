@@ -99,12 +99,12 @@ namespace AlephNote.Plugins.Nextcloud
 
 		private string Encrypt(string data, AXMLSerializationSettings opt)
 		{
-			return AESThenHMAC.SimpleEncryptWithPassword(data, ENCRYPTION_KEY, opt);
+			return ANEncryptionHelper.SimpleEncryptWithPassword(data, ENCRYPTION_KEY, opt);
 		}
 
 		private string Decrypt(string data, AXMLSerializationSettings opt)
 		{
-			return AESThenHMAC.SimpleDecryptWithPassword(data, ENCRYPTION_KEY, opt);
+			return ANEncryptionHelper.SimpleDecryptWithPassword(data, ENCRYPTION_KEY, opt);
 		}
 
 		public string GetDisplayIdentifier()

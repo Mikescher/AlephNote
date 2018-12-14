@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using AlephNote.PluginInterface.Datatypes;
 using AlephNote.PluginInterface.Util;
 using AlephNote.PluginInterface.Impl;
+using MSHC.Lang.Collections;
 
 namespace AlephNote.Plugins.Evernote
 {

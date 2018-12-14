@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using MSHC.Lang.Collections;
 
 namespace AlephNote.PluginInterface.Datatypes
 {
-	public abstract class TagList : IList<string>, INotifyCollectionChanged
+	public abstract class TagList : IListWithMove<string>, INotifyCollectionChanged
 	{
 		public abstract IEnumerator<string> GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

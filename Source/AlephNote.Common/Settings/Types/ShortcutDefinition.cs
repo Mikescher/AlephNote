@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AlephNote.Common.MVVM;
 using AlephNote.PluginInterface.Objects;
 using AlephNote.PluginInterface.Objects.AXML;
+using MSHC.WPF.MVVM;
 
 namespace AlephNote.Common.Settings.Types
 {

@@ -4,6 +4,7 @@ using AlephNote.PluginInterface.Util;
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using MSHC.Lang.Collections;
 
 namespace AlephNote.WPF.Windows
 {

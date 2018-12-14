@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using AlephNote.PluginInterface.Util;
+using MSHC.Lang.Exceptions;
 
 namespace AlephNote.Plugins.SimpleNote
 {

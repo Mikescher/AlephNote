@@ -1,5 +1,4 @@
-﻿using AlephNote.Common.MVVM;
-using AlephNote.PluginInterface;
+﻿using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Util;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,8 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using MSHC.Lang.Collections;
+using MSHC.WPF.MVVM;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedMemberInSuper.Global

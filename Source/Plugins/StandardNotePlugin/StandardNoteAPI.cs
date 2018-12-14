@@ -6,6 +6,9 @@ using System.Linq;
 using System.Text;
 using AlephNote.PluginInterface.Exceptions;
 using AlephNote.PluginInterface.Util;
+using MSHC.Lang.Collections;
+using MSHC.Math.Encryption;
+using MSHC.Serialization;
 
 namespace AlephNote.Plugins.StandardNote
 {

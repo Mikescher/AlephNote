@@ -1,8 +1,6 @@
-﻿using AlephNote.Common.MVVM;
-using AlephNote.Common.Themes;
+﻿using AlephNote.Common.Themes;
 using AlephNote.Common.Util;
 using AlephNote.WPF.Dialogs;
-using AlephNote.WPF.MVVM;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -10,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using MSHC.WPF.MVVM;
+using RelayCommand = AlephNote.WPF.MVVM.RelayCommand;
 
 namespace AlephNote.WPF.Windows
 {

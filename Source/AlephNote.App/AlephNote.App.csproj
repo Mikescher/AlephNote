@@ -170,7 +170,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Commandline\CommandLineArguments.cs" />
     <Compile Include="Impl\PluginManager.cs" />
     <Compile Include="Impl\ProxyFactory.cs" />
     <Compile Include="Impl\SynchronizationDispatcher.cs" />
@@ -344,7 +343,6 @@
     <Compile Include="WPF\Util\MenuItemContainerTemplateSelector.cs" />
     <Compile Include="WPF\Util\ScintillaHighlighter.cs" />
     <Compile Include="WPF\Util\ScintillaSearcher.cs" />
-    <Compile Include="WPF\Util\WPFHelper.cs" />
     <Compile Include="WPF\Windows\AboutWindowViewmodel.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>

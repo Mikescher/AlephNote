@@ -22,6 +22,8 @@ using AlephNote.PluginInterface.Util;
 using System;
 using System.Threading;
 using AlephNote.Common.Util.Search;
+using MSHC.WPF;
+using CollectionViewExtension = AlephNote.WPF.Extensions.CollectionViewExtension;
 
 namespace AlephNote.WPF.Controls
 {
@@ -188,7 +190,7 @@ namespace AlephNote.WPF.Controls
 
 		public INote GetTopNote()
 		{
-			return NotesList.Items.FirstOrDefault<INote>();
+			return CollectionViewExtension.FirstOrDefault<INote>(NotesList.Items);
 		}
 
 		public bool IsTopSortedNote(INote n)
@@ -196,7 +198,7 @@ namespace AlephNote.WPF.Controls
 			if (Settings?.SortByPinned == true)
 				return NotesList.Items.OfType<INote>().FirstOrDefault(p => p.IsPinned == n?.IsPinned) == n;
 			else
-				return NotesList.Items.FirstOrDefault<INote>() == n;
+				return CollectionViewExtension.FirstOrDefault<INote>(NotesList.Items) == n;
 		}
 
 		public void RefreshView()

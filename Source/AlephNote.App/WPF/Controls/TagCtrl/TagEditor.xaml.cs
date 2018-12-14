@@ -6,11 +6,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
-using AlephNote.Common.Extensions;
 using AlephNote.Common.Repository;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Themes;
 using AlephNote.PluginInterface.Util;
+using MSHC.Lang.Collections;
 
 namespace AlephNote.WPF.Controls
 {

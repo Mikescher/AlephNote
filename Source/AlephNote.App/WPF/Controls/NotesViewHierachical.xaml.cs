@@ -19,6 +19,7 @@ using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.MVVM;
 using AlephNote.WPF.Shortcuts;
 using AlephNote.Common.Util.Search;
+using MSHC.WPF;
 
 namespace AlephNote.WPF.Controls
 {

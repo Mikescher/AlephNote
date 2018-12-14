@@ -1,10 +1,8 @@
 ﻿using AlephNote.PluginInterface;
-using AlephNote.WPF.MVVM;
 using System.Windows;
 using System.Windows.Input;
 using System;
 using System.Linq;
-using AlephNote.Common.MVVM;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
 using AlephNote.WPF.Shortcuts;
@@ -14,6 +12,8 @@ using AlephNote.Common.SPSParser;
 using AlephNote.Common.Themes;
 using AlephNote.Common.Util;
 using AlephNote.WPF.Util;
+using MSHC.WPF.MVVM;
+using RelayCommand = AlephNote.WPF.MVVM.RelayCommand;
 
 namespace AlephNote.WPF.Windows
 {

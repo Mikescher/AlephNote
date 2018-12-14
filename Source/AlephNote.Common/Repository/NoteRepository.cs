@@ -6,13 +6,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using AlephNote.Common.MVVM;
 using AlephNote.Common.Operations;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Threading;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Util;
+using MSHC.WPF.MVVM;
 
 namespace AlephNote.Common.Repository
 {

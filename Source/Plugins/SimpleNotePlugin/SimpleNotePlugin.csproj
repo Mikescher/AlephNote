@@ -16,7 +16,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj"><Private>false</Private></ProjectReference>
+		<ProjectReference Include="..\..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj">
+			<Private>false</Private>
+		</ProjectReference>
+
+		<ProjectReference Include="..\..\External\CSharpUtils\CSharpUtils.csproj"> <!-- This is only here to prevent CSharpUtils.dll in the /Plugins/ directory  -->
+			<Private>false</Private>
+		</ProjectReference>
 	</ItemGroup>
 
 	<ItemGroup>

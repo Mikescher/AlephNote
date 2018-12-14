@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using AlephNote.Log;
-using AlephNote.WPF.MVVM;
 using System.Windows.Data;
 using System.Windows.Input;
-using AlephNote.Common.MVVM;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.AppContext;
+using MSHC.WPF.MVVM;
+using RelayCommand = AlephNote.WPF.MVVM.RelayCommand;
 
 namespace AlephNote.WPF.Windows
 {

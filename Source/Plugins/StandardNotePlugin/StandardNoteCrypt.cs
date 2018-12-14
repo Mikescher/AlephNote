@@ -3,6 +3,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using AlephNote.PluginInterface.Util;
+using MSHC.Math.Encryption;
 
 // ReSharper disable InconsistentNaming
 namespace AlephNote.Plugins.StandardNote

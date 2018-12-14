@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AlephNote.PluginInterface.Util;
+using MSHC.Util.Helper;
 
 namespace AlephNote.Plugins.Filesystem
 {
@@ -79,7 +80,7 @@ namespace AlephNote.Plugins.Filesystem
 
 				WriteNoteToPath(note, path);
 				conflict = null;
-				FileSystemUtil.DeleteFileAndFolderIfEmpty(FilesystemPlugin.Name, _logger, _config.Folder, note.PathRemote);
+				ANFileSystemUtil.DeleteFileAndFolderIfEmpty(FilesystemPlugin.Name, _logger, _config.Folder, note.PathRemote);
 				note.PathRemote = path;
 				return RemoteUploadResult.Uploaded;
 			}
@@ -94,7 +95,7 @@ namespace AlephNote.Plugins.Filesystem
 					if (strategy == ConflictResolutionStrategy.UseClientCreateConflictFile || strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.ManualMerge)
 					{
 						WriteNoteToPath(note, path);
-						FileSystemUtil.DeleteFileAndFolderIfEmpty(FilesystemPlugin.Name, _logger, _config.Folder, note.PathRemote);
+						ANFileSystemUtil.DeleteFileAndFolderIfEmpty(FilesystemPlugin.Name, _logger, _config.Folder, note.PathRemote);
 						note.PathRemote = path;
 						return RemoteUploadResult.Conflict;
 					}
@@ -108,7 +109,7 @@ namespace AlephNote.Plugins.Filesystem
 				{
 					WriteNoteToPath(note, path);
 					conflict = null;
-					FileSystemUtil.DeleteFileAndFolderIfEmpty(FilesystemPlugin.Name, _logger, _config.Folder, note.PathRemote);
+					ANFileSystemUtil.DeleteFileAndFolderIfEmpty(FilesystemPlugin.Name, _logger, _config.Folder, note.PathRemote);
 					note.PathRemote = path;
 					return RemoteUploadResult.Uploaded;
 				}
@@ -122,7 +123,7 @@ namespace AlephNote.Plugins.Filesystem
 					if (strategy == ConflictResolutionStrategy.UseClientCreateConflictFile || strategy == ConflictResolutionStrategy.UseClientVersion)
 					{
 						WriteNoteToPath(note, path);
-						if (note.PathRemote != "") FileSystemUtil.DeleteFileAndFolderIfEmpty(FilesystemPlugin.Name, _logger, _config.Folder, note.PathRemote);
+						if (note.PathRemote != "") ANFileSystemUtil.DeleteFileAndFolderIfEmpty(FilesystemPlugin.Name, _logger, _config.Folder, note.PathRemote);
 						note.PathRemote = path;
 						return RemoteUploadResult.Conflict;
 					}
@@ -203,7 +204,7 @@ namespace AlephNote.Plugins.Filesystem
 
 			if (note.IsConflictNote) return;
 
-			if (File.Exists(note.PathRemote)) FileSystemUtil.DeleteFileAndFolderIfEmpty(FilesystemPlugin.Name, _logger, _config.Folder, note.PathRemote);
+			if (File.Exists(note.PathRemote)) ANFileSystemUtil.DeleteFileAndFolderIfEmpty(FilesystemPlugin.Name, _logger, _config.Folder, note.PathRemote);
 		}
 
 		private FilesystemNote ReadNoteFromPath(string path)
@@ -215,7 +216,7 @@ namespace AlephNote.Plugins.Filesystem
 			using (note.SuppressDirtyChanges())
 			{
 				note.Title = Path.GetFileNameWithoutExtension(info.FullName);
-				note.Path = FileSystemUtil.GetDirectoryPath(_config.Folder, info.DirectoryName);
+				note.Path = ANFileSystemUtil.GetDirectoryPath(_config.Folder, info.DirectoryName);
 				note.Text  = File.ReadAllText(info.FullName, _config.Encoding);
 				note.CreationDate = info.CreationTime;
 				note.ModificationDate = info.LastWriteTime;

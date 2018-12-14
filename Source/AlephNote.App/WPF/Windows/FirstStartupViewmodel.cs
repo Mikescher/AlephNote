@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using AlephNote.Common.MVVM;
 using AlephNote.Impl;
 using AlephNote.PluginInterface.Util;
 using AlephNote.Common.Util;
+using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.Windows
 {

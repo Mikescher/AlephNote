@@ -1,7 +1,6 @@
 ﻿using AlephNote.Common.Repository;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
-using AlephNote.Common.Threading;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Util;
@@ -13,6 +12,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using MSHC.Math.Encryption;
+using MSHC.Util.Threads;
 
 namespace AlephNote.Common.Operations
 {
@@ -155,14 +156,14 @@ namespace AlephNote.Common.Operations
 				yield return new PathEntry(
 					filepath, 
 					dsrcpath, 
-					FilenameHelper.ConvertStringFromFilenameBack(Path.GetFileNameWithoutExtension(filepath)),
+					ANFilenameHelper.ConvertStringFromFilenameBack(Path.GetFileNameWithoutExtension(filepath)),
 					new DateTimeOffset(new FileInfo(filepath).LastWriteTime), 
 					File.ReadAllText(filepath, _encoding));
 			}
 
 			foreach (var dir in Directory.EnumerateDirectories(fsrcpath))
 			{
-				var d = dsrcpath.SubDir(FilenameHelper.ConvertStringFromFilenameBack(Path.GetFileName(dir)));
+				var d = dsrcpath.SubDir(ANFilenameHelper.ConvertStringFromFilenameBack(Path.GetFileName(dir)));
 
 				foreach (var item in EnumerateFolder(d, dir, depth+1)) yield return item;
 			}
@@ -600,8 +601,8 @@ namespace AlephNote.Common.Operations
 
 		private string GetFilesystemPath(INote note)
 		{
-			var filename = FilenameHelper.ConvertStringForFilename(note.Title);
-			if (string.IsNullOrWhiteSpace(filename)) filename = FilenameHelper.ConvertStringForFilename(note.UniqueName);
+			var filename = ANFilenameHelper.ConvertStringForFilename(note.Title);
+			if (string.IsNullOrWhiteSpace(filename)) filename = ANFilenameHelper.ConvertStringForFilename(note.UniqueName);
 
 			var ext = ".txt";
 			if (note.HasTagCaseInsensitive(AppSettings.TAG_MARKDOWN)) ext = ".md";
@@ -609,7 +610,7 @@ namespace AlephNote.Common.Operations
 			if (note.Path.IsRoot()) return Path.Combine(_path, filename+ext);
 
 			var comp = new[]{ _path }
-							.Concat(note.Path.Enumerate().Select(FilenameHelper.ConvertStringForFilename))
+							.Concat(note.Path.Enumerate().Select(ANFilenameHelper.ConvertStringForFilename))
 							.Concat(new[]{ filename+ext });
 
 			return Path.Combine(comp.ToArray());
@@ -623,7 +624,7 @@ namespace AlephNote.Common.Operations
 			b.AppendLine($"\tTitle:         '{d.Title}'");
 			b.AppendLine($"\tContentLength: {d.Content.Length}");
 			b.AppendLine($"\tContentHash:   {ChecksumHelper.MD5(d.Content)}");
-			b.AppendLine($"\tChangeDate:    {d.MDate.ToString("yyyy-MM-dd HH:mm:ss")}");
+			b.AppendLine($"\tChangeDate:    {d.MDate:yyyy-MM-dd HH:mm:ss}");
 			b.AppendLine($"\tPath:          {d.FilesystemPath}");
 			b.AppendLine($"\tFolder:        {d.NotePath.StrSerialize()}");
 			b.AppendLine("}");
@@ -638,7 +639,7 @@ namespace AlephNote.Common.Operations
 			b.AppendLine($"\tTitle:         '{d.Title}'");
 			b.AppendLine($"\tContentLength: {d.Text.Length}");
 			b.AppendLine($"\tContentHash:   {ChecksumHelper.MD5(d.Text)}");
-			b.AppendLine($"\tChangeDate:    {d.ModificationDate.ToString("yyyy-MM-dd HH:mm:ss")}");
+			b.AppendLine($"\tChangeDate:    {d.ModificationDate:yyyy-MM-dd HH:mm:ss}");
 			b.AppendLine($"\tFolder:        {d.Path.StrSerialize()}");
 			b.AppendLine("}");
 			return b.ToString();

@@ -62,8 +62,8 @@ namespace AlephNote.Plugins.Filesystem
 
 		private static string CleanForFS(string str, string uniq)
 		{
-			var fn = FilenameHelper.StripStringForFilename(str, '_');
-			if (string.IsNullOrWhiteSpace(fn)) fn = FilenameHelper.StripStringForFilename(uniq);
+			var fn = ANFilenameHelper.StripStringForFilename(str, '_');
+			if (string.IsNullOrWhiteSpace(fn)) fn = ANFilenameHelper.StripStringForFilename(uniq);
 			return fn;
 		}
 

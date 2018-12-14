@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AlephNote.PluginInterface.Exceptions;
 using AlephNote.PluginInterface.Util;
+using MSHC.Lang.Collections;
 
 namespace AlephNote.Plugins.SimpleNote
 {

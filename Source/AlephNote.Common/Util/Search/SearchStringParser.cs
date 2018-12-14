@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using MSHC.Lang.Collections;
 
 namespace AlephNote.Common.Util.Search
 {

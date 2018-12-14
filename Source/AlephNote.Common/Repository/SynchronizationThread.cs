@@ -7,6 +7,7 @@ using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Exceptions;
 using AlephNote.PluginInterface.Util;
+using MSHC.Lang.Collections;
 
 namespace AlephNote.Common.Repository
 {

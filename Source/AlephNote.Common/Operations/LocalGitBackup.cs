@@ -1,5 +1,4 @@
-﻿using AlephNote.Common.Extensions;
-using AlephNote.PluginInterface;
+﻿using AlephNote.PluginInterface;
 using System;
 using System.IO;
 using System.Linq;
@@ -11,6 +10,8 @@ using AlephNote.PluginInterface.Util;
 using AlephNote.Common.Util;
 using System.Collections.Generic;
 using AlephNote.PluginInterface.AppContext;
+using MSHC.Util.Helper;
+using ProcessHelper = MSHC.Util.Helper.ProcessHelper;
 
 namespace AlephNote.Common.Operations
 {
@@ -185,14 +186,14 @@ namespace AlephNote.Common.Operations
 
 			foreach (var note in repo.Notes.OrderBy(p => p.CreationDate))
 			{
-				var fn = FilenameHelper.ConvertStringForFilename(note.Title);
-				if (string.IsNullOrWhiteSpace(fn)) fn = FilenameHelper.StripStringForFilename(note.UniqueName);
+				var fn = ANFilenameHelper.ConvertStringForFilename(note.Title);
+				if (string.IsNullOrWhiteSpace(fn)) fn = ANFilenameHelper.StripStringForFilename(note.UniqueName);
 
 				var ext = ".txt";
 
 				if (note.HasTagCaseInsensitive(AppSettings.TAG_MARKDOWN)) ext = ".md";
 
-				var path = Path.Combine(note.Path.Enumerate().Select(c => FilenameHelper.StripStringForFilename(c)).ToArray());
+				var path = Path.Combine(note.Path.Enumerate().Select(c => ANFilenameHelper.StripStringForFilename(c)).ToArray());
 
 				var oldfn = fn;
 
@@ -315,7 +316,7 @@ namespace AlephNote.Common.Operations
 			foreach (var dir in FileSystemUtil.EnumerateEmptyDirectories(targetFolder, 16).ToList())
 			{
 				dir_deleted.Add(dir);
-				FileSystemUtil.DeleteDirectoryWithRetry(LoggerSingleton.Inst, dir);
+				ANFileSystemUtil.DeleteDirectoryWithRetry(LoggerSingleton.Inst, dir);
 				
 				var rpath = FileSystemUtil.MakePathRelative(dir, targetFolder);
 				LoggerSingleton.Inst.Info("LocalGitMirror", $"Directory dleted: '{rpath}'", dir);
