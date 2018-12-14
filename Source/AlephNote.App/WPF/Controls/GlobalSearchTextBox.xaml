@@ -6,7 +6,7 @@
 			 xmlns:local="clr-namespace:AlephNote.WPF.Controls"
 			 xmlns:services="clr-namespace:MSHC.WPF.Services;assembly=CSharpUtils"
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
-			 xmlns:conv="clr-namespace:AlephNote.WPF.Converter"
+			 xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="22" d:DesignWidth="300">
 	<Grid x:Name="LayoutRoot">

@@ -4,12 +4,13 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:self="clr-namespace:AlephNote.WPF.Controls"
-			 xmlns:conv="clr-namespace:AlephNote.WPF.Converter"
+			 xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
 			 xmlns:util="clr-namespace:AlephNote.WPF.Util"
-             xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
+			 xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
 			 xmlns:settings="clr-namespace:AlephNote.Common.Settings.Types;assembly=AlephNote.Common"
-             xmlns:services="clr-namespace:MSHC.WPF.Services;assembly=CSharpUtils"
+			 xmlns:services="clr-namespace:MSHC.WPF.Services;assembly=CSharpUtils"
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
+			 xmlns:locconv="clr-namespace:AlephNote.WPF.Converter"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="150">
 
@@ -48,10 +49,10 @@
 				  Background="{ext:ThemeBinding 'window.notesview.hierachical.tree:background'}"
 				  Foreground="{ext:ThemeBinding 'window.notesview.hierachical.tree:foreground'}"
 				  ItemsSource="{Binding DisplayItems.SubFolder}"
-				  FontSize="{Binding Settings.ListFontSize, Converter={conv:FontSizeToInt}}" 
-				  FontFamily="{Binding Settings.ListFontFamily, Converter={conv:FontNameToFontFamily}}" 
-				  FontWeight="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontWeight}}" 
-				  FontStyle="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontStyle}}"
+				  FontSize="{Binding Settings.ListFontSize, Converter={locconv:FontSizeToInt}}" 
+				  FontFamily="{Binding Settings.ListFontFamily, Converter={locconv:FontNameToFontFamily}}" 
+				  FontWeight="{Binding Settings.ListFontModifier, Converter={locconv:FontModifierToFontWeight}}" 
+				  FontStyle="{Binding Settings.ListFontModifier, Converter={locconv:FontModifierToFontStyle}}"
 				  PreviewMouseRightButtonDown="FolderTreeView_OnPreviewMouseRightButtonDown"
 				  SelectedItemChanged="TreeView_SelectedItemChanged">
 			
@@ -73,7 +74,7 @@
 				<HierarchicalDataTemplate ItemsSource="{Binding SubFolder}" DataType="{x:Type util:HierachicalWrapper_Folder}">
 
 					<StackPanel Orientation="Horizontal">
-						<Image Width="16" Height="16" Margin="2" Stretch="Fill" Source="{Binding ., Converter={conv:HierachicalWrapperToIcon}}"/>
+						<Image Width="16" Height="16" Margin="2" Stretch="Fill" Source="{Binding ., Converter={locconv:HierachicalWrapperToIcon}}"/>
 						<TextBlock Text="{Binding Header}" Foreground="{ext:ThemeBinding 'window.notesview.hierachical.tree:foreground'}" />
 					</StackPanel>
 				</HierarchicalDataTemplate>
@@ -99,10 +100,10 @@
 					  ItemsSource="{Binding SelectedFolder.AllSubNotes}" 
 					  SelectedValue="{Binding SelectedNote}"
 					  MouseRightButtonUp="NotesList_MouseRightButtonUp"
-					  FontSize="{Binding Settings.ListFontSize, Converter={conv:FontSizeToInt}}" 
-					  FontFamily="{Binding Settings.ListFontFamily, Converter={conv:FontNameToFontFamily}}" 
-					  FontWeight="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontWeight}}" 
-					  FontStyle="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontStyle}}">
+					  FontSize="{Binding Settings.ListFontSize, Converter={locconv:FontSizeToInt}}" 
+					  FontFamily="{Binding Settings.ListFontFamily, Converter={locconv:FontNameToFontFamily}}" 
+					  FontWeight="{Binding Settings.ListFontModifier, Converter={locconv:FontModifierToFontWeight}}" 
+					  FontStyle="{Binding Settings.ListFontModifier, Converter={locconv:FontModifierToFontStyle}}">
 
 			<!-- ReSharper disable Xaml.RedundantResource -->
 			<services:MultiDataTemplateService.MultiDataTemplate>
@@ -205,17 +206,17 @@
 									 Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
 								<Run FontWeight="Normal" FontStyle="Normal" 
 									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.preview:foreground'}" 
-									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
+									 Text="{Binding Text, Converter={conv:GetStringLine}, ConverterParameter=0, Mode=OneWay}" />
 							</TextBlock>
 							<TextBlock Grid.Row="2" TextWrapping="NoWrap">
 								<Run FontWeight="Normal" FontStyle="Normal" 
 									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.preview:foreground'}" 
-									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=1, Mode=OneWay}" />
+									 Text="{Binding Text, Converter={conv:GetStringLine}, ConverterParameter=1, Mode=OneWay}" />
 							</TextBlock>
 							<TextBlock Grid.Row="3" TextWrapping="NoWrap">
 								<Run FontWeight="Normal" FontStyle="Normal" 
 									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.preview:foreground'}" 
-									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=2, Mode=OneWay}" />
+									 Text="{Binding Text, Converter={conv:GetStringLine}, ConverterParameter=2, Mode=OneWay}" />
 							</TextBlock>
 							<Rectangle Grid.Row="4" Height="2"
 							           Fill="{ext:ThemeBinding 'window.notesview.hierachical.list.separator'}" 
@@ -254,7 +255,7 @@
 									 Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
 								<Run FontWeight="Normal" FontStyle="Normal" 
 									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.preview:foreground'}" 
-									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
+									 Text="{Binding Text, Converter={conv:GetStringLine}, ConverterParameter=0, Mode=OneWay}" />
 							</TextBlock>
 							<Rectangle Grid.Row="2" Height="2"
 							           Fill="{ext:ThemeBinding 'window.notesview.hierachical.list.separator'}" 

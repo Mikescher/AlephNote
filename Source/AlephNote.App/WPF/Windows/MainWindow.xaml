@@ -4,7 +4,8 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:windows="clr-namespace:AlephNote.WPF.Windows"
-        xmlns:conv="clr-namespace:AlephNote.WPF.Converter"
+        xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
+        xmlns:locconv="clr-namespace:AlephNote.WPF.Converter"
 		xmlns:scinet="clr-namespace:ScintillaNET;assembly=ScintillaNET"
         xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
 		xmlns:ctrl="clr-namespace:AlephNote.WPF.Controls"
@@ -69,9 +70,9 @@
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Synchronize now" AlephAction="Resync" Settings="{Binding Settings}"  />
 				<ctrl:AutoActionMenuItem Foreground="Black" Header="Delete local data and sync new" AlephAction="FullResync" Settings="{Binding Settings}" />
 				<Separator />
-				<MenuItem Foreground="Black" Header="Insert Snippet" UsesItemContainerTemplate="True" ItemsSource="{Binding Settings.Snippets, Converter={conv:SnippetsToSnippetSource}}" >
+				<MenuItem Foreground="Black" Header="Insert Snippet" UsesItemContainerTemplate="True" ItemsSource="{Binding Settings.Snippets, Converter={locconv:SnippetsToSnippetSource}}" >
 					<MenuItem.Resources>
-						<ItemContainerTemplate DataType="{x:Type conv:SnippetElem}">
+						<ItemContainerTemplate DataType="{x:Type locconv:SnippetElem}">
 							<ctrl:AutoActionMenuItem Foreground="Black" />
 						</ItemContainerTemplate>
 					</MenuItem.Resources>
@@ -252,10 +253,10 @@
 			<TextBox Grid.Row="0" BorderBrush="Transparent" BorderThickness="0"  
 					 Background="Transparent"
 					 Foreground="{ext:ThemeBinding 'window.notetitle:foreground'}" 
-					 FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
-					 FontFamily="{Binding Settings.TitleFontFamily, Converter={conv:FontNameToFontFamily}}" 
-					 FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
-					 FontStyle="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontStyle}}" 
+					 FontSize="{Binding Settings.TitleFontSize, Converter={locconv:FontSizeToInt}}" 
+					 FontFamily="{Binding Settings.TitleFontFamily, Converter={locconv:FontNameToFontFamily}}" 
+					 FontWeight="{Binding Settings.TitleFontModifier, Converter={locconv:FontModifierToFontWeight}}" 
+					 FontStyle="{Binding Settings.TitleFontModifier, Converter={locconv:FontModifierToFontStyle}}" 
 					 Text="{Binding SelectedNote.Title, UpdateSourceTrigger=PropertyChanged}" >
 				<TextBox.IsReadOnly>
 					<MultiBinding Converter="{StaticResource MBOP}" ConverterParameter="OR">
@@ -265,10 +266,10 @@
 				</TextBox.IsReadOnly>
 				<services:WatermarkService.Watermark>
 					<TextBlock Text="Empty Title..." VerticalAlignment="Center" Padding="6,0"
-							   FontSize="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" 
-							   FontFamily="{Binding Settings.TitleFontFamily, Converter={conv:FontNameToFontFamily}}" 
-							   FontWeight="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontWeight}}" 
-							   FontStyle="{Binding Settings.TitleFontModifier, Converter={conv:FontModifierToFontStyle}}" />
+							   FontSize="{Binding Settings.TitleFontSize, Converter={locconv:FontSizeToInt}}" 
+							   FontFamily="{Binding Settings.TitleFontFamily, Converter={locconv:FontNameToFontFamily}}" 
+							   FontWeight="{Binding Settings.TitleFontModifier, Converter={locconv:FontModifierToFontWeight}}" 
+							   FontStyle="{Binding Settings.TitleFontModifier, Converter={locconv:FontModifierToFontStyle}}" />
 				</services:WatermarkService.Watermark>
 			</TextBox>
 
@@ -276,8 +277,8 @@
 				   Cursor="Hand"
 				   MouseDown="ImageLock_MouseDown"
 				   HorizontalAlignment="Right" 
-				   Source="{Binding Settings.IsReadOnlyMode, Converter={conv:ReadonlyToLockIcon}}" 
-				   Height="{Binding Settings.TitleFontSize, Converter={conv:FontSizeToInt}}" >
+				   Source="{Binding Settings.IsReadOnlyMode, Converter={locconv:ReadonlyToLockIcon}}" 
+				   Height="{Binding Settings.TitleFontSize, Converter={locconv:FontSizeToInt}}" >
 
 				<Image.Visibility>
 					<MultiBinding Converter="{StaticResource MB2V}" ConverterParameter="OR;Visible;Collapsed">
@@ -384,7 +385,7 @@
 			x:Name="TrayIcon"
 			Visibility="Visible"
 			ToolTipText="{Binding FullVersion}"
-			IconSource="{Binding SynchronizationState, Converter={conv:StateToAppIcon}}"
+			IconSource="{Binding SynchronizationState, Converter={locconv:StateToAppIcon}}"
 			TrayRightMouseDown="TrayIcon_TrayRightMouseDown"
 			LeftClickCommand="{Binding ShowMainWindowCommand}"
 			DoubleClickCommand="{Binding ShowMainWindowCommand}">

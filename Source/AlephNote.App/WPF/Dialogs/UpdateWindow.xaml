@@ -5,7 +5,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:AlephNote.WPF.Windows"
 		xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
-		xmlns:converter="clr-namespace:AlephNote.WPF.Converter"
+		xmlns:converter="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
 		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance local:UpdateWindowViewmodel}"
 		Title="Update found" Height="250" Width="500">

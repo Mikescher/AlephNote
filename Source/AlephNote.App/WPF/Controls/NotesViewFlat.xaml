@@ -4,9 +4,10 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:self="clr-namespace:AlephNote.WPF.Controls"
-			 xmlns:conv="clr-namespace:AlephNote.WPF.Converter"
+			 xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
              xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
 			 xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
+             xmlns:locconv="clr-namespace:AlephNote.WPF.Converter"
 			 xmlns:settings="clr-namespace:AlephNote.Common.Settings.Types;assembly=AlephNote.Common"
              xmlns:services="clr-namespace:MSHC.WPF.Services;assembly=CSharpUtils"
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
@@ -49,10 +50,10 @@
 					  ItemsSource="{Binding NotesView}" 
 					  SelectedValue="{Binding SelectedNote}"
 					  MouseRightButtonUp="NotesList_MouseRightButtonUp"
-					  FontSize="{Binding Settings.ListFontSize, Converter={conv:FontSizeToInt}}" 
-					  FontFamily="{Binding Settings.ListFontFamily, Converter={conv:FontNameToFontFamily}}" 
-					  FontWeight="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontWeight}}" 
-					  FontStyle="{Binding Settings.ListFontModifier, Converter={conv:FontModifierToFontStyle}}">
+					  FontSize="{Binding Settings.ListFontSize, Converter={locconv:FontSizeToInt}}" 
+					  FontFamily="{Binding Settings.ListFontFamily, Converter={locconv:FontNameToFontFamily}}" 
+					  FontWeight="{Binding Settings.ListFontModifier, Converter={locconv:FontModifierToFontWeight}}" 
+					  FontStyle="{Binding Settings.ListFontModifier, Converter={locconv:FontModifierToFontStyle}}">
 
 			<!-- ReSharper disable Xaml.RedundantResource -->
 			<services:MultiDataTemplateService.MultiDataTemplate>
@@ -155,17 +156,17 @@
 									 Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
 								<Run FontWeight="Normal" FontStyle="Normal" 
 									 Foreground="{ext:ThemeBinding 'window.notesview.flat.preview:foreground'}" 
-									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
+									 Text="{Binding Text, Converter={conv:GetStringLine}, ConverterParameter=0, Mode=OneWay}" />
 							</TextBlock>
 							<TextBlock Grid.Row="2" TextWrapping="NoWrap">
 								<Run FontWeight="Normal" FontStyle="Normal" 
 									 Foreground="{ext:ThemeBinding 'window.notesview.flat.preview:foreground'}" 
-									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=1, Mode=OneWay}" />
+									 Text="{Binding Text, Converter={conv:GetStringLine}, ConverterParameter=1, Mode=OneWay}" />
 							</TextBlock>
 							<TextBlock Grid.Row="3" TextWrapping="NoWrap">
 								<Run FontWeight="Normal" FontStyle="Normal" 
 									 Foreground="{ext:ThemeBinding 'window.notesview.flat.preview:foreground'}" 
-									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=2, Mode=OneWay}" />
+									 Text="{Binding Text, Converter={conv:GetStringLine}, ConverterParameter=2, Mode=OneWay}" />
 							</TextBlock>
 							<Rectangle Grid.Row="4" Height="2"
 							           Fill="{ext:ThemeBinding 'window.notesview.flat.separator'}" 
@@ -204,7 +205,7 @@
 									 Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
 								<Run FontWeight="Normal" FontStyle="Normal" 
 									 Foreground="{ext:ThemeBinding 'window.notesview.flat.preview:foreground'}" 
-									 Text="{Binding Text, Converter={conv:GetLine}, ConverterParameter=0, Mode=OneWay}" />
+									 Text="{Binding Text, Converter={conv:GetStringLine}, ConverterParameter=0, Mode=OneWay}" />
 							</TextBlock>
 							<Rectangle Grid.Row="2" Height="2"
 							           Fill="{ext:ThemeBinding 'window.notesview.flat.separator'}" 

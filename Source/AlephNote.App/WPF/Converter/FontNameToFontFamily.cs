@@ -1,11 +1,11 @@
-﻿using MSHC.WPF.MVVM;
-using System;
+﻿using System;
 using System.Windows.Controls;
 using System.Windows.Media;
+using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.Converter
 {
-	class FontNameToFontFamily : OneWayConverter<string, FontFamily>
+	public class FontNameToFontFamily : OneWayConverter<string, FontFamily>
 	{
 		private static readonly FontFamily defaultValue = new TextBlock().FontFamily;
 		private static readonly FontFamilyConverter ffc = new FontFamilyConverter();

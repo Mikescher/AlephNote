@@ -4,7 +4,8 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:windows="clr-namespace:AlephNote.WPF.Windows"
-		xmlns:converter="clr-namespace:AlephNote.WPF.Converter"
+		xmlns:converter="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
+		xmlns:locconv="clr-namespace:AlephNote.WPF.Converter"
 		mc:Ignorable="d"
 		d:DataContext="{d:DesignInstance windows:FirstStartupViewmodel}"
 		WindowStartupLocation="CenterScreen"
@@ -12,7 +13,7 @@
 		x:Name="FSWindow"
 		Title="First Startup" Height="550" Width="450">
 	<Window.Resources>
-		<converter:CreatePluginSettingsGrid x:Key="CreateGridConv" />
+		<locconv:CreatePluginSettingsGrid x:Key="CreateGridConv" />
 	</Window.Resources>
 	<Grid Margin="2">
 		<Grid.RowDefinitions>
@@ -66,22 +67,22 @@
 
 			<StackPanel Grid.Column="1" Orientation="Horizontal" >
 				<Border BorderBrush="Black" BorderThickness="2" Margin="2">
-					<Rectangle Fill="{Binding SyncProgress, FallbackValue=CornflowerBlue, Converter={converter:ProgressIndicatorConverter}, ConverterParameter=0;6}" Width="16" Height="16"/>
+					<Rectangle Fill="{Binding SyncProgress, FallbackValue=CornflowerBlue, Converter={locconv:ProgressIndicatorConverter}, ConverterParameter=0;6}" Width="16" Height="16"/>
 				</Border>
 				<Border BorderBrush="Black" BorderThickness="2" Margin="2">
-					<Rectangle Fill="{Binding SyncProgress, FallbackValue=CornflowerBlue, Converter={converter:ProgressIndicatorConverter}, ConverterParameter=1;6}" Width="16" Height="16"/>
+					<Rectangle Fill="{Binding SyncProgress, FallbackValue=CornflowerBlue, Converter={locconv:ProgressIndicatorConverter}, ConverterParameter=1;6}" Width="16" Height="16"/>
 				</Border>
 				<Border BorderBrush="Black" BorderThickness="2" Margin="2">
-					<Rectangle Fill="{Binding SyncProgress, FallbackValue=CornflowerBlue, Converter={converter:ProgressIndicatorConverter}, ConverterParameter=2;6}" Width="16" Height="16"/>
+					<Rectangle Fill="{Binding SyncProgress, FallbackValue=CornflowerBlue, Converter={locconv:ProgressIndicatorConverter}, ConverterParameter=2;6}" Width="16" Height="16"/>
 				</Border>
 				<Border BorderBrush="Black" BorderThickness="2" Margin="2">
-					<Rectangle Fill="{Binding SyncProgress, FallbackValue=CornflowerBlue, Converter={converter:ProgressIndicatorConverter}, ConverterParameter=3;6}" Width="16" Height="16"/>
+					<Rectangle Fill="{Binding SyncProgress, FallbackValue=CornflowerBlue, Converter={locconv:ProgressIndicatorConverter}, ConverterParameter=3;6}" Width="16" Height="16"/>
 				</Border>
 				<Border BorderBrush="Black" BorderThickness="2" Margin="2">
-					<Rectangle Fill="{Binding SyncProgress, FallbackValue=CornflowerBlue, Converter={converter:ProgressIndicatorConverter}, ConverterParameter=4;6}" Width="16" Height="16"/>
+					<Rectangle Fill="{Binding SyncProgress, FallbackValue=CornflowerBlue, Converter={locconv:ProgressIndicatorConverter}, ConverterParameter=4;6}" Width="16" Height="16"/>
 				</Border>
 				<Border BorderBrush="Black" BorderThickness="2" Margin="2">
-					<Rectangle Fill="{Binding SyncProgress, FallbackValue=CornflowerBlue, Converter={converter:ProgressIndicatorConverter}, ConverterParameter=5;6}" Width="16" Height="16"/>
+					<Rectangle Fill="{Binding SyncProgress, FallbackValue=CornflowerBlue, Converter={locconv:ProgressIndicatorConverter}, ConverterParameter=5;6}" Width="16" Height="16"/>
 				</Border>
 			</StackPanel>
 

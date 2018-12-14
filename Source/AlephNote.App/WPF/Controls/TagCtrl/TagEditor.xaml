@@ -3,7 +3,7 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:conv="clr-namespace:AlephNote.WPF.Converter"
+			 xmlns:locconv="clr-namespace:AlephNote.WPF.Converter"
 			 xmlns:self="clr-namespace:AlephNote.WPF.Controls"
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 			 mc:Ignorable="d" 
@@ -15,7 +15,7 @@
 				<Border VerticalAlignment="Center" 
 						Background="{ext:ThemeBinding 'window.tageditor.tag:background'}" 
 						BorderThickness="1" 
-						BorderBrush="{ext:ThemeSlaveBinding {Binding ., Converter={conv:TagToBorderBrush}}}" 
+						BorderBrush="{ext:ThemeSlaveBinding {Binding ., Converter={locconv:TagToBorderBrush}}}" 
 						Margin="-4,1,8,1" Padding="1">
 					
 					<TextBlock 
@@ -38,7 +38,7 @@
 				Focusable="False" IsHitTestVisible="False" Panel.ZIndex="2"
 				Background="Transparent" 
 				Foreground="{ext:ThemeBinding 'window.tageditor.placeholder'}"
-				Text="{Binding FormattedText, Converter={conv:TagsToPlaceholder}, Mode=OneWay}"
+				Text="{Binding FormattedText, Converter={locconv:TagsToPlaceholder}, Mode=OneWay}"
 				AcceptsReturn="False" AcceptsTab="False" 
 				Margin="5,0,0,0" VerticalContentAlignment="Top" >
 		</TextBox>
