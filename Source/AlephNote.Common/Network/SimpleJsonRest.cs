@@ -298,6 +298,7 @@ namespace AlephNote.Common.Network
 		private TResult GenericTwoWay<TResult>(object body, string path, HttpMethod method, int[] allowedStatusCodes, params string[] parameter)
 		{
 			var uri = CreateUri(path, parameter);
+			var ident = $"[[{Guid.NewGuid().ToString("N").ToUpper().Substring(0,6)}]]";
 			
 			string upload = JsonConvert.SerializeObject(body, GetSerializerSettings());
 			string download;
@@ -313,7 +314,9 @@ namespace AlephNote.Common.Network
 				};
 				_headers.ToList().ForEach(h => request.Headers.Add(h.Key, h.Value));
 				
-				LoggerSingleton.Inst.Debug("REST", "SendRequest<GenericTwoWay>", $"RequestUri := {uri}\nMethod := {method}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
+				LoggerSingleton.Inst.Debug("REST", 
+					$"{ident} SendRequest<GenericTwoWay> [START] ({uri} :: {method})", 
+					$"RequestUri := {uri}\nMethod := {method}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
 
 				resp = _client.SendAsync(request).Result;
 
@@ -321,7 +324,9 @@ namespace AlephNote.Common.Network
 				{
 					if (allowedStatusCodes.Any(sc => sc == (int)resp.StatusCode))
 					{
-						LoggerSingleton.Inst.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
+						LoggerSingleton.Inst.Warn("REST", 
+							$"{ident} SendRequest<GenericTwoWay> [FAILED] ({uri} :: {method})",
+							$"REST call to '{uri}' [{method}] returned (allowed) statuscode {(int) resp.StatusCode} ({resp.StatusCode})");
 						_lastResponse = resp;
 
 						return default(TResult);
@@ -375,10 +380,10 @@ namespace AlephNote.Common.Network
 			}
 
 			LoggerSingleton.Inst.Debug("REST",
-				string.Format("Calling REST API '{0}' [{1}]", uri, method),
-				string.Format("Send:\r\n{0}\r\n\r\n---------------------\r\n\r\nRecieved:\r\n{1}",
-				CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH),
-				CompactJsonFormatter.FormatJSON(download, LOG_FMT_DEPTH)));
+				$"{ident} SendRequest<GenericTwoWay> [FINISH] ({uri} :: {method})",
+				$"Send:\r\n{CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH)}\n\n"+
+				"---------------------\n\n"+
+				$"Recieved:\n{CompactJsonFormatter.FormatJSON(download, LOG_FMT_DEPTH)}");
 
 			_lastResponse = resp;
 			return downloadObject;
@@ -387,6 +392,7 @@ namespace AlephNote.Common.Network
 		private void GenericUpload(object body, string path, HttpMethod method, int[] allowedStatusCodes, params string[] parameter)
 		{
 			var uri = CreateUri(path, parameter);
+			var ident = $"[[{Guid.NewGuid().ToString("N").ToUpper().Substring(0,6)}]]";
 
 			string upload = JsonConvert.SerializeObject(body, GetSerializerSettings());
 			HttpResponseMessage resp;
@@ -401,7 +407,9 @@ namespace AlephNote.Common.Network
 				};
 				_headers.ToList().ForEach(h => request.Headers.Add(h.Key, h.Value));
 				
-				LoggerSingleton.Inst.Debug("REST", "SendRequest<GenericUpload>", $"RequestUri := {uri}\nMethod := {method}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
+				LoggerSingleton.Inst.Debug("REST", 
+					$"{ident} SendRequest<GenericUpload> [START] ({uri} :: {method})", 
+					$"RequestUri := {uri}\nMethod := {method}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
 
 				resp = _client.SendAsync(request).Result;
 
@@ -409,7 +417,9 @@ namespace AlephNote.Common.Network
 				{
 					if (allowedStatusCodes.Any(sc => sc == (int)resp.StatusCode))
 					{
-						LoggerSingleton.Inst.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
+						LoggerSingleton.Inst.Warn("REST",
+							$"{ident} SendRequest<GenericUpload> [FAILED] ({uri} :: {method})", 
+							$"REST call to '{uri}' [{method}] returned (allowed) statuscode {(int) resp.StatusCode} ({resp.StatusCode})");
 						_lastResponse = resp;
 
 						return;
@@ -441,9 +451,8 @@ namespace AlephNote.Common.Network
 			}
 
 			LoggerSingleton.Inst.Debug("REST",
-				string.Format("Calling REST API '{0}' [{1}]", uri, method),
-				string.Format("Send:\r\n{0}\r\n\r\nRecieved: Nothing",
-				CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH)));
+				$"{ident} SendRequest<GenericUpload> [FINISH] ({uri} :: {method})",
+				$"Send:\r\n{CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH)}\r\n\r\nRecieved: Nothing");
 
 			_lastResponse = resp;
 		}
@@ -451,6 +460,7 @@ namespace AlephNote.Common.Network
 		private TResult GenericDownload<TResult>(string path, HttpMethod method, int[] allowedStatusCodes, params string[] parameter)
 		{
 			var uri = CreateUri(path, parameter);
+			var ident = $"[[{Guid.NewGuid().ToString("N").ToUpper().Substring(0,6)}]]";
 
 			string download;
 			HttpResponseMessage resp;
@@ -464,7 +474,9 @@ namespace AlephNote.Common.Network
 				};
 				_headers.ToList().ForEach(h => request.Headers.Add(h.Key, h.Value));
 
-				LoggerSingleton.Inst.Debug("REST", "SendRequest<GenericDownload>", $"RequestUri := {uri}\nMethod := {method}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
+				LoggerSingleton.Inst.Debug("REST", 
+					$"{ident} SendRequest<GenericDownload> [START] ({uri} :: {method})", 
+					$"RequestUri := {uri}\nMethod := {method}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
 
 				resp = _client.SendAsync(request).Result;
 
@@ -472,7 +484,10 @@ namespace AlephNote.Common.Network
 				{
 					if (allowedStatusCodes.Any(sc => sc == (int)resp.StatusCode))
 					{
-						LoggerSingleton.Inst.Debug("REST", string.Format("REST call to '{0}' [{3}] returned (allowed) statuscode {1} ({2})", uri, (int)resp.StatusCode, resp.StatusCode, method));
+						LoggerSingleton.Inst.Warn("REST",
+							$"{ident} SendRequest<GenericDownload> [FAILED] ({uri} :: {method})",
+							$"REST call to '{uri}' [{method}] returned (allowed) statuscode {(int) resp.StatusCode} ({resp.StatusCode})");
+
 						_lastResponse = resp;
 
 						return default(TResult);
@@ -526,9 +541,8 @@ namespace AlephNote.Common.Network
 			}
 
 			LoggerSingleton.Inst.Debug("REST",
-				string.Format("Calling REST API '{0}' [{1}]", uri, method),
-				string.Format("Send: Nothing\r\nRecieved:\r\n{0}",
-				CompactJsonFormatter.FormatJSON(download, LOG_FMT_DEPTH)));
+				$"{ident} SendRequest<GenericDownload> [FINISH] ({uri} :: {method})",
+				$"Send: Nothing\r\nRecieved:\r\n{CompactJsonFormatter.FormatJSON(download, LOG_FMT_DEPTH)}");
 
 			_lastResponse = resp;
 			return downloadObject;
