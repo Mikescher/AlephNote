@@ -1,12 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using MSHC;
 
 namespace AlephNote.WPF.Windows
 {
-	/// <summary>
-	/// Interaction logic for AboutWindow.xaml
-	/// </summary>
 	public partial class AboutWindow 
 	{
 		public AboutWindow()
