@@ -5,7 +5,7 @@ namespace AlephNote.PluginInterface.Datatypes
 {
 	public class SimpleTagList : TagList
 	{
-		private ObservableCollection<string> _backend = new ObservableCollection<string>();
+		private readonly ObservableCollection<string> _backend = new ObservableCollection<string>();
 
 		public SimpleTagList()
 		{

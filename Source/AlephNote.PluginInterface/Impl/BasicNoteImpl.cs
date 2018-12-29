@@ -107,7 +107,7 @@ namespace AlephNote.PluginInterface.Impl
 		{
 			if (_dirtySupressor > 0) return;
 
-			SetDirty($"TagList.OnChanged called.\n\nAction: [{e.Action}]\nNewItems: [{string.Join(", ", e.NewItems)}]\nNewItems: [{string.Join(", ", e.OldItems)}]");
+			SetDirty($"TagList.OnChanged called.\n\nAction: [{e.Action}]\nNewItems: [{string.Join(", ", e.NewItems.OfType<string>())}]\nOldItems: [{string.Join(", ", e.OldItems.OfType<string>())}]");
 			ModificationDate = DateTimeOffset.Now;
 			if (IsConflictNote) IsConflictNote = false;
 			OnChanged?.Invoke(this, new NoteChangedEventArgs(this, "Tags"));
