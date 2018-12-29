@@ -99,7 +99,11 @@ namespace AlephNote.Common.Repository
 					notesToDelete = repo.LocalDeletedNotes.ToList();
 				});
 
-				_log.Info("Sync", string.Format("Found {0} alive notes and {1} deleted notes", allNotes.Count, notesToDelete.Count));
+				_log.Info(
+					"Sync", 
+					$"Found {allNotes.Count} alive notes and {notesToDelete.Count} deleted notes", 
+					$"Alive:\n{string.Join("\n", allNotes.Select(n => $"{n.Item2.UniqueName}    {n.Item2.Title}"))}\n\n\n" +
+					$"Deleted:\n{string.Join("\n", notesToDelete.Select(n => $"{n.UniqueName}    {n.Title}"))}");
 
 				repo.Connection.StartSync(data, allNotes.Select(p => p.Item2).ToList(), notesToDelete);
 				{
@@ -110,7 +114,11 @@ namespace AlephNote.Common.Repository
 					// we think 'upload', but provider doesn't say so
 					var notesToResetDirty = allNotes.Where(p => !p.Item2.IsRemoteSaved && !notesToUpload.Contains(p)).ToList();
 
-					_log.Info("Sync", string.Format("Found {0} notes for upload and {1} notes for download", notesToUpload.Count, notesToDownload.Count));
+					_log.Info(
+						"Sync", 
+						$"Found {notesToUpload.Count} notes for upload and {notesToDownload.Count} notes for download", 
+						$"Upload:\n{string.Join("\n", notesToUpload.Select(n => $"{n.Item2.UniqueName}    {n.Item2.Title}"))}\n\n\n" +
+						$"Download:\n{string.Join("\n", notesToDownload.Select(n => $"{n.Item2.UniqueName}    {n.Item2.Title}"))}");
 
 					UploadNotes(notesToUpload, notesToResetDirty, ref errors);
 

@@ -8,6 +8,7 @@ using AlephNote.PluginInterface.Exceptions;
 using AlephNote.PluginInterface.Util;
 using MSHC.Lang.Collections;
 using MSHC.Math.Encryption;
+using MSHC.Network;
 using MSHC.Serialization;
 
 namespace AlephNote.Plugins.StandardNote
@@ -28,6 +29,7 @@ namespace AlephNote.Plugins.StandardNote
 		public class APIRequestUser { public string email, password; }
 		public class APIResultAuthorize { public APIResultUser user; public string token; public byte[] masterkey, masterauthkey; public string version; }
 		public class APIBodyItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at; public bool deleted; }
+		public class APIRawBodyItem { public Guid uuid; public string content_type, content; public DateTimeOffset created_at; public bool deleted; }
 		public class APIResultItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at, updated_at; public bool deleted; }
 		public class APIBodySync { public int limit; public List<APIBodyItem> items; public string sync_token, cursor_token; }
 		public class APIResultErrorItem { public APIResultItem item; public APISyncResultError error; }
@@ -237,24 +239,26 @@ namespace AlephNote.Plugins.StandardNote
 			d.limit = 150;
 			d.items = new List<APIBodyItem>();
 
+			var items_raw = new List<APIRawBodyItem>();
+
 			var allTags = dat.Tags.ToList();
 
 			// Upload new notes
 			foreach (var mvNote in notesUpload)
 			{
-				PrepareNoteForUpload(web, d, mvNote, allTags, authToken, cfg, false);
+				PrepareNoteForUpload(web, d, ref items_raw, mvNote, allTags, authToken, cfg, false);
 			}
 
 			// Delete deleted notes
 			foreach (var rmNote in notesDelete)
 			{
-				PrepareNoteForUpload(web, d, rmNote, allTags, authToken, cfg, true);
+				PrepareNoteForUpload(web, d, ref items_raw, rmNote, allTags, authToken, cfg, true);
 			}
 
 			// Update references on tags (from changed notes)
 			foreach (var upTag in GetTagsInNeedOfUpdate(dat.Tags, notesUpload, notesDelete))
 			{
-				PrepareTagForUpload(web, d, upTag, authToken, false);
+				PrepareTagForUpload(web, d, ref items_raw, upTag, authToken, false);
 			}
 
 			// Remove unused tags
@@ -262,10 +266,15 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				foreach (var rmTag in tagsDelete)
 				{
-					PrepareTagForUpload(web, d, rmTag, authToken, true);
+					PrepareTagForUpload(web, d, ref items_raw, rmTag, authToken, true);
 				}
 			}
 			
+			Logger.Debug(
+				StandardNotePlugin.Name,
+				$"Perform sync request ({items_raw.Count} items send)",
+				"Sent Items (unencrypted):\n\n" +string.Join("\n", items_raw.Select(i => $"{{\n  content_type = {i.content_type}\n  uuid         = {i.uuid}\n  created_at   = {i.created_at}\n  deleted      = {i.deleted}\n  content      =\n{CompactJsonFormatter.FormatJSON(i.content, 2, 1)}\n}}")) );
+
 			var result = GetCursorResult(web, dat, d);
 
 			var syncresult = new SyncResult();
@@ -573,14 +582,14 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		private static void PrepareNoteForUpload(ISimpleJsonRest web, APIBodySync body, StandardFileNote note, List<StandardFileTag> allTags, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
+		private static void PrepareNoteForUpload(ISimpleJsonRest web, APIBodySync body, ref List<APIRawBodyItem> bodyraw, StandardFileNote note, List<StandardFileTag> allTags, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
 		{
 			var appdata = new Dictionary<string, Dictionary<string, object>>();
 
 			SetAppDataBool(appdata, APPDATA_PINNED, note.IsPinned);
 			SetAppDataBool(appdata, APPDATA_LOCKED, note.IsLocked);
 
-			var jsnContent = new ContentNote
+			var objContent = new ContentNote
 			{
 				title = note.InternalTitle,
 				text = note.Text.Replace("\r\n", "\n"),
@@ -613,23 +622,33 @@ namespace AlephNote.Plugins.StandardNote
 			//	jsnContent.references.Add(new APIResultContentRef { content_type = "Tag", uuid = itertag.UUID.Value });
 			//}
 
-			var cdNote = StandardNoteCrypt.EncryptContent(token.version, web.SerializeJson(jsnContent), note.ID, token.masterkey, token.masterauthkey);
+			var jsonContent = web.SerializeJson(objContent);
+
+			var cryptData = StandardNoteCrypt.EncryptContent(token.version, jsonContent, note.ID, token.masterkey, token.masterauthkey);
 
 			body.items.Add(new APIBodyItem
 			{
 				content_type = "Note",
-				uuid = note.ID,
-				created_at = note.CreationDate,
-				enc_item_key = cdNote.enc_item_key,
-				auth_hash = cdNote.auth_hash,
-				content = cdNote.enc_content,
-				deleted = delete,
+				uuid         = note.ID,
+				created_at   = note.CreationDate,
+				enc_item_key = cryptData.enc_item_key,
+				auth_hash    = cryptData.auth_hash,
+				content      = cryptData.enc_content,
+				deleted      = delete,
+			});
+			bodyraw.Add(new APIRawBodyItem
+			{
+				content_type = "Note",
+				uuid         = note.ID,
+				created_at   = note.CreationDate,
+				content      = jsonContent,
+				deleted      = delete,
 			});
 		}
 
-		private static void PrepareTagForUpload(ISimpleJsonRest web, APIBodySync body, StandardFileTag tag, APIResultAuthorize token, bool delete)
+		private static void PrepareTagForUpload(ISimpleJsonRest web, APIBodySync body, ref List<APIRawBodyItem> bodyraw, StandardFileTag tag, APIResultAuthorize token, bool delete)
 		{
-			var jsnContent = new ContentTag
+			var objContent = new ContentTag
 			{
 				title = tag.Title,
 				references = tag
@@ -639,17 +658,26 @@ namespace AlephNote.Plugins.StandardNote
 			};
 
 			Debug.Assert(tag.UUID != null, "tag.UUID != null");
+			
+			var jsonContent = web.SerializeJson(objContent);
 
-			var cdNote = StandardNoteCrypt.EncryptContent(token.version, web.SerializeJson(jsnContent), tag.UUID.Value, token.masterkey, token.masterauthkey);
+			var cryptData = StandardNoteCrypt.EncryptContent(token.version, jsonContent, tag.UUID.Value, token.masterkey, token.masterauthkey);
 
 			body.items.Add(new APIBodyItem
 			{
 				content_type = "Tag",
-				uuid = tag.UUID.Value,
-				enc_item_key = cdNote.enc_item_key,
-				auth_hash = cdNote.auth_hash,
-				content = cdNote.enc_content,
-				deleted = delete,
+				uuid         = tag.UUID.Value,
+				enc_item_key = cryptData.enc_item_key,
+				auth_hash    = cryptData.auth_hash,
+				content      = cryptData.enc_content,
+				deleted      = delete,
+			});
+			bodyraw.Add(new APIRawBodyItem
+			{
+				content_type = "Tag",
+				uuid         = tag.UUID.Value,
+				content      = jsonContent,
+				deleted      = delete,
 			});
 		}
 
