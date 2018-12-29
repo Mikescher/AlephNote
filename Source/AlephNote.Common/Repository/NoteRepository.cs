@@ -135,6 +135,7 @@ namespace AlephNote.Common.Repository
 				try
 				{
 					var note = LoadNoteFromFile(noteFile);
+					note.IsUINote = true;
 
 					Notes.Add(note);
 				}
@@ -159,13 +160,13 @@ namespace AlephNote.Common.Repository
 
 			var note = account.Plugin.CreateEmptyNote(Connection, account.Config);
 			note.Deserialize(data.Elements().FirstOrDefault());
-			note.ResetLocalDirty();
-			note.ResetRemoteDirty();
+			note.ResetLocalDirty("Reset local dirty after deserialization");
+			note.ResetRemoteDirty("Reset remote dirty after deserialization");
 
 			var meta = root.Element("meta");
 			if (meta == null) throw new Exception("missing meta node");
 
-			if (XHelper.GetChildValue(meta, "dirty", false)) note.SetRemoteDirty();
+			if (XHelper.GetChildValue(meta, "dirty", false)) note.SetRemoteDirty("Set remote dirty from deserialization-value (pending sync from last app-run)");
 			note.IsConflictNote = XHelper.GetChildValue(meta, "conflict", false);
 			return note;
 		}
@@ -175,8 +176,9 @@ namespace AlephNote.Common.Repository
 			p = p ?? DirectoryPath.Root();
 			var note = account.Plugin.CreateEmptyNote(Connection, account.Config);
 			note.Path = p;
+			note.IsUINote=true;
 			Notes.Add(note);
-			note.SetDirty();
+			note.SetDirty("Set newly created note to dirty");
 			SaveNote(note);
 
 			logger.Info("Repository", "New Note created");
@@ -222,7 +224,7 @@ namespace AlephNote.Common.Repository
 					}
 
 					File.Copy(tempPath, path, true);
-					note.ResetLocalDirty();
+					note.ResetLocalDirty("Reset local dirty after SaveNote()");
 					File.Delete(tempPath);
 				}
 				catch (Exception e)
@@ -299,8 +301,9 @@ namespace AlephNote.Common.Repository
 
 		public void AddNote(INote note, bool updateRemote)
 		{
-			logger.Info("Repository", string.Format("Add note {0} (updateRemote={1})", note.UniqueName, updateRemote));
+			logger.Info("Repository", $"Add note {note.UniqueName} (updateRemote={updateRemote})");
 
+			note.IsUINote = true;
 			Notes.Add(note);
 			SaveNote(note);
 

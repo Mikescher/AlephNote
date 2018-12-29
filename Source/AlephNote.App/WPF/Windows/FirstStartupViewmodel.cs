@@ -223,8 +223,8 @@ namespace AlephNote.WPF.Windows
 						var note = conn.DownloadNote(noteid, out var isnewnote);
 						if (isnewnote)
 						{
-							note.SetLocalDirty();
-							note.ResetRemoteDirty();
+							note.SetLocalDirty("Set Note LocalDirty=true after download in Startupmode");
+							note.ResetRemoteDirty("Set Note RemoteDirty=false after download in Startupmode");
 							resultNotes.Add(note);
 						}
 						else

@@ -105,7 +105,7 @@ namespace AlephNote.Plugins.Filesystem
 			}
 		}
 
-		protected override BasicHierachicalNote CreateClone()
+		protected override BasicNoteImpl CreateClone()
 		{
 			var n = new FilesystemNote(_id, _config);
 

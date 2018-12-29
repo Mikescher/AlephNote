@@ -81,7 +81,7 @@ namespace AlephNote.Plugins.Headless
 			_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
 		}
 
-		protected override BasicHierachicalNote CreateClone()
+		protected override BasicNoteImpl CreateClone()
 		{
 			var n = new HeadlessNote(_id);
 

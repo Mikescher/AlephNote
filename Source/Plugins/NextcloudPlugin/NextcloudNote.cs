@@ -211,7 +211,7 @@ namespace AlephNote.Plugins.Nextcloud
 			}
 		}
 
-		protected override BasicHierachicalNote CreateClone()
+		protected override BasicNoteImpl CreateClone()
 		{
 			var n = new NextcloudNote(_remoteID, _localID, _config);
 			

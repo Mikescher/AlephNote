@@ -175,7 +175,7 @@ namespace AlephNote.Common.Repository
 								if (realnote.IsLocalSaved)
 								{
 									realnote.OnAfterUpload(clonenote);
-									realnote.ResetRemoteDirty();
+									realnote.ResetRemoteDirty("Note was successfully uploaded (no conflict)");
 									repo.SaveNote(realnote);
 								}
 							});
@@ -186,8 +186,8 @@ namespace AlephNote.Common.Repository
 							{
 								realnote.ApplyUpdatedData(clonenote);
 								realnote.TriggerOnChanged(true);
-								realnote.SetLocalDirty();
-								realnote.ResetRemoteDirty();
+								realnote.SetLocalDirty("Note was uploaded and a merge has happened");
+								realnote.ResetRemoteDirty("Note was successfully uploaded (auto-merge)");
 							});
 							break;
 
@@ -232,7 +232,7 @@ namespace AlephNote.Common.Repository
 					{
 						if (realnote.IsLocalSaved)
 						{
-							realnote.ResetRemoteDirty();
+							realnote.ResetRemoteDirty("Reset remote dirty - was marked for upload but plugin says no upload is needed");
 							repo.SaveNote(realnote);
 						}
 					});
@@ -261,7 +261,7 @@ namespace AlephNote.Common.Repository
 						if (realnote.IsLocalSaved)
 						{
 							realnote.OnAfterUpload(clonenote);
-							realnote.ResetRemoteDirty();
+							realnote.ResetRemoteDirty("Upload conflict was solved by [UseClientVersion]");
 							repo.SaveNote(realnote);
 
 							_log.Warn("Sync", "Resolve conflict: UseClientVersion");
@@ -277,8 +277,8 @@ namespace AlephNote.Common.Repository
 					{
 						realnote.ApplyUpdatedData(clonenote);
 						realnote.TriggerOnChanged(true);
-						realnote.SetLocalDirty();
-						realnote.ResetRemoteDirty();
+						realnote.SetLocalDirty("Upload conflict was solved by [UseServerVersion]");
+						realnote.ResetRemoteDirty("Upload conflict was solved by [UseServerVersion]");
 						repo.SaveNote(realnote);
 
 						_log.Warn("Sync", "Resolve conflict: UseServerVersion");
@@ -290,7 +290,7 @@ namespace AlephNote.Common.Repository
 						if (realnote.IsLocalSaved)
 						{
 							realnote.OnAfterUpload(clonenote);
-							realnote.ResetRemoteDirty();
+							realnote.ResetRemoteDirty("Upload conflict was solved by [UseClientCreateConflictFile]");
 							repo.SaveNote(realnote);
 						}
 						else
@@ -313,8 +313,8 @@ namespace AlephNote.Common.Repository
 					{
 						realnote.ApplyUpdatedData(clonenote);
 						realnote.TriggerOnChanged(true);
-						realnote.SetLocalDirty();
-						realnote.ResetRemoteDirty();
+						realnote.SetLocalDirty("Upload conflict was solved by [UseServerCreateConflictFile]");
+						realnote.ResetRemoteDirty("Upload conflict was solved by [UseServerCreateConflictFile]");
 						repo.SaveNote(realnote);
 
 						var conflict = repo.CreateNewNote(conflictnote.Path);
@@ -333,7 +333,7 @@ namespace AlephNote.Common.Repository
 						if (realnote.IsLocalSaved)
 						{
 							realnote.OnAfterUpload(clonenote);
-							realnote.ResetRemoteDirty();
+							realnote.ResetRemoteDirty("Upload conflict was solved by [ManualMerge]");
 							repo.SaveNote(realnote);
 						}
 						else
@@ -410,7 +410,7 @@ namespace AlephNote.Common.Repository
 									{
 										// Even when up to date - perhaps local mod date is wrong ...
 										realnote.ModificationDate = clonenote.ModificationDate;
-										realnote.ResetRemoteDirty();
+										realnote.ResetRemoteDirty("Note was downloaded from remote (no changes - UpToDate)");
 									}
 								});
 							}
@@ -424,8 +424,8 @@ namespace AlephNote.Common.Repository
 								{
 									realnote.ApplyUpdatedData(clonenote);
 									realnote.TriggerOnChanged(true);
-									realnote.SetLocalDirty();
-									realnote.ResetRemoteDirty();
+									realnote.SetLocalDirty("Note was downloaded from remote (local note was updated)");
+									realnote.ResetRemoteDirty("Note was downloaded from remote (local note was updated)");
 									repo.SaveNote(realnote);
 								}
 								else
@@ -497,12 +497,11 @@ namespace AlephNote.Common.Repository
 
 				try
 				{
-					bool isnewnote;
-					var note = repo.Connection.DownloadNote(noteid, out isnewnote);
+					var note = repo.Connection.DownloadNote(noteid, out var isnewnote);
 					if (isnewnote)
 					{
-						note.SetLocalDirty();
-						note.ResetRemoteDirty();
+						note.SetLocalDirty("New note from remote");
+						note.ResetRemoteDirty("New note from remote");
 						dispatcher.Invoke(() => repo.AddNote(note, false));
 					}
 					else

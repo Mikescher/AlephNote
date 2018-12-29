@@ -190,7 +190,7 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		protected override BasicFlatNote CreateClone()
+		protected override BasicNoteImpl CreateClone()
 		{
 			var n = new SimpleNote(_id, _config, _hConfig);
 			

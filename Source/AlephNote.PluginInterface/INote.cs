@@ -16,11 +16,11 @@ namespace AlephNote.PluginInterface
 
 		bool EqualID(INote clonenote);
 
-		void SetDirty();
-		void SetLocalDirty();
-		void SetRemoteDirty();
-		void ResetLocalDirty();
-		void ResetRemoteDirty();
+		void SetDirty(string sourceinfo);
+		void SetLocalDirty(string sourceinfo);
+		void SetRemoteDirty(string sourceinfo);
+		void ResetLocalDirty(string sourceinfo);
+		void ResetRemoteDirty(string sourceinfo);
 
 		void OnAfterUpload(INote clonenote);
 		void ApplyUpdatedData(INote other);
@@ -33,12 +33,14 @@ namespace AlephNote.PluginInterface
 		bool IsPinned { get; set; }
 		bool IsLocked { get; set; }
 		DirectoryPath Path { get; set; }
-
-		bool IsLocalSaved { get; set; }
-		bool IsRemoteSaved { get; set; }
+		
+		bool IsLocalSaved { get; }
+		bool IsRemoteSaved { get; }
 		bool IsConflictNote { get; set; }
 		DateTimeOffset CreationDate { get; set; }
 		DateTimeOffset ModificationDate { get; set; }
+		
+		bool IsUINote { get; set; } // "Real" Note that is linked to the UI - not a intermediate copy
 
 		INote Clone();
 		IDisposable SuppressDirtyChanges();
