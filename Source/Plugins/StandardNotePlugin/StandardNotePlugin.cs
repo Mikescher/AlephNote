@@ -20,14 +20,14 @@ namespace AlephNote.Plugins.StandardNote
 
 		public const string CURRENT_SCHEMA = "003";
 
-		private IAlephLogger _logger;
+		private AlephLogger _logger;
 
 		public StandardNotePlugin() : base("Standard Notes", Version, Guid.Parse("30d867a4-cbdc-45c5-950a-c119bf2f2845"))
 		{
 			//
 		}
 
-		public override void Init(IAlephLogger logger)
+		public override void Init(AlephLogger logger)
 		{
 			_logger = logger;
 		}

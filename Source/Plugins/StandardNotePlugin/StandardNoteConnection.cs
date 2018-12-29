@@ -17,7 +17,7 @@ namespace AlephNote.Plugins.StandardNote
 	{
 		private readonly StandardNoteConfig _config;
 		private readonly IWebProxy _proxy;
-		private readonly IAlephLogger _logger;
+		private readonly AlephLogger _logger;
 
 		private StandardNoteAPI.APIResultAuthorize _token = null;
 		private StandardNoteAPI.SyncResult _syncResult = null;
@@ -25,7 +25,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public readonly HierachyEmulationConfig HConfig;
 
-		public StandardNoteConnection(IAlephLogger log, IWebProxy proxy, StandardNoteConfig config, HierachyEmulationConfig hConfig)
+		public StandardNoteConnection(AlephLogger log, IWebProxy proxy, StandardNoteConfig config, HierachyEmulationConfig hConfig)
 		{
 			HConfig = hConfig;
 

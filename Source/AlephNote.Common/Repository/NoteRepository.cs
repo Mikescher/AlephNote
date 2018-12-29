@@ -18,7 +18,7 @@ namespace AlephNote.Common.Repository
 {
 	public class NoteRepository : ObservableObject, ISynchronizationFeedback
 	{
-		private readonly IAlephLogger logger = LoggerSingleton.Inst;
+		private readonly AlephLogger logger = LoggerSingleton.Inst;
 
 		private readonly string pathLocalFolder;
 		private readonly string pathLocalData;

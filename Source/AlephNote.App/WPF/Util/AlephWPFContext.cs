@@ -10,7 +10,7 @@ namespace AlephNote.WPF.Util
 	{
 		IReadonlyAlephSettings IAlephAppContext.GetSettings() => MainWindow.Instance?.Settings;
 
-		IAlephLogger IAlephAppContext.GetLogger() => LoggerSingleton.Inst;
+		AlephLogger IAlephAppContext.GetLogger() => LoggerSingleton.Inst;
 
 		Tuple<int, int, int, int> IAlephAppContext.GetAppVersion() => Tuple.Create(App.APP_VERSION.Major, App.APP_VERSION.Minor, App.APP_VERSION.Build, App.APP_VERSION.Revision);
 

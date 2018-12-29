@@ -29,7 +29,7 @@ namespace AlephNote.Plugins.SimpleNote
 		// ReSharper restore All
 #pragma warning restore 0649
 
-		public static IAlephLogger Logger = new AlephDummyLoggger();
+		public static AlephLogger Logger = new AlephDummyLoggger();
 
 		public static APIResultAuthorize Authenticate(ISimpleJsonRest web, string userName, string password)
 		{

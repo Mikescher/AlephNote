@@ -18,14 +18,14 @@ namespace AlephNote.Plugins.Nextcloud
 		public override bool SupportsNativeDirectories => true;
 		public override bool SupportsTags              => true;
 
-		private IAlephLogger _logger;
+		private AlephLogger _logger;
 
 		public NextcloudPlugin() : base("Nextcloud Notes", Version, Guid.Parse("9c4538de-8adb-438f-99fe-1531f90d9d0a"))
 		{
 			//
 		}
 
-		public override void Init(IAlephLogger logger)
+		public override void Init(AlephLogger logger)
 		{
 			_logger = logger;
 		}

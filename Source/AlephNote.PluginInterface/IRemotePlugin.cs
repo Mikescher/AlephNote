@@ -10,7 +10,7 @@ namespace AlephNote.PluginInterface
 		string DisplayTitleLong { get; }
 		string DisplayTitleShort { get; }
 
-		void Init(IAlephLogger logger);
+		void Init(AlephLogger logger);
 
 		Guid GetUniqueID();
 		string GetName();

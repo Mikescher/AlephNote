@@ -17,14 +17,14 @@ namespace AlephNote.Plugins.Evernote
 		public override bool SupportsNativeDirectories => false;
 		public override bool SupportsTags              => false;
 
-		private IAlephLogger _logger;
+		private AlephLogger _logger;
 
 		public EvernotePlugin() : base("Evernote", Version, Guid.Parse("b1bc98fa-247a-4f12-ac2d-febaa927f2ec"))
 		{
 			//
 		}
 
-		public override void Init(IAlephLogger logger)
+		public override void Init(AlephLogger logger)
 		{
 			_logger = logger;
 		}

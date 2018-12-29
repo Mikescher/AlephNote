@@ -12,11 +12,11 @@ namespace AlephNote.Plugins.Filesystem
 	public class FilesystemConnection : BasicRemoteConnection
 	{
 		private readonly FilesystemConfig _config;
-		private readonly IAlephLogger _logger;
+		private readonly AlephLogger _logger;
 
 		private List<string> _syncScan = null; 
 
-		public FilesystemConnection(IAlephLogger log, FilesystemConfig config)
+		public FilesystemConnection(AlephLogger log, FilesystemConfig config)
 		{
 			_config = config;
 			_logger = log;

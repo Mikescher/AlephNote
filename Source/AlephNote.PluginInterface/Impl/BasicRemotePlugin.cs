@@ -57,7 +57,7 @@ namespace AlephNote.PluginInterface.Impl
 			return CreateHelpTexts().ToDictionary(t => t.Item1, t => t.Item2);
 		}
 
-		public abstract void Init(IAlephLogger logger);
+		public abstract void Init(AlephLogger logger);
 
 		public abstract IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
 		public abstract IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hierachicalConfig);

@@ -18,7 +18,7 @@ namespace AlephNote.Plugins.SimpleNote
 
 		private readonly SimpleNoteConfig _config;
 		private readonly IWebProxy _proxy;
-		private readonly IAlephLogger _logger;
+		private readonly AlephLogger _logger;
 
 		private SimpleNoteAPI.APIResultAuthorize _token = null;
 		private SimpleNoteAPI.APIResultIndex buckets = null;
@@ -27,7 +27,7 @@ namespace AlephNote.Plugins.SimpleNote
 
 		public readonly HierachyEmulationConfig HConfig;
 
-		public SimpleNoteConnection(IAlephLogger log, IWebProxy proxy, SimpleNoteConfig config, HierachyEmulationConfig hConfig)
+		public SimpleNoteConnection(AlephLogger log, IWebProxy proxy, SimpleNoteConfig config, HierachyEmulationConfig hConfig)
 		{
 			HConfig = hConfig;
 

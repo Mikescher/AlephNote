@@ -22,7 +22,7 @@ namespace AlephNote.Plugins.Headless
 			//
 		}
 
-		public override void Init(IAlephLogger logger)
+		public override void Init(AlephLogger logger)
 		{
 			//
 		}

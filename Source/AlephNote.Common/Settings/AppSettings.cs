@@ -475,6 +475,10 @@ namespace AlephNote.Common.Settings
 		public bool ForceDebugMode { get { return _forceDebugMode; } set { _forceDebugMode = value; OnPropertyChanged(); } }
 		private bool _forceDebugMode = false;
 
+		[AlephXMLField]
+		public bool DisableLogger { get { return _disableLogger; } set { _disableLogger = value; OnPropertyChanged(); } }
+		private bool _disableLogger = false;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

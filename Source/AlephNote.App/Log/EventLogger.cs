@@ -11,9 +11,9 @@ using AlephNote.WPF.Windows;
 
 namespace AlephNote.Log
 {
-	public class EventLogger : IAlephLogger
+	public class EventLogger : BasicWPFLogger
 	{
-		public readonly ObservableCollection<LogEvent> Events = new ObservableCollection<LogEvent>();
+		private readonly ObservableCollection<LogEvent> events = new ObservableCollection<LogEvent>();
 
 		private void Log(LogEvent e)
 		{
@@ -41,123 +41,76 @@ namespace AlephNote.Log
 			var disp = curr.Dispatcher;
 
 			if (disp.CheckAccess())
-				Events.Add(e);
+				events.Add(e);
 			else
-				disp.BeginInvoke(new Action(() => Events.Add(e)));
+				disp.BeginInvoke(new Action(() => events.Add(e)));
 		}
 
-		void IAlephLogger.Trace(string src, string text, string longtext)
-		{
-			Trace(src, text, longtext);
-		}
-
-		[Conditional("DEBUG")]
-		public void Trace(string src, string text, string longtext = null)
+		public override void Trace(string src, string text, string longtext = null)
 		{
 			Log(new LogEvent(LogEventType.Trace, src, text, longtext));
 		}
-
-		[Conditional("DEBUG")]
-		public void TraceExt(string src, string text, params Tuple<string, string>[] longtexts)
+		
+		public override void TraceExt(string src, string text, params Tuple<string, string>[] longtexts)
 		{
 			var pad = longtexts.Length == 0 ? 0 : longtexts.Max(l => l.Item1.Length);
 			Log(new LogEvent(LogEventType.Trace, src, text, string.Join("\n", longtexts.Select(txt => txt.Item1.PadRight(pad, ' ') + " = " + txt.Item2))));
 		}
 
-		public void Debug(string src, string text, string longtext = null)
+		public override void Debug(string src, string text, string longtext = null)
 		{
 			Log(new LogEvent(LogEventType.Debug, src, text, longtext));
 		}
 
-		public void Info(string src, string text, string longtext = null)
+		public override void Info(string src, string text, string longtext = null)
 		{
 			Log(new LogEvent(LogEventType.Information, src, text, longtext));
 		}
 
-		public void Warn(string src, string text, string longtext = null)
+		public override void Warn(string src, string text, string longtext = null)
 		{
 			Log(new LogEvent(LogEventType.Warning, src, text, longtext));
 		}
 
-		public void Error(string src, string text, string longtext = null)
+		public override void Error(string src, string text, string longtext = null)
 		{
 			Log(new LogEvent(LogEventType.Error, src, text, longtext));
 		}
 
-		public void Error(string src, string text, Exception e)
+		public override void Error(string src, string text, Exception e)
 		{
 			Log(new LogEvent(LogEventType.Error, src, text, e.ToString()));
 		}
 
-		public void ShowExceptionDialog(string title, Exception e, string additionalInfo)
-		{
-			if (Application.Current != null && !Application.Current.Dispatcher.CheckAccess())
-			{
-				Application.Current.Dispatcher.Invoke(() => ExceptionDialog.Show(null, title, e, additionalInfo));
-				return;
-			}
-			ExceptionDialog.Show(null, title, e, additionalInfo);
-		}
-
-		public void ShowExceptionDialog(string title, Exception e)
-		{
-			if (Application.Current != null && !Application.Current.Dispatcher.CheckAccess())
-			{
-				Application.Current.Dispatcher.Invoke(() => ExceptionDialog.Show(null, title, e, ""));
-				return;
-			}
-			ExceptionDialog.Show(null, title, e, "");
-		}
-
-		public void ShowExceptionDialog(string title, string message, Exception e, params Exception[] additionalExceptions)
-		{
-			if (Application.Current != null && !Application.Current.Dispatcher.CheckAccess())
-			{
-				Application.Current.Dispatcher.Invoke(() => ExceptionDialog.Show(null, title, message, e, additionalExceptions));
-				return;
-			}
-			ExceptionDialog.Show(null, title, message, e, additionalExceptions);
-		}
-
-		public void ShowSyncErrorDialog(string message, string trace)
-		{
-			if (Application.Current != null && !Application.Current.Dispatcher.CheckAccess())
-			{
-				Application.Current.Dispatcher.Invoke(() => SyncErrorDialog.Show(null, message, trace));
-				return;
-			}
-			SyncErrorDialog.Show(null, message, trace);
-		}
-
-		public void ShowSyncErrorDialog(string message, Exception e)
-		{
-			if (Application.Current != null && !Application.Current.Dispatcher.CheckAccess())
-			{
-				Application.Current.Dispatcher.Invoke(() => SyncErrorDialog.Show(null, new[]{message}, new[]{e}));
-				return;
-			}
-			SyncErrorDialog.Show(null, new[]{message}, new[]{e});
-		}
-
-		public string Export()
+		public override string Export()
 		{
 			var root = new XElement("log");
 			XDocument doc = new XDocument(root);
 
 			root.Add(new XAttribute("version", App.APP_VERSION.ToString()));
 
-			foreach (var e in Events) root.Add(e.Serialize());
+			foreach (var e in events) root.Add(e.Serialize());
 
 			return XHelper.ConvertToStringFormatted(doc);
 		}
 
-		public void Import(XDocument xdoc)
+		public override void Import(XDocument xdoc)
 		{
-			Events.Clear();
+			events.Clear();
 			foreach (var elem in xdoc.Root?.Elements("event") ?? Enumerable.Empty<XElement>())
 			{
-				Events.Add(LogEvent.Deserialize(elem));
+				events.Add(LogEvent.Deserialize(elem));
 			}
+		}
+
+		public override void Clear()
+		{
+			events.Clear();
+		}
+		
+		public override ObservableCollection<LogEvent> GetEventSource()
+		{
+			return events;
 		}
 	}
 }

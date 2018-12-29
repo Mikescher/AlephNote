@@ -983,6 +983,11 @@
 									<RowDefinition Height="Auto"/>
 									<RowDefinition Height="Auto"/>
 									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
 									<RowDefinition/>
 								</Grid.RowDefinitions>
 								<Grid.ColumnDefinitions>
@@ -1016,6 +1021,9 @@
 
 								<TextBlock     Grid.Row="6" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Use beta release channel" />
 								<CheckBox      Grid.Row="6" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.UpdateToPrerelease}" />
+
+								<TextBlock     Grid.Row="7" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Disable the Application Log" />
+								<CheckBox      Grid.Row="7" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.DisableLogger}" />
 
 							</Grid>
 						</StackPanel>

@@ -5,7 +5,7 @@ namespace AlephNote.PluginInterface.AppContext
 	public interface IAlephAppContext
 	{
 		IReadonlyAlephSettings GetSettings();
-		IAlephLogger GetLogger();
+		AlephLogger GetLogger();
 		Tuple<int, int, int, int> GetAppVersion();
 
 		bool IsDebugMode { get; set; }

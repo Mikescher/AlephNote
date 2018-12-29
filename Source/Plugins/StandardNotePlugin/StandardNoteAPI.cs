@@ -48,9 +48,9 @@ namespace AlephNote.Plugins.StandardNote
 		private static readonly Tuple<string, string> APPDATA_PINNED = Tuple.Create("org.standardnotes.sn", "pinned");
 		private static readonly Tuple<string, string> APPDATA_LOCKED = Tuple.Create("org.standardnotes.sn", "locked");
 
-		public static IAlephLogger Logger;
+		public static AlephLogger Logger;
 
-		public static APIResultAuthorize Authenticate(ISimpleJsonRest web, string mail, string password, IAlephLogger logger)
+		public static APIResultAuthorize Authenticate(ISimpleJsonRest web, string mail, string password, AlephLogger logger)
 		{
 			var apiparams = web.Get<APIAuthParams>("auth/params", "email=" + mail);
 
@@ -68,7 +68,7 @@ namespace AlephNote.Plugins.StandardNote
 			throw new Exception("Unsupported auth API version: " + apiparams.version);
 		}
 
-		private static APIResultAuthorize Authenticate001(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string uip, IAlephLogger logger)
+		private static APIResultAuthorize Authenticate001(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string uip, AlephLogger logger)
 		{
 			try
 			{
@@ -130,7 +130,7 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		private static APIResultAuthorize Authenticate002(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string uip, IAlephLogger logger)
+		private static APIResultAuthorize Authenticate002(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string uip, AlephLogger logger)
 		{
 			try
 			{
@@ -180,7 +180,7 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 		
-		private static APIResultAuthorize Authenticate003(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string uip, IAlephLogger logger)
+		private static APIResultAuthorize Authenticate003(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string uip, AlephLogger logger)
 		{
 			try
 			{

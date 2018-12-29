@@ -18,14 +18,14 @@ namespace AlephNote.Plugins.SimpleNote
 		public override bool SupportsNativeDirectories => false;
 		public override bool SupportsTags              => true;
 
-		private IAlephLogger _logger;
+		private AlephLogger _logger;
 
 		public SimpleNotePlugin() : base("Simplenote", Version, Guid.Parse("4c73e687-3803-4078-9bf0-554aaafc0873"))
 		{
 			//
 		}
 
-		public override void Init(IAlephLogger logger)
+		public override void Init(AlephLogger logger)
 		{
 			_logger = logger;
 			SimpleNoteAPI.Logger = logger;

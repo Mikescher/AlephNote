@@ -21,14 +21,14 @@ namespace AlephNote.Plugins.Filesystem
 		public const int MIN_SEARCH_DEPTH =  1;
 		public const int MAX_SEARCH_DEPTH = 16;
 
-		private IAlephLogger logger;
+		private AlephLogger logger;
 
 		public FilesystemPlugin() : base("Filesystem", Version, Guid.Parse("a430b7ef-3526-4cbf-a304-8208de18efb5"))
 		{
 			//
 		}
 
-		public override void Init(IAlephLogger l)
+		public override void Init(AlephLogger l)
 		{
 			logger = l;
 		}

@@ -17,13 +17,13 @@ namespace AlephNote.Plugins.Nextcloud
 
 		private readonly NextcloudConfig _config;
 		private readonly IWebProxy _proxy;
-		private readonly IAlephLogger _logger;
+		private readonly AlephLogger _logger;
 
 		private NextcloudData _data;
 
 		private List<NextcloudAPI.NoteRef> remoteNotes; 
 
-		public NextcloudConnection(IAlephLogger log, IWebProxy proxy, NextcloudConfig config)
+		public NextcloudConnection(AlephLogger log, IWebProxy proxy, NextcloudConfig config)
 		{
 			_config = config;
 			_proxy = proxy;

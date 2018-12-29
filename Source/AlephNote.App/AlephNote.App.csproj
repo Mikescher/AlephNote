@@ -173,9 +173,11 @@
     <Compile Include="Impl\PluginManager.cs" />
     <Compile Include="Impl\ProxyFactory.cs" />
     <Compile Include="Impl\SynchronizationDispatcher.cs" />
+    <Compile Include="Log\BasicWPFLogger.cs" />
     <Compile Include="Log\EventLogger.cs" />
     <Compile Include="Log\LogEvent.cs" />
     <Compile Include="Log\LogEventType.cs" />
+    <Compile Include="Log\VoidLogger.cs" />
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="WPF\Controls\AutoActionMenuItem.cs" />
     <Compile Include="WPF\Controls\ConnectionDisplayControl.xaml.cs">

@@ -27,7 +27,7 @@ namespace AlephNote.Plugins.Evernote
 
 		private readonly EvernoteConfig _config;
 		private readonly IWebProxy _proxy;
-		private readonly IAlephLogger _logger;
+		private readonly AlephLogger _logger;
 
 		private EvernoteData _data;
 
@@ -38,7 +38,7 @@ namespace AlephNote.Plugins.Evernote
 
 		public readonly HierachyEmulationConfig HConfig;
 
-		public EvernoteConnection(IAlephLogger log, IWebProxy proxy, EvernoteConfig config, HierachyEmulationConfig hConfig)
+		public EvernoteConnection(AlephLogger log, IWebProxy proxy, EvernoteConfig config, HierachyEmulationConfig hConfig)
 		{
 			HConfig = hConfig;
 

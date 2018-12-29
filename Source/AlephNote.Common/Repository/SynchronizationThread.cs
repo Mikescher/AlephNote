@@ -13,7 +13,7 @@ namespace AlephNote.Common.Repository
 {
 	class SynchronizationThread
 	{
-		private readonly IAlephLogger _log = LoggerSingleton.Inst;
+		private readonly AlephLogger _log = LoggerSingleton.Inst;
 
 		private readonly NoteRepository repo;
 		private readonly List<ISynchronizationFeedback> listener;

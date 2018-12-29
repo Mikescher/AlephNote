@@ -9,7 +9,7 @@ namespace AlephNote.WPF.Windows
 {
 	class LogWindowViewmodel : ObservableObject
 	{
-		public ICommand ClearCommand { get { return new RelayCommand(App.Logger.Events.Clear); } }
+		public ICommand ClearCommand { get { return new RelayCommand(App.Logger.Clear); } }
 
 		private ListCollectionView _logView;
 		public ListCollectionView LogView
@@ -18,9 +18,11 @@ namespace AlephNote.WPF.Windows
 			{
 				if (_logView != null) return _logView;
 
-				if (App.Logger?.Events == null) return (ListCollectionView)CollectionViewSource.GetDefaultView(new List<LogEvent>());
+				var events = App.Logger?.GetEventSource();
 
-				var source = (ListCollectionView)CollectionViewSource.GetDefaultView(App.Logger.Events);
+				if (events == null) return (ListCollectionView)CollectionViewSource.GetDefaultView(new List<LogEvent>());
+
+				var source = (ListCollectionView)CollectionViewSource.GetDefaultView(events);
 				source.Filter = p => Filter((LogEvent)p);
 
 				return _logView = source;

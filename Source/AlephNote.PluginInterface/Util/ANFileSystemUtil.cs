@@ -11,7 +11,7 @@ namespace AlephNote.PluginInterface.Util
 	public static class ANFileSystemUtil
 	{
 
-		public static void DeleteFileAndFolderIfEmpty(string logsrc, IAlephLogger log, string baseFolder, string file)
+		public static void DeleteFileAndFolderIfEmpty(string logsrc, AlephLogger log, string baseFolder, string file)
 		{
 			var fi = new FileInfo(file);
 			if (fi.Exists && fi.IsReadOnly) fi.IsReadOnly = false;
@@ -21,7 +21,7 @@ namespace AlephNote.PluginInterface.Util
 			DeleteFolderIfEmpty(logsrc, log, baseFolder, Path.GetDirectoryName(file));
 		}
 
-		public static void DeleteFolderIfEmpty(string logsrc, IAlephLogger log, string baseFolder, string folder)
+		public static void DeleteFolderIfEmpty(string logsrc, AlephLogger log, string baseFolder, string folder)
 		{
 			var p1 = Path.GetFullPath(baseFolder).TrimEnd(Path.DirectorySeparatorChar).ToLower();
 			var p2 = Path.GetFullPath(folder).TrimEnd(Path.DirectorySeparatorChar).ToLower();
@@ -44,7 +44,7 @@ namespace AlephNote.PluginInterface.Util
 			return DirectoryPath.Create(relative);
 		}
 
-		public static void DeleteDirectoryWithRetry(IAlephLogger logger, string path)
+		public static void DeleteDirectoryWithRetry(AlephLogger logger, string path)
 		{
 			for (int i = 0; i < 5; i++)
 			{

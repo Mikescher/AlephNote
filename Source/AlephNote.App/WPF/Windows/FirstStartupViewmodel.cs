@@ -195,7 +195,7 @@ namespace AlephNote.WPF.Windows
 			_progressThread.Start();
 		}
 
-		private Tuple<IRemoteStorageSyncPersistance, List<INote>> DoSync(RemoteStorageAccount acc, IAlephLogger log)
+		private Tuple<IRemoteStorageSyncPersistance, List<INote>> DoSync(RemoteStorageAccount acc, AlephLogger log)
 		{
 			var data = SelectedProvider.CreateEmptyRemoteSyncData();
 

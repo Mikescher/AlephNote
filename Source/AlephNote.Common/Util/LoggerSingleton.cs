@@ -7,13 +7,23 @@ namespace AlephNote.Common.Util
 	{
 		private static readonly object _lock = new object();
 
-		public static IAlephLogger Inst { get; private set; }
+		public static AlephLogger Inst { get; private set; }
 
-		public static void Register(IAlephLogger log)
+		public static void Register(AlephLogger log)
 		{
 			lock (_lock)
 			{
 				if (Inst != null) throw new NotSupportedException();
+
+				Inst = log;
+			}
+		}
+		
+		public static void Swap(AlephLogger log)
+		{
+			lock (_lock)
+			{
+				if (Inst == null) throw new NotSupportedException();
 
 				Inst = log;
 			}

@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Threading;
 using AlephNote.Common.Settings.Types;
 using AlephNote.Native;
+using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.AppContext;
 using AlephNote.WPF.Dialogs;
 using AlephNote.WPF.Util;
@@ -30,8 +31,9 @@ namespace AlephNote
 
 		public static CommandLineArguments Args;
 
+		public static BasicWPFLogger Logger => (BasicWPFLogger)LoggerSingleton.Inst;
+
 		public static readonly ThemeCache    Themes    = new ThemeCache();
-		public static readonly EventLogger   Logger    = new EventLogger();
 		public static readonly PluginManager PluginMan = new PluginManager();
 
 		public static bool DebugMode = false;
@@ -54,7 +56,7 @@ namespace AlephNote
 			
 			AlephAppContext.Init(new AlephWPFContext());
 
-			LoggerSingleton.Register(Logger);
+			LoggerSingleton.Register(new EventLogger());
 			PluginManagerSingleton.Register(PluginMan);
 			ThemeManager.Register(Themes);
 
@@ -103,6 +105,7 @@ namespace AlephNote
 
 			if (settings.LockOnStartup && !settings.IsReadOnlyMode) settings.IsReadOnlyMode = true;
 			if (settings.ForceDebugMode) DebugMode = true;
+			if (settings.DisableLogger) LoggerSingleton.Swap(new VoidLogger());
 
 			ThemeManager.Inst.LoadWithErrorDialog(settings);
 
