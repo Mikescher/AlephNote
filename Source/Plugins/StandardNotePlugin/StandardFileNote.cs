@@ -3,6 +3,7 @@ using AlephNote.PluginInterface;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using AlephNote.PluginInterface.Datatypes;
@@ -96,7 +97,7 @@ namespace AlephNote.Plugins.StandardNote
 				_internalTags = XHelper.GetChildOrThrow(input, "Tags").Elements().Select(StandardFileTagRef.Deserialize).ToList();
 
 				_id = XHelper.GetChildValueGUID(input, "ID");
-				_tags.Synchronize(_internalTags.Select(it => it.Title));
+				ResyncTags();
 				_text = XHelper.GetChildBase64String(input, "Text");
 				_internaltitle = XHelper.GetChildValueString(input, "Title");
 				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
@@ -114,19 +115,26 @@ namespace AlephNote.Plugins.StandardNote
 		private void TagsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (_ignoreTagsChanged) return;
+			
+			// Ignore items that are new and old (they were only moved)
+			var inew = e.NewItems?.Cast<string>().Except(e.OldItems?.Cast<string>() ?? Enumerable.Empty<string>()).ToList() ?? new List<string>();
+			var iold = e.OldItems?.Cast<string>().Except(e.NewItems?.Cast<string>() ?? Enumerable.Empty<string>()).ToList() ?? new List<string>();
 
-			if (e.NewItems != null)
-				foreach (var item in e.NewItems.Cast<string>())
-				{
-					if (_internalTags.All(it => it.Title != item))
-						_internalTags.Add(new StandardFileTagRef(null, item));
-				}
+			foreach (var item in iold)
+			{
+				_internalTags.RemoveAll(it => it.Title == item);
+			}
 
-			if (e.OldItems != null)
-				foreach (var item in e.OldItems.Cast<string>())
-				{
-					_internalTags.RemoveAll(it => it.Title == item);
-				}
+			foreach (var item in inew)
+			{
+				if (_internalTags.All(it => it.Title != item))
+					_internalTags.Add(new StandardFileTagRef(null, item));
+			}
+
+#if DEBUG
+			if (!_internalTags.Select(t => t.Title).UnorderedCollectionEquals(Tags.Select(t=>t))) Debugger.Break();
+			Debug.Assert(_internalTags.Select(t => t.Title).UnorderedCollectionEquals(Tags.Select(t=>t)));
+#endif
 		}
 
 		public void UpgradeTag(StandardFileTagRef told, StandardFileTagRef tnew)

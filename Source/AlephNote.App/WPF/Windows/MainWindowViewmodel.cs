@@ -246,11 +246,6 @@ namespace AlephNote.WPF.Windows
 		{
 			if (_lastSelectedNote != null) {_lastSelectedNote.PropertyChanged -= SelectedNotePropertyChanged; _lastSelectedNote=null; }
 
-			if (SelectedNote != null && Settings != null && Settings.AutoSortTags)
-			{
-				SelectedNote.Tags.SynchronizeCollectionSafe(SelectedNote.Tags.OrderBy(p => p));
-			}
-
 			Owner.ResetScintillaScrollAndUndo();
 			if (Settings != null) Owner.UpdateMargins(Settings);
 			if (!PreventScintillaFocusLock.Value && Settings?.AutofocusScintilla == true) Owner.FocusScintillaDelayed();
@@ -271,7 +266,10 @@ namespace AlephNote.WPF.Windows
 
 		private void SelectedNotePropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(INote.IsLocked)) Owner.SetupScintilla(Settings);
+			if (e.PropertyName == nameof(INote.IsLocked))
+			{
+				Owner.SetupScintilla(Settings);
+			}
 		}
 
 		private void SelectedFolderPathChanged()
@@ -297,28 +295,30 @@ namespace AlephNote.WPF.Windows
 
 		public void OnNoteChanged(NoteChangedEventArgs e) // only local changes
 		{
+			if (Settings.AutoSortTags && e.PropertyName == "Tags")
+			{
+				Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+				{
+					SelectedNote.Tags.SynchronizeCollectionSafe(SelectedNote.Tags.OrderBy(p => p).ToList());
+				}));
+				
+			}
+
 			if (Settings.NoteSorting == SortingMode.ByModificationDate && !Owner.NotesViewControl.IsTopSortedNote(e.Note))
 			{
 				Owner.NotesViewControl.RefreshView();
-				return;
 			}
-
-			if (Settings.NoteSorting == SortingMode.ByName && e.PropertyName == "Title")
+			else if (Settings.NoteSorting == SortingMode.ByName && e.PropertyName == "Title")
 			{
 				Owner.NotesViewControl.RefreshView();
-				return;
 			}
-
-			if (Settings.UseHierachicalNoteStructure && e.PropertyName == "Path")
+			else if (Settings.UseHierachicalNoteStructure && e.PropertyName == "Path")
 			{
 				Owner.NotesViewControl.RefreshView();
-				return;
 			}
-
-			if (Settings.SortByPinned && e.PropertyName == "IsPinned")
+			else if (Settings.SortByPinned && e.PropertyName == "IsPinned")
 			{
 				Owner.NotesViewControl.RefreshView();
-				return;
 			}
 		}
 

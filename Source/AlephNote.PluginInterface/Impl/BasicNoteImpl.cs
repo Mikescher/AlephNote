@@ -107,7 +107,7 @@ namespace AlephNote.PluginInterface.Impl
 		{
 			if (_dirtySupressor > 0) return;
 
-			SetDirty($"TagList.OnChanged called.\n\nAction: [{e.Action}]\nNewItems: [{string.Join(", ", e.NewItems.OfType<string>())}]\nOldItems: [{string.Join(", ", e.OldItems.OfType<string>())}]");
+			SetDirty($"TagList.OnChanged called.\n\nAction: [{e.Action}]\nNewItems: [{(e.NewItems==null?"NULL":string.Join(", ", e.NewItems.OfType<string>()))}]\nOldItems: [{(e.OldItems==null?"NULL":string.Join(", ", e.OldItems.OfType<string>()))}]");
 			ModificationDate = DateTimeOffset.Now;
 			if (IsConflictNote) IsConflictNote = false;
 			OnChanged?.Invoke(this, new NoteChangedEventArgs(this, "Tags"));
@@ -174,7 +174,6 @@ namespace AlephNote.PluginInterface.Impl
 		{
 			return new NoteDirtyBlocker(this);
 		}
-
 
 		public bool HasTagCaseInsensitive(string tag)
 		{
