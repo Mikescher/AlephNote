@@ -245,6 +245,11 @@ namespace AlephNote.WPF.Windows
 		private void SelectedNoteChanged()
 		{
 			if (_lastSelectedNote != null) {_lastSelectedNote.PropertyChanged -= SelectedNotePropertyChanged; _lastSelectedNote=null; }
+			
+			if (SelectedNote != null && Settings != null && Settings.AutoSortTags)
+			{
+				SelectedNote.Tags.SynchronizeCollectionSafe(SelectedNote.Tags.OrderBy(p => p));
+			}
 
 			Owner.ResetScintillaScrollAndUndo();
 			if (Settings != null) Owner.UpdateMargins(Settings);
@@ -301,7 +306,6 @@ namespace AlephNote.WPF.Windows
 				{
 					SelectedNote.Tags.SynchronizeCollectionSafe(SelectedNote.Tags.OrderBy(p => p).ToList());
 				}));
-				
 			}
 
 			if (Settings.NoteSorting == SortingMode.ByModificationDate && !Owner.NotesViewControl.IsTopSortedNote(e.Note))

@@ -131,6 +131,12 @@ namespace AlephNote.Plugins.StandardNote
 					_internalTags.Add(new StandardFileTagRef(null, item));
 			}
 
+			if (e.Action == NotifyCollectionChangedAction.Move)
+			{
+				// keep order
+				_internalTags.Sort((a,b) => Tags.IndexOf(a.Title) - Tags.IndexOf(b.Title));
+			}
+
 #if DEBUG
 			if (!_internalTags.Select(t => t.Title).UnorderedCollectionEquals(Tags.Select(t=>t))) Debugger.Break();
 			Debug.Assert(_internalTags.Select(t => t.Title).UnorderedCollectionEquals(Tags.Select(t=>t)));

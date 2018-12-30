@@ -2,10 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Linq;
 using MSHC.Lang.Collections;
 
 namespace AlephNote.PluginInterface.Datatypes
 {
+	[DebuggerDisplay("{DebuggerDisplay,nq}")]
 	public abstract class TagList : IListWithMove<string>, INotifyCollectionChanged
 	{
 		public abstract IEnumerator<string> GetEnumerator();
@@ -38,5 +41,7 @@ namespace AlephNote.PluginInterface.Datatypes
 			// Not sure if this is the correct ActionType for "Anything could have changed ??"
 			CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 		}
+
+		public string DebuggerDisplay => "["+string.Join(", ", this.Select(t=>$"'{t}'"))+"]";
 	}
 }

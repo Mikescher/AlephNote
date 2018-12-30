@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using AlephNote.Common.Repository;
 using AlephNote.Common.Settings;
+using AlephNote.PluginInterface.Datatypes;
 using AlephNote.PluginInterface.Util;
 using MSHC.Lang.Collections;
 
@@ -15,13 +16,13 @@ namespace AlephNote.WPF.Controls
 		public static readonly DependencyProperty TagSourceProperty =
 			DependencyProperty.Register(
 				"TagSource",
-				typeof(IList<string>),
+				typeof(TagList),
 				typeof(TagEditor2),
 				new FrameworkPropertyMetadata((d,e) => ((TagEditor2)d).TagsChanged(e)));
 
-		public IList<string> TagSource
+		public TagList TagSource
 		{
-			get { return (IList<string>)GetValue(TagSourceProperty); }
+			get { return (TagList)GetValue(TagSourceProperty); }
 			set { SetValue(TagSourceProperty, value); }
 		}
 

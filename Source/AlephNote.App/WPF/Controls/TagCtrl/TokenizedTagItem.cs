@@ -1,5 +1,5 @@
-﻿using AlephNote.WPF.Util;
-using System.Collections;
+﻿using System.Collections;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,6 +10,7 @@ namespace AlephNote.WPF.Controls
 	[TemplatePart(Name = "PART_InputBox", Type = typeof(AutoCompleteBox))]
 	[TemplatePart(Name = "PART_DeleteTagButton", Type = typeof(Button))]
 	[TemplatePart(Name = "PART_TagButton", Type = typeof(Button))]
+	[DebuggerDisplay("TTI [Text={Text,nq}, IsEditing={IsEditing,nq}]")]
 	public class TokenizedTagItem : Control
 	{
 		public static readonly DependencyProperty TextProperty = 
@@ -57,19 +58,17 @@ namespace AlephNote.WPF.Controls
 
 		public override void OnApplyTemplate()
 		{
-			AutoCompleteBox inputBox = this.GetTemplateChild("PART_InputBox") as AutoCompleteBox;
-			if (inputBox != null)
+			if (this.GetTemplateChild("PART_InputBox") is AutoCompleteBox inputBox)
 			{
 				inputBox.LostKeyboardFocus += InputBox_LostFocus;
 				inputBox.Loaded += InputBox_Loaded;
 			}
 
-			Button btn = this.GetTemplateChild("PART_TagButton") as Button;
-			if (btn != null)
+			if (this.GetTemplateChild("PART_TagButton") is Button btn)
 			{
 				btn.Loaded += (s, e) =>
 				{
-					Button b = s as Button;
+					var b = (Button)s;
 					if (b.Template.FindName("PART_DeleteTagButton", b) is Button btnDelete)
 					{
 						btnDelete.Click -= BtnDelete_Click;
@@ -79,7 +78,6 @@ namespace AlephNote.WPF.Controls
 
 				btn.Click += (s, e) =>
 				{
-					_parent.RaiseTagClick(this);
 					if (_parent.IsSelectable && !_parent.IsReadonly) _parent.SelectedItem = this;
 				};
 
@@ -102,14 +100,9 @@ namespace AlephNote.WPF.Controls
 
 		private void InputBox_Loaded(object sender, RoutedEventArgs e)
 		{
-			AutoCompleteBox acb = sender as AutoCompleteBox;
-			
-			if (acb != null)
+			if (sender is AutoCompleteBox acb)
 			{
-				var tb = acb.Template.FindName("Text", acb) as TextBox;
-
-				if (tb != null)
-					tb.Focus();
+				if (acb.Template.FindName("Text", acb) is TextBox tb) tb.Focus();
 
 				acb.PreviewKeyDown += (s, e1) =>
 				{
@@ -137,7 +130,7 @@ namespace AlephNote.WPF.Controls
 
 						case (Key.Escape):
 						{
-							_parent.Focus();
+							_parent.AbortEditing();
 						}
 						break;
 

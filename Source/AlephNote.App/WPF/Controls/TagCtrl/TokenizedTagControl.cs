@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using AlephNote.PluginInterface.Datatypes;
 using AlephNote.PluginInterface.Util;
 using MSHC.Lang.Collections;
 
@@ -19,11 +20,6 @@ namespace AlephNote.WPF.Controls
 	[TemplatePart(Name = "PART_CreateTagButton", Type = typeof(Button))]
 	public class TokenizedTagControl : ListBox, INotifyPropertyChanged
 	{
-		public event EventHandler<TokenizedTagEventArgs> TagClick;
-		public event EventHandler<TokenizedTagEventArgs> TagAdded;
-		public event EventHandler<TokenizedTagEventArgs> TagApplied;
-		public event EventHandler<TokenizedTagEventArgs> TagRemoved;
-		
 		public event EventHandler<TokenizedTagEventArgs> TagListChanged;
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -47,13 +43,17 @@ namespace AlephNote.WPF.Controls
 		public static readonly DependencyProperty EnteredTagsProperty = 
 			DependencyProperty.Register(
 				"EnteredTags", 
-				typeof(IList<string>), 
+				typeof(TagList), 
 				typeof(TokenizedTagControl), 
 				new PropertyMetadata(null, (d,e) => ((TokenizedTagControl)d).OnEnteredTagsChanged(e)));
 		
-		public IList<string> EnteredTags
+		// Entered Tags is the collection that is watched to the outside world
+		// In TagEditor2.xaml we bind TagSource to EnteredTags TwoWay
+		// This collection is Updated in UpdateEnteredTags()
+		// This is _NOT_ what is actually visible _INSIDE_ the control - that is the ItemsSource collection
+		public TagList EnteredTags
 		{
-			get => (IList<string>) GetValue(EnteredTagsProperty);
+			get => (TagList) GetValue(EnteredTagsProperty);
 			set => SetValue(EnteredTagsProperty, value);
 		}
 
@@ -123,12 +123,12 @@ namespace AlephNote.WPF.Controls
 		public TokenizedTagControl()
 		{
 			if (ItemsSource == null) ItemsSource = new ObservableCollection<TokenizedTagItem>();
-			if (EnteredTags == null) EnteredTags = new ObservableCollection<string>();
+			if (EnteredTags == null) EnteredTags = new VoidTagList();
 
 			LostKeyboardFocus += TokenizedTagControl_LostKeyboardFocus;
 		}
 
-		void TokenizedTagControl_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+		private void TokenizedTagControl_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
 		{
 			if (!IsSelectable)
 			{
@@ -139,11 +139,11 @@ namespace AlephNote.WPF.Controls
 			TokenizedTagItem itemToSelect = null;
 			if (Items.Count > 0 && !object.ReferenceEquals((TokenizedTagItem)Items.CurrentItem, null))
 			{
-				if (SelectedItem != null && ((TokenizedTagItem) SelectedItem).Text != null && !((TokenizedTagItem) SelectedItem).IsEditing)
+				if (((TokenizedTagItem) SelectedItem)?.Text != null && !((TokenizedTagItem) SelectedItem).IsEditing)
 				{
 					itemToSelect = (TokenizedTagItem) SelectedItem;
 				}
-				else if (!String.IsNullOrWhiteSpace(((TokenizedTagItem)Items.CurrentItem).Text))
+				else if (!string.IsNullOrWhiteSpace(((TokenizedTagItem)Items.CurrentItem).Text))
 				{
 					itemToSelect = (TokenizedTagItem) Items.CurrentItem;
 				}
@@ -159,13 +159,16 @@ namespace AlephNote.WPF.Controls
 
 		private void OnEnteredTagsChanged(DependencyPropertyChangedEventArgs e)
 		{
-			if (e.OldValue is INotifyCollectionChanged vold) vold.CollectionChanged -= OnEnteredTagsCollectionChanged;
-			if (e.NewValue is INotifyCollectionChanged vnew) vnew.CollectionChanged += OnEnteredTagsCollectionChanged;
+			if (e.OldValue is TagList vold) vold.OnChanged -= OnEnteredTagsCollectionChanged;
+			if (e.NewValue is TagList vnew) vnew.OnChanged += OnEnteredTagsCollectionChanged;
 
 			if (ItemsSource == null) ItemsSource = new ObservableCollection<TokenizedTagItem>();
+
 			((IList<TokenizedTagItem>)ItemsSource).SynchronizeCollection(((IEnumerable<string>)e.NewValue) ?? new List<string>(), (s,t) => s==t.Text, s => new TokenizedTagItem(s, this));
 			OnExplicitPropertyChanged("FormattedText");
 			Items.Refresh();
+			
+			if (IsEditing) AbortEditing();
 		}
 
 		private void OnEnteredTagsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -179,6 +182,25 @@ namespace AlephNote.WPF.Controls
 			((IList<TokenizedTagItem>)ItemsSource).SynchronizeCollection(ni, (s,t) => s==t.Text, s => new TokenizedTagItem(s, this));
 			OnExplicitPropertyChanged("FormattedText");
 			Items.Refresh();
+			
+			if (IsEditing) AbortEditing();
+		}
+
+		public void AbortEditing()
+		{
+			try
+			{
+				suppressItemsRefresh++;
+				
+				var rm = ((IList<TokenizedTagItem>)ItemsSource).FirstOrDefault(p => p.IsEditing);
+				if (rm != null) ((IList<TokenizedTagItem>)ItemsSource).Remove(rm);
+				IsEditing = false;
+			}
+			finally
+			{
+				suppressItemsRefresh--;
+			}
+
 		}
 
 		private void UpdateEnteredTags()
@@ -187,7 +209,7 @@ namespace AlephNote.WPF.Controls
 			{
 				suppressItemsRefresh++;
 				
-				var newvalue = (ItemsSource as IEnumerable<TokenizedTagItem>)?.Where(p => !p.IsEditing)?.Select(p => p.Text)?.ToList() ?? new List<string>();
+				var newvalue = (ItemsSource as IEnumerable<TokenizedTagItem>)?.Where(p => !p.IsEditing).Select(p => p.Text).ToList() ?? new List<string>();
 				EnteredTags.SynchronizeCollection(newvalue);
 				OnExplicitPropertyChanged("FormattedText");
 			}
@@ -211,11 +233,6 @@ namespace AlephNote.WPF.Controls
 			}
 
 			base.OnApplyTemplate();
-
-			if (appliedTag != null)
-			{
-				TagApplied?.Invoke(this, new TokenizedTagEventArgs(appliedTag));
-			}
 		}
 
 		private void CreateBtn_Click(object sender, RoutedEventArgs e)
@@ -248,11 +265,8 @@ namespace AlephNote.WPF.Controls
 
 			if (!(itemToSelect is null))
 			{
-				RaiseTagClick(itemToSelect);
 				if (IsSelectable) SelectedItem = itemToSelect;
 			}
-
-			TagAdded?.Invoke(this, new TokenizedTagEventArgs(tag));
 
 			UpdateEnteredTags();
 		}
@@ -277,14 +291,11 @@ namespace AlephNote.WPF.Controls
 				
 				Items.Refresh();
 
-				if (TagRemoved != null && !cancelEvent) TagRemoved(this, new TokenizedTagEventArgs(tag));
-
 				if (SelectedItem == null && Items.Count > 0)
 				{
 					TokenizedTagItem itemToSelect = Items.GetItemAt(Items.Count - 1) as TokenizedTagItem;
 					if (!(itemToSelect is null))
 					{
-						RaiseTagClick(itemToSelect);
 						if (IsSelectable) SelectedItem = itemToSelect;
 					}
 				}
@@ -293,14 +304,8 @@ namespace AlephNote.WPF.Controls
 			UpdateEnteredTags();
 		}
 
-		public void RaiseTagClick(TokenizedTagItem tag)
-		{
-			TagClick?.Invoke(this, new TokenizedTagEventArgs(tag));
-		}
-
 		public void RaiseTagApplied(TokenizedTagItem tag)
 		{
-			TagApplied?.Invoke(this, new TokenizedTagEventArgs(tag));
 			UpdateEnteredTags();
 		}
 
