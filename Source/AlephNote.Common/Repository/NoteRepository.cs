@@ -16,21 +16,21 @@ using MSHC.WPF.MVVM;
 
 namespace AlephNote.Common.Repository
 {
-	public class NoteRepository : ObservableObject, ISynchronizationFeedback
+	public class NoteRepository : ObservableObject, ISynchronizationFeedback, IRepository
 	{
-		private readonly AlephLogger logger = LoggerSingleton.Inst;
+		private readonly AlephLogger _logger = LoggerSingleton.Inst;
 
-		private readonly string pathLocalFolder;
-		private readonly string pathLocalData;
-		private readonly string pathLocalBase;
+		private readonly string _pathLocalFolder;
+		private readonly string _pathLocalData;
+		private readonly string _pathLocalBase;
 
-		private readonly IRemoteStorageConnection conn;
-		private readonly RemoteStorageAccount account;
-		private          AppSettings appconfig;
-		private readonly SynchronizationThread thread;
-		private readonly ISynchronizationFeedback listener;
-		private readonly IAlephDispatcher dispatcher;
-		private readonly RawFolderRepository rawFilesystemRepo;
+		private readonly IRemoteStorageConnection _conn;
+		private readonly RemoteStorageAccount _account;
+		private          AppSettings _appconfig;
+		private readonly SynchronizationThread _thread;
+		private readonly ISynchronizationFeedback _listener;
+		private readonly IAlephDispatcher _dispatcher;
+		private readonly RawFolderRepository _rawFilesystemRepo;
 
 		public readonly List<INote> LocalDeletedNotes = new List<INote>(); // deleted local but not on remote
 
@@ -40,22 +40,22 @@ namespace AlephNote.Common.Repository
 		private readonly object _lockSaveNote = new object();
 		private readonly object _lockSaveSyncData = new object();
 
-		private readonly DelayedCombiningInvoker invSaveNotesLocal;
-		private readonly DelayedCombiningInvoker invSaveNotesRemote;
-		private readonly DelayedCombiningInvoker invSaveNotesGitBackup;
+		private readonly DelayedCombiningInvoker _invSaveNotesLocal;
+		private readonly DelayedCombiningInvoker _invSaveNotesRemote;
+		private readonly DelayedCombiningInvoker _invSaveNotesGitBackup;
 
-		public IRemoteStorageConnection Connection { get { return conn; } }
+		public IRemoteStorageConnection Connection { get { return _conn; } }
 		
-		public string ConnectionName { get { return account.Plugin.DisplayTitleShort; } }
-		public string ConnectionDisplayTitle { get { return account.DisplayTitle; } }
-		public string ConnectionUUID { get { return account.ID.ToString("B"); } }
-		public Guid ConnectionID { get { return account.ID; } }
-		public string ProviderID { get { return account.Plugin.GetUniqueID().ToString("B"); } }
-		public Guid ProviderUID { get { return account.Plugin.GetUniqueID(); } }
+		public string ConnectionName { get { return _account.Plugin.DisplayTitleShort; } }
+		public string ConnectionDisplayTitle { get { return _account.DisplayTitle; } }
+		public string ConnectionUUID { get { return _account.ID.ToString("B"); } }
+		public Guid ConnectionID { get { return _account.ID; } }
+		public string ProviderID { get { return _account.Plugin.GetUniqueID().ToString("B"); } }
+		public Guid ProviderUID { get { return _account.Plugin.GetUniqueID(); } }
 
-		public bool SupportsPinning => account.Plugin.SupportsPinning;
-		public bool SupportsLocking => account.Plugin.SupportsLocking;
-		public bool SupportsTags    => account.Plugin.SupportsTags;
+		public bool SupportsPinning => _account.Plugin.SupportsPinning;
+		public bool SupportsLocking => _account.Plugin.SupportsLocking;
+		public bool SupportsTags    => _account.Plugin.SupportsTags;
 
 		public bool NotSupportsPinning => !SupportsPinning;
 		public bool NotSupportsLocking => !SupportsLocking;
@@ -63,21 +63,21 @@ namespace AlephNote.Common.Repository
 
 		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, RemoteStorageAccount acc, IAlephDispatcher disp)
 		{
-			pathLocalBase = path;
-			pathLocalFolder = Path.Combine(path, acc.ID.ToString("B"));
-			pathLocalData = Path.Combine(path, acc.ID.ToString("B") + ".xml");
-			conn = acc.Plugin.CreateRemoteStorageConnection(cfg.CreateProxy(), acc.Config, cfg.GetHierachicalConfig());
-			account = acc;
-			appconfig = cfg;
-			listener = fb;
-			dispatcher = disp;
-			thread = new SynchronizationThread(this, new[]{ this, fb }, cfg.ConflictResolution, dispatcher);
+			_pathLocalBase = path;
+			_pathLocalFolder = Path.Combine(path, acc.ID.ToString("B"));
+			_pathLocalData = Path.Combine(path, acc.ID.ToString("B") + ".xml");
+			_conn = acc.Plugin.CreateRemoteStorageConnection(cfg.CreateProxy(), acc.Config, cfg.GetHierachicalConfig());
+			_account = acc;
+			_appconfig = cfg;
+			_listener = fb;
+			_dispatcher = disp;
+			_thread = new SynchronizationThread(this, new[]{ this, fb }, cfg.ConflictResolution, _dispatcher);
 
-			invSaveNotesLocal     = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SaveAllDirtyNotes),      10 * 1000,  1 * 60 * 1000);
-			invSaveNotesRemote    = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(SyncNow),                45 * 1000, 15 * 60 * 1000);
-			invSaveNotesGitBackup = DelayedCombiningInvoker.Create(() => dispatcher.BeginInvoke(CommitToLocalGitBackup), 10 * 1000, 15 * 60 * 1000);
+			_invSaveNotesLocal     = DelayedCombiningInvoker.Create(() => _dispatcher.BeginInvoke(SaveAllDirtyNotes),      10 * 1000,  1 * 60 * 1000);
+			_invSaveNotesRemote    = DelayedCombiningInvoker.Create(() => _dispatcher.BeginInvoke(SyncNow),                45 * 1000, 15 * 60 * 1000);
+			_invSaveNotesGitBackup = DelayedCombiningInvoker.Create(() => _dispatcher.BeginInvoke(CommitToLocalGitBackup), 10 * 1000, 15 * 60 * 1000);
 
-			rawFilesystemRepo = new RawFolderRepository(this, disp, cfg);
+			_rawFilesystemRepo = new RawFolderRepository(this, disp, cfg);
 
 			_notes.CollectionChanged += NoteCollectionChanged;
 		}
@@ -86,49 +86,49 @@ namespace AlephNote.Common.Repository
 		{
 			var sw = Stopwatch.StartNew();
 
-			if (!Directory.Exists(pathLocalFolder))
+			if (!Directory.Exists(_pathLocalFolder))
 			{
-				logger.Info("Repository", "Create local note folder: " + pathLocalFolder);
-				Directory.CreateDirectory(pathLocalFolder);
+				_logger.Info("Repository", "Create local note folder: " + _pathLocalFolder);
+				Directory.CreateDirectory(_pathLocalFolder);
 			}
 
 			LoadNotesFromLocal();
 
-			thread.Start(appconfig.GetSyncDelay());
+			_thread.Start(_appconfig.GetSyncDelay());
 			
-			rawFilesystemRepo.Start();
+			_rawFilesystemRepo.Start();
 
-			logger.Trace("Repository", $"SyncThread init took {sw.ElapsedMilliseconds}ms");
+			_logger.Trace("Repository", $"SyncThread init took {sw.ElapsedMilliseconds}ms");
 		}
 
 		public void Shutdown(bool lastSync = true)
 		{
 			var sw = Stopwatch.StartNew();
 
-			invSaveNotesLocal.CancelPendingRequests();
+			_invSaveNotesLocal.CancelPendingRequests();
 			SaveAllDirtyNotes();
 
 			if (lastSync && Notes.Any(n => !n.IsRemoteSaved && !n.IsConflictNote))
-				thread.SyncNowAndStopAsync();
+				_thread.SyncNowAndStopAsync();
 			else
-				thread.StopAsync();
+				_thread.StopAsync();
 
-			if (lastSync) dispatcher.Invoke(() => rawFilesystemRepo.SyncNow());
-			rawFilesystemRepo.Shutdown();
+			if (lastSync) _dispatcher.Invoke(() => _rawFilesystemRepo.SyncNow());
+			_rawFilesystemRepo.Shutdown();
 
-			logger.Trace("Repository", $"SyncThread shutdown took {sw.ElapsedMilliseconds}ms");
+			_logger.Trace("Repository", $"SyncThread shutdown took {sw.ElapsedMilliseconds}ms");
 		}
 
 		public void KillThread()
 		{
-			thread.Kill();
+			_thread.Kill();
 		}
 
 		private void LoadNotesFromLocal()
 		{
-			var noteFiles = Directory.GetFiles(pathLocalFolder, "*.xml");
+			var noteFiles = Directory.GetFiles(_pathLocalFolder, "*.xml");
 
-			logger.Info("Repository", "Found " + noteFiles.Length + " files in local repository");
+			_logger.Info("Repository", "Found " + noteFiles.Length + " files in local repository");
 
 			foreach (var noteFile in noteFiles)
 			{
@@ -141,11 +141,11 @@ namespace AlephNote.Common.Repository
 				}
 				catch (Exception e)
 				{
-					logger.ShowExceptionDialog("LoadNotes from local cache", "Could not load note from '" + noteFile + "'", e);
+					_logger.ShowExceptionDialog("LoadNotes from local cache", "Could not load note from '" + noteFile + "'", e);
 				}
 			}
 
-			logger.Trace("Repository", "Loaded " + Notes.Count + " notes from local repository");
+			_logger.Trace("Repository", "Loaded " + Notes.Count + " notes from local repository");
 		}
 
 		private INote LoadNoteFromFile(string noteFile)
@@ -158,7 +158,7 @@ namespace AlephNote.Common.Repository
 			var data = root.Element("data");
 			if (data == null) throw new Exception("missing data node");
 
-			var note = account.Plugin.CreateEmptyNote(Connection, account.Config);
+			var note = _account.Plugin.CreateEmptyNote(Connection, _account.Config);
 			note.Deserialize(data.Elements().FirstOrDefault());
 			note.ResetLocalDirty("Reset local dirty after deserialization");
 			note.ResetRemoteDirty("Reset remote dirty after deserialization");
@@ -174,14 +174,14 @@ namespace AlephNote.Common.Repository
 		public INote CreateNewNote(DirectoryPath p = null)
 		{
 			p = p ?? DirectoryPath.Root();
-			var note = account.Plugin.CreateEmptyNote(Connection, account.Config);
+			var note = _account.Plugin.CreateEmptyNote(Connection, _account.Config);
 			note.Path = p;
 			note.IsUINote=true;
 			Notes.Add(note);
 			note.SetDirty("Set newly created note to dirty");
 			SaveNote(note);
 
-			logger.Info("Repository", "New Note created");
+			_logger.Info("Repository", "New Note created");
 
 			return note;
 		}
@@ -196,7 +196,7 @@ namespace AlephNote.Common.Repository
 
 		public void SaveNote(INote note)
 		{
-			SaveNote(note, pathLocalFolder, true);
+			SaveNote(note, _pathLocalFolder, true);
 		}
 
 		private void SaveNote(INote note, string localFolder, bool doRoundtrip)
@@ -240,7 +240,7 @@ namespace AlephNote.Common.Repository
 
 			var meta = new XElement("meta");
 			meta.Add(new XElement("date", DateTime.Now.ToString("O")));
-			meta.Add(new XElement("provider", account.Plugin.GetUniqueID().ToString("B")));
+			meta.Add(new XElement("provider", _account.Plugin.GetUniqueID().ToString("B")));
 			meta.Add(new XElement("dirty", !note.IsRemoteSaved));
 			meta.Add(new XElement("conflict", note.IsConflictNote));
 			meta.Add(new XElement("real_title", note.Title));
@@ -273,46 +273,46 @@ namespace AlephNote.Common.Repository
 
 		private void NoteChanged(object sender, NoteChangedEventArgs e) // only local changes
 		{
-			invSaveNotesLocal.Request();
-			invSaveNotesRemote.Request();
-			invSaveNotesGitBackup.Request();
+			_invSaveNotesLocal.Request();
+			_invSaveNotesRemote.Request();
+			_invSaveNotesGitBackup.Request();
 			
-			listener.OnSyncRequest();
+			_listener.OnSyncRequest();
 			
-			listener.OnNoteChanged(e);
+			_listener.OnNoteChanged(e);
 		}
 
 		public void DeleteNote(INote note, bool updateRemote)
 		{
-			logger.Info("Repository", string.Format("Delete note {0} (updateRemote={1})", note.UniqueName, updateRemote));
+			_logger.Info("Repository", string.Format("Delete note {0} (updateRemote={1})", note.UniqueName, updateRemote));
 
 			var found = Notes.Remove(note);
 
-			var path = Path.Combine(pathLocalFolder, note.UniqueName+ ".xml");
+			var path = Path.Combine(_pathLocalFolder, note.UniqueName+ ".xml");
 			if (File.Exists(path)) File.Delete(path);
 
 			if (found && updateRemote)
 			{
 				LocalDeletedNotes.Add(note);
-				rawFilesystemRepo.AddLocalDeletedNote(note);
-				thread.SyncNowAsync();
+				_rawFilesystemRepo.AddLocalDeletedNote(note);
+				_thread.SyncNowAsync();
 			}
 		}
 
 		public void AddNote(INote note, bool updateRemote)
 		{
-			logger.Info("Repository", $"Add note {note.UniqueName} (updateRemote={updateRemote})");
+			_logger.Info("Repository", $"Add note {note.UniqueName} (updateRemote={updateRemote})");
 
 			note.IsUINote = true;
 			Notes.Add(note);
 			SaveNote(note);
 
-			invSaveNotesLocal.Request();
-			invSaveNotesGitBackup.Request();
+			_invSaveNotesLocal.Request();
+			_invSaveNotesGitBackup.Request();
 
 			if (updateRemote)
 			{
-				thread.SyncNowAsync();
+				_thread.SyncNowAsync();
 			}
 		}
 
@@ -327,20 +327,20 @@ namespace AlephNote.Common.Repository
 
 		public void SyncNow() // = StartSyncNow, real sync happens asynchronous
 		{
-			logger.Info("Repository", "Sync Now");
+			_logger.Info("Repository", "Sync Now");
 
-			invSaveNotesRemote.CancelPendingRequests();
+			_invSaveNotesRemote.CancelPendingRequests();
 
-			dispatcher.Invoke(() => rawFilesystemRepo.SyncNow()); //synchron
+			_dispatcher.Invoke(() => _rawFilesystemRepo.SyncNow()); //synchron
 
-			thread.SyncNowAsync();
+			_thread.SyncNowAsync();
 
 			CommitToLocalGitBackup(); // without invoker
 		}
 
 		private void CommitToLocalGitBackup()
 		{
-			LocalGitBackup.UpdateRepository(this, appconfig);
+			LocalGitBackup.UpdateRepository(this, _appconfig);
 		}
 
 		public void SaveAll()
@@ -352,12 +352,12 @@ namespace AlephNote.Common.Repository
 		{
 			lock (_lockSaveSyncData)
 			{
-				var d = account.Plugin.CreateEmptyRemoteSyncData();
-				if (File.Exists(pathLocalData))
+				var d = _account.Plugin.CreateEmptyRemoteSyncData();
+				if (File.Exists(_pathLocalData))
 				{
 					try
 					{
-						var doc = XDocument.Load(pathLocalData);
+						var doc = XDocument.Load(_pathLocalData);
 
 						var root = doc.Root;
 						if (root == null) throw new Exception("Root == null");
@@ -368,12 +368,12 @@ namespace AlephNote.Common.Repository
 					}
 					catch (Exception e)
 					{
-						throw new Exception("Could not load synchronization state from '" + pathLocalData + "'", e);
+						throw new Exception("Could not load synchronization state from '" + _pathLocalData + "'", e);
 					}
 				}
 				else
 				{
-					WriteSyncData(d, pathLocalData);
+					WriteSyncData(d, _pathLocalData);
 					return d;
 				}
 			}
@@ -383,7 +383,7 @@ namespace AlephNote.Common.Repository
 		{
 			lock (_lockSaveSyncData)
 			{
-				WriteSyncData(data, pathLocalData);
+				WriteSyncData(data, _pathLocalData);
 			}
 		}
 
@@ -402,27 +402,27 @@ namespace AlephNote.Common.Repository
 		{
 			lock (_lockSaveSyncData)
 			{
-				if (File.Exists(pathLocalData))
+				if (File.Exists(_pathLocalData))
 				{
-					logger.Info("Repository", "Delete file from local repository: " + Path.GetFileName(pathLocalData), pathLocalData);
-					File.Delete(pathLocalData);
+					_logger.Info("Repository", "Delete file from local repository: " + Path.GetFileName(_pathLocalData), _pathLocalData);
+					File.Delete(_pathLocalData);
 				}
 			}
 
-			var noteFiles = Directory.GetFiles(pathLocalFolder, "*.xml");
+			var noteFiles = Directory.GetFiles(_pathLocalFolder, "*.xml");
 			foreach (var path in noteFiles)
 			{
-				logger.Info("Repository", "Delete file from local repository: " + Path.GetFileName(path), path);
+				_logger.Info("Repository", "Delete file from local repository: " + Path.GetFileName(path), path);
 				File.Delete(path);
 			}
 
-			logger.Info("Repository", "Delete folder from local repository: " + Path.GetFileName(pathLocalFolder), pathLocalFolder);
-			Directory.Delete(pathLocalFolder, true);
+			_logger.Info("Repository", "Delete folder from local repository: " + Path.GetFileName(_pathLocalFolder), _pathLocalFolder);
+			Directory.Delete(_pathLocalFolder, true);
 		}
 
 		public void ShowConflictResolutionDialog(string uuid, string txt0, string ttl0, List<string> tgs0, DirectoryPath ndp0, string txt1, string ttl1, List<string> tgs1, DirectoryPath ndp1)
 		{
-			listener.ShowConflictResolutionDialog(uuid, txt0, ttl0, tgs0, ndp0, txt1, ttl1, tgs1, ndp1);
+			_listener.ShowConflictResolutionDialog(uuid, txt0, ttl0, tgs0, ndp0, txt1, ttl1, tgs1, ndp1);
 		}
 
 		public IEnumerable<string> EnumerateAllTags()
@@ -432,17 +432,17 @@ namespace AlephNote.Common.Repository
 
 		public void ReplaceSettings(AppSettings settings)
 		{
-			appconfig = settings;
+			_appconfig = settings;
 		}
 
 		public void ApplyNewAccountData(RemoteStorageAccount acc, IRemoteStorageSyncPersistance data, List<INote> notes)
 		{
-			var localFolder = Path.Combine(pathLocalBase, acc.ID.ToString("B"));
-			var localData   = Path.Combine(pathLocalBase, acc.ID.ToString("B") + ".xml");
+			var localFolder = Path.Combine(_pathLocalBase, acc.ID.ToString("B"));
+			var localData   = Path.Combine(_pathLocalBase, acc.ID.ToString("B") + ".xml");
 
 			if (!Directory.Exists(localFolder))
 			{
-				logger.Info("Repository", "Create local note folder: " + localFolder);
+				_logger.Info("Repository", "Create local note folder: " + localFolder);
 				Directory.CreateDirectory(localFolder);
 			}
 
@@ -463,14 +463,14 @@ namespace AlephNote.Common.Repository
 		{
 			// [event from sync thread]
 
-			LocalGitBackup.UpdateRepository(this, appconfig);
+			LocalGitBackup.UpdateRepository(this, _appconfig);
 		}
 
 		public void SyncError(List<Tuple<string, Exception>> errors)
 		{
 			// [event from sync thread]
 
-			LocalGitBackup.UpdateRepository(this, appconfig);
+			LocalGitBackup.UpdateRepository(this, _appconfig);
 		}
 
 		public void OnSyncRequest()

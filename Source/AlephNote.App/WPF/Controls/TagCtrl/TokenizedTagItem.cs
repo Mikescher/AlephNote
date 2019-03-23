@@ -112,44 +112,36 @@ namespace AlephNote.WPF.Controls
 						return;
 					}
 
-					switch (e1.Key)
+					if (e1.Key == Key.Enter)
 					{
-						case (Key.Enter):
+						if (!string.IsNullOrWhiteSpace(this.Text))
 						{
-							if (!string.IsNullOrWhiteSpace(this.Text))
-							{
-								_parent.OnApplyTemplate(this);
-								_parent.SelectedItem = _parent.InitializeNewTag();
-							}
-							else
-							{
-								_parent.Focus();
-							}
+							_parent.OnApplyTemplate(this);
+							_parent.SelectedItem = _parent.InitializeNewTag();
 						}
-						break;
-
-						case (Key.Escape):
+						else
 						{
-							_parent.AbortEditing();
+							_parent.Focus();
 						}
-						break;
-
-						case (Key.Back):
+					}
+					else if (e1.Key == Key.Escape)
+					{
+						_parent.AbortEditing();
+					}
+					else if (e1.Key == Key.Back)
+					{
+						if (string.IsNullOrWhiteSpace(this.Text))
 						{
-							if (string.IsNullOrWhiteSpace(this.Text))
-							{
-								_ignoreLostFocus = true;
-								InputBox_LostFocus(this, new RoutedEventArgs());
-								_ignoreLostFocus = false;
-								var previousTagIndex = ((IList)_parent.ItemsSource).Count - 1;
-								if (previousTagIndex < 0) { _parent.AbortEditing(); break;}
+							_ignoreLostFocus = true;
+							InputBox_LostFocus(this, new RoutedEventArgs());
+							_ignoreLostFocus = false;
+							var previousTagIndex = ((IList)_parent.ItemsSource).Count - 1;
+							if (previousTagIndex < 0) { _parent.AbortEditing(); return; }
 								
-								var previousTag = (((IList)_parent.ItemsSource)[previousTagIndex] as TokenizedTagItem);
-								previousTag.Focus();
-								previousTag.IsEditing = true;
-							}
+							var previousTag = ((TokenizedTagItem) ((IList)_parent.ItemsSource)[previousTagIndex]);
+							previousTag.Focus();
+							previousTag.IsEditing = true;
 						}
-						break;
 					}
 				};
 			}
