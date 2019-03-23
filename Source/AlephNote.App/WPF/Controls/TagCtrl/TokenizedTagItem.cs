@@ -142,7 +142,7 @@ namespace AlephNote.WPF.Controls
 								InputBox_LostFocus(this, new RoutedEventArgs());
 								_ignoreLostFocus = false;
 								var previousTagIndex = ((IList)_parent.ItemsSource).Count - 1;
-								if (previousTagIndex < 0) break;
+								if (previousTagIndex < 0) { _parent.AbortEditing(); break;}
 								
 								var previousTag = (((IList)_parent.ItemsSource)[previousTagIndex] as TokenizedTagItem);
 								previousTag.Focus();
