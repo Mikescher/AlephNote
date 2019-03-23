@@ -1,0 +1,27 @@
+version: AV_{build}
+image: Visual Studio 2017
+configuration: Release
+platform: Any CPU
+clone_depth: 1
+before_build:
+- cmd: >-
+    git submodule update --recursive --init
+
+    cd Source
+
+    nuget restore
+
+    cd ..
+build:
+  project: Source\AlephNote.sln
+  verbosity: normal
+after_build:
+- cmd: >-
+    cd Data
+
+    call AUTO_BUILD_RELEASE.bat
+
+    cd ..
+artifacts:
+- path: AlephNote.zip
+  name: AlephNote_Archive

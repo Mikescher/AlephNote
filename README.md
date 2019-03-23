@@ -1,4 +1,4 @@
-# AlephNote
+# AlephNote [![Build status](https://ci.appveyor.com/api/projects/status/6od3qq5kpisd9l5t?svg=true)](https://ci.appveyor.com/project/Mikescher/alephnote-vqio1)
 
 An extensible, lightweight desktop note client for multiple backends
 
