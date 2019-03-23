@@ -14,8 +14,10 @@ namespace AlephNote.WPF.Windows
 	/// </summary>
 	public partial class SettingsWindow
 	{
-		private readonly SettingsWindowViewmodel viewmodel;
-		private readonly MainWindowViewmodel ownerVM;
+		private readonly SettingsWindowViewmodel _viewmodel;
+		private readonly MainWindowViewmodel _ownerVM;
+
+		private bool? _multiSelectBackup = null;
 
 		public SettingsWindow(MainWindowViewmodel owner, AppSettings data)
 		{
@@ -25,17 +27,17 @@ namespace AlephNote.WPF.Windows
 
 			InitializeComponent();
 
-			ownerVM = owner;
-			viewmodel = new SettingsWindowViewmodel(owner.Owner, data.Clone());
-			DataContext = viewmodel;
+			_ownerVM = owner;
+			_viewmodel = new SettingsWindowViewmodel(owner.Owner, data.Clone());
+			DataContext = _viewmodel;
 		}
 
 		private void OnOKClicked(object sender, RoutedEventArgs e)
 		{
 			Close();
 
-			viewmodel.OnBeforeApply();
-			if (!viewmodel.Settings.IsEqual(ownerVM.Settings)) ownerVM.ChangeSettings(viewmodel.Settings);
+			_viewmodel.OnBeforeApply();
+			if (!_viewmodel.Settings.IsEqual(_ownerVM.Settings)) _ownerVM.ChangeSettings(_viewmodel.Settings);
 		}
 
 		private void OnCancelClicked(object sender, RoutedEventArgs e)
@@ -45,7 +47,7 @@ namespace AlephNote.WPF.Windows
 
 		private void DialogWindow_Closed(object sender, System.EventArgs e)
 		{
-			viewmodel.OnBeforeClose();
+			_viewmodel.OnBeforeClose();
 		}
 
 		private void OnAddAccountClicked(object sender, RoutedEventArgs e)
@@ -58,7 +60,7 @@ namespace AlephNote.WPF.Windows
 			foreach (var p in PluginManager.Inst.LoadedPlugins)
 			{
 				var i = new MenuItem() { Header = p.DisplayTitleShort };
-				i.Click += (sdr, rea) => viewmodel.AddAccount(p);
+				i.Click += (sdr, rea) => _viewmodel.AddAccount(p);
 				btn.ContextMenu.Items.Add(i);
 			}
 			btn.ContextMenu.IsOpen = true;
@@ -66,7 +68,7 @@ namespace AlephNote.WPF.Windows
 
 		private void OnRemAccountClicked(object sender, RoutedEventArgs e)
 		{
-			viewmodel.RemoveAccount();
+			_viewmodel.RemoveAccount();
 		}
 
 		private void Button_OpenThemeFolder_Click(object sender, RoutedEventArgs e)
@@ -76,17 +78,17 @@ namespace AlephNote.WPF.Windows
 
 		private void Button_Advanced_Click(object sender, RoutedEventArgs e)
 		{
-			viewmodel.HideAdvancedVisibility = Visibility.Hidden;
+			_viewmodel.HideAdvancedVisibility = Visibility.Hidden;
 		}
 
 		private void AddSnippet_Click(object sender, RoutedEventArgs e)
 		{
-			viewmodel.AddSnippet();
+			_viewmodel.AddSnippet();
 		}
 
 		private void RemoveSnippet_Click(object sender, RoutedEventArgs e)
 		{
-			viewmodel.RemoveSnippet();
+			_viewmodel.RemoveSnippet();
 		}
 
 		private void UIElement_OnKeyDown(object sender, KeyEventArgs e)
@@ -95,8 +97,22 @@ namespace AlephNote.WPF.Windows
 			{
 				if (e.Source is UIElement elt) BindingOperations.GetBindingExpression(elt, TextBox.TextProperty)?.UpdateSource();
 
-				viewmodel.SelectedSnippet?.Update();
+				_viewmodel.SelectedSnippet?.Update();
 			}
+		}
+		
+		private void RectSelection_Unchecked(object sender, RoutedEventArgs e)
+		{
+			// Save
+			_multiSelectBackup = _viewmodel.Settings.SciMultiSelection;
+			_viewmodel.Settings.SciMultiSelection = false;
+		}
+		
+		private void RectSelection_Checked(object sender, RoutedEventArgs e)
+		{
+			// Restore
+			if (_multiSelectBackup != null) _viewmodel.Settings.SciMultiSelection = _multiSelectBackup.Value;
+			_multiSelectBackup = null;
 		}
 	}
 }

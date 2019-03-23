@@ -556,8 +556,8 @@
 									</Grid.RowDefinitions>
 									
 									<CheckBox Grid.Row="0" Grid.Column="0" Margin="2" Content="Display Line numbers" IsChecked="{Binding Settings.SciLineNumbers}" />
-									
-									<CheckBox Grid.Row="1" Grid.Column="0" Margin="2" Content="Enable rectangular selection" IsChecked="{Binding Settings.SciRectSelection}" />
+
+									<CheckBox Grid.Row="1" Grid.Column="0" Margin="2" Content="Enable rectangular selection" IsChecked="{Binding Settings.SciRectSelection}" Checked="RectSelection_Checked" Unchecked="RectSelection_Unchecked" />
 									<ctrl:PHelpBtn Grid.Row="1" Grid.Column="1" HelpProperty="SciRectSelection" Margin="2,0" VerticalAlignment="Center" />
 
 									<CheckBox Grid.Row="2" Grid.Column="0" Margin="2" Content="Enable multiple selections" IsChecked="{Binding Settings.SciMultiSelection}" IsEnabled="{Binding Settings.SciRectSelection}" />

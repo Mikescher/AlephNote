@@ -102,7 +102,7 @@ namespace AlephNote.Common.Settings
 		public bool SciRectSelection { get { return _sciRectSelection; } set { _sciRectSelection = value; OnPropertyChanged(); } }
 		private bool _sciRectSelection = true;
 
-		[AlephXMLField]
+		[AlephXMLField] // Only allowed when (SciRectSelection == true)
 		public bool SciMultiSelection { get { return _sciMultiSelection; } set { _sciMultiSelection = value; OnPropertyChanged(); } }
 		private bool _sciMultiSelection = false;
 

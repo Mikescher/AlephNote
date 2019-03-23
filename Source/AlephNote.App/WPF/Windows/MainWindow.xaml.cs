@@ -185,9 +185,9 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_ON].DefineRgbaImage(Properties.Resources.ui_on);
 
 			NoteEdit.MultipleSelection = s.SciMultiSelection;
-			NoteEdit.MouseSelectionRectangularSwitch = s.SciMultiSelection;
-			NoteEdit.AdditionalSelectionTyping = s.SciMultiSelection;
-			NoteEdit.VirtualSpaceOptions = s.SciMultiSelection ? VirtualSpace.RectangularSelection : VirtualSpace.None;
+			NoteEdit.MouseSelectionRectangularSwitch = s.SciRectSelection;
+			NoteEdit.AdditionalSelectionTyping = s.SciRectSelection;
+			NoteEdit.VirtualSpaceOptions = s.SciRectSelection ? VirtualSpace.RectangularSelection : VirtualSpace.None;
 			NoteEdit.EndAtLastLine = !s.SciScrollAfterLastLine;
 
 			var fnt = string.IsNullOrWhiteSpace(s.NoteFontFamily) ? FontNameToFontFamily.StrDefaultValue : s.NoteFontFamily;
@@ -666,7 +666,6 @@ namespace AlephNote.WPF.Windows
 
 		public void ShowTagFilter()
 		{
-
 			var tags = VM.Repository.EnumerateAllTags().Distinct().OrderBy(p=>p.ToLower()).Select(p => new CheckableTag(p, VM)).ToList();
 			foreach (var t in tags) t.TagGroup=tags;
 
