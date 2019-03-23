@@ -237,6 +237,7 @@
     <Compile Include="WPF\Util\AlephWPFContext.cs" />
     <Compile Include="WPF\Util\CaptureMouseWheelWhenUnfocusedBehavior.cs" />
     <Compile Include="WPF\Util\CheckableTag.cs" />
+    <Compile Include="WPF\Util\ListHighlightValue.cs" />
     <Compile Include="WPF\Util\SettingsHelper.cs" />
     <Compile Include="WPF\Util\SideBySideDiffModelVisualizer.cs" />
     <Compile Include="WPF\Windows\ConflictWindow.xaml.cs">
@@ -580,6 +581,9 @@
     <Resource Include="Resources\lock_open.png" />
     <Resource Include="Resources\tag.png" />
     <Resource Include="Resources\lock_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ui-mix.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\Lib\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\..\Lib\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />

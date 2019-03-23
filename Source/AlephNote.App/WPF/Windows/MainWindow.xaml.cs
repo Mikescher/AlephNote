@@ -179,10 +179,11 @@ namespace AlephNote.WPF.Windows
 
 			UpdateMargins(s);
 			NoteEdit.BorderStyle = BorderStyle.FixedSingle;
-
-			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_OFF].DefineRgbaImage(Properties.Resources.ui_off);
-
+			
 			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_ON].DefineRgbaImage(Properties.Resources.ui_on);
+			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_OFF].DefineRgbaImage(Properties.Resources.ui_off);
+			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_MIX].DefineRgbaImage(Properties.Resources.ui_mix);
+
 
 			NoteEdit.MultipleSelection = s.SciMultiSelection;
 			NoteEdit.MouseSelectionRectangularSwitch = s.SciRectSelection;
@@ -549,7 +550,8 @@ namespace AlephNote.WPF.Windows
 
 					if ((mark & (1 << ScintillaHighlighter.STYLE_MARKER_LIST_ON)) != 0)
 					{
-						var newText = _highlighterDefault.ChangeListLine(line.Text, ' ');
+						var mrk = _highlighterDefault.FindListMarkerChar(NoteEdit.Lines, ListHighlightValue.FALSE);
+						var newText = _highlighterDefault.ChangeListLine(line.Text, mrk ?? ' ');
 
 						NoteEdit.TargetStart = line.Position;
 						NoteEdit.TargetEnd = line.EndPosition;
@@ -557,7 +559,28 @@ namespace AlephNote.WPF.Windows
 					}
 					else if ((mark & (1 << ScintillaHighlighter.STYLE_MARKER_LIST_OFF)) != 0)
 					{
-						var mrk = _highlighterDefault.FindListerOnMarker(NoteEdit.Lines);
+						if (e.Modifiers.HasFlag(Keys.Control))
+						{
+							var mrk = _highlighterDefault.FindListMarkerChar(NoteEdit.Lines, ListHighlightValue.INTERMED);
+							var newText = _highlighterDefault.ChangeListLine(line.Text, mrk ?? '~');
+
+							NoteEdit.TargetStart = line.Position;
+							NoteEdit.TargetEnd = line.EndPosition;
+							NoteEdit.ReplaceTarget(newText);
+						}
+						else
+						{
+							var mrk = _highlighterDefault.FindListMarkerChar(NoteEdit.Lines, ListHighlightValue.TRUE);
+							var newText = _highlighterDefault.ChangeListLine(line.Text, mrk ?? 'X');
+
+							NoteEdit.TargetStart = line.Position;
+							NoteEdit.TargetEnd = line.EndPosition;
+							NoteEdit.ReplaceTarget(newText);
+						}
+					}
+					else if ((mark & (1 << ScintillaHighlighter.STYLE_MARKER_LIST_MIX)) != 0)
+					{
+						var mrk = _highlighterDefault.FindListMarkerChar(NoteEdit.Lines, ListHighlightValue.TRUE);
 						var newText = _highlighterDefault.ChangeListLine(line.Text, mrk ?? 'X');
 
 						NoteEdit.TargetStart = line.Position;

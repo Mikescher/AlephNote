@@ -157,6 +157,16 @@ namespace AlephNote.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ui_mix {
+            get {
+                object obj = ResourceManager.GetObject("ui_mix", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ui_off {
             get {
                 object obj = ResourceManager.GetObject("ui_off", resourceCulture);

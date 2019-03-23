@@ -85,14 +85,29 @@ namespace AlephNote.WPF.Util
 		public const int STYLE_MD_URL     = 7;
 		public const int STYLE_MD_LIST    = 8;
 
-		public const int STYLE_MARGIN_LINENUMBERS = 0;
-		public const int STYLE_MARGIN_LISTSYMBOLS = 1;
+		public const int STYLE_MARGIN_LINENUMBERS   = 0;
+		public const int STYLE_MARGIN_LISTSYMBOLS   = 1;
+		public const int STYLE_MARKER_LIST_ON       = 2;
+		public const int STYLE_MARKER_LIST_OFF      = 4;
+		public const int STYLE_MARKER_LIST_MIX      = 8;
 
-		public const int STYLE_MARKER_LIST_ON  = 2;
-		public const int STYLE_MARKER_LIST_OFF = 4;
+		public const int INDICATOR_INLINE_SEARCH    = 16;
+		public const int INDICATOR_GLOBAL_SEARCH    = 17;
 
-		public const int INDICATOR_INLINE_SEARCH = 8;
-		public const int INDICATOR_GLOBAL_SEARCH = 9;
+		private static readonly Tuple<char, ListHighlightValue>[] LIST_MARKERS =
+		{
+			Tuple.Create(' ', ListHighlightValue.FALSE),
+			Tuple.Create('_', ListHighlightValue.FALSE),
+
+			Tuple.Create('x', ListHighlightValue.TRUE),
+			Tuple.Create('X', ListHighlightValue.TRUE),
+			Tuple.Create('+', ListHighlightValue.TRUE),
+			Tuple.Create('#', ListHighlightValue.TRUE),
+
+			Tuple.Create('\\', ListHighlightValue.INTERMED),
+			Tuple.Create('/',  ListHighlightValue.INTERMED),
+			Tuple.Create('~',  ListHighlightValue.INTERMED),
+		};
 
 		public void SetUpStyles(Scintilla sci, AppSettings s)
 		{
@@ -283,20 +298,22 @@ namespace AlephNote.WPF.Util
 
 				line.MarkerDelete(STYLE_MARKER_LIST_ON);
 				line.MarkerDelete(STYLE_MARKER_LIST_OFF);
+				line.MarkerDelete(STYLE_MARKER_LIST_MIX);
 
 				var hl = GetListHighlight(line.Text);
 
-				if (hl == true)  line.MarkerAdd(STYLE_MARKER_LIST_ON);
-				if (hl == false) line.MarkerAdd(STYLE_MARKER_LIST_OFF);
+				if (hl == ListHighlightValue.TRUE)     line.MarkerAdd(STYLE_MARKER_LIST_ON);
+				if (hl == ListHighlightValue.FALSE)    line.MarkerAdd(STYLE_MARKER_LIST_OFF);
+				if (hl == ListHighlightValue.INTERMED) line.MarkerAdd(STYLE_MARKER_LIST_MIX);
 			}
 		}
 
-		private bool? GetListHighlight(string text)
+		private ListHighlightValue? GetListHighlight(string text)
 		{
 			return GetListHighlight(text, out _);
 		}
-
-		private bool? GetListHighlight(string text, out char? mark)
+		
+		private ListHighlightValue? GetListHighlight(string text, out char? mark)
 		{
 			text = text.TrimStart(' ', '\t');
 			if (text.Length > 0 && (text[0] == '*' || text[0] == '-')) text = text.Substring(1);
@@ -304,25 +321,12 @@ namespace AlephNote.WPF.Util
 
 			if (text.Length < 4 || string.IsNullOrWhiteSpace(text.Substring(3))) { mark = null; return null; }
 
-			if (text.StartsWith("[ ]")) { mark=' '; return false; }
-			if (text.StartsWith("{ }")) { mark=' '; return false; }
-			if (text.StartsWith("( )")) { mark=' '; return false; }
-
-			if (text.StartsWith("[x]")) { mark='x'; return true; }
-			if (text.StartsWith("{x}")) { mark='x'; return true; }
-			if (text.StartsWith("(x)")) { mark='x'; return true; }
-
-			if (text.StartsWith("[X]")) { mark='X'; return true; }
-			if (text.StartsWith("{X}")) { mark='X'; return true; }
-			if (text.StartsWith("(X)")) { mark='X'; return true; }
-
-			if (text.StartsWith("[+]")) { mark='+'; return true; }
-			if (text.StartsWith("{+}")) { mark='+'; return true; }
-			if (text.StartsWith("(+)")) { mark='+'; return true; }
-
-			if (text.StartsWith("[#]")) { mark='#'; return true; }
-			if (text.StartsWith("{#}")) { mark='#'; return true; }
-			if (text.StartsWith("(#)")) { mark='#'; return true; }
+			foreach (var markchar in LIST_MARKERS)
+			{
+				if (text.StartsWith("["+markchar.Item1+"]")) { mark = markchar.Item1; return markchar.Item2; }
+				if (text.StartsWith("{"+markchar.Item1+"}")) { mark = markchar.Item1; return markchar.Item2; }
+				if (text.StartsWith("("+markchar.Item1+")")) { mark = markchar.Item1; return markchar.Item2; }
+			}
 
 			{ mark = null; return null; }
 		}
@@ -352,11 +356,12 @@ namespace AlephNote.WPF.Util
 			return text;
 		}
 
-		public char? FindListerOnMarker(LineCollection lines)
+		public char? FindListMarkerChar(LineCollection lines, ListHighlightValue needle)
 		{
 			foreach (var line in lines)
 			{
-				if (GetListHighlight(line.Text, out char? c) == true) return c;
+				var r = GetListHighlight(line.Text, out var c);
+				if (r == needle) return c;
 			}
 
 			return null;
