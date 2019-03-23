@@ -268,6 +268,10 @@ namespace AlephNote.WPF.Windows
 			{
 				Process.Start(link);
 			}
+			else if (ScintillaHighlighter.IsRawMail(link))
+			{
+				Process.Start("mailto://" + link);
+			}
 			else
 			{
 				Process.Start(link);

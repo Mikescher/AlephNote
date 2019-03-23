@@ -23,8 +23,6 @@ namespace AlephNote.WPF.Util
 		//   mailto://xxxxx
 		//   note://xxxx
 
-
-
 		//(?:
 		//    (?:(?:(?:http|https|ftp|irc)://[\w\.\-]+\.\w\w+)[/\w\?=\&\-_\.\+\!\*\'\(\)\%]*)
 		//    |
@@ -37,7 +35,7 @@ namespace AlephNote.WPF.Util
 		//    (?:note://[^\w\-_.\{\}0-9]+)
 		//)
 		//(?=(\s|$))
-		public static readonly Regex REX_URL_STANDARD = new Regex(@"(?:(?:(?:(?:http|https|ftp|irc)://[\w\.\-]+\.\w\w+)[/\w\?=\&\-_\.\+\!\*\'\(\)\%]*)|(?:(?:www\.[\w\.\-]+\.\w\w+)[/\w\?=\&\-_\.\+\!\*\'\(\)\%]*)|(?:mailto:(?:[\w]+(?:[._\-][\w]+)*)@(?:[\w\-]+(?:[.-][\w]+)*\.[a-z]{2,}))|(?:file://[^\s]+)|(?:note://[^\w\-_.\{\}0-9]+))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private static readonly Regex REX_URL_STANDARD = new Regex(@"(?:(?:(?:(?:http|https|ftp|irc)://[\w\.\-]+\.\w\w+)[/\w\?=\&\-_\.\+\!\*\'\(\)\%]*)|(?:(?:www\.[\w\.\-]+\.\w\w+)[/\w\?=\&\-_\.\+\!\*\'\(\)\%]*)|(?:mailto:(?:[\w]+(?:[._\-][\w]+)*)@(?:[\w\-]+(?:[.-][\w]+)*\.[a-z]{2,}))|(?:file://[^\s]+)|(?:note://[^\w\-_.\{\}0-9]+))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		
 
 		// (?:
@@ -50,9 +48,11 @@ namespace AlephNote.WPF.Util
 		//     (?:file://[^\s]+)
 		//     |
 		//     (?:note://[^\s]+)
+		//     |
+		//     (?:\w+(?:[-+.']\w+)*@\w+(?:[-.]\w+)*\.\w+([-.]\w+)*)
 		// )
 		// (?=(\s|$))
-		public static readonly Regex REX_URL_EXTENDED = new Regex(@"(?:(?:(?:(?:http|https|ftp|irc)://[\w\.\-_äöü]+\.\w\w+)[/\w\?=\&\-\#\%\.\+\~\@\!\$\'\*\,\;\`\p{Pd}]*)|(?:(?:www\.[\w\.\-_äöü]+\.\w\w+)[/\w\?=\&\-\#\%\.\+\~\@\!\$\'\*\,\;\`\p{Pd}]*)|(?:mailto:(?:[äöü\w]+(?:[._\-][äöü\w]+)*)@(?:[äöü\w\-]+(?:[.-][äöü\w]+)*\.[a-z]{2,}))|(?:file://[^\s]+)|(?:note://[^\s]+))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private static readonly Regex REX_URL_EXTENDED = new Regex(@"(?:(?:(?:(?:http|https|ftp|irc)://[\w\.\-_äöü]+\.\w\w+)[/\w\?=\&\-\#\%\.\+\~\@\!\$\'\*\,\;\`\p{Pd}]*)|(?:(?:www\.[\w\.\-_äöü]+\.\w\w+)[/\w\?=\&\-\#\%\.\+\~\@\!\$\'\*\,\;\`\p{Pd}]*)|(?:mailto:(?:[äöü\w]+(?:[._\-][äöü\w]+)*)@(?:[äöü\w\-]+(?:[.-][äöü\w]+)*\.[a-z]{2,}))|(?:file://[^\s]+)|(?:note://[^\s]+)|(?:\w+(?:[-+.']\w+)*@\w+(?:[-.]\w+)*\.\w+([-.]\w+)*))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		
 
 		//(?<=(\s|^))
@@ -66,9 +66,14 @@ namespace AlephNote.WPF.Util
 		//    (?:file://[^\s]+)
 		//    |
 		//    (?:note://[^\s]+)
+		//    |
+		//    (?:\w+(?:[-+.']\w+)*@\w+(?:[-.]\w+)*\.\w+([-.]\w+)*)
 		//)
 		//(?=(\s|$))
-		public static readonly Regex REX_URL_TOLERANT = new Regex(@"(?<=(\s|^))(?:(?:(?:(?:http|https|ftp|irc)://[^\.\s]+\.\w\w+)[^\s]*)|(?:(?:www\.[^\s]+\.\w\w+)[^\s]*)|(?:mailto:(?:[^\s]+(?:[._\-][^\s]+)*)@(?:[^\s-]+(?:[.-][^\s]+)*\.[a-z]{2,}))|(?:file://[^\s]+)|(?:note://[^\s]+))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private static readonly Regex REX_URL_TOLERANT = new Regex(@"(?<=(\s|^))(?:(?:(?:(?:http|https|ftp|irc)://[^\.\s]+\.\w\w+)[^\s]*)|(?:(?:www\.[^\s]+\.\w\w+)[^\s]*)|(?:mailto:(?:[^\s]+(?:[._\-][^\s]+)*)@(?:[^\s-]+(?:[.-][^\s]+)*\.[a-z]{2,}))|(?:file://[^\s]+)|(?:note://[^\s]+)|(?:\w+(?:[-+.']\w+)*@\w+(?:[-.]\w+)*\.\w+([-.]\w+)*))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+
+		private static readonly Regex REX_MAILTEST_RAW = new Regex(@"^[-+.'\w]+@[-+.'\w]+\.[-+.'\w]{2,63}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		public const int STYLE_DEFAULT    = 0;
 		public const int STYLE_URL        = 1;
@@ -369,6 +374,11 @@ namespace AlephNote.WPF.Util
 
 				default: throw new Exception("Invalid enum value: " + v);
 			}
+		}
+
+		public static bool IsRawMail(string link)
+		{
+			return REX_MAILTEST_RAW.IsMatch(link);
 		}
 	}
 }
