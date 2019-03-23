@@ -575,5 +575,10 @@ namespace AlephNote.WPF.Windows
 		{
 			ConflictWindow.Show(Repository, Owner, uuid, Tuple.Create(txt0, ttl0, tgs0, ndp0), Tuple.Create(txt1, ttl1, tgs1, ndp1));
 		}
+
+		public List<INote> GetAllSelectedNotes()
+		{
+			return Owner.NotesViewControl.GetAllSelectedNotes();
+		}
 	}
 }

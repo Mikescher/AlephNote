@@ -360,7 +360,9 @@
 									<ctrl:PHelpBtn Grid.Column="1" HelpProperty="NoteSorting" Margin="2,0" VerticalAlignment="Center" />
 								</Grid>
 
-								<CheckBox Grid.Row="2" Grid.Column="2" Margin="2" Content="Sort pinned notes to the top"  IsChecked="{Binding Settings.SortByPinned}" />
+								<CheckBox Grid.Row="2" Grid.Column="0" Margin="2" Content="Allow selecting multiple notes" IsChecked="{Binding Settings.MultiNoteSelection}" />
+
+								<CheckBox Grid.Row="2" Grid.Column="2" Margin="2" Content="Sort pinned notes to the top" IsChecked="{Binding Settings.SortByPinned}" />
 								
 								<Grid Grid.Row="3" Grid.Column="2">
 									<Grid.ColumnDefinitions>

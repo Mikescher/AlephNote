@@ -5,11 +5,12 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using AlephNote.Common.Settings;
-using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.Dialogs;
 using MSHC.WPF.MVVM;
 using Microsoft.Win32;
 using MSHC.Lang.Collections;
+using MSHC.Util.Helper;
+using Ookii.Dialogs.Wpf;
 
 namespace AlephNote.WPF.Windows
 {
@@ -36,22 +37,54 @@ namespace AlephNote.WPF.Windows
 		private void ExportNote()
 		{
 			if (SelectedNote == null) return;
-
-			SaveFileDialog sfd = new SaveFileDialog();
-
-			if (SelectedNote.HasTagCaseInsensitive(AppSettings.TAG_MARKDOWN))
+			
+			var selection = GetAllSelectedNotes();
+			if (selection.Count > 1)
 			{
-				sfd.Filter = "Markdown files (*.md)|*.md";
-				sfd.FileName = SelectedNote.Title + ".md";
+				var dialog = new VistaFolderBrowserDialog();
+				if (!(dialog.ShowDialog() ?? false)) return;
+				
+				try
+				{
+					var directory = dialog.SelectedPath;
+					foreach (var note in selection)
+					{
+						var filenameRaw = FilenameHelper.StripStringForFilename(note.Title, FilenameHelper.ValidityMode.AllowWhitelist);
+						var filename = filenameRaw;
+						var ext = SelectedNote.HasTagCaseInsensitive(AppSettings.TAG_MARKDOWN) ? ".md" : ".txt";
+
+						int i = 1;
+						while (File.Exists(Path.Combine(directory, filename + ext)))
+						{
+							i++;
+							filename = $"{filenameRaw} ({i})";
+						}
+						
+						File.WriteAllText(Path.Combine(directory, filename + ext), note.Text, Encoding.UTF8);
+					}
+				}
+				catch (Exception e)
+				{
+					App.Logger.Error("Main", "Could not write to file", e);
+					ExceptionDialog.Show(Owner, "Could not write to file", e, string.Empty);
+				}
 			}
 			else
 			{
-				sfd.Filter = "Text files (*.txt)|*.txt";
-				sfd.FileName = SelectedNote.Title + ".txt";
-			}
+				var sfd = new SaveFileDialog();
 
-			if (sfd.ShowDialog() == true)
-			{
+				if (SelectedNote.HasTagCaseInsensitive(AppSettings.TAG_MARKDOWN))
+				{
+					sfd.Filter = "Markdown files (*.md)|*.md";
+					sfd.FileName = SelectedNote.Title + ".md";
+				}
+				else
+				{
+					sfd.Filter = "Text files (*.txt)|*.txt";
+					sfd.FileName = SelectedNote.Title + ".txt";
+				}
+
+				if (sfd.ShowDialog() != true) return;
 				try
 				{
 					File.WriteAllText(sfd.FileName, SelectedNote.Text, Encoding.UTF8);
@@ -70,16 +103,29 @@ namespace AlephNote.WPF.Windows
 			{
 				if (SelectedNote == null) return;
 
-				if (MessageBox.Show(Owner, "Do you really want to delete this note?", "Delete note?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+				var selection = GetAllSelectedNotes();
+				if (selection.Count > 1)
+				{
+					if (MessageBox.Show(Owner, $"Do you really want to delete {selection.Count} notes?", "Delete multiple notes?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
 
-				Repository.DeleteNote(SelectedNote, true);
+					foreach (var note in selection) Repository.DeleteNote(note, true);
 
-				SelectedNote = Repository.Notes.FirstOrDefault();
+					SelectedNote = Repository.Notes.FirstOrDefault();
+				}
+				else
+				{
+					if (MessageBox.Show(Owner, "Do you really want to delete this note?", "Delete note?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+
+					Repository.DeleteNote(SelectedNote, true);
+
+					SelectedNote = Repository.Notes.FirstOrDefault();
+				}
+
 			}
 			catch (Exception e)
 			{
-				App.Logger.Error("Main", "Could not delete note", e);
-				ExceptionDialog.Show(Owner, "Could not delete note", e, string.Empty);
+				App.Logger.Error("Main", "Could not delete note(s)", e);
+				ExceptionDialog.Show(Owner, "Could not delete note(s)", e, string.Empty);
 			}
 		}
 		
@@ -88,36 +134,101 @@ namespace AlephNote.WPF.Windows
 			if (SelectedNote == null) return;
 
 			if (Owner.Visibility == Visibility.Hidden) ShowMainWindow();
+			
+			var selection = GetAllSelectedNotes();
+			if (selection.Count > 1)
+			{
+				if (MessageBox.Show(Owner, $"Do you really want to duplicate {selection.Count} notes?", "Duplicate multiple notes?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+				
+				var lastNote = SelectedNote;
+				foreach (var note in selection)
+				{
+					var title = note.Title;
+					var path  = note.Path;
+					var text  = note.Text;
+					var tags  = note.Tags.ToList();
 
-			var title = SelectedNote.Title;
-			var path = SelectedNote.Path;
-			var text = SelectedNote.Text;
-			var tags = SelectedNote.Tags.ToList();
+					var ntitle = title + " (copy)";
+					var i = 2;
+					while (Repository.Notes.Any(n => n.Title.ToLower() == ntitle.ToLower())) ntitle = title + " (copy-" + (i++) + ")";
+					title = ntitle;
 
-			var ntitle = title + " (copy)";
-			int i = 2;
-			while (Repository.Notes.Any(n => n.Title.ToLower() == ntitle.ToLower())) ntitle = title + " (copy-" + (i++) + ")";
-			title = ntitle;
+					lastNote = Repository.CreateNewNote(path);
 
-			SelectedNote = Repository.CreateNewNote(path);
+					lastNote.Title = title;
+					lastNote.Text = text;
+					lastNote.Tags.SynchronizeCollection(tags);
+				}
+				SelectedNote = lastNote;
+			}
+			else
+			{
+				var title = SelectedNote.Title;
+				var path = SelectedNote.Path;
+				var text = SelectedNote.Text;
+				var tags = SelectedNote.Tags.ToList();
 
-			SelectedNote.Title = title;
-			SelectedNote.Text = text;
-			SelectedNote.Tags.SynchronizeCollection(tags);
+				var ntitle = title + " (copy)";
+				var i = 2;
+				while (Repository.Notes.Any(n => n.Title.ToLower() == ntitle.ToLower())) ntitle = title + " (copy-" + (i++) + ")";
+				title = ntitle;
+
+				SelectedNote = Repository.CreateNewNote(path);
+
+				SelectedNote.Title = title;
+				SelectedNote.Text = text;
+				SelectedNote.Tags.SynchronizeCollection(tags);
+			}
 		}
 
 		private void PinUnpinNote()
 		{
+			if (!Repository.SupportsPinning)
+			{
+				MessageBox.Show(Owner, "Pinning notes is not supported by your note provider", "Unsupported oprtation!", MessageBoxButton.OK);
+				return;
+			}
+
 			if (SelectedNote == null) return;
 
-			SelectedNote.IsPinned = !SelectedNote.IsPinned;
+			var selection = GetAllSelectedNotes();
+			if (selection.Count > 1)
+			{
+				var newpin = !selection[0].IsPinned;
+
+				if (MessageBox.Show(Owner, $"Do you really want to {(newpin?"pin":"unpin")} {selection.Count} notes?", $"{(newpin?"Pin":"Unpin")} multiple note?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+
+				foreach (var note in selection) note.IsPinned = newpin;
+			}
+			else
+			{
+				SelectedNote.IsPinned = !SelectedNote.IsPinned;
+			}
 		}
 
 		private void LockUnlockNote()
 		{
-			if (SelectedNote == null) return;
+			if (!Repository.SupportsLocking)
+			{
+				MessageBox.Show(Owner, "Locking notes is not supported by your note provider", "Unsupported oprtation!", MessageBoxButton.OK);
+				return;
+			}
 
-			SelectedNote.IsLocked = !SelectedNote.IsLocked;
+			if (SelectedNote == null) return;
+			
+			var selection = GetAllSelectedNotes();
+			if (selection.Count > 1)
+			{
+				var newlock = !selection[0].IsLocked;
+
+				if (MessageBox.Show(Owner, $"Do you really want to {(newlock?"lock":"unlock")} {selection.Count} notes?", $"{(newlock?"Lock":"Unlock")} multiple note?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+
+				foreach (var note in selection) note.IsLocked = newlock;
+			}
+			else
+			{
+				SelectedNote.IsLocked = !SelectedNote.IsLocked;
+			}
 		}
 		
 		private void CreateNote()

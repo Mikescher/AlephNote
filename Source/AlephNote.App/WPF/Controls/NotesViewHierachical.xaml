@@ -94,7 +94,7 @@
 					  HorizontalContentAlignment="Stretch"
 					  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					  ScrollViewer.CanContentScroll="{Binding Settings.SmoothScrollNotesView, Converter={conv:NegateBool}}"
-					  SelectionMode="Single"
+					  SelectionMode="{Binding Settings.MultiNoteSelection, Converter={locconv:BoolToListViewSelectionMode}}"
 					  Background="{ext:ThemeBinding 'window.notesview.hierachical.list:background'}"
 					  Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list:foreground'}"
 					  ItemsSource="{Binding SelectedFolder.AllSubNotes}" 

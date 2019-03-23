@@ -213,6 +213,7 @@
     <Compile Include="WPF\Controls\TagCtrl\TokenizedTagControl.cs" />
     <Compile Include="WPF\Controls\TagCtrl\TokenizedTagEventArgs.cs" />
     <Compile Include="WPF\Controls\TagCtrl\TokenizedTagItem.cs" />
+    <Compile Include="WPF\Converter\BoolToListViewSelectionMode.cs" />
     <Compile Include="WPF\Converter\BrushRefToBrush.cs" />
     <Compile Include="WPF\Converter\ColorRefToBrush.cs" />
     <Compile Include="WPF\Converter\FontNameToFontFamily.cs" />

@@ -277,6 +277,11 @@ namespace AlephNote.WPF.Controls
 			// control does not exist
 		}
 
+		public List<INote> GetAllSelectedNotes()
+		{
+			return NotesList.SelectedItems.OfType<INote>().ToList();
+		}
+
 		public DirectoryPath GetNewNotesPath()
 		{
 			return DirectoryPath.Root();

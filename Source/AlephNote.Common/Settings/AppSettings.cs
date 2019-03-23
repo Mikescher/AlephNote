@@ -479,6 +479,10 @@ namespace AlephNote.Common.Settings
 		public bool DisableLogger { get { return _disableLogger; } set { _disableLogger = value; OnPropertyChanged(); } }
 		private bool _disableLogger = false;
 
+		[AlephXMLField]
+		public bool MultiNoteSelection { get { return _multiNoteSelection; } set { _multiNoteSelection = value; OnPropertyChanged(); } }
+		private bool _multiNoteSelection = true;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

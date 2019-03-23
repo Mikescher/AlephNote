@@ -662,6 +662,11 @@ namespace AlephNote.WPF.Controls
 			Keyboard.Focus(FolderTreeView);
 		}
 
+		public List<INote> GetAllSelectedNotes()
+		{
+			return HierachicalNotesList.SelectedItems.OfType<INote>().ToList();
+		}
+
 		private void NotesList_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
 		{
 			ListViewItem lvi = WPFHelper.VisualLVUpwardSearch(e.OriginalSource as DependencyObject);
