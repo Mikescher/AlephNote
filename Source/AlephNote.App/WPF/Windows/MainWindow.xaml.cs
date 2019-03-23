@@ -61,6 +61,8 @@ namespace AlephNote.WPF.Windows
 			SetupScintilla(settings);
 
 			viewmodel = new MainWindowViewmodel(settings, this);
+			viewmodel.ManuallyTriggerSelectedNoteChanged();
+
 			DataContext = viewmodel;
 
 			FocusScintillaDelayed(250);

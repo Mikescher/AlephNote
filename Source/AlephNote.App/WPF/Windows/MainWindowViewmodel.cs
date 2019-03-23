@@ -242,6 +242,8 @@ namespace AlephNote.WPF.Windows
 			ChangeSettings(newSettings);
 		}
 
+		public void ManuallyTriggerSelectedNoteChanged() => SelectedNoteChanged();
+
 		private void SelectedNoteChanged()
 		{
 			if (_lastSelectedNote != null) {_lastSelectedNote.PropertyChanged -= SelectedNotePropertyChanged; _lastSelectedNote=null; }
