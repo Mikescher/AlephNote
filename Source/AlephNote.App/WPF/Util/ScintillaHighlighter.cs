@@ -91,8 +91,8 @@ namespace AlephNote.WPF.Util
 		public const int STYLE_MARKER_LIST_OFF      = 4;
 		public const int STYLE_MARKER_LIST_MIX      = 8;
 
-		public const int INDICATOR_INLINE_SEARCH    = 16;
-		public const int INDICATOR_GLOBAL_SEARCH    = 17;
+		public const int INDICATOR_INLINE_SEARCH    = 16; // I'm not sure if styles need to be powers of two and if they need to be distinct from the indicators
+		public const int INDICATOR_GLOBAL_SEARCH    = 32; // but for now I have enough bits, so lets just do it...
 
 		private static readonly Tuple<char, ListHighlightValue>[] LIST_MARKERS =
 		{
