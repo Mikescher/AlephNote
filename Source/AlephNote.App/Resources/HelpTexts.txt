@@ -366,3 +366,8 @@ The text to be inserted, you can use the following keywords for dynamic content:
  - {note:title}       // the currently selected note title
  - {note:cdate}       // the currently selected note creation date
  - {note:mdate}       // the currently selected note modification date
+
+[VSLineCopy]
+Changes Ctr+C and Ctrl+V to cut/copy the whole current line if nothing is selected.
+If text is selected the shortcuts behave the same as before.
+This mimics the behaviour of Visual Studio and the VisualStudioLineCopy plugin for Notepad++.

@@ -93,6 +93,8 @@ namespace AlephNote.WPF.Shortcuts
 			AddCommand(ASS.NoteEdit,   "FocusNextDirectory",               vm => vm.FocusNextDirectoryCommand,               "Select the next directory (on the same level)");
 			AddCommand(ASS.NoteEdit,   "FocusDirectoryLevelDown",          vm => vm.FocusDirectoryLevelDownCommand,          "Go one directory level down");
 			AddCommand(ASS.NoteEdit,   "FocusDirectoryLevelUp",            vm => vm.FocusDirectoryLevelUpCommand,            "Go one directory level up");
+			AddCommand(ASS.NoteEdit,   "CopyAllowLine",                    vm => vm.CopyAllowLineCommand,                    "Copy selection or current line if no text is selected");
+			AddCommand(ASS.NoteEdit,   "CutAllowLine",                     vm => vm.CutAllowLineCommand,                     "Cut selection or current line if no text is selected");
 
 			AddCommand(ASS.Window,     "CheckForUpdates",                  vm => vm.ManuallyCheckForUpdatesCommand,          "Manually check for new updates");
 

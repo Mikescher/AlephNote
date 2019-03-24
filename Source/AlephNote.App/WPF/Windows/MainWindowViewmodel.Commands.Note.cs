@@ -17,39 +17,136 @@ namespace AlephNote.WPF.Windows
 {
 	public partial class MainWindowViewmodel
 	{
-		public ICommand CreateNewNoteCommand { get { return new RelayCommand(CreateNote);} }
-		public ICommand CreateNewNoteFromClipboardCommand { get { return new RelayCommand(CreateNoteFromClipboard);} }
-		public ICommand CreateNewNoteFromTextfileCommand { get { return new RelayCommand(CreateNewNoteFromTextfile);} }
-		public ICommand ExportCommand { get { return new RelayCommand(ExportNote); } }
-		public ICommand DeleteCommand { get { return new RelayCommand(DeleteNote); } }
-		public ICommand DocumentSearchCommand { get { return new RelayCommand(ShowDocSearchBar); } }
-		public ICommand DocumentContinueSearchCommand { get { return new RelayCommand(ContinueSearch); } }
-		public ICommand CloseDocumentSearchCommand { get { return new RelayCommand(HideDocSearchBar); } }
-		public ICommand InsertSnippetCommand { get { return new RelayCommand<string>(InsertSnippet); } }
-		public ICommand ChangePathCommand { get { return new RelayCommand(() => Owner.PathEditor.ChangePath()); } }
-		public ICommand DuplicateNoteCommand { get { return new RelayCommand(DuplicateNote); } }
-		public ICommand PinUnpinNoteCommand { get { return new RelayCommand(PinUnpinNote); } }
-		public ICommand LockUnlockNoteCommand { get { return new RelayCommand(LockUnlockNote); } }
-		public ICommand InsertHyperlinkCommand { get { return new RelayCommand(InsertHyperlink); } }
-		public ICommand InsertFilelinkCommand { get { return new RelayCommand(InsertFilelink); } }
-		public ICommand InsertNotelinkCommand { get { return new RelayCommand(InsertNotelink); } }
-		public ICommand InsertMaillinkCommand { get { return new RelayCommand(InsertMaillink); } }
-		public ICommand MoveCurrentLineUpCommand { get { return new RelayCommand(MoveCurrentLineUp); } }
-		public ICommand MoveCurrentLineDownCommand { get { return new RelayCommand(MoveCurrentLineDown); } }
-		public ICommand DuplicateCurrentLineCommand { get { return new RelayCommand(DuplicateCurrentLine); } }
-		public ICommand CopyCurrentLineCommand { get { return new RelayCommand(CopyCurrentLine); } }
-		public ICommand CutCurrentLineCommand { get { return new RelayCommand(CutCurrentLine); } }
-		
+		public ICommand CreateNewNoteCommand
+		{
+			get { return new RelayCommand(CreateNote); }
+		}
+
+		public ICommand CreateNewNoteFromClipboardCommand
+		{
+			get { return new RelayCommand(CreateNoteFromClipboard); }
+		}
+
+		public ICommand CreateNewNoteFromTextfileCommand
+		{
+			get { return new RelayCommand(CreateNewNoteFromTextfile); }
+		}
+
+		public ICommand ExportCommand
+		{
+			get { return new RelayCommand(ExportNote); }
+		}
+
+		public ICommand DeleteCommand
+		{
+			get { return new RelayCommand(DeleteNote); }
+		}
+
+		public ICommand DocumentSearchCommand
+		{
+			get { return new RelayCommand(ShowDocSearchBar); }
+		}
+
+		public ICommand DocumentContinueSearchCommand
+		{
+			get { return new RelayCommand(ContinueSearch); }
+		}
+
+		public ICommand CloseDocumentSearchCommand
+		{
+			get { return new RelayCommand(HideDocSearchBar); }
+		}
+
+		public ICommand InsertSnippetCommand
+		{
+			get { return new RelayCommand<string>(InsertSnippet); }
+		}
+
+		public ICommand ChangePathCommand
+		{
+			get { return new RelayCommand(() => Owner.PathEditor.ChangePath()); }
+		}
+
+		public ICommand DuplicateNoteCommand
+		{
+			get { return new RelayCommand(DuplicateNote); }
+		}
+
+		public ICommand PinUnpinNoteCommand
+		{
+			get { return new RelayCommand(PinUnpinNote); }
+		}
+
+		public ICommand LockUnlockNoteCommand
+		{
+			get { return new RelayCommand(LockUnlockNote); }
+		}
+
+		public ICommand InsertHyperlinkCommand
+		{
+			get { return new RelayCommand(InsertHyperlink); }
+		}
+
+		public ICommand InsertFilelinkCommand
+		{
+			get { return new RelayCommand(InsertFilelink); }
+		}
+
+		public ICommand InsertNotelinkCommand
+		{
+			get { return new RelayCommand(InsertNotelink); }
+		}
+
+		public ICommand InsertMaillinkCommand
+		{
+			get { return new RelayCommand(InsertMaillink); }
+		}
+
+		public ICommand MoveCurrentLineUpCommand
+		{
+			get { return new RelayCommand(MoveCurrentLineUp); }
+		}
+
+		public ICommand MoveCurrentLineDownCommand
+		{
+			get { return new RelayCommand(MoveCurrentLineDown); }
+		}
+
+		public ICommand DuplicateCurrentLineCommand
+		{
+			get { return new RelayCommand(DuplicateCurrentLine); }
+		}
+
+		public ICommand CopyCurrentLineCommand
+		{
+			get { return new RelayCommand(CopyCurrentLine); }
+		}
+
+		public ICommand CutCurrentLineCommand
+		{
+			get { return new RelayCommand(CutCurrentLine); }
+		}
+
+		public ICommand CopyAllowLineCommand
+		{
+			get { return new RelayCommand(CopyAllowLine); }
+		}
+
+		public ICommand CutAllowLineCommand
+		{
+			get { return new RelayCommand(CutAllowLine); }
+		}
+
 		private void ExportNote()
 		{
 			if (SelectedNote == null) return;
-			
+
 			var selection = GetAllSelectedNotes();
 			if (selection.Count > 1)
 			{
 				var dialog = new VistaFolderBrowserDialog();
 				if (!(dialog.ShowDialog() ?? false)) return;
-				
+
 				try
 				{
 					var directory = dialog.SelectedPath;
@@ -65,7 +162,7 @@ namespace AlephNote.WPF.Windows
 							i++;
 							filename = $"{filenameRaw} ({i})";
 						}
-						
+
 						File.WriteAllText(Path.Combine(directory, filename + ext), note.Text, Encoding.UTF8);
 					}
 				}
@@ -126,7 +223,6 @@ namespace AlephNote.WPF.Windows
 
 					SelectedNote = Repository.Notes.FirstOrDefault();
 				}
-
 			}
 			catch (Exception e)
 			{
@@ -134,25 +230,25 @@ namespace AlephNote.WPF.Windows
 				ExceptionDialog.Show(Owner, "Could not delete note(s)", e, string.Empty);
 			}
 		}
-		
+
 		private void DuplicateNote()
 		{
 			if (SelectedNote == null) return;
 
 			if (Owner.Visibility == Visibility.Hidden) ShowMainWindow();
-			
+
 			var selection = GetAllSelectedNotes();
 			if (selection.Count > 1)
 			{
 				if (MessageBox.Show(Owner, $"Do you really want to duplicate {selection.Count} notes?", "Duplicate multiple notes?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
-				
+
 				var lastNote = SelectedNote;
 				foreach (var note in selection)
 				{
 					var title = note.Title;
-					var path  = note.Path;
-					var text  = note.Text;
-					var tags  = note.Tags.ToList();
+					var path = note.Path;
+					var text = note.Text;
+					var tags = note.Tags.ToList();
 
 					var ntitle = title + " (copy)";
 					var i = 2;
@@ -165,6 +261,7 @@ namespace AlephNote.WPF.Windows
 					lastNote.Text = text;
 					lastNote.Tags.SynchronizeCollection(tags);
 				}
+
 				SelectedNote = lastNote;
 			}
 			else
@@ -202,7 +299,7 @@ namespace AlephNote.WPF.Windows
 			{
 				var newpin = !selection[0].IsPinned;
 
-				if (MessageBox.Show(Owner, $"Do you really want to {(newpin?"pin":"unpin")} {selection.Count} notes?", $"{(newpin?"Pin":"Unpin")} multiple note?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+				if (MessageBox.Show(Owner, $"Do you really want to {(newpin ? "pin" : "unpin")} {selection.Count} notes?", $"{(newpin ? "Pin" : "Unpin")} multiple note?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
 
 				foreach (var note in selection) note.IsPinned = newpin;
 			}
@@ -221,13 +318,13 @@ namespace AlephNote.WPF.Windows
 			}
 
 			if (SelectedNote == null) return;
-			
+
 			var selection = GetAllSelectedNotes();
 			if (selection.Count > 1)
 			{
 				var newlock = !selection[0].IsLocked;
 
-				if (MessageBox.Show(Owner, $"Do you really want to {(newlock?"lock":"unlock")} {selection.Count} notes?", $"{(newlock?"Lock":"Unlock")} multiple note?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+				if (MessageBox.Show(Owner, $"Do you really want to {(newlock ? "lock" : "unlock")} {selection.Count} notes?", $"{(newlock ? "Lock" : "Unlock")} multiple note?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
 
 				foreach (var note in selection) note.IsLocked = newlock;
 			}
@@ -236,7 +333,7 @@ namespace AlephNote.WPF.Windows
 				SelectedNote.IsLocked = !SelectedNote.IsLocked;
 			}
 		}
-		
+
 		private void CreateNote()
 		{
 			try
@@ -250,7 +347,7 @@ namespace AlephNote.WPF.Windows
 				ExceptionDialog.Show(Owner, "Cannot create note", e, string.Empty);
 			}
 		}
-		
+
 		private void CreateNoteFromClipboard()
 		{
 			var notepath = Owner.NotesViewControl.GetNewNotesPath();
@@ -261,25 +358,25 @@ namespace AlephNote.WPF.Windows
 
 				foreach (var path in Clipboard.GetFileDropList())
 				{
-					var filename    = Path.GetFileNameWithoutExtension(path) ?? "New note from unknown file";
+					var filename = Path.GetFileNameWithoutExtension(path) ?? "New note from unknown file";
 					var filecontent = File.ReadAllText(path);
 
-					SelectedNote       = Repository.CreateNewNote(notepath);
+					SelectedNote = Repository.CreateNewNote(notepath);
 					SelectedNote.Title = filename;
-					SelectedNote.Text  = filecontent;
+					SelectedNote.Text = filecontent;
 				}
 			}
 			else if (Clipboard.ContainsText())
 			{
 				if (Owner.Visibility == Visibility.Hidden) ShowMainWindow();
 
-				var notetitle   = "New note from clipboard";
+				var notetitle = "New note from clipboard";
 				var notecontent = Clipboard.GetText();
 				if (!string.IsNullOrWhiteSpace(notecontent))
 				{
-					SelectedNote       = Repository.CreateNewNote(notepath);
+					SelectedNote = Repository.CreateNewNote(notepath);
 					SelectedNote.Title = notetitle;
-					SelectedNote.Text  = notecontent;
+					SelectedNote.Text = notecontent;
 				}
 			}
 		}
@@ -301,15 +398,15 @@ namespace AlephNote.WPF.Windows
 			if (ofd.ShowDialog() != true) return;
 
 			try
-			{ 
+			{
 				foreach (var path in ofd.FileNames)
 				{
-					var filename    = Path.GetFileNameWithoutExtension(path) ?? "New note from unknown file";
+					var filename = Path.GetFileNameWithoutExtension(path) ?? "New note from unknown file";
 					var filecontent = File.ReadAllText(path);
 
-					SelectedNote       = Repository.CreateNewNote(notepath);
+					SelectedNote = Repository.CreateNewNote(notepath);
 					SelectedNote.Title = filename;
-					SelectedNote.Text  = filecontent;
+					SelectedNote.Text = filecontent;
 				}
 			}
 			catch (Exception ex)
@@ -317,7 +414,7 @@ namespace AlephNote.WPF.Windows
 				ExceptionDialog.Show(Owner, "Reading file failed", "Creating note from file failed due to an error", ex);
 			}
 		}
-		
+
 		private void ShowDocSearchBar()
 		{
 			Owner.ShowDocSearchBar();
@@ -339,7 +436,7 @@ namespace AlephNote.WPF.Windows
 		private void InsertSnippet(string snip)
 		{
 			if (SelectedNote == null) return;
-			
+
 			snip = _spsParser.Parse(snip, Repository, SelectedNote, out bool succ);
 
 			if (!succ)
@@ -364,7 +461,7 @@ namespace AlephNote.WPF.Windows
 			Owner.NoteEdit.ReplaceSelection(url);
 			Owner.FocusScintilla();
 		}
-		
+
 		private void InsertFilelink()
 		{
 			if (SelectedNote == null) return;
@@ -383,15 +480,15 @@ namespace AlephNote.WPF.Windows
 			}
 
 			var uri = new Uri(ofd.FileName).AbsoluteUri;
-			
+
 			Owner.NoteEdit.ReplaceSelection(uri);
 			Owner.FocusScintilla();
 		}
-		
+
 		private void InsertMaillink()
 		{
 			if (SelectedNote == null) return;
-			
+
 			if (!GenericInputDialog.ShowInputDialog(Owner, "Insert mail address", "Email address", "", out var url)) return;
 			if (string.IsNullOrWhiteSpace(url)) return;
 
@@ -400,11 +497,11 @@ namespace AlephNote.WPF.Windows
 			Owner.NoteEdit.ReplaceSelection(url);
 			Owner.FocusScintilla();
 		}
-		
+
 		private void InsertNotelink()
 		{
 			if (SelectedNote == null) return;
-			
+
 			if (!NoteChooserDialog.ShowInputDialog(Owner, "Choose note to link", Repository, null, out var note)) return;
 
 			var uri = "note://" + note.UniqueName;
@@ -416,7 +513,7 @@ namespace AlephNote.WPF.Windows
 		private void MoveCurrentLineUp()
 		{
 			if (SelectedNote == null) return;
-			
+
 			var hasSelection = Owner.NoteEdit.Selections.Any(s => s.End - s.Start > 1);
 
 			Owner.NoteEdit.ExecuteCmd(Command.MoveSelectedLinesUp);
@@ -427,9 +524,9 @@ namespace AlephNote.WPF.Windows
 		private void MoveCurrentLineDown()
 		{
 			if (SelectedNote == null) return;
-			
+
 			var hasSelection = Owner.NoteEdit.Selections.Any(s => s.End - s.Start > 1);
-			
+
 			Owner.NoteEdit.ExecuteCmd(Command.MoveSelectedLinesDown);
 
 			if (!hasSelection) Owner.NoteEdit.SetEmptySelection(Owner.NoteEdit.CurrentPosition);
@@ -438,12 +535,12 @@ namespace AlephNote.WPF.Windows
 		private void DuplicateCurrentLine()
 		{
 			if (SelectedNote == null) return;
-			
+
 			var lineidx = Owner.NoteEdit.CurrentLine;
 			var lines = Owner.NoteEdit.Lines;
-			if (lineidx<0 || lineidx >=lines.Count) return;
+			if (lineidx < 0 || lineidx >= lines.Count) return;
 
-			if (lineidx == lines.Count-1)
+			if (lineidx == lines.Count - 1)
 				Owner.NoteEdit.InsertText(lines[lineidx].EndPosition, "\r\n" + lines[lineidx].Text);
 			else
 				Owner.NoteEdit.InsertText(lines[lineidx].EndPosition, lines[lineidx].Text);
@@ -452,10 +549,10 @@ namespace AlephNote.WPF.Windows
 		private void CopyCurrentLine()
 		{
 			if (SelectedNote == null) return;
-			
+
 			var lineidx = Owner.NoteEdit.CurrentLine;
 			var lines = Owner.NoteEdit.Lines;
-			if (lineidx<0 || lineidx >=lines.Count) return;
+			if (lineidx < 0 || lineidx >= lines.Count) return;
 
 			Owner.NoteEdit.CopyRange(lines[lineidx].Position, lines[lineidx].EndPosition);
 		}
@@ -463,13 +560,41 @@ namespace AlephNote.WPF.Windows
 		private void CutCurrentLine()
 		{
 			if (SelectedNote == null) return;
-			
+
 			var lineidx = Owner.NoteEdit.CurrentLine;
 			var lines = Owner.NoteEdit.Lines;
-			if (lineidx<0 || lineidx >=lines.Count) return;
+			if (lineidx < 0 || lineidx >= lines.Count) return;
 
 			Owner.NoteEdit.CopyRange(lines[lineidx].Position, lines[lineidx].EndPosition);
 			Owner.NoteEdit.DeleteRange(lines[lineidx].Position, lines[lineidx].Length);
+		}
+
+		private void CopyAllowLine()
+		{
+			if (SelectedNote == null) return;
+
+			Owner.NoteEdit.CopyAllowLine();
+		}
+
+		private void CutAllowLine()
+		{
+			if (SelectedNote == null) return;
+
+			var lineidx = Owner.NoteEdit.CurrentLine;
+			var lines = Owner.NoteEdit.Lines;
+			if (lineidx < 0 || lineidx >= lines.Count) return;
+
+			var hasSelection = Owner.NoteEdit.Selections.Any(s => s.End - s.Start > 1);
+
+			if (hasSelection)
+			{
+				Owner.NoteEdit.Cut();
+			}
+			else
+			{
+				Owner.NoteEdit.CopyAllowLine();
+				Owner.NoteEdit.DeleteRange(lines[lineidx].Position, lines[lineidx].Length);
+			}
 		}
 	}
 }

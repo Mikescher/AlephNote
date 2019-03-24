@@ -438,6 +438,18 @@ namespace AlephNote.WPF.Windows
 						}
 					}
 				}
+
+				if (Settings.VSLineCopy && emod == ModifierKeys.Control && ekey == Key.C)
+				{
+					viewmodel.CopyAllowLineCommand.Execute(null);
+					e.Handled = true;
+				}
+
+				if (Settings.VSLineCopy && emod == ModifierKeys.Control && ekey == Key.X)
+				{
+					viewmodel.CutAllowLineCommand.Execute(null);
+					e.Handled = true;
+				}
 			}
 		}
 
