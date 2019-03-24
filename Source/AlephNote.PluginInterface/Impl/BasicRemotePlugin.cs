@@ -10,33 +10,33 @@ namespace AlephNote.PluginInterface.Impl
 {
 	public abstract class BasicRemotePlugin : IRemotePlugin
 	{
-		private readonly Guid uuid;
-		private readonly string name;
-		private readonly Version version;
+		private readonly Guid _uuid;
+		private readonly string _name;
+		private readonly Version _version;
 
-		public string DisplayTitleLong { get { return GetName() + " v" + (version.Revision == 0 ? version.ToString(3) : (version.ToString(4) + " BETA")); } }
+		public string DisplayTitleLong { get { return GetName() + " v" + (_version.Revision == 0 ? _version.ToString(3) : (_version.ToString(4) + " BETA")); } }
 		public string DisplayTitleShort { get { return GetName(); } }
 
 		protected BasicRemotePlugin(string name, Version version, Guid uuid)
 		{
-			this.name = name;
-			this.uuid = uuid;
-			this.version = version;
+			this._name = name;
+			this._uuid = uuid;
+			this._version = version;
 		}
 
 		public Guid GetUniqueID()
 		{
-			return uuid;
+			return _uuid;
 		}
 
 		public string GetName()
 		{
-			return name;
+			return _name;
 		}
 
 		public Version GetVersion()
 		{
-			return version;
+			return _version;
 		}
 
 		protected static Version GetInformationalVersion(Assembly assembly)
@@ -64,12 +64,15 @@ namespace AlephNote.PluginInterface.Impl
 		public abstract IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData();
 		public abstract INote CreateEmptyNote(IRemoteStorageConnection conn, IRemoteStorageConfiguration cfg);
 		
-		public abstract bool SupportsNativeDirectories { get; }
-		public abstract bool SupportsPinning           { get; }
-		public abstract bool SupportsLocking           { get; }
-		public abstract bool SupportsTags              { get; }
+		public abstract bool SupportsNativeDirectories         { get; }
+		public abstract bool SupportsPinning                   { get; }
+		public abstract bool SupportsLocking                   { get; }
+		public abstract bool SupportsTags                      { get; }
+		public abstract bool SupportsDownloadMultithreading    { get; }
+		public abstract bool SupportsNewDownloadMultithreading { get; }
+		public abstract bool SupportsUploadMultithreading      { get; }
 
-		public virtual IEnumerable<Tuple<string, string>> CreateHelpTexts()
+		protected virtual IEnumerable<Tuple<string, string>> CreateHelpTexts()
 		{
 			return Enumerable.Empty<Tuple<string, string>>();
 		}

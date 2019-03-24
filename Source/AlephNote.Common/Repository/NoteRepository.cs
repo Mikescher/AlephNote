@@ -53,13 +53,12 @@ namespace AlephNote.Common.Repository
 		public string ProviderID { get { return _account.Plugin.GetUniqueID().ToString("B"); } }
 		public Guid ProviderUID { get { return _account.Plugin.GetUniqueID(); } }
 
-		public bool SupportsPinning => _account.Plugin.SupportsPinning;
-		public bool SupportsLocking => _account.Plugin.SupportsLocking;
-		public bool SupportsTags    => _account.Plugin.SupportsTags;
-
-		public bool NotSupportsPinning => !SupportsPinning;
-		public bool NotSupportsLocking => !SupportsLocking;
-		public bool NotSupportsTags    => !SupportsTags;
+		public bool SupportsPinning                   => _account.Plugin.SupportsPinning;
+		public bool SupportsLocking                   => _account.Plugin.SupportsLocking;
+		public bool SupportsTags                      => _account.Plugin.SupportsTags;
+		public bool SupportsDownloadMultithreading    => _account.Plugin.SupportsDownloadMultithreading;
+		public bool SupportsNewDownloadMultithreading => _account.Plugin.SupportsNewDownloadMultithreading;
+		public bool SupportsUploadMultithreading      => _account.Plugin.SupportsUploadMultithreading;
 
 		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, RemoteStorageAccount acc, IAlephDispatcher disp)
 		{
@@ -71,7 +70,7 @@ namespace AlephNote.Common.Repository
 			_appconfig = cfg;
 			_listener = fb;
 			_dispatcher = disp;
-			_thread = new SynchronizationThread(this, new[]{ this, fb }, cfg.ConflictResolution, _dispatcher);
+			_thread = new SynchronizationThread(this, new[]{ this, fb }, cfg, _dispatcher);
 
 			_invSaveNotesLocal     = DelayedCombiningInvoker.Create(() => _dispatcher.BeginInvoke(SaveAllDirtyNotes),      10 * 1000,  1 * 60 * 1000);
 			_invSaveNotesRemote    = DelayedCombiningInvoker.Create(() => _dispatcher.BeginInvoke(SyncNow),                45 * 1000, 15 * 60 * 1000);

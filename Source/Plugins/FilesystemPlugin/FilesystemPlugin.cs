@@ -13,10 +13,13 @@ namespace AlephNote.Plugins.Filesystem
 		public static readonly Version Version = GetInformationalVersion(typeof(FilesystemPlugin).GetTypeInfo().Assembly);
 		public const string Name = "FilesystemPlugin";
 
-		public override bool SupportsPinning           => false;
-		public override bool SupportsLocking           => true;
-		public override bool SupportsNativeDirectories => true;
-		public override bool SupportsTags              => false;
+		public override bool SupportsPinning                   => false;
+		public override bool SupportsLocking                   => true;
+		public override bool SupportsNativeDirectories         => true;
+		public override bool SupportsTags                      => false;
+		public override bool SupportsDownloadMultithreading    => false;
+		public override bool SupportsNewDownloadMultithreading => false;
+		public override bool SupportsUploadMultithreading      => false;
 
 		public const int MIN_SEARCH_DEPTH =  1;
 		public const int MAX_SEARCH_DEPTH = 16;
@@ -52,8 +55,8 @@ namespace AlephNote.Plugins.Filesystem
 		{
 			return new FilesystemData();
 		}
-		
-		public override IEnumerable<Tuple<string, string>> CreateHelpTexts()
+
+		protected override IEnumerable<Tuple<string, string>> CreateHelpTexts()
 		{
 			yield return Tuple.Create("SearchDepth", "The maximum folder depth for notes. Files in deeper nesting levels will be ignored.");
 		}

@@ -483,10 +483,34 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public bool MultiNoteSelection { get { return _multiNoteSelection; } set { _multiNoteSelection = value; OnPropertyChanged(); } }
 		private bool _multiNoteSelection = true;
-
+		
 		[AlephXMLField]
 		public bool VSLineCopy { get { return _vsLineCopy; } set { _vsLineCopy = value; OnPropertyChanged(); } }
 		private bool _vsLineCopy = false;
+
+		[AlephXMLField(ReconnectRepo=true)]
+		public int NoteDownloadParallelismThreshold { get { return _noteDownloadParallelismThreshold; } set { _noteDownloadParallelismThreshold = value; OnPropertyChanged(); } }
+		private int _noteDownloadParallelismThreshold = 10;
+
+		[AlephXMLField(ReconnectRepo=true)]
+		public int NoteDownloadParallelismLevel { get { return _noteDownloadParallelismLevel; } set { _noteDownloadParallelismLevel = value; OnPropertyChanged(); } }
+		private int _noteDownloadParallelismLevel = 5;
+
+		[AlephXMLField(ReconnectRepo=true)]
+		public int NoteNewDownloadParallelismLevel { get { return _noteNewDownloadParallelismLevel; } set { _noteNewDownloadParallelismLevel = value; OnPropertyChanged(); } }
+		private int _noteNewDownloadParallelismLevel = 10;
+
+		[AlephXMLField(ReconnectRepo=true)]
+		public int NoteNewDownloadParallelismThreshold { get { return _noteNewDownloadParallelismThreshold; } set { _noteNewDownloadParallelismThreshold = value; OnPropertyChanged(); } }
+		private int _noteNewDownloadParallelismThreshold = 10;
+
+		[AlephXMLField(ReconnectRepo=true)]
+		public int NoteUploadParallelismThreshold { get { return _noteUploadParallelismThreshold; } set { _noteUploadParallelismThreshold = value; OnPropertyChanged(); } }
+		private int _noteUploadParallelismThreshold = 999999;
+
+		[AlephXMLField(ReconnectRepo=true)]
+		public int NoteUploadParallelismLevel { get { return _noteUploadParallelismLevel; } set { _noteUploadParallelismLevel = value; OnPropertyChanged(); } }
+		private int _noteUploadParallelismLevel = 1;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

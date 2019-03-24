@@ -1,5 +1,4 @@
-﻿
-using AlephNote.PluginInterface;
+﻿using AlephNote.PluginInterface;
 
 namespace AlephNote.Common.Repository
 {
@@ -8,6 +7,9 @@ namespace AlephNote.Common.Repository
 		bool SupportsPinning { get; }
 		bool SupportsLocking { get; }
 		bool SupportsTags { get; }
+		bool SupportsDownloadMultithreading { get; }
+		bool SupportsNewDownloadMultithreading { get; }
+		bool SupportsUploadMultithreading { get; }
 
 		IRemoteStorageConnection Connection { get; }
 

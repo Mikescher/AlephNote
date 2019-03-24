@@ -13,10 +13,13 @@ namespace AlephNote.Plugins.StandardNote
 		public static readonly Version Version = GetInformationalVersion(typeof(StandardNotePlugin).GetTypeInfo().Assembly);
 		public const string Name = "StandardNotePlugin";
 
-		public override bool SupportsPinning           => true;
-		public override bool SupportsLocking           => true;
-		public override bool SupportsNativeDirectories => false;
-		public override bool SupportsTags              => true;
+		public override bool SupportsPinning                   => true;
+		public override bool SupportsLocking                   => true;
+		public override bool SupportsNativeDirectories         => false;
+		public override bool SupportsTags                      => true;
+		public override bool SupportsDownloadMultithreading    => false;
+		public override bool SupportsNewDownloadMultithreading => false;
+		public override bool SupportsUploadMultithreading      => false;
 
 		public const string CURRENT_SCHEMA = "003";
 
@@ -53,7 +56,7 @@ namespace AlephNote.Plugins.StandardNote
 			return new StandardNoteData();
 		}
 
-		public override IEnumerable<Tuple<string, string>> CreateHelpTexts()
+		protected override IEnumerable<Tuple<string, string>> CreateHelpTexts()
 		{
 			yield return Tuple.Create("SendEncrypted", "If checked the note content is encrypted locally before being send to the server."+"\n"+
 				                                       "No one can read your notes without your password, not even the server administrator.");

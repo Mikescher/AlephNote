@@ -371,3 +371,25 @@ The text to be inserted, you can use the following keywords for dynamic content:
 Changes Ctr+C and Ctrl+V to cut/copy the whole current line if nothing is selected.
 If text is selected the shortcuts behave the same as before.
 This mimics the behaviour of Visual Studio and the VisualStudioLineCopy plugin for Notepad++.
+
+[NetworkParallelism]
+Some network operations can be executed in parallel to speed them up.
+For example downloading many new notes in the initial sync benefits greatly from parallel connections to the remote provider.
+These setting only have an effect if the remote provider plugin supports parallel connections.
+
+[ParallelismLevel]
+Specifies how many threads are used to execute the operation.
+
+[ParallelismThreshold]
+Specified the threshold to execute the operation in parallel.
+If less items need to be downloaded/uploaded/modified the operation exhibits in its normal (sequential) behavior.
+
+[NoteDownloadParallelism]
+Specifies the parallelism settings for downloading existing notes (updating their content from the remote provider).
+
+[NoteNewDownloadParallelism]
+Specifies the parallelism settings for downloading new notes (downloading their content from the remote provider).
+This is especially relevant for the initial sync when adding a new remote provider.
+
+[NoteUploadParallelism]
+Specifies the parallelism settings for uploading new notes (creating them in the remote provider and uploading their content).

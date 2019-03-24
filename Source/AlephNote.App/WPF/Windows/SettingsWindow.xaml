@@ -985,61 +985,106 @@
 				<Grid>
 					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 						<StackPanel Orientation="Vertical">
-							<Grid Margin="8">
-								<Grid.RowDefinitions>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition/>
-								</Grid.RowDefinitions>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto" />
-									<ColumnDefinition Width="5" />
-									<ColumnDefinition Width="1*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
+							<GroupBox Header="Advanced Properties" Padding="4">
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition/>
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="5" />
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
 
-								<TextBlock     Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Developer Debug Mode" />
-								<CheckBox      Grid.Row="0" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.ForceDebugMode}" />
+									<TextBlock     Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Developer Debug Mode" />
+									<CheckBox      Grid.Row="0" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.ForceDebugMode}" />
 
-								<TextBlock     Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Support for international characters in filenames" />
-								<CheckBox      Grid.Row="1" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.AllowAllLettersInFilename}"/>
-								<ctrl:PHelpBtn Grid.Row="1" Grid.Column="3" HelpProperty="AllowAllLettersInFilename" Margin="2,0" VerticalAlignment="Center" />
+									<TextBlock     Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Support for international characters in filenames" />
+									<CheckBox      Grid.Row="1" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.AllowAllLettersInFilename}"/>
+									<ctrl:PHelpBtn Grid.Row="1" Grid.Column="3" HelpProperty="AllowAllLettersInFilename" Margin="2,0" VerticalAlignment="Center" />
 
-								<TextBlock     Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Allow all not explicitly forbidden characters in filenames" />
-								<CheckBox      Grid.Row="2" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.AllowAllCharactersInFilename}" />
-								<ctrl:PHelpBtn Grid.Row="2" Grid.Column="3" HelpProperty="AllowAllCharactersInFilename" Margin="2,0" VerticalAlignment="Center" />
+									<TextBlock     Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Allow all not explicitly forbidden characters in filenames" />
+									<CheckBox      Grid.Row="2" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.AllowAllCharactersInFilename}" />
+									<ctrl:PHelpBtn Grid.Row="2" Grid.Column="3" HelpProperty="AllowAllCharactersInFilename" Margin="2,0" VerticalAlignment="Center" />
 
-								<TextBlock     Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Only run a single instance of AlephNote in parallel" />
-								<CheckBox      Grid.Row="3" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.SingleInstanceMode}" />
-								<ctrl:PHelpBtn Grid.Row="3" Grid.Column="3" HelpProperty="SingleInstanceMode" Margin="2,0" VerticalAlignment="Center" />
+									<TextBlock     Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Only run a single instance of AlephNote in parallel" />
+									<CheckBox      Grid.Row="3" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.SingleInstanceMode}" />
+									<ctrl:PHelpBtn Grid.Row="3" Grid.Column="3" HelpProperty="SingleInstanceMode" Margin="2,0" VerticalAlignment="Center" />
 
-								<TextBlock     Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Use pre-release update channel" />
-								<CheckBox      Grid.Row="4" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.UpdateToPrerelease}" />
-								<ctrl:PHelpBtn Grid.Row="4" Grid.Column="3" HelpProperty="UpdateToPrerelease" Margin="2,0" VerticalAlignment="Center" />
+									<TextBlock     Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Use pre-release update channel" />
+									<CheckBox      Grid.Row="4" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.UpdateToPrerelease}" />
+									<ctrl:PHelpBtn Grid.Row="4" Grid.Column="3" HelpProperty="UpdateToPrerelease" Margin="2,0" VerticalAlignment="Center" />
 
-								<TextBlock     Grid.Row="5" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Used mode for URL matching" />
-								<ComboBox      Grid.Row="5" Grid.Column="2" Margin="4" ItemsSource="{mext:EnumSource {x:Type settings:URLMatchingMode}}" SelectedValue="{Binding Settings.UsedURLMatcher}" />
+									<TextBlock     Grid.Row="5" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Used mode for URL matching" />
+									<ComboBox      Grid.Row="5" Grid.Column="2" Margin="4" ItemsSource="{mext:EnumSource {x:Type settings:URLMatchingMode}}" SelectedValue="{Binding Settings.UsedURLMatcher}" />
 
-								<TextBlock     Grid.Row="6" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Use beta release channel" />
-								<CheckBox      Grid.Row="6" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.UpdateToPrerelease}" />
+									<TextBlock     Grid.Row="6" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Disable the Application Log" />
+									<CheckBox      Grid.Row="6" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.DisableLogger}" />
 
-								<TextBlock     Grid.Row="7" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Disable the Application Log" />
-								<CheckBox      Grid.Row="7" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.DisableLogger}" />
+								</Grid>
+							</GroupBox>
+							<GroupBox Padding="4">
+								<GroupBox.Header>
+									<StackPanel Orientation="Horizontal">
+										<TextBlock Text="Network Parallelism" />
+										<ctrl:PHelpBtn HelpProperty="NetworkParallelism" Margin="6,0,0,0" VerticalAlignment="Center" Height="14" Width="14" />
+									</StackPanel>
+								</GroupBox.Header>
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="10" />
+										<ColumnDefinition Width="*" />
+										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="10" />
+										<ColumnDefinition Width="*" />
+										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+									</Grid.RowDefinitions>
 
-							</Grid>
+									<TextBlock          Grid.Row="0" Grid.Column="2" Margin="3"   VerticalAlignment="Center" Text="Level of parallelism" />
+									<ctrl:PHelpBtn      Grid.Row="0" Grid.Column="3" Margin="2,0" HelpProperty="ParallelismLevel" VerticalAlignment="Center" />
+									<TextBlock          Grid.Row="0" Grid.Column="5" Margin="3"   VerticalAlignment="Center" Text="Threshold" />
+									<ctrl:PHelpBtn      Grid.Row="0" Grid.Column="6" Margin="2,0" HelpProperty="ParallelismThreshold" VerticalAlignment="Center" />
+
+									<TextBlock          Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" Margin="3"       VerticalAlignment="Center" Text="Updating notes from remote" />
+									<xctk:IntegerUpDown Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="3"       Value="{Binding Settings.NoteDownloadParallelismLevel}" Minimum="1" Maximum="100"/>
+									<xctk:IntegerUpDown Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2" Margin="3"       Value="{Binding Settings.NoteDownloadParallelismThreshold}" Minimum="0" Maximum="1000000"/>
+									<ctrl:PHelpBtn      Grid.Row="1" Grid.Column="7" Grid.ColumnSpan="1" Margin="0,0,0,1" HelpProperty="NoteDownloadParallelism" VerticalAlignment="Center" />
+
+									<TextBlock          Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="1" Margin="3"       VerticalAlignment="Center" Text="Downloading new notes from remote" />
+									<xctk:IntegerUpDown Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Margin="3"       Value="{Binding Settings.NoteNewDownloadParallelismLevel}" Minimum="1" Maximum="100"/>
+									<xctk:IntegerUpDown Grid.Row="2" Grid.Column="5" Grid.ColumnSpan="2" Margin="3"       Value="{Binding Settings.NoteNewDownloadParallelismThreshold}" Minimum="0" Maximum="1000000"/>
+									<ctrl:PHelpBtn      Grid.Row="2" Grid.Column="7" Grid.ColumnSpan="1" Margin="0,0,0,1" HelpProperty="NoteNewDownloadParallelism" VerticalAlignment="Center" />
+
+									<TextBlock          Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="1" Margin="3"       VerticalAlignment="Center" Text="Uploading new notes to the remote" />
+									<xctk:IntegerUpDown Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Margin="3"       Value="{Binding Settings.NoteUploadParallelismLevel}" Minimum="1" Maximum="100"/>
+									<xctk:IntegerUpDown Grid.Row="3" Grid.Column="5" Grid.ColumnSpan="2" Margin="3"       Value="{Binding Settings.NoteUploadParallelismThreshold}" Minimum="0" Maximum="1000000"/>
+									<ctrl:PHelpBtn      Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="1" Margin="0,0,0,1" HelpProperty="NoteUploadParallelism" VerticalAlignment="Center" />
+								</Grid>
+							</GroupBox>
 						</StackPanel>
 					</ScrollViewer>
-					<Grid Background="White" Visibility="{Binding HideAdvancedVisibility}">
+					<Grid x:Name="AdvancedWarningGrid" Background="White" Visibility="Collapsed">
 						<GroupBox HorizontalAlignment="Center" VerticalAlignment="Center" Header="Warning" MaxWidth="350" Padding="15">
 
 							<StackPanel Orientation="Vertical">

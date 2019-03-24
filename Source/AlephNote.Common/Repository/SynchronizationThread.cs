@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
@@ -17,6 +20,16 @@ namespace AlephNote.Common.Repository
 		private readonly NoteRepository _repo;
 		private readonly List<ISynchronizationFeedback> _listener;
 		private readonly ConflictResolutionStrategy _conflictStrategy;
+		private readonly bool _noteDownloadEnableMultithreading;
+		private readonly int _noteDownloadParallelismLevel;
+		private readonly int _noteDownloadParallelismThreshold;
+		private readonly bool _noteNewDownloadEnableMultithreading;
+		private readonly int _noteNewDownloadParallelismLevel;
+		private readonly int _noteNewDownloadParallelismThreshold;
+		private readonly bool _noteUploadEnableMultithreading;
+		private readonly int _noteUploadParallelismLevel;
+		private readonly int _noteUploadParallelismThreshold;
+
 		private int _delay;
 
 		private static readonly object _syncobj = new object();
@@ -30,12 +43,22 @@ namespace AlephNote.Common.Repository
 		private volatile bool _running = false;
 		private volatile bool _isSyncing = false;
 
-
-		public SynchronizationThread(NoteRepository repository, ISynchronizationFeedback[] synclistener, ConflictResolutionStrategyConfig strat, IAlephDispatcher disp)
+		public SynchronizationThread(NoteRepository repository, IEnumerable<ISynchronizationFeedback> synclistener, AppSettings settings, IAlephDispatcher disp)
 		{
 			_repo = repository;
 			_listener = synclistener.ToList();
-			_conflictStrategy = ConflictResolutionStrategyHelper.ToInterfaceType(strat);
+
+			_conflictStrategy = ConflictResolutionStrategyHelper.ToInterfaceType(settings.ConflictResolution);
+			_noteDownloadEnableMultithreading    = repository.SupportsDownloadMultithreading;
+			_noteDownloadParallelismLevel        = settings.NoteDownloadParallelismLevel;
+			_noteDownloadParallelismThreshold    = settings.NoteDownloadParallelismThreshold;
+			_noteNewDownloadEnableMultithreading = repository.SupportsNewDownloadMultithreading;
+			_noteNewDownloadParallelismLevel     = settings.NoteNewDownloadParallelismLevel;
+			_noteNewDownloadParallelismThreshold = settings.NoteNewDownloadParallelismThreshold;
+			_noteUploadEnableMultithreading      = repository.SupportsUploadMultithreading;
+			_noteUploadParallelismLevel          = settings.NoteUploadParallelismLevel;
+			_noteUploadParallelismThreshold      = settings.NoteUploadParallelismThreshold;
+
 			_dispatcher = disp;
 			_comChannel = new ManualResetEvent(false);
 		}
@@ -54,7 +77,7 @@ namespace AlephNote.Common.Repository
 		{
 			_running = true;
 
-			for (; ; )
+			for (;;)
 			{
 				lock (_syncobj)
 				{
@@ -99,8 +122,8 @@ namespace AlephNote.Common.Repository
 				});
 
 				_log.Info(
-					"Sync", 
-					$"Found {allNotes.Count} alive notes and {notesToDelete.Count} deleted notes", 
+					"Sync",
+					$"Found {allNotes.Count} alive notes and {notesToDelete.Count} deleted notes",
 					$"Alive:\n{string.Join("\n", allNotes.Select(n => $"{n.Item2.UniqueName}    {n.Item2.Title}"))}\n\n\n" +
 					$"Deleted:\n{string.Join("\n", notesToDelete.Select(n => $"{n.UniqueName}    {n.Title}"))}");
 
@@ -114,18 +137,18 @@ namespace AlephNote.Common.Repository
 					var notesToResetDirty = allNotes.Where(p => !p.Item2.IsRemoteSaved && !notesToUpload.Contains(p)).ToList();
 
 					_log.Info(
-						"Sync", 
-						$"Found {notesToUpload.Count} notes for upload and {notesToDownload.Count} notes for download", 
+						"Sync",
+						$"Found {notesToUpload.Count} notes for upload and {notesToDownload.Count} notes for download",
 						$"Upload:\n{string.Join("\n", notesToUpload.Select(n => $"{n.Item2.UniqueName}    {n.Item2.Title}"))}\n\n\n" +
 						$"Download:\n{string.Join("\n", notesToDownload.Select(n => $"{n.Item2.UniqueName}    {n.Item2.Title}"))}");
 
-					UploadNotes(notesToUpload, notesToResetDirty, ref errors);
+					UploadNotes(notesToUpload, notesToResetDirty, errors);
 
-					DownloadNotes(notesToDownload, ref errors);
+					DownloadNotes(notesToDownload, errors);
 
-					DeleteNotes(notesToDelete, ref errors);
+					DeleteNotes(notesToDelete, errors);
 
-					DownloadNewNotes(allNotes, ref errors);
+					DownloadNewNotes(allNotes, errors);
 				}
 				_repo.Connection.FinishSync();
 
@@ -152,17 +175,28 @@ namespace AlephNote.Common.Repository
 			_log.Info("Sync", "Finished remote synchronization");
 		}
 
-		private void UploadNotes(List<Tuple<INote, INote>> notesToUpload, List<Tuple<INote, INote>> notesToResetRemoteDirty, ref List<Tuple<string, Exception>> errors)
+		private void UploadNotes(IReadOnlyCollection<Tuple<INote, INote>> notesToUpload, IEnumerable<Tuple<INote, INote>> notesToResetRemoteDirty, ICollection<Tuple<string, Exception>> errors)
 		{
-			foreach (var notetuple in notesToUpload)
-			{
-				var realnote = notetuple.Item1;
-				var clonenote = notetuple.Item2;
-
-				_log.Info("Sync", string.Format("Upload note {0}", clonenote.UniqueName));
-
-				try
+			ExecuteInParallel(
+				"UploadNotes",
+				_noteUploadEnableMultithreading,
+				notesToUpload,
+				_noteUploadParallelismLevel,
+				_noteUploadParallelismThreshold,
+				(e, notetuple) =>
 				{
+					var message = string.Format("Could not upload note '{2}' ({0}) cause of {1}", notetuple.Item2.UniqueName, e.Message, notetuple.Item2.Title);
+
+					_log.Error("Sync", message, e);
+					errors.Add(Tuple.Create(message, e));
+				},
+				notetuple =>
+				{
+					var realnote = notetuple.Item1;
+					var clonenote = notetuple.Item2;
+
+					_log.Info("Sync", string.Format("Upload note {0}", clonenote.UniqueName));
+
 					if (!realnote.IsLocalSaved)
 					{
 						_dispatcher.Invoke(() =>
@@ -199,24 +233,14 @@ namespace AlephNote.Common.Repository
 							break;
 
 						case RemoteUploadResult.Conflict:
-							_log.Warn("Sync", "Uploading note " + clonenote.UniqueName+ " resulted in conflict");
+							_log.Warn("Sync", "Uploading note " + clonenote.UniqueName + " resulted in conflict");
 							ResolveUploadConflict(realnote, clonenote, conflictnote);
 							break;
 
 						default:
 							throw new ArgumentOutOfRangeException();
 					}
-
-				}
-				catch (Exception e)
-				{
-					var message = string.Format("Could not upload note '{2}' ({0}) cause of {1}", clonenote.UniqueName, e.Message, clonenote.Title);
-
-					_log.Error("Sync", message, e);
-					errors.Add(Tuple.Create(message, e));
-				}
-			}
-
+				});
 
 			foreach (var notetuple in notesToResetRemoteDirty)
 			{
@@ -243,7 +267,6 @@ namespace AlephNote.Common.Repository
 							_repo.SaveNote(realnote);
 						}
 					});
-
 				}
 				catch (Exception e)
 				{
@@ -312,7 +335,7 @@ namespace AlephNote.Common.Repository
 						conflict.IsConflictNote = true;
 						_repo.SaveNote(conflict);
 
-						_log.Warn("Sync", "Resolve conflict: UseClientCreateConflictFile (conflictnote: " + conflict.UniqueName+ ")");
+						_log.Warn("Sync", "Resolve conflict: UseClientCreateConflictFile (conflictnote: " + conflict.UniqueName + ")");
 					});
 					break;
 				case ConflictResolutionStrategy.UseServerCreateConflictFile:
@@ -331,7 +354,7 @@ namespace AlephNote.Common.Repository
 						conflict.IsConflictNote = true;
 						_repo.SaveNote(conflict);
 
-						_log.Warn("Sync", "Resolve conflict: UseServerCreateConflictFile (conflictnote: " + conflict.UniqueName+ ")");
+						_log.Warn("Sync", "Resolve conflict: UseServerCreateConflictFile (conflictnote: " + conflict.UniqueName + ")");
 					});
 					break;
 				case ConflictResolutionStrategy.ManualMerge:
@@ -347,15 +370,15 @@ namespace AlephNote.Common.Repository
 						{
 							_log.Warn("Sync", "Resolve conflict: ManualMerge (do not [OnAfterUpload] cause note changed locally)");
 						}
-						
+
 						var txt0 = clonenote.Text;
 						var txt1 = conflictnote.Text;
 
 						var ttl0 = clonenote.Title;
 						var ttl1 = conflictnote.Title;
 
-						var tgs0 = clonenote.Tags.OrderBy(p=>p).ToList();
-						var tgs1 = conflictnote.Tags.OrderBy(p=>p).ToList();
+						var tgs0 = clonenote.Tags.OrderBy(p => p).ToList();
+						var tgs1 = conflictnote.Tags.OrderBy(p => p).ToList();
 
 						var ndp0 = clonenote.Path;
 						var ndp1 = conflictnote.Path;
@@ -363,13 +386,13 @@ namespace AlephNote.Common.Repository
 						if (txt0 != txt1 || ttl0 != ttl1 || !tgs0.CollectionEquals(tgs1) || ndp0 != ndp1)
 						{
 							_log.Info(
-								"Sync", 
-								"Resolve conflict: ManualMerge :: Show dialog", 
-								$"======== Title 1 ========\n{ttl0}\n\n======== Title 2 ========\n{ttl1}\n\n"+
-								$"======== Text 1 ========\n{txt0}\n\n======== Text 2 ========\n{txt1}\n\n"+
+								"Sync",
+								"Resolve conflict: ManualMerge :: Show dialog",
+								$"======== Title 1 ========\n{ttl0}\n\n======== Title 2 ========\n{ttl1}\n\n" +
+								$"======== Text 1 ========\n{txt0}\n\n======== Text 2 ========\n{txt1}\n\n" +
 								$"======== Tags 1 ========\n{string.Join(" | ", tgs0)}\n\n======== Tags 2 ========\n{string.Join(" | ", tgs1)}\n\n");
 
-							_dispatcher.BeginInvoke(() => 
+							_dispatcher.BeginInvoke(() =>
 							{
 								_repo.ShowConflictResolutionDialog(clonenote.UniqueName, txt0, ttl0, tgs0, ndp0, txt1, ttl1, tgs1, ndp1);
 							});
@@ -385,21 +408,30 @@ namespace AlephNote.Common.Repository
 			}
 		}
 
-		private void DownloadNotes(List<Tuple<INote, INote>> notesToDownload, ref List<Tuple<string, Exception>> errors)
+		private void DownloadNotes(List<Tuple<INote, INote>> notesToDownload, ICollection<Tuple<string, Exception>> errors)
 		{
-			foreach (var noteuple in notesToDownload)
-			{
-				var realnote = noteuple.Item1;
-				var clonenote = noteuple.Item2;
-
-				_log.Info("Sync", string.Format("Download note {0}", clonenote.UniqueName));
-
-				try
+			ExecuteInParallel(
+				"DownloadNotes",
+				_noteDownloadEnableMultithreading,
+				notesToDownload,
+				_noteDownloadParallelismLevel,
+				_noteDownloadParallelismThreshold,
+				(e, notetuple) =>
 				{
+					var message = string.Format("Could not synchronize note '{2}' ({0}) cause of {1}", notetuple.Item2.UniqueName, e.Message, notetuple.Item2.Title);
+					_log.Error("Sync", message, e);
+					errors.Add(Tuple.Create(message, e));
+				},
+				notetuple =>
+				{
+					var realnote = notetuple.Item1;
+					var clonenote = notetuple.Item2;
+
+					_log.Info("Sync", string.Format("Download note {0}", clonenote.UniqueName));
 					if (!realnote.IsLocalSaved)
 					{
 						_log.Warn("Sync", "Downloading note skipped (unsaved changes)");
-						continue;
+						return;
 					}
 
 					var result = _repo.Connection.UpdateNoteFromRemote(clonenote);
@@ -421,6 +453,7 @@ namespace AlephNote.Common.Repository
 									}
 								});
 							}
+
 							break;
 
 						case RemoteDownloadResult.Updated:
@@ -460,23 +493,16 @@ namespace AlephNote.Common.Repository
 						default:
 							throw new ArgumentOutOfRangeException();
 					}
-				}
-				catch (Exception e)
-				{
-					var message = string.Format("Could not synchronize note '{2}' ({0}) cause of {1}", clonenote.UniqueName, e.Message, clonenote.Title);
-					_log.Error("Sync", message, e);
-					errors.Add(Tuple.Create(message, e));
-				}
-			}
+				});
 		}
 
-		private void DeleteNotes(List<INote> notesToDelete, ref List<Tuple<string, Exception>> errors)
+		private void DeleteNotes(List<INote> notesToDelete, ICollection<Tuple<string, Exception>> errors)
 		{
 			foreach (var xnote in notesToDelete)
 			{
 				var note = xnote;
 
-				_log.Info("Sync", string.Format("Delete note {0}", note.UniqueName));
+				_log.Info("Sync", $"Delete note {note.UniqueName}");
 
 				try
 				{
@@ -485,26 +511,32 @@ namespace AlephNote.Common.Repository
 				}
 				catch (Exception e)
 				{
-					var message = string.Format("Could not delete note {2} ({0}) on remote cause of {1}", note.UniqueName, e.Message, note.Title);
+					var message = $"Could not delete note {note.Title} ({note.UniqueName}) on remote cause of {e.Message}";
 					_log.Error("Sync", message, e);
 					errors.Add(Tuple.Create(message, e));
 				}
 			}
 		}
 
-		private void DownloadNewNotes(List<Tuple<INote, INote>> allNotes, ref List<Tuple<string, Exception>> errors)
+		private void DownloadNewNotes(IEnumerable<Tuple<INote, INote>> allNotes, ICollection<Tuple<string, Exception>> errors)
 		{
 			var missing = _repo.Connection.ListMissingNotes(allNotes.Select(p => p.Item2).ToList());
-
-			foreach (var xnoteid in missing)
-			{
-				var noteid = xnoteid;
-
-				_log.Info("Sync", string.Format("Download new note {{id:'{0}'}}", noteid));
-
-				try
+			
+			ExecuteInParallel(
+				"DownloadNewNotes",
+				_noteNewDownloadEnableMultithreading,
+				missing,
+				_noteNewDownloadParallelismLevel,
+				_noteNewDownloadParallelismThreshold,
+				(e, xnoteid) =>
 				{
-					var note = _repo.Connection.DownloadNote(noteid, out var isnewnote);
+					var message = $"Could not download new note '{xnoteid}' on remote cause of {e.Message}";
+					_log.Error("Sync", message, e);
+					errors.Add(Tuple.Create(message, e));
+				},
+				xnoteid =>
+				{
+					var note = _repo.Connection.DownloadNote(xnoteid, out var isnewnote);
 					if (isnewnote)
 					{
 						note.SetLocalDirty("New note from remote");
@@ -513,18 +545,11 @@ namespace AlephNote.Common.Repository
 					}
 					else
 					{
-						_log.Warn("Sync", string.Format("Download new note {{id:'{0}'}} returned false", noteid));
+						_log.Warn("Sync", $"Download new note {{id:'{xnoteid}'}} returned false");
 					}
-				}
-				catch (Exception e)
-				{
-					var message = string.Format("Could not download new note '{0}' on remote cause of {1}", noteid, e.Message);
-					_log.Error("Sync", message, e);
-					errors.Add(Tuple.Create(message, e));
-				}
-			}
+				});
 		}
-		
+
 		public void SyncNowAsync()
 		{
 			_log.Info("Sync", "Requesting priorty sync");
@@ -602,7 +627,7 @@ namespace AlephNote.Common.Repository
 				if (Environment.TickCount - startWait1 > seconds * 1000)
 				{
 					_log.Error("Sync", "Requesting sync&stop failed after timeout (waiting on prioritysync)");
-					throw new Exception("Background thread timeout after "+ seconds + "sec");
+					throw new Exception("Background thread timeout after " + seconds + "sec");
 				}
 			}
 		}
@@ -617,17 +642,19 @@ namespace AlephNote.Common.Repository
 					_log.Info("Sync", "Requesting sync&stop finished (isSyncing=false)");
 					return;
 				}
+
 				if (!_running)
 				{
 					_log.Info("Sync", "Requesting sync&stop finished (running=false)");
 					return;
 				}
+
 				SleepDoEvents(10);
 
 				if (Environment.TickCount - startWait2 > seconds * 1000)
 				{
 					_log.Error("Sync", "Requesting sync&stop failed after timeout (waiting on isSyncing)");
-					throw new Exception("Background thread timeout after "+ seconds + "sec");
+					throw new Exception("Background thread timeout after " + seconds + "sec");
 				}
 			}
 		}
@@ -654,6 +681,72 @@ namespace AlephNote.Common.Repository
 		{
 			Thread.Sleep(sleep);
 			_dispatcher.Work();
+		}
+
+		private void ExecuteInParallel<T>(string taskname, bool enableParallelism, IReadOnlyCollection<T> data, int level, int threshold, Action<Exception, T> error, Action<T> method)
+		{
+			if (data.Count == 0)
+			{
+				_log.Debug("Sync",
+					$"Skip executing {{{taskname}}}",
+					$"Multithreading enabled := {enableParallelism}\n" +
+					$"Datasize               := {data.Count}\n" +
+					$"Threadcount            := {level}\n" +
+					$"Threshold              := {threshold}\n");
+			}
+			else if (data.Count < threshold || level <= 1 || !enableParallelism)
+			{
+				_log.Debug("Sync",
+					$"Execute {{{taskname}}} in sequence",
+					$"Multithreading enabled := {enableParallelism}\n" +
+					$"Datasize               := {data.Count}\n" +
+					$"Threadcount            := {level}\n" +
+					$"Threshold              := {threshold}\n");
+
+				foreach (var datum in data)
+				{
+					try
+					{
+						method.Invoke(datum);
+					}
+					catch (Exception e)
+					{
+						error.Invoke(e, datum);
+					}
+				}
+			}
+			else
+			{
+				_log.Debug("Sync",
+					$"Execute {{{taskname}}} in parallel",
+					$"Multithreading enabled := {enableParallelism}\n" +
+					$"Datasize               := {data.Count}\n" +
+					$"Threadcount            := {level}\n" +
+					$"Threshold              := {threshold}\n");
+
+				var work = new ConcurrentQueue<T>();
+				foreach (var datum in data) work.Enqueue(datum);
+
+				var tasks = new List<Task>(level);
+				for (var i = 0; i < level; i++)
+					tasks.Add(Task.Factory.StartNew(() =>
+					{
+						for (;;)
+						{
+							if (!work.TryDequeue(out var datum)) return;
+							try
+							{
+								method(datum);
+							}
+							catch (Exception e)
+							{
+								error(e, datum);
+							}
+						}
+					}));
+
+				Task.WaitAll(tasks.ToArray());
+			}
 		}
 	}
 }

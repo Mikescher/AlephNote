@@ -27,6 +27,9 @@ namespace AlephNote.WPF.Windows
 
 			InitializeComponent();
 
+			// HACK: Set this binding in code - otherwise you can't see the underlying panel in the XAML designer
+			AdvancedWarningGrid.SetBinding(UIElement.VisibilityProperty, nameof(SettingsWindowViewmodel.HideAdvancedVisibility));
+
 			_ownerVM = owner;
 			_viewmodel = new SettingsWindowViewmodel(owner.Owner, data.Clone());
 			DataContext = _viewmodel;
