@@ -212,5 +212,52 @@ namespace AlephNote.WPF.Shortcuts
 			return result;
 
 		}
+
+		public static IEnumerable<Tuple<ObservableShortcutConfig, ObservableShortcutConfig>> ListConflicts(IEnumerable<ObservableShortcutConfig> input)
+		{
+			var shortcuts = input.Where(s => s.Scope != AlephShortcutScope.None && s.Key != AlephKey.None).ToList();
+
+			foreach (var s1 in shortcuts)
+			{
+				HashSet<AlephShortcutScope> conflictScopes;
+				switch (s1.Scope)
+				{
+					case AlephShortcutScope.None:
+						conflictScopes = new HashSet<AlephShortcutScope>{ AlephShortcutScope.None };
+						break;
+					case AlephShortcutScope.Window:
+						conflictScopes = new HashSet<AlephShortcutScope>{ AlephShortcutScope.Window, AlephShortcutScope.Global };
+						break;
+					case AlephShortcutScope.NoteList:
+						conflictScopes = new HashSet<AlephShortcutScope>{ AlephShortcutScope.NoteList, AlephShortcutScope.Window, AlephShortcutScope.Global };
+						break;
+					case AlephShortcutScope.FolderList:
+						conflictScopes = new HashSet<AlephShortcutScope>{ AlephShortcutScope.FolderList, AlephShortcutScope.Window, AlephShortcutScope.Global };
+						break;
+					case AlephShortcutScope.NoteEdit:
+						conflictScopes = new HashSet<AlephShortcutScope>{ AlephShortcutScope.NoteEdit, AlephShortcutScope.Window, AlephShortcutScope.Global };
+						break;
+					case AlephShortcutScope.Global:
+						conflictScopes = new HashSet<AlephShortcutScope>{ AlephShortcutScope.Global };
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+
+				foreach (var s2 in shortcuts)
+				{
+					if (s1 == s2) continue;
+					if (!conflictScopes.Contains(s2.Scope)) continue;
+
+					if (s1.Key != s2.Key) continue;
+
+					if ((s1.Modifiers & s2.Modifiers) == s1.Modifiers || (s1.Modifiers & s2.Modifiers) == s2.Modifiers)
+					{
+						yield return Tuple.Create(s1, s2);
+					}
+				}
+
+			}
+		}
 	}
 }

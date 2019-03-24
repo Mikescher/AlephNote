@@ -21,6 +21,9 @@ namespace AlephNote.WPF.Shortcuts
 		private AlephShortcutScope _scope;
 		public AlephShortcutScope Scope { get { return _scope; } set { _scope = value; OnPropertyChanged(); } }
 
+		private bool _isConflict;
+		public bool IsConflict { get { return _isConflict; } set { if (value == _isConflict) return; _isConflict = value; OnPropertyChanged(); }  }
+
 		public string Gesture => GetGestureString();
 
 		public ObservableShortcutConfig(string id, string d, AlephKey k, AlephModifierKeys m, AlephShortcutScope s)
@@ -30,6 +33,7 @@ namespace AlephNote.WPF.Shortcuts
 			_key = k;
 			_modifiers = m;
 			_scope = s;
+			_isConflict = false;
 		}
 
 		private string GetGestureString()

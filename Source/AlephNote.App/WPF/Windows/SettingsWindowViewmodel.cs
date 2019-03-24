@@ -7,6 +7,7 @@ using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
 using AlephNote.WPF.Shortcuts;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using AlephNote.Common.SPSParser;
 using AlephNote.Common.Themes;
@@ -91,6 +92,9 @@ namespace AlephNote.WPF.Windows
 			Settings = data;
 
 			ShortcutList = ShortcutManager.ListObservableShortcuts(data);
+			ShortcutList.CollectionChanged += (s,e) => UpdateShortcutConflicts();
+			foreach (var elem in ShortcutList) elem.PropertyChanged += (s, a) => { if (a.PropertyName != "IsConflict") UpdateShortcutConflicts(); };
+			UpdateShortcutConflicts();
 
 			AvailableThemes = App.Themes.GetAllAvailableThemes();
 			AvailableModifier = App.Themes.GetAllAvailableModifier().Select(m => new CheckableAlephTheme{Theme=m,Owner=this,Checked=data.ThemeModifier.Contains(m.SourceFilename)}).ToList();
@@ -195,6 +199,17 @@ namespace AlephNote.WPF.Windows
 			if (SelectedSnippet == null) return;
 			SnippetList.Remove(SelectedSnippet);
 			SelectedSnippet = null;
+		}
+
+		private void UpdateShortcutConflicts()
+		{
+			foreach (var sc in ShortcutList) sc.IsConflict = false;
+
+			foreach (var c in ShortcutManager.ListConflicts(ShortcutList.ToList()))
+			{
+				c.Item1.IsConflict = true;
+				c.Item2.IsConflict = true;
+			}
 		}
 	}
 }

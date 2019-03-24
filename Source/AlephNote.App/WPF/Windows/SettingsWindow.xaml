@@ -848,6 +848,11 @@
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<DataGrid Grid.Row="0" ItemsSource="{Binding ShortcutList}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectedItem="{Binding SelectedShortcut}">
+						<DataGrid.RowStyle>
+							<Style TargetType="DataGridRow">
+								<Setter Property="Background" Value="{Binding IsConflict, Converter={converter:BoolToBrushSwitch}, ConverterParameter='Tomato;White'}"/>
+							</Style>
+						</DataGrid.RowStyle>
 						<DataGrid.Columns>
 							<DataGridTemplateColumn Header="Name" Width="SizeToCells" MinWidth="100">
 								<DataGridTemplateColumn.CellTemplate>
