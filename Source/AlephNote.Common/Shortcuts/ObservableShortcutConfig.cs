@@ -2,7 +2,7 @@
 using AlephNote.Common.Settings.Types;
 using MSHC.WPF.MVVM;
 
-namespace AlephNote.WPF.Shortcuts
+namespace AlephNote.Common.Shortcuts
 {
 	public class ObservableShortcutConfig : ObservableObject
 	{

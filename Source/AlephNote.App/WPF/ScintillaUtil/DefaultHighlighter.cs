@@ -1,15 +1,14 @@
 ﻿using AlephNote.Common.Settings;
-using ScintillaNET;
 using AlephNote.Common.Settings.Types;
 
-namespace AlephNote.WPF.Util
+namespace AlephNote.WPF.ScintillaUtil
 {
 	public class DefaultHighlighter : ScintillaHighlighter
 	{
 		private const int MAX_BACKTRACE = 512;
 		private const int MAX_FORWARDTRACE = 512;
 		
-		public override void Highlight(Scintilla sci, int start, int end, AppSettings s)
+		public override void Highlight(ScintillaNET.Scintilla sci, int start, int end, AppSettings s)
 		{
 			bool startsWithNL = sci.GetCharAt(start) == '\n' || (start+1 < sci.TextLength && sci.GetCharAt(start) == '\r' && sci.GetCharAt(start+1) == '\n');
 			bool endsWithNL   = sci.GetCharAt(end) == '\n' || (end-1 >= 0 && sci.GetCharAt(end-1) == '\n');

@@ -1,15 +1,14 @@
 ﻿using System;
 using AlephNote.Common.Settings;
-using ScintillaNET;
 
-namespace AlephNote.WPF.Util
+namespace AlephNote.WPF.ScintillaUtil
 {
 	public class MarkdownHighlighter : ScintillaHighlighter
 	{
 		private enum ParserMode { None, Bold, Italic, CodeTick }
 		private enum ParserSuperMode { None, FencedTildeBlock, FencedBacktickBlock }
 
-		public override void Highlight(Scintilla sci, int istart, int iend, AppSettings s)
+		public override void Highlight(ScintillaNET.Scintilla sci, int istart, int iend, AppSettings s)
 		{
 			// http://spec.commonmark.org/0.28/
 
@@ -63,12 +62,12 @@ namespace AlephNote.WPF.Util
 			}
 		}
 
-		private void HighlightFencedLine(Scintilla sci, string text)
+		private void HighlightFencedLine(ScintillaNET.Scintilla sci, string text)
 		{
 			sci.SetStyling(text.Length, STYLE_MD_CODE);
 		}
 
-		private void HighlightLine(Scintilla sci, string text)
+		private void HighlightLine(ScintillaNET.Scintilla sci, string text)
 		{
 			if (text.TrimStart().StartsWith("#") && text.TrimStart().TrimStart('#').StartsWith(" "))
 			{

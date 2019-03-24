@@ -6,6 +6,7 @@ using System;
 using System.Threading;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
+using AlephNote.WPF.ScintillaUtil;
 using AlephNote.WPF.Util;
 
 namespace AlephNote.WPF.Controls

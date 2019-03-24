@@ -2,7 +2,6 @@
 using AlephNote.Common.Settings.Types;
 using AlephNote.Common.SPSParser;
 using AlephNote.PluginInterface;
-using AlephNote.WPF.Shortcuts;
 using AlephNote.WPF.Util;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Win32;
@@ -17,11 +16,13 @@ using System.Windows;
 using System.Windows.Input;
 using AlephNote.Common.Operations;
 using AlephNote.Common.Settings;
+using AlephNote.Common.Shortcuts;
 using AlephNote.Impl;
 using AlephNote.PluginInterface.Util;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface.Exceptions;
 using AlephNote.WPF.Dialogs;
+using AlephNote.WPF.ScintillaUtil;
 using MSHC.Lang.Collections;
 using MSHC.Lang.Special;
 using MSHC.Util.Threads;
@@ -29,7 +30,7 @@ using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.Windows
 {
-	public partial class MainWindowViewmodel : ObservableObject, ISynchronizationFeedback, IThemeListener
+	public partial class MainWindowViewmodel : ObservableObject, ISynchronizationFeedback, IThemeListener, IShortcutHandler
 	{
 		public ICommand ClosingEvent { get { return new RelayCommand<CancelEventArgs>(OnClosing); } }
 		public ICommand CloseEvent { get { return new RelayCommand<EventArgs>(OnClose); } }

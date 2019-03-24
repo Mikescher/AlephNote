@@ -237,7 +237,7 @@
     <Compile Include="WPF\Util\AlephWPFContext.cs" />
     <Compile Include="WPF\Util\CaptureMouseWheelWhenUnfocusedBehavior.cs" />
     <Compile Include="WPF\Util\CheckableTag.cs" />
-    <Compile Include="WPF\Util\ListHighlightValue.cs" />
+    <Compile Include="WPF\ScintillaUtil\ListHighlightValue.cs" />
     <Compile Include="WPF\Util\SettingsHelper.cs" />
     <Compile Include="WPF\Util\SideBySideDiffModelVisualizer.cs" />
     <Compile Include="WPF\Windows\ConflictWindow.xaml.cs">
@@ -269,14 +269,12 @@
     </Compile>
     <Compile Include="WPF\Extensions\AlephThemeExtension.cs" />
     <Compile Include="WPF\Extensions\ThemeBindingExtension.cs" />
-    <Compile Include="WPF\Shortcuts\GlobalShortcutManager.cs" />
-    <Compile Include="WPF\Shortcuts\ObservableShortcutConfig.cs" />
-    <Compile Include="WPF\Shortcuts\ShortcutManager.cs" />
+    <Compile Include="Native\GlobalShortcutManager.cs" />
     <Compile Include="WPF\Util\HelpTextsLoader.cs" />
     <Compile Include="WPF\Util\HierachicalBaseWrapper.cs" />
     <Compile Include="WPF\Util\IChangeListener.cs" />
-    <Compile Include="WPF\Util\MarkdownHighlighter.cs" />
-    <Compile Include="WPF\Util\DefaultHighlighter.cs" />
+    <Compile Include="WPF\ScintillaUtil\MarkdownHighlighter.cs" />
+    <Compile Include="WPF\ScintillaUtil\DefaultHighlighter.cs" />
     <Compile Include="WPF\Controls\BindablePasswordBox.cs" />
     <Compile Include="WPF\Controls\ClickSelectTextBox.cs" />
     <Compile Include="WPF\Controls\DialogWindow.cs" />
@@ -298,8 +296,8 @@
     <Compile Include="WPF\Converter\FontModifierToFontWeight.cs" />
     <Compile Include="WPF\Converter\CreatePluginSettingsGrid.cs" />
     <Compile Include="WPF\Util\MenuItemContainerTemplateSelector.cs" />
-    <Compile Include="WPF\Util\ScintillaHighlighter.cs" />
-    <Compile Include="WPF\Util\ScintillaSearcher.cs" />
+    <Compile Include="WPF\ScintillaUtil\ScintillaHighlighter.cs" />
+    <Compile Include="WPF\ScintillaUtil\ScintillaSearcher.cs" />
     <Compile Include="WPF\Windows\AboutWindowViewmodel.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>

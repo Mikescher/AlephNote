@@ -1,4 +1,4 @@
-﻿namespace AlephNote.WPF.Util
+﻿namespace AlephNote.WPF.ScintillaUtil
 {
 	public enum ListHighlightValue
 	{

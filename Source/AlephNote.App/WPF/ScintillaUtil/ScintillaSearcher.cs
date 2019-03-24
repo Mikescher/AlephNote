@@ -1,15 +1,13 @@
-﻿using AlephNote.PluginInterface;
-using System;
-using System.Linq;
+﻿using System;
 using System.Text.RegularExpressions;
-using ScintillaNET;
 using AlephNote.Common.Util.Search;
+using AlephNote.PluginInterface;
 
-namespace AlephNote.WPF.Util
+namespace AlephNote.WPF.ScintillaUtil
 {
 	public static class ScintillaSearcher
 	{
-		public static void Highlight(Scintilla sci, INote n, string searchText)
+		public static void Highlight(ScintillaNET.Scintilla sci, INote n, string searchText)
 		{
 			sci.IndicatorCurrent = ScintillaHighlighter.INDICATOR_GLOBAL_SEARCH;
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using AlephNote.Common.AlephXMLSerialization;
 using AlephNote.Common.Settings.Types;
+using AlephNote.Common.Shortcuts;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.AppContext;
@@ -300,7 +301,7 @@ namespace AlephNote.Common.Settings
 
 		[AlephXMLField]
 		public KeyValueFlatCustomList<ShortcutDefinition> Shortcuts { get { return _shortcuts; } set { _shortcuts = value; OnPropertyChanged(); } }
-		private KeyValueFlatCustomList<ShortcutDefinition> _shortcuts = CreateDefaultShortcutList();
+		private KeyValueFlatCustomList<ShortcutDefinition> _shortcuts = ShortcutManager.CreateDefaultShortcutList();
 
 		[AlephXMLField]
 		public Guid ClientID { get { return _clientID; } set { _clientID = value; OnPropertyChanged(); } }
@@ -682,90 +683,11 @@ namespace AlephNote.Common.Settings
 			SnippetDefinition.DEFAULT);
 		}
 
-		private static KeyValueFlatCustomList<ShortcutDefinition> CreateDefaultShortcutList()
-		{
-			return new KeyValueFlatCustomList<ShortcutDefinition>(new[]
-			{
-				Tuple.Create("NewNote",              new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.N)),       // v1.6.00
-				Tuple.Create("NewNoteFromTextFile",  new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.O)),       // v1.6.06
-				Tuple.Create("FocusPrevNote",        new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Alt,     AlephKey.Up)),      // v1.6.19
-				Tuple.Create("FocusNextNote",        new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Alt,     AlephKey.Down)),    // v1.6.19
-				Tuple.Create("SaveAndSync",          new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.S)),       // v1.6.00
-				Tuple.Create("DocumentSearch",       new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Control, AlephKey.F)),       // v1.6.00
-				Tuple.Create("DocumentSearchNext",   new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.None,    AlephKey.F3)),      // v1.6.17
-				Tuple.Create("CloseDocumentSearch",  new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.None,    AlephKey.Escape)),  // v1.6.00
-				Tuple.Create("DuplicateCurrentLine", new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Control, AlephKey.D)),       // v1.6.30
-				Tuple.Create("DeleteNote",           new ShortcutDefinition(AlephShortcutScope.NoteList,   AlephModifierKeys.None,    AlephKey.Delete)),  // v1.6.00
-				Tuple.Create("AppExit",              new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Alt,     AlephKey.F4)),      // v1.6.00
-				Tuple.Create("DeleteFolder",         new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None,    AlephKey.Delete)),  // v1.6.04
-				Tuple.Create("RenameFolder",         new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None,    AlephKey.F2)),      // v1.6.04
-			}, 
-			ShortcutDefinition.DEFAULT);
-		}
-
 		public void Migrate(Version from, Version to)
 		{
-			var v1_6_04 = new Version(1, 6,  4, 0);
-			var v1_6_06 = new Version(1, 6,  6, 0);
-			var v1_6_17 = new Version(1, 6, 17, 0);
-			var v1_6_19 = new Version(1, 6, 19, 0);
-			var v1_6_30 = new Version(1, 6, 30, 0);
-
 			LoggerSingleton.Inst.Info("AppSettings", $"Migrate settings from {from} to {to}");
-
-			if (from < v1_6_04)
-			{
-				if (Shortcuts.All(sc => sc.Key != "DeleteFolder"))
-				{
-					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [DeleteFolder]");
-					Shortcuts = Shortcuts.Concat(Tuple.Create("DeleteFolder", new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None, AlephKey.Delete)));
-				}
-			}
-			if (from < v1_6_04)
-			{
-				if (Shortcuts.All(sc => sc.Key != "RenameFolder"))
-				{
-					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [RenameFolder]");
-					Shortcuts = Shortcuts.Concat(Tuple.Create("RenameFolder", new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None, AlephKey.F2)));
-				}
-			}
-			if (from < v1_6_06)
-			{
-				if (Shortcuts.All(sc => sc.Key != "NewNoteFromTextFile"))
-				{
-					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [NewNoteFromTextFile]");
-					Shortcuts = Shortcuts.Concat(Tuple.Create("NewNoteFromTextFile", new ShortcutDefinition(AlephShortcutScope.Window, AlephModifierKeys.Control, AlephKey.O)));
-				}
-			}
-			if (from < v1_6_17)
-			{
-				if (Shortcuts.All(sc => sc.Key != "DocumentSearchNext"))
-				{
-					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [DocumentSearchNext]");
-					Shortcuts = Shortcuts.Concat(Tuple.Create("DocumentSearchNext", new ShortcutDefinition(AlephShortcutScope.Window, AlephModifierKeys.None, AlephKey.F3)));
-				}
-			}
-			if (from < v1_6_19)
-			{
-				if (Shortcuts.All(sc => sc.Key != "FocusPrevNote"))
-				{
-					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [FocusPrevNote]");
-					Shortcuts = Shortcuts.Concat(Tuple.Create("FocusPrevNote", new ShortcutDefinition(AlephShortcutScope.NoteEdit, AlephModifierKeys.Alt, AlephKey.Up)));
-				}
-				if (Shortcuts.All(sc => sc.Key != "FocusNextNote"))
-				{
-					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [FocusNextNote]");
-					Shortcuts = Shortcuts.Concat(Tuple.Create("FocusNextNote", new ShortcutDefinition(AlephShortcutScope.NoteEdit, AlephModifierKeys.Alt, AlephKey.Down)));
-				}
-			}
-			if (from < v1_6_30)
-			{
-				if (Shortcuts.All(sc => sc.Key != "DuplicateCurrentLine"))
-				{
-					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [DuplicateCurrentLine]");
-					Shortcuts = Shortcuts.Concat(Tuple.Create("DuplicateCurrentLine", new ShortcutDefinition(AlephShortcutScope.NoteEdit, AlephModifierKeys.Control, AlephKey.D)));
-				}
-			}
+			
+			_shortcuts = ShortcutManager.MigrateShortcutSettings(from, to, _shortcuts);
 		}
 
 		public static List<AXMLFieldInfo> Diff(AppSettings a, AppSettings b)

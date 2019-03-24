@@ -13,8 +13,8 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
+using AlephNote.Common.Shortcuts;
 using AlephNote.WPF.Controls;
-using AlephNote.WPF.Shortcuts;
 using MSHC.WPF.MVVM;
 using Hardcodet.Wpf.TaskbarNotification;
 using AlephNote.WPF.Converter;
@@ -24,12 +24,13 @@ using AlephNote.WPF.Extensions;
 using AlephNote.Common.Util;
 using AlephNote.Common.Util.Search;
 using AlephNote.Native;
+using AlephNote.WPF.ScintillaUtil;
 using MSHC.Lang.Collections;
 using Application = System.Windows.Application;
 
 namespace AlephNote.WPF.Windows
 {
-	public partial class MainWindow
+	public partial class MainWindow : IShortcutHandlerParent
 	{
 		public static MainWindow Instance { get; private set; }
 
@@ -67,6 +68,8 @@ namespace AlephNote.WPF.Windows
 
 			FocusScintillaDelayed(250);
 		}
+
+		public IShortcutHandler GetShortcutHandler() => viewmodel;
 
 		protected override void OnSourceInitialized(EventArgs e)
 		{

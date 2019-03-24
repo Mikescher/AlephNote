@@ -1,17 +1,17 @@
-﻿using ScintillaNET;
-using System;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using AlephNote.Common.Settings.Types;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using AlephNote.Common.Settings;
+using AlephNote.Common.Settings.Types;
 using AlephNote.Common.Themes;
-using AlephNote.WPF.Extensions;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface.AppContext;
+using AlephNote.WPF.Extensions;
+using ScintillaNET;
 
-namespace AlephNote.WPF.Util
+namespace AlephNote.WPF.ScintillaUtil
 {
 	public abstract class ScintillaHighlighter
 	{
@@ -109,7 +109,7 @@ namespace AlephNote.WPF.Util
 			Tuple.Create('~',  ListHighlightValue.INTERMED),
 		};
 
-		public void SetUpStyles(Scintilla sci, AppSettings s)
+		public void SetUpStyles(ScintillaNET.Scintilla sci, AppSettings s)
 		{
 			var theme = ThemeManager.Inst.CurrentThemeSet;
 
@@ -213,9 +213,9 @@ namespace AlephNote.WPF.Util
 			sci.SetFoldMarginHighlightColor(!theme.Get<ColorRef>("scintilla.margin.symbols:background").IsTransparent, theme.Get<ColorRef>("scintilla.margin.symbols:background").ToDCol());
 		}
 
-		public abstract void Highlight(Scintilla sci, int start, int end, AppSettings s);
+		public abstract void Highlight(ScintillaNET.Scintilla sci, int start, int end, AppSettings s);
 
-		protected void LinkHighlight(Scintilla sci, int start, string text)
+		protected void LinkHighlight(ScintillaNET.Scintilla sci, int start, string text)
 		{
 			var m = GetURLMatchingRegex().Matches(text);
 
@@ -277,14 +277,14 @@ namespace AlephNote.WPF.Util
 			return r;
 		}
 
-		public List<Tuple<string, int, int>> FindAllLinks(Scintilla noteEdit)
+		public List<Tuple<string, int, int>> FindAllLinks(ScintillaNET.Scintilla noteEdit)
 		{
 			var matched = GetURLMatchingRegex().Matches(noteEdit.Text);
 
 			return matched.OfType<Match>().Select(m => Tuple.Create(m.Groups[0].Value, m.Index, m.Index + m.Length)).ToList();
 		}
 
-		public void UpdateListMargin(Scintilla sci, int? start, int? end)
+		public void UpdateListMargin(ScintillaNET.Scintilla sci, int? start, int? end)
 		{
 			int startLine = (start == null) ? 0                 : sci.LineFromPosition(start.Value);
 			int endLine   = (end   == null) ? sci.Lines.Count-1 : sci.LineFromPosition(end.Value);

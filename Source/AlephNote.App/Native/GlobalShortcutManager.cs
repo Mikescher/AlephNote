@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AlephNote.WPF.Windows;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interop;
 using AlephNote.Common.Settings.Types;
-using System.Windows.Input;
+using AlephNote.Common.Shortcuts;
+using AlephNote.WPF.Windows;
 
-namespace AlephNote.WPF.Shortcuts
+namespace AlephNote.Native
 {
 	public class GlobalShortcutManager
 	{

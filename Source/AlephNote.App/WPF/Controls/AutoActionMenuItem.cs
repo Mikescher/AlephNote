@@ -1,9 +1,9 @@
-﻿using AlephNote.WPF.Shortcuts;
-using AlephNote.WPF.Windows;
+﻿using AlephNote.WPF.Windows;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using AlephNote.Common.Settings;
+using AlephNote.Common.Shortcuts;
 
 namespace AlephNote.WPF.Controls
 {

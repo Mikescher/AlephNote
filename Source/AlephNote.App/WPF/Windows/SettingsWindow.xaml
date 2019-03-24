@@ -8,9 +8,9 @@
 		xmlns:windows="clr-namespace:AlephNote.WPF.Windows"
 		xmlns:ctrl="clr-namespace:AlephNote.WPF.Controls"
 		xmlns:mext="clr-namespace:MSHC.WPF.MarkupExtensions;assembly=CSharpUtils"
-		xmlns:shortcuts="clr-namespace:AlephNote.WPF.Shortcuts"
-        xmlns:locconv="clr-namespace:AlephNote.WPF.Converter"
+		xmlns:locconv="clr-namespace:AlephNote.WPF.Converter"
 		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+		xmlns:commshortcuts="clr-namespace:AlephNote.Common.Shortcuts;assembly=AlephNote.Common"
 		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance windows:SettingsWindowViewmodel}"
 		WindowStartupLocation="CenterOwner"
@@ -861,21 +861,21 @@
 							<DataGridTemplateColumn Header="Name" Width="SizeToCells" MinWidth="100">
 								<DataGridTemplateColumn.CellTemplate>
 									<DataTemplate>
-										<TextBlock d:DataContext="{d:DesignInstance shortcuts:ObservableShortcutConfig}" Text="{Binding Identifier}" Foreground="{Binding Key, Converter={locconv:KeyToColor}}" />
+										<TextBlock d:DataContext="{d:DesignInstance commshortcuts:ObservableShortcutConfig}" Text="{Binding Identifier}" Foreground="{Binding Key, Converter={locconv:KeyToColor}}" />
 									</DataTemplate>
 								</DataGridTemplateColumn.CellTemplate>
 							</DataGridTemplateColumn>
 							<DataGridTemplateColumn Header="Shortcut" Width="SizeToCells" MinWidth="100">
 								<DataGridTemplateColumn.CellTemplate>
 									<DataTemplate>
-										<TextBlock d:DataContext="{d:DesignInstance shortcuts:ObservableShortcutConfig}" Text="{Binding Gesture}" Foreground="{Binding Key, Converter={locconv:KeyToColor}}" />
+										<TextBlock d:DataContext="{d:DesignInstance commshortcuts:ObservableShortcutConfig}" Text="{Binding Gesture}" Foreground="{Binding Key, Converter={locconv:KeyToColor}}" />
 									</DataTemplate>
 								</DataGridTemplateColumn.CellTemplate>
 							</DataGridTemplateColumn>
 							<DataGridTemplateColumn Header="Scope" Width="SizeToCells" MinWidth="100">
 								<DataGridTemplateColumn.CellTemplate>
 									<DataTemplate>
-										<TextBlock d:DataContext="{d:DesignInstance shortcuts:ObservableShortcutConfig}" Text="{Binding Scope, Converter={converter:EnumToDescription}}" Foreground="{Binding Key, Converter={locconv:KeyToColor}}" />
+										<TextBlock d:DataContext="{d:DesignInstance commshortcuts:ObservableShortcutConfig}" Text="{Binding Scope, Converter={converter:EnumToDescription}}" Foreground="{Binding Key, Converter={locconv:KeyToColor}}" />
 									</DataTemplate>
 								</DataGridTemplateColumn.CellTemplate>
 							</DataGridTemplateColumn>
