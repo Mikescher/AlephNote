@@ -206,6 +206,8 @@ namespace AlephNote.WPF.Windows
 
 			NoteEdit.ReadOnly = s.IsReadOnlyMode || VM?.SelectedNote?.IsLocked==true;
 
+			NoteEdit.ClearCmdKey(Keys.Control | Keys.D); // SCI_SELECTIONDUPLICATE
+
 			ResetScintillaScrollAndUndo();
 
 			ForceNewHighlighting(s);

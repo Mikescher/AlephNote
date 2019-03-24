@@ -56,6 +56,12 @@ namespace AlephNote.WPF.Shortcuts
 			AddCommand("InsertNotelink",                   vm => vm.InsertNotelinkCommand,                   "Insert a link to another note",                            ActionModifier.AccessControl);
 			AddCommand("InsertMaillink",                   vm => vm.InsertMaillinkCommand,                   "Insert a clickable mail address",                          ActionModifier.AccessControl);
 
+			AddCommand("MoveCurrentLineUp",                vm => vm.MoveCurrentLineUpCommand,                "Move the currently selected line one up",                  ActionModifier.AccessControl);
+			AddCommand("MoveCurrentLineDown",              vm => vm.MoveCurrentLineDownCommand,              "Move the currently selected line one down",                ActionModifier.AccessControl);
+			AddCommand("DuplicateCurrentLine",             vm => vm.DuplicateCurrentLineCommand,             "Duplicate the current line",                               ActionModifier.AccessControl);
+			AddCommand("CopyCurrentLine",                  vm => vm.CopyCurrentLineCommand,                  "Copy the currently selected line to the clipboard",        ActionModifier.AccessControl);
+			AddCommand("CutCurrentLine",                   vm => vm.CutCurrentLineCommand,                   "Cut the currently selected line to the clipboard",         ActionModifier.AccessControl);
+
 			AddCommand("SaveAndSync",                      vm => vm.SaveAndSyncCommand,                      "Save current note and synchronize");
 			AddCommand("Resync",                           vm => vm.ResyncCommand,                           "Start synchronization with remote");
 			AddCommand("FullResync",                       vm => vm.FullResyncCommand,                       "Delete local data and do a full resync",                   ActionModifier.AccessControl);

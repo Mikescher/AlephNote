@@ -11,6 +11,7 @@ using Microsoft.Win32;
 using MSHC.Lang.Collections;
 using MSHC.Util.Helper;
 using Ookii.Dialogs.Wpf;
+using ScintillaNET;
 
 namespace AlephNote.WPF.Windows
 {
@@ -33,6 +34,11 @@ namespace AlephNote.WPF.Windows
 		public ICommand InsertFilelinkCommand { get { return new RelayCommand(InsertFilelink); } }
 		public ICommand InsertNotelinkCommand { get { return new RelayCommand(InsertNotelink); } }
 		public ICommand InsertMaillinkCommand { get { return new RelayCommand(InsertMaillink); } }
+		public ICommand MoveCurrentLineUpCommand { get { return new RelayCommand(MoveCurrentLineUp); } }
+		public ICommand MoveCurrentLineDownCommand { get { return new RelayCommand(MoveCurrentLineDown); } }
+		public ICommand DuplicateCurrentLineCommand { get { return new RelayCommand(DuplicateCurrentLine); } }
+		public ICommand CopyCurrentLineCommand { get { return new RelayCommand(CopyCurrentLine); } }
+		public ICommand CutCurrentLineCommand { get { return new RelayCommand(CutCurrentLine); } }
 		
 		private void ExportNote()
 		{
@@ -405,6 +411,65 @@ namespace AlephNote.WPF.Windows
 
 			Owner.NoteEdit.ReplaceSelection(uri);
 			Owner.FocusScintilla();
+		}
+
+		private void MoveCurrentLineUp()
+		{
+			if (SelectedNote == null) return;
+			
+			var hasSelection = Owner.NoteEdit.Selections.Any(s => s.End - s.Start > 1);
+
+			Owner.NoteEdit.ExecuteCmd(Command.MoveSelectedLinesUp);
+
+			if (!hasSelection) Owner.NoteEdit.SetEmptySelection(Owner.NoteEdit.CurrentPosition);
+		}
+
+		private void MoveCurrentLineDown()
+		{
+			if (SelectedNote == null) return;
+			
+			var hasSelection = Owner.NoteEdit.Selections.Any(s => s.End - s.Start > 1);
+			
+			Owner.NoteEdit.ExecuteCmd(Command.MoveSelectedLinesDown);
+
+			if (!hasSelection) Owner.NoteEdit.SetEmptySelection(Owner.NoteEdit.CurrentPosition);
+		}
+
+		private void DuplicateCurrentLine()
+		{
+			if (SelectedNote == null) return;
+			
+			var lineidx = Owner.NoteEdit.CurrentLine;
+			var lines = Owner.NoteEdit.Lines;
+			if (lineidx<0 || lineidx >=lines.Count) return;
+
+			if (lineidx == lines.Count-1)
+				Owner.NoteEdit.InsertText(lines[lineidx].EndPosition, "\r\n" + lines[lineidx].Text);
+			else
+				Owner.NoteEdit.InsertText(lines[lineidx].EndPosition, lines[lineidx].Text);
+		}
+
+		private void CopyCurrentLine()
+		{
+			if (SelectedNote == null) return;
+			
+			var lineidx = Owner.NoteEdit.CurrentLine;
+			var lines = Owner.NoteEdit.Lines;
+			if (lineidx<0 || lineidx >=lines.Count) return;
+
+			Owner.NoteEdit.CopyRange(lines[lineidx].Position, lines[lineidx].EndPosition);
+		}
+
+		private void CutCurrentLine()
+		{
+			if (SelectedNote == null) return;
+			
+			var lineidx = Owner.NoteEdit.CurrentLine;
+			var lines = Owner.NoteEdit.Lines;
+			if (lineidx<0 || lineidx >=lines.Count) return;
+
+			Owner.NoteEdit.CopyRange(lines[lineidx].Position, lines[lineidx].EndPosition);
+			Owner.NoteEdit.DeleteRange(lines[lineidx].Position, lines[lineidx].Length);
 		}
 	}
 }

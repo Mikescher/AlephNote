@@ -690,6 +690,7 @@ namespace AlephNote.Common.Settings
 				Tuple.Create("DocumentSearch",       new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Control, AlephKey.F)),       // v1.6.00
 				Tuple.Create("DocumentSearchNext",   new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.None,    AlephKey.F3)),      // v1.6.17
 				Tuple.Create("CloseDocumentSearch",  new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.None,    AlephKey.Escape)),  // v1.6.00
+				Tuple.Create("DuplicateCurrentLine", new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Control, AlephKey.D)),       // v1.6.30
 				Tuple.Create("DeleteNote",           new ShortcutDefinition(AlephShortcutScope.NoteList,   AlephModifierKeys.None,    AlephKey.Delete)),  // v1.6.00
 				Tuple.Create("AppExit",              new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Alt,     AlephKey.F4)),      // v1.6.00
 				Tuple.Create("DeleteFolder",         new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None,    AlephKey.Delete)),  // v1.6.04
@@ -704,6 +705,7 @@ namespace AlephNote.Common.Settings
 			var v1_6_06 = new Version(1, 6,  6, 0);
 			var v1_6_17 = new Version(1, 6, 17, 0);
 			var v1_6_19 = new Version(1, 6, 19, 0);
+			var v1_6_30 = new Version(1, 6, 30, 0);
 
 			LoggerSingleton.Inst.Info("AppSettings", $"Migrate settings from {from} to {to}");
 
@@ -750,6 +752,14 @@ namespace AlephNote.Common.Settings
 				{
 					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [FocusNextNote]");
 					Shortcuts = Shortcuts.Concat(Tuple.Create("FocusNextNote", new ShortcutDefinition(AlephShortcutScope.NoteEdit, AlephModifierKeys.Alt, AlephKey.Down)));
+				}
+			}
+			if (from < v1_6_30)
+			{
+				if (Shortcuts.All(sc => sc.Key != "DuplicateCurrentLine"))
+				{
+					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [DuplicateCurrentLine]");
+					Shortcuts = Shortcuts.Concat(Tuple.Create("DuplicateCurrentLine", new ShortcutDefinition(AlephShortcutScope.NoteEdit, AlephModifierKeys.Control, AlephKey.D)));
 				}
 			}
 		}
