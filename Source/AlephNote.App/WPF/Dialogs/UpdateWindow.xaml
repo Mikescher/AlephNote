@@ -8,6 +8,7 @@
 		xmlns:converter="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
 		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance local:UpdateWindowViewmodel}"
+		WindowStartupLocation="CenterScreen"
 		Title="Update found" Height="250" Width="500">
 	<Grid>
 		<Grid.RowDefinitions>
