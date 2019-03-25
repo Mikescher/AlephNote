@@ -217,7 +217,7 @@ namespace AlephNote.WPF.Windows
 
 					try
 					{
-						string msg = $"Download Note {idx}/{missing.Count}";
+						var msg = $"Download Note {idx}/{missing.Count}";
 						Application.Current.Dispatcher.Invoke(() => { SyncInfoText = msg; });
 
 						var note = conn.DownloadNote(noteid, out var isnewnote);

@@ -206,6 +206,7 @@ namespace AlephNote.WPF.Controls
 				
 				var rm = ((IList<TokenizedTagItem>)ItemsSource).FirstOrDefault(p => p.IsEditing);
 				if (rm != null) ((IList<TokenizedTagItem>)ItemsSource).Remove(rm);
+				Items.Refresh();
 				IsEditing = false;
 			}
 			finally
