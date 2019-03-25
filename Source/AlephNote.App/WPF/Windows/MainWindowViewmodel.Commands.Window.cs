@@ -48,7 +48,7 @@ namespace AlephNote.WPF.Windows
 		public void ShowMainWindow()
 		{
 			Owner.Show();
-			WindowState = WindowState.Normal;
+			if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
 			Owner.Activate();
 			Owner.Focus();
 			Owner.FocusScintillaDelayed(150);
