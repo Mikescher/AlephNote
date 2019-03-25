@@ -19,6 +19,7 @@ using AlephNote.Common.Shortcuts;
 using AlephNote.PluginInterface.Util;
 using MSHC.WPF.MVVM;
 using AlephNote.Common.Util.Search;
+using MSHC.Lang.Collections;
 using MSHC.WPF;
 
 namespace AlephNote.WPF.Controls
@@ -70,6 +71,19 @@ namespace AlephNote.WPF.Controls
 		{
 			get { return (INote)GetValue(SelectedNoteProperty); }
 			set { SetValue(SelectedNoteProperty, value); }
+		}
+		
+		private static readonly DependencyProperty SelectedNotesListProperty =
+			DependencyProperty.Register(
+				"SelectedNotesList",
+				typeof(ObservableCollection<INote>),
+				typeof(NotesViewHierachical),
+				new FrameworkPropertyMetadata(null));
+		
+		public ObservableCollection<INote> SelectedNotesList
+		{
+			get { return (ObservableCollection<INote>)GetValue(SelectedNotesListProperty); }
+			set { throw new Exception("An attempt ot modify Read-Only property"); }
 		}
 
 		public static readonly DependencyProperty SelectedFolderProperty =
@@ -170,6 +184,8 @@ namespace AlephNote.WPF.Controls
 		public NotesViewHierachical()
 		{
 			App.Logger.Trace("NotesViewHierachical", ".ctr()");
+
+			SetCurrentValue(SelectedNotesListProperty, new ObservableCollection<INote>());
 
 			_displayItems = new HierachicalWrapper_Folder("ROOT", this, DirectoryPath.Root(), true, false);
 			InitializeComponent();
@@ -662,11 +678,6 @@ namespace AlephNote.WPF.Controls
 			Keyboard.Focus(FolderTreeView);
 		}
 
-		public List<INote> GetAllSelectedNotes()
-		{
-			return HierachicalNotesList.SelectedItems.OfType<INote>().ToList();
-		}
-
 		private void NotesList_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
 		{
 			ListViewItem lvi = WPFHelper.VisualLVUpwardSearch(e.OriginalSource as DependencyObject);
@@ -706,6 +717,12 @@ namespace AlephNote.WPF.Controls
 				HierachicalNotesList.ContextMenu = cms;
 				cms.IsOpen = true;
 			}
+		}
+
+		private void HierachicalNotesList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (SelectedNotesList == null) SetValue(SelectedNotesListProperty, new ObservableCollection<INote>());
+			SelectedNotesList.SynchronizeCollectionSafe(((ListView)sender).SelectedItems.Cast<INote>().ToList());
 		}
 	}
 }

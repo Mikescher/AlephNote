@@ -24,7 +24,5 @@ namespace AlephNote.WPF.Controls
 
 		void FocusNotesList();
 		void FocusFolderList();
-
-		List<INote> GetAllSelectedNotes();
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using AlephNote.Common.Settings.Types;
 using AlephNote.PluginInterface;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ using System.Windows.Media;
 using AlephNote.Common.Shortcuts;
 using AlephNote.PluginInterface.Util;
 using AlephNote.Common.Util.Search;
+using MSHC.Lang.Collections;
 using MSHC.WPF;
 
 namespace AlephNote.WPF.Controls
@@ -69,6 +71,19 @@ namespace AlephNote.WPF.Controls
 		{
 			get { return (INote)GetValue(SelectedNoteProperty); }
 			set { SetValue(SelectedNoteProperty, value); }
+		}
+		
+		private static readonly DependencyProperty SelectedNotesListProperty =
+			DependencyProperty.Register(
+				"SelectedNotesList",
+				typeof(ObservableCollection<INote>),
+				typeof(NotesViewFlat),
+				new FrameworkPropertyMetadata(null));
+		
+		public ObservableCollection<INote> SelectedNotesList
+		{
+			get { return (ObservableCollection<INote>)GetValue(SelectedNotesListProperty); }
+			set { throw new Exception("An attempt ot modify Read-Only property"); }
 		}
 
 		public static readonly DependencyProperty AllNotesProperty =
@@ -138,6 +153,8 @@ namespace AlephNote.WPF.Controls
 		public NotesViewFlat()
 		{
 			App.Logger.Trace("NotesViewFlat", ".ctr()");
+
+			SetCurrentValue(SelectedNotesListProperty, new ObservableCollection<INote>());
 
 			InitializeComponent();
 			RootGrid.DataContext = this;
@@ -277,11 +294,6 @@ namespace AlephNote.WPF.Controls
 			// control does not exist
 		}
 
-		public List<INote> GetAllSelectedNotes()
-		{
-			return NotesList.SelectedItems.OfType<INote>().ToList();
-		}
-
 		public DirectoryPath GetNewNotesPath()
 		{
 			return DirectoryPath.Root();
@@ -326,6 +338,12 @@ namespace AlephNote.WPF.Controls
 				NotesList.ContextMenu = cms;
 				cms.IsOpen = true;
 			}
+		}
+
+		private void NotesList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (SelectedNotesList == null) SetValue(SelectedNotesListProperty, new ObservableCollection<INote>());
+			SelectedNotesList.SynchronizeCollectionSafe(((ListView)sender).SelectedItems.Cast<INote>().ToList());
 		}
 	}
 }

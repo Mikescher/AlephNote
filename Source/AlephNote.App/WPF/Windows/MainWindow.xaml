@@ -212,6 +212,7 @@
 									ParentAnchor="{Binding ., ElementName=LayoutRoot}"
 									Settings="{Binding Settings}"
 									SelectedNote="{Binding SelectedNote}"
+									SelectedNotesList="{Binding AllSelectedNotes, Mode=OneWayToSource}"
 									AllNotes="{Binding Repository.Notes}" 
 									SearchText="{Binding SearchText}" />
 					</ControlTemplate>
@@ -225,6 +226,7 @@
 									Settings="{Binding Settings}"
 									AllNotes="{Binding Repository.Notes}" 
 									SelectedNote="{Binding SelectedNote}"
+									SelectedNotesList="{Binding AllSelectedNotes, Mode=OneWayToSource}"
 									SelectedFolderPath="{Binding SelectedFolderPath}"
 									SearchText="{Binding SearchText}" />
 					</ControlTemplate>
@@ -370,14 +372,16 @@
 				<Image Source="/Resources/refresh.png" />
 			</Button>
 			<Separator Margin="5,2" Foreground="Beige" />
-			<StatusBarItem Content="Length: " />
-			<StatusBarItem Content="{Binding SelectedNote.Text.Length, FallbackValue=''}"/>
-			<StatusBarItem Content="Lines: " />
-			<StatusBarItem Content="{Binding SelectedNote.Text, Converter={conv:TextToLines}, FallbackValue=''}"/>
-			<StatusBarItem Content="Created: " />
-			<StatusBarItem Content="{Binding SelectedNote.CreationDate, Converter={conv:DateOnlyToDisplay}, FallbackValue=''}" ToolTip="{Binding SelectedNote.CreationDate, Converter={conv:DTOToDisplay}, FallbackValue=''}"/>
-			<StatusBarItem Content="Synchronized: " />
-			<StatusBarItem Content="{Binding SelectedNote.IsRemoteSaved, FallbackValue='?'}"/>
+			<StatusBarItem Content="Length: " Visibility="{Binding AllSelectedNotes.Count, Converter={conv:IntegerEqualsToVisibility}, ConverterParameter='1;Visible;Collapsed'}" />
+			<StatusBarItem Content="{Binding SelectedNote.Text.Length, FallbackValue=''}" Visibility="{Binding AllSelectedNotes.Count, Converter={conv:IntegerEqualsToVisibility}, ConverterParameter='1;Visible;Collapsed'}" />
+			<StatusBarItem Content="Lines: " Visibility="{Binding AllSelectedNotes.Count, Converter={conv:IntegerEqualsToVisibility}, ConverterParameter='1;Visible;Collapsed'}" />
+			<StatusBarItem Content="{Binding SelectedNote.Text, Converter={conv:TextToLines}, FallbackValue=''}" Visibility="{Binding AllSelectedNotes.Count, Converter={conv:IntegerEqualsToVisibility}, ConverterParameter='1;Visible;Collapsed'}" />
+			<StatusBarItem Content="Created: " Visibility="{Binding AllSelectedNotes.Count, Converter={conv:IntegerEqualsToVisibility}, ConverterParameter='1;Visible;Collapsed'}" />
+			<StatusBarItem Content="{Binding SelectedNote.CreationDate, Converter={conv:DateOnlyToDisplay}, FallbackValue=''}" ToolTip="{Binding SelectedNote.CreationDate, Converter={conv:DTOToDisplay}, FallbackValue=''}" Visibility="{Binding AllSelectedNotes.Count, Converter={conv:IntegerEqualsToVisibility}, ConverterParameter='1;Visible;Collapsed'}" />
+			<StatusBarItem Content="Synchronized: " Visibility="{Binding AllSelectedNotes.Count, Converter={conv:IntegerEqualsToVisibility}, ConverterParameter='1;Visible;Collapsed'}" />
+			<StatusBarItem Content="{Binding SelectedNote.IsRemoteSaved, FallbackValue='?'}" Visibility="{Binding AllSelectedNotes.Count, Converter={conv:IntegerEqualsToVisibility}, ConverterParameter='1;Visible;Collapsed'}" />
+			<StatusBarItem Content="Selected notes: " Visibility="{Binding AllSelectedNotes.Count, Converter={conv:IntegerGreaterToVisibility}, ConverterParameter='1;Visible;Collapsed'}" />
+			<StatusBarItem Content="{Binding AllSelectedNotes.Count}" Visibility="{Binding AllSelectedNotes.Count, Converter={conv:IntegerGreaterToVisibility}, ConverterParameter='1;Visible;Collapsed'}" />
 			<controls:ConnectionDisplayControl Settings="{Binding Settings}" Repository="{Binding Repository}" ChangeAccount="CDC_DoChangeAccount"  HorizontalAlignment="Right" Margin="0,0,15,0"/>
 		</StatusBar>
 

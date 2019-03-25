@@ -7,6 +7,7 @@ using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -45,6 +46,9 @@ namespace AlephNote.WPF.Windows
 		private INote _lastSelectedNote = null;
 		private INote _selectedNote;
 		public INote SelectedNote { get { return _selectedNote; } set { if (_selectedNote != value) { _selectedNote = value; OnPropertyChanged(); SelectedNoteChanged(); } } }
+		
+		private ObservableCollection<INote> _allSelectedNotes;
+		public ObservableCollection<INote> AllSelectedNotes { get { return _allSelectedNotes; } set { _allSelectedNotes = value; OnPropertyChanged(); } }
 
 		private DirectoryPath _selectedFolderPath;
 		public DirectoryPath SelectedFolderPath { get { return _selectedFolderPath; } set { if (_selectedFolderPath != value) { _selectedFolderPath = value; OnPropertyChanged(); SelectedFolderPathChanged(); } } }
@@ -575,11 +579,6 @@ namespace AlephNote.WPF.Windows
 		public void ShowConflictResolutionDialog(string uuid, string txt0, string ttl0, List<string> tgs0, DirectoryPath ndp0, string txt1, string ttl1, List<string> tgs1, DirectoryPath ndp1)
 		{
 			ConflictWindow.Show(Repository, Owner, uuid, Tuple.Create(txt0, ttl0, tgs0, ndp0), Tuple.Create(txt1, ttl1, tgs1, ndp1));
-		}
-
-		public List<INote> GetAllSelectedNotes()
-		{
-			return Owner.NotesViewControl.GetAllSelectedNotes();
 		}
 	}
 }

@@ -142,7 +142,7 @@ namespace AlephNote.WPF.Windows
 		{
 			if (SelectedNote == null) return;
 
-			var selection = GetAllSelectedNotes();
+			var selection = AllSelectedNotes.ToList();
 			if (selection.Count > 1)
 			{
 				var dialog = new VistaFolderBrowserDialog();
@@ -207,7 +207,7 @@ namespace AlephNote.WPF.Windows
 			{
 				if (SelectedNote == null) return;
 
-				var selection = GetAllSelectedNotes();
+				var selection = AllSelectedNotes.ToList();
 				if (selection.Count > 1)
 				{
 					if (MessageBox.Show(Owner, $"Do you really want to delete {selection.Count} notes?", "Delete multiple notes?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
@@ -238,7 +238,7 @@ namespace AlephNote.WPF.Windows
 
 			if (Owner.Visibility == Visibility.Hidden) ShowMainWindow();
 
-			var selection = GetAllSelectedNotes();
+			var selection = AllSelectedNotes.ToList();
 			if (selection.Count > 1)
 			{
 				if (MessageBox.Show(Owner, $"Do you really want to duplicate {selection.Count} notes?", "Duplicate multiple notes?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
@@ -295,7 +295,7 @@ namespace AlephNote.WPF.Windows
 
 			if (SelectedNote == null) return;
 
-			var selection = GetAllSelectedNotes();
+			var selection = AllSelectedNotes.ToList();
 			if (selection.Count > 1)
 			{
 				var newpin = !selection[0].IsPinned;
@@ -320,7 +320,7 @@ namespace AlephNote.WPF.Windows
 
 			if (SelectedNote == null) return;
 
-			var selection = GetAllSelectedNotes();
+			var selection = AllSelectedNotes.ToList();
 			if (selection.Count > 1)
 			{
 				var newlock = !selection[0].IsLocked;

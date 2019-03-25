@@ -90,6 +90,7 @@
 					  AllowDrop="True"
 					  Drop="HierachicalNotesList_Drop"
 					  KeyDown="HierachicalNotesList_KeyDown"
+					  SelectionChanged="HierachicalNotesList_OnSelectionChanged"
 					  services:MultiDataTemplateService.MultiDataTemplateSelector="{Binding Settings.NotePreviewStyle}"
 					  HorizontalContentAlignment="Stretch"
 					  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
