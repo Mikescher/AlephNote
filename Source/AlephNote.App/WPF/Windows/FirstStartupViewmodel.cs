@@ -1,10 +1,13 @@
 ﻿using AlephNote.Common.Plugins;
 using AlephNote.PluginInterface;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using AlephNote.Common.Repository;
+using AlephNote.Common.Settings;
 using AlephNote.Impl;
 using AlephNote.PluginInterface.Util;
 using AlephNote.Common.Util;
@@ -52,6 +55,13 @@ namespace AlephNote.WPF.Windows
 		{
 			get { return _isValidating; }
 			set { _isValidating = value; OnPropertyChanged(); }
+		}
+
+		private bool _canAbort = false;
+		public bool CanAbort
+		{
+			get { return _canAbort; }
+			set { _canAbort = value; OnPropertyChanged(); }
 		}
 
 		private string _syncInfoText = "";
@@ -126,7 +136,19 @@ namespace AlephNote.WPF.Windows
 			{
 				try
 				{
-					Application.Current.Dispatcher.Invoke(() => { IsValidating = true; });
+					Application.Current.Dispatcher.Invoke(() =>
+					{
+						IsValidating = true; 
+
+						ConfigurationValidated = false;
+						ValidationResultData = null;
+						ValidationResultNotes = null;
+
+						SyncProgress = 0;
+						SyncInfoText = string.Empty;
+
+						CanAbort = true;
+					});
 					
 					var r = DoSync(acc, App.Logger);
 					Application.Current.Dispatcher.Invoke(() =>
@@ -134,8 +156,8 @@ namespace AlephNote.WPF.Windows
 						ConfigurationValidated = true;
 						ValidationResultData = r.Item1;
 						ValidationResultNotes = r.Item2;
-						SyncProgress = -100;
-						SyncInfoText = string.Empty;
+						SyncProgress = r.Item3 == 0 ? -100 : -66;
+						SyncInfoText = r.Item3 == 0 ? string.Empty : $"({r.Item3}/{r.Item4} notes had download errors)";
 					});
 				}
 				catch (ThreadAbortException)
@@ -195,13 +217,16 @@ namespace AlephNote.WPF.Windows
 			_progressThread.Start();
 		}
 
-		private Tuple<IRemoteStorageSyncPersistance, List<INote>> DoSync(RemoteStorageAccount acc, AlephLogger log)
+		private Tuple<IRemoteStorageSyncPersistance, List<INote>, int, int> DoSync(RemoteStorageAccount acc, AlephLogger log)
 		{
 			var data = SelectedProvider.CreateEmptyRemoteSyncData();
 
 			var conn = acc.Plugin.CreateRemoteStorageConnection(PluginManagerSingleton.Inst.GetProxyFactory().Build(), acc.Config, new HierachyEmulationConfig(false, "\\", '\\'));
 
-			var resultNotes = new List<INote>();
+			var resultNotes  = new ConcurrentQueue<INote>();
+			var resultErrors = new ConcurrentQueue<string>();
+
+			int fullCount;
 
 			Application.Current.Dispatcher.Invoke(() => { SyncInfoText = "Connect to remote"; });
 			conn.StartSync(data, new List<INote>(), new List<INote>());
@@ -209,43 +234,48 @@ namespace AlephNote.WPF.Windows
 				Application.Current.Dispatcher.Invoke(() => { SyncInfoText = "List notes from remote"; });
 				var missing = conn.ListMissingNotes(new List<INote>());
 
-				int idx = 0;
-				foreach (var xnoteid in missing)
+				fullCount = missing.Count;
+				
+				Application.Current.Dispatcher.Invoke(() =>
 				{
-					var noteid = xnoteid;
-					idx++;
+					CanAbort = !acc.Plugin.SupportsNewDownloadMultithreading || missing.Count < AppSettings.DEFAULT_INITIALDOWNLOAD_PARALLELISM_THRESHOLD;
+				});
 
-					try
+				SynchronizationThread.ExecuteInParallel(
+					log,
+					"InitialDownloadNewNotes",
+					acc.Plugin.SupportsNewDownloadMultithreading,
+					missing,
+					AppSettings.DEFAULT_INITIALDOWNLOAD_PARALLELISM_LEVEL,
+					AppSettings.DEFAULT_INITIALDOWNLOAD_PARALLELISM_THRESHOLD,
+					(e, xnoteid) =>
 					{
-						var msg = $"Download Note {idx}/{missing.Count}";
+						resultErrors.Enqueue(xnoteid);
+						return true;
+					},
+					xnoteid =>
+					{
+						var msg = $"Download Note {resultNotes.Count}/{missing.Count}";
 						Application.Current.Dispatcher.Invoke(() => { SyncInfoText = msg; });
 
-						var note = conn.DownloadNote(noteid, out var isnewnote);
+						var note = conn.DownloadNote(xnoteid, out var isnewnote);
 						if (isnewnote)
 						{
 							note.SetLocalDirty("Set Note LocalDirty=true after download in Startupmode");
 							note.ResetRemoteDirty("Set Note RemoteDirty=false after download in Startupmode");
-							resultNotes.Add(note);
+							resultNotes.Enqueue(note);
 						}
 						else
 						{
-							log.Warn("Sync_FirstStart", string.Format("Download new note {{id:'{0}'}} returned false", noteid));
+							log.Warn("Sync_FirstStart", $"Download new note {{id:'{xnoteid}'}} returned false");
 						}
-					}
-					catch (ThreadAbortException)
-					{
-						throw;
-					}
-					catch (Exception e)
-					{
-						throw new Exception(string.Format("Could not download new note '{0}' on remote cause of {1}", noteid, e.Message));
-					}
-				}
+					});
+
 			}
 			Application.Current.Dispatcher.Invoke(() => { SyncInfoText = "Finish synchronization"; });
 			conn.FinishSync();
 
-			return Tuple.Create(data, resultNotes);
+			return Tuple.Create(data, resultNotes.ToList(), resultErrors.Count, fullCount);
 		}
 	}
 }

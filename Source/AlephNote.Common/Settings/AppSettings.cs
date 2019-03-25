@@ -19,6 +19,9 @@ namespace AlephNote.Common.Settings
 	// ReSharper disable CompareOfFloatsByEqualityOperator
 	public class AppSettings : ObservableObject, IAlephSerializable, IReadonlyAlephSettings
 	{
+		public const int DEFAULT_INITIALDOWNLOAD_PARALLELISM_LEVEL     = 10;
+		public const int DEFAULT_INITIALDOWNLOAD_PARALLELISM_THRESHOLD = 100;
+
 		public static readonly string PATH_SETTINGS    = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.config");
 		public static readonly string PATH_SCROLLCACHE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.scrollcache.config");
 		public static readonly string PATH_GCCACHE     = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.gitcleancache.config");

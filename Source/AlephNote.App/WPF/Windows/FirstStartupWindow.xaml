@@ -86,7 +86,7 @@
 				</Border>
 			</StackPanel>
 
-			<Button Grid.Column="2" Content="Abort" MinWidth="80" Margin="10,0,0,0" Click="OnStartSync" Visibility="{Binding IsValidating, Converter={converter:BoolToVisibility}, ConverterParameter='Visible;Hidden'}" />
+			<Button Grid.Column="2" Content="Abort" MinWidth="80" Margin="10,0,0,0" Click="OnStartSync" Visibility="{Binding IsValidating, Converter={converter:BoolToVisibility}, ConverterParameter='Visible;Hidden'}" IsEnabled="{Binding CanAbort}" />
 		</Grid>
 		<Label Grid.Row="9" Content="{Binding SyncInfoText}" HorizontalContentAlignment="Center" />
 

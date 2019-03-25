@@ -178,6 +178,7 @@ namespace AlephNote.Common.Repository
 		private void UploadNotes(IReadOnlyCollection<Tuple<INote, INote>> notesToUpload, IEnumerable<Tuple<INote, INote>> notesToResetRemoteDirty, ICollection<Tuple<string, Exception>> errors)
 		{
 			ExecuteInParallel(
+				_log,
 				"UploadNotes",
 				_noteUploadEnableMultithreading,
 				notesToUpload,
@@ -189,6 +190,7 @@ namespace AlephNote.Common.Repository
 
 					_log.Error("Sync", message, e);
 					errors.Add(Tuple.Create(message, e));
+					return true;
 				},
 				notetuple =>
 				{
@@ -411,6 +413,7 @@ namespace AlephNote.Common.Repository
 		private void DownloadNotes(List<Tuple<INote, INote>> notesToDownload, ICollection<Tuple<string, Exception>> errors)
 		{
 			ExecuteInParallel(
+				_log,
 				"DownloadNotes",
 				_noteDownloadEnableMultithreading,
 				notesToDownload,
@@ -421,6 +424,7 @@ namespace AlephNote.Common.Repository
 					var message = string.Format("Could not synchronize note '{2}' ({0}) cause of {1}", notetuple.Item2.UniqueName, e.Message, notetuple.Item2.Title);
 					_log.Error("Sync", message, e);
 					errors.Add(Tuple.Create(message, e));
+					return true;
 				},
 				notetuple =>
 				{
@@ -523,6 +527,7 @@ namespace AlephNote.Common.Repository
 			var missing = _repo.Connection.ListMissingNotes(allNotes.Select(p => p.Item2).ToList());
 			
 			ExecuteInParallel(
+				_log,
 				"DownloadNewNotes",
 				_noteNewDownloadEnableMultithreading,
 				missing,
@@ -533,6 +538,7 @@ namespace AlephNote.Common.Repository
 					var message = $"Could not download new note '{xnoteid}' on remote cause of {e.Message}";
 					_log.Error("Sync", message, e);
 					errors.Add(Tuple.Create(message, e));
+					return true;
 				},
 				xnoteid =>
 				{
@@ -683,11 +689,11 @@ namespace AlephNote.Common.Repository
 			_dispatcher.Work();
 		}
 
-		private void ExecuteInParallel<T>(string taskname, bool enableParallelism, IReadOnlyCollection<T> data, int level, int threshold, Action<Exception, T> error, Action<T> method)
+		public static void ExecuteInParallel<T>(AlephLogger log, string taskname, bool enableParallelism, IReadOnlyCollection<T> data, int level, int threshold, Func<Exception, T, bool> error, Action<T> method)
 		{
 			if (data.Count == 0)
 			{
-				_log.Debug("Sync",
+				log.Debug("Sync",
 					$"Skip executing {{{taskname}}}",
 					$"Multithreading enabled := {enableParallelism}\n" +
 					$"Datasize               := {data.Count}\n" +
@@ -696,7 +702,7 @@ namespace AlephNote.Common.Repository
 			}
 			else if (data.Count < threshold || level <= 1 || !enableParallelism)
 			{
-				_log.Debug("Sync",
+				log.Debug("Sync",
 					$"Execute {{{taskname}}} in sequence",
 					$"Multithreading enabled := {enableParallelism}\n" +
 					$"Datasize               := {data.Count}\n" +
@@ -717,7 +723,7 @@ namespace AlephNote.Common.Repository
 			}
 			else
 			{
-				_log.Debug("Sync",
+				log.Debug("Sync",
 					$"Execute {{{taskname}}} in parallel",
 					$"Multithreading enabled := {enableParallelism}\n" +
 					$"Datasize               := {data.Count}\n" +
@@ -740,11 +746,17 @@ namespace AlephNote.Common.Repository
 							}
 							catch (Exception e)
 							{
-								error(e, datum);
+								var cont = error(e, datum);
+								if (!cont)
+								{
+									// Abort
+									while(work.TryDequeue(out _));
+									return;
+								}
 							}
 						}
 					}));
-
+				
 				Task.WaitAll(tasks.ToArray());
 			}
 		}
