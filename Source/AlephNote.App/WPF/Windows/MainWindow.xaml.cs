@@ -1,6 +1,7 @@
 ﻿using AlephNote.WPF.Util;
 using ScintillaNET;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Drawing;
 using System.Threading;
@@ -706,8 +707,14 @@ namespace AlephNote.WPF.Windows
 
 		public void ShowTagFilter()
 		{
-			var tags = VM.Repository.EnumerateAllTags().Distinct().OrderBy(p=>p.ToLower()).Select(p => new CheckableTag(p, VM)).ToList();
-			foreach (var t in tags) t.TagGroup=tags;
+			List<CheckableTag> tags = null;
+
+			void Update(string name, bool check)
+			{
+				VM.SearchText = string.Join(" ", tags.Where(t => t.Checked).Select(p => "["+p.Name.Replace("\\", "\\\\").Replace("[", "\\[").Replace("]", "\\]") + "]"));
+			}
+
+			tags = VM.Repository.EnumerateAllTags().Distinct().OrderBy(p=>p.ToLower()).Select(p => new CheckableTag(p, Update)).ToList();
 
 			if (tags.Count==0) return; // no tags
 
@@ -722,7 +729,7 @@ namespace AlephNote.WPF.Windows
 			
 			TagPopup.IsOpen=true;
 
-			tags[0].UpdateSearchString();
+			Update(null, true);
 		}
 	}
 }

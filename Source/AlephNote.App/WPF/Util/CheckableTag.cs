@@ -1,37 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AlephNote.WPF.Windows;
 using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.Util
 {
 	public class CheckableTag : ObservableObject
 	{
-		public List<CheckableTag> TagGroup = new List<CheckableTag>();
-
-		public string Name {get; set;}
+		public string Name { get; }
 
 		private bool _checked = false;
 		public bool Checked
 		{
 			get => _checked;
-			set { _checked = value; OnPropertyChanged(); UpdateSearchString(); }
+			set { _checked = value; OnPropertyChanged();_lambda?.Invoke(Name, _checked); }
 		}
 
-		private MainWindowViewmodel _vm;
+		private readonly Action<string, bool> _lambda;
 
-		public CheckableTag(string txt, MainWindowViewmodel vm)
+		public CheckableTag(string txt, Action<string, bool> clickAction)
 		{
 			Name = txt;
-			_vm = vm;
-		}
-
-		public void UpdateSearchString()
-		{
-			_vm.SearchText = string.Join(" ", TagGroup.Where(t => t.Checked).Select(p => "["+p.Name.Replace("\\", "\\\\").Replace("[", "\\[").Replace("]", "\\]") + "]"));
+			_lambda = clickAction;
 		}
 	}
 }

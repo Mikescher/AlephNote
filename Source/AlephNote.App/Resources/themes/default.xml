@@ -159,19 +159,32 @@ Repository: https://github.com/Mikescher/AlephNote
 			</group>
 			
 			<group name="tageditor">
-				<property name="window.tageditor.popup:background"            value="#EEEEEE"/>
-				<property name="window.tageditor.popup:bordercolor"           value="@LightGray"/>
-				<property name="window.tageditor.popup:foreground"            value="$window.foreground"/>
+				<property name="window.tageditor.popup:background"                 value="#EEEEEE"/>
+				<property name="window.tageditor.popup:bordercolor"                value="@LightGray"/>
+				<property name="window.tageditor.popup:foreground"                 value="$window.foreground"/>
 
-				<property name="window.tageditor.placeholder"                 value="@LightGray"/>
-				<property name="window.tageditor.foreground"                  value="$window.foreground"/>
+				<property name="window.tageditor.placeholder"                      value="@LightGray"/>
+				<property name="window.tageditor.foreground"                       value="$window.foreground"/>
 
-				<property name="window.tageditor.tag:background"              value="@SeaShell"/>
-				<property name="window.tageditor.tag:bordercolor_default"     value="@LightGray"/>
-				<property name="window.tageditor.tag:bordercolor_highlighted" value="@Black"/>
-				<property name="window.tageditor.tag:foreground"              value="$window.foreground"/>
-				<property name="window.tageditor.tag:borderradius"            value="0"/>
-				<property name="window.tageditor.tag:highlight"               value="@DodgerBlue"/>
+				<property name="window.tageditor.tag:background"                   value="@SeaShell"/>
+				<property name="window.tageditor.tag:bordercolor_default"          value="@LightGray"/>
+				<property name="window.tageditor.tag:bordercolor_highlighted"      value="@Black"/>
+				<property name="window.tageditor.tag:foreground"                   value="$window.foreground"/>
+				<property name="window.tageditor.tag:borderradius"                 value="0"/>
+				<property name="window.tageditor.tag:highlight"                    value="@DodgerBlue"/>
+				
+				<property name="window.tageditor.tagbutton:background"             value="@White"/>
+				<property name="window.tageditor.tagbutton:foreground"             value="@Black"/>
+				<property name="window.tageditor.tagbutton:border"                 value="@Black"/>
+				<property name="window.tageditor.tagbutton:border_thickness"       value="0"/>
+				
+				<property name="window.tageditor.tagbutton.popup:background"       value="$window.tageditor.popup:background"/>
+				<property name="window.tageditor.tagbutton.popup:bordercolor"      value="@DarkGray"/>
+				<property name="window.tageditor.tagbutton.popup:foreground"       value="$window.tageditor.popup:foreground"/>
+				<property name="window.tageditor.tagbutton.popup:border_thickness" value="1"/>
+				<property name="window.tageditor.tagbutton.popup:margin"           value="0"/>
+				<property name="window.tageditor.tagbutton.popup:padding"          value="2"/>
+				
 			</group>
 
 			<group name="pathdisplay">

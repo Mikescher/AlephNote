@@ -106,7 +106,7 @@
 				<Setter Property="ItemsPanel" >
 					<Setter.Value>
 						<ItemsPanelTemplate>
-							<WrapPanel/>
+							<WrapPanel VerticalAlignment="Center" />
 						</ItemsPanelTemplate>
 					</Setter.Value>
 				</Setter>
@@ -218,7 +218,33 @@
 
 
 	<Grid x:Name="MainGrid" d:DataContext="{d:DesignInstance self:TagEditor2}">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+
+		<Button Grid.Row="0" Grid.Column="0" Margin="2" Padding="0" FontWeight="Bold" x:Name="TagChoosePopupButton"
+		        Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
+		        Foreground="{ext:ThemeBinding 'window.tageditor.tagbutton:foreground'}" 
+		        Background="{ext:ThemeBinding 'window.tageditor.tagbutton:background'}" 
+		        BorderThickness="{ext:ThemeBinding 'window.tageditor.tagbutton:border_thickness'}"
+		        BorderBrush="{ext:ThemeBinding 'window.tageditor.tagbutton:border'}" 
+		        Visibility="{Binding Settings.ShowTagButton, Converter={conv:BoolToVisibility}, ConverterParameter=Visible;Collapsed}"
+				IsEnabled="{Binding Readonly, Converter={conv:NegateBool}}"
+		        Command="{Binding ShowTagChooserCommand}">
+			<Image Grid.Column="0" Source="/Resources/tag.png" Margin="2" />
+		</Button>
+
+
 		<self:TokenizedTagControl x:Name="TagCtrl"
+		                          Grid.Column="1"
+		                          Grid.Row="0"
+		                          VerticalAlignment="Center"
 		                          IsReadonly="{Binding Readonly}"
 		                          EnteredTags="{Binding TagSource, Mode=TwoWay}" 
 		                          TagListChanged="TokenizedTagControl_OnChange" >
@@ -238,6 +264,32 @@
 			</self:TokenizedTagControl.ItemContainerStyle>
 
 		</self:TokenizedTagControl>
+
+
+		<Popup Grid.Row="0" Grid.Column="0" StaysOpen="False" Placement="Bottom" PlacementTarget="{Binding ElementName=TagChoosePopupButton}" x:Name="TagChoosePopup" AllowsTransparency="True">
+			<Border 
+				Padding="{ext:ThemeBinding 'window.tageditor.tagbutton.popup:padding'}" 
+				Margin="{ext:ThemeBinding 'window.tageditor.tagbutton.popup:margin'}" 
+				Background="{ext:ThemeBinding 'window.tageditor.tagbutton.popup:background'}" 
+				BorderBrush="{ext:ThemeBinding 'window.tageditor.tagbutton.popup:bordercolor'}"
+				BorderThickness="{ext:ThemeBinding 'window.tageditor.tagbutton.popup:border_thickness'}">
+				<ScrollViewer MaxHeight="200" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+					<ItemsControl Width="200" x:Name="TagChoosePopupList">
+						<ItemsControl.ItemsPanel>
+							<ItemsPanelTemplate>
+								<StackPanel Orientation="Vertical" Background="{ext:ThemeBinding 'window.tageditor.tagbutton.popup:background'}" />
+							</ItemsPanelTemplate>
+						</ItemsControl.ItemsPanel>
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<CheckBox Content="{Binding Name}" IsChecked="{Binding Checked}" Foreground="{ext:ThemeBinding 'window.tageditor.tagbutton.popup:foreground'}" />
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</ScrollViewer>
+			</Border>
+		</Popup>
+
 	</Grid>
 
 </UserControl>

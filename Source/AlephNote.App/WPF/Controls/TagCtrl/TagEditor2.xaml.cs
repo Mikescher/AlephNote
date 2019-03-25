@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using AlephNote.Common.Repository;
 using AlephNote.Common.Settings;
+using AlephNote.Common.Util.Search;
 using AlephNote.PluginInterface.Datatypes;
 using AlephNote.PluginInterface.Util;
+using AlephNote.WPF.Util;
 using MSHC.Lang.Collections;
+using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.Controls
 {
@@ -65,6 +70,8 @@ namespace AlephNote.WPF.Controls
 			set { SetValue(ReadonlyProperty, value); }
 		}
 		
+		public ICommand ShowTagChooserCommand { get { return new RelayCommand(ShowTagChooser); } }
+
 		public event TagsSourceChanged Changed;
 
 		public TagEditor2()
@@ -123,6 +130,35 @@ namespace AlephNote.WPF.Controls
 			{
 				TagCtrl.DropDownTags.Clear();
 			}
+		}
+
+		private void ShowTagChooser()
+		{
+			void Update(string name, bool check)
+			{
+				if (check)
+				{
+					if (TagSource.Any(t => t.ToLower() == name.ToLower())) return;
+					TagSource.Add(name);
+				}
+				else
+				{
+					var rm = TagSource.FirstOrDefault(t => t.ToLower() == name.ToLower());
+					if (rm != null) TagSource.Remove(rm);
+				}
+			}
+
+			List<CheckableTag> tags = Repository.EnumerateAllTags().Distinct().OrderBy(p=>p.ToLower()).Select(p => new CheckableTag(p, Update)).ToList();
+			if (tags.Count==0) return; // no tags
+
+			foreach (var tm in TagSource)
+			{
+				foreach (var t in tags.Where(p => p.Name.ToLower()==tm)) t.Checked=true;
+			}
+
+			TagChoosePopupList.ItemsSource = tags;
+			
+			TagChoosePopup.IsOpen=true;
 		}
 	}
 }

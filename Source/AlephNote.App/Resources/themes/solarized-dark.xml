@@ -121,6 +121,9 @@ License:    Copyright (c) 2011 Ethan Schoonover
 
 			<property name="window.tageditor.tag:bordercolor_default"     value="@base0"/>
 			<property name="window.tageditor.tag:bordercolor_highlighted" value="@cyan"/>
+			
+			<property name="window.tageditor.tagbutton:background" value="$window.background"/>
+			<property name="window.tageditor.tagbutton:border"     value="$window.foreground"/>
 
 			<property name="window.pathdisplay.element:background_hover"  value="@base1"/>
 			<property name="window.pathdisplay.element:border"            value="@green"/>

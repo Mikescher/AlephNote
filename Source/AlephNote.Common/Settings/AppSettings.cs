@@ -511,6 +511,10 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField(ReconnectRepo=true)]
 		public int NoteUploadParallelismLevel { get { return _noteUploadParallelismLevel; } set { _noteUploadParallelismLevel = value; OnPropertyChanged(); } }
 		private int _noteUploadParallelismLevel = 1;
+		
+		[AlephXMLField]
+		public bool ShowTagButton { get { return _showTagButton; } set { _showTagButton = value; OnPropertyChanged(); } }
+		private bool _showTagButton = false;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

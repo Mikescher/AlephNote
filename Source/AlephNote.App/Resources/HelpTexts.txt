@@ -393,3 +393,6 @@ This is especially relevant for the initial sync when adding a new remote provid
 
 [NoteUploadParallelism]
 Specifies the parallelism settings for uploading new notes (creating them in the remote provider and uploading their content).
+
+[ShowTagButton]
+Adds a button to the left side of the tagbar to add tags from the list of existing tags

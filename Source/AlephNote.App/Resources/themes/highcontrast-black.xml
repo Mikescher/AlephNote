@@ -81,6 +81,11 @@ Repository: https://github.com/Mikescher/AlephNote
 		<property name="window.tageditor.popup:background"            value="@Secondary" />
 		<property name="window.tageditor.popup:bordercolor"           value="@Primary" />
 
+		<property name="window.tageditor.tagbutton:background"        value="@Secondary"/>
+		<property name="window.tageditor.tagbutton:border"            value="@Primary"/>
+		<property name="window.tageditor.tagbutton:border_thickness"  value="1"/>
+		<property name="window.tageditor.tagbutton:foreground"        value="@Primary"/>
+
 		<property name="window.pathdisplay.element:background_hover"       value="@Secondary" />
 		<property name="window.pathdisplay.element:border"                 value="@Primary" />
 		<property name="window.pathdisplay.button:foreground"              value="@Primary" />

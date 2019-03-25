@@ -102,6 +102,8 @@ License:    Copyright (c) 2017 Skyler Lee
 		<property name="window.tageditor.popup:bordercolor"                value="@MK_Blue" />
 		<property name="window.tageditor.popup:foreground"                 value="@MK_VeryLightGray" />
 		<property name="window.tageditor.tag:highlight"                    value="@MK_Purple"/>
+		<property name="window.tageditor.tagbutton:foreground"             value="@Transparent"/>
+		<property name="window.tageditor.tagbutton:background"             value="@MK_DarkGray"/>
 
 		<property name="window.pathdisplay.element:foregroud"              value="$window.foreground" />
 		<property name="window.pathdisplay.element:background"             value="$window.background" />
