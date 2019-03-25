@@ -51,6 +51,7 @@ namespace AlephNote.WPF.Controls
 		// In TagEditor2.xaml we bind TagSource to EnteredTags TwoWay
 		// This collection is Updated in UpdateEnteredTags()
 		// This is _NOT_ what is actually visible _INSIDE_ the control - that is the ItemsSource collection
+		// Can be NULL (?)
 		public TagList EnteredTags
 		{
 			get => (TagList) GetValue(EnteredTagsProperty);
@@ -111,7 +112,7 @@ namespace AlephNote.WPF.Controls
 			set => SetValue(IsReadonlyProperty, value);
 		}
 
-		private int suppressItemsRefresh = 0;
+		private int _suppressItemsRefresh = 0;
 
 		private List<string> _tagsBeforeEdit = null;
 
@@ -157,6 +158,17 @@ namespace AlephNote.WPF.Controls
 			}
 		}
 
+		public void FullResyncWithDataSource()
+		{
+			if (ItemsSource == null) return;
+
+			((IList<TokenizedTagItem>)ItemsSource).SynchronizeCollection(((IEnumerable<string>)EnteredTags) ?? new List<string>(), (s,t) => s==t.Text, s => new TokenizedTagItem(s, this));
+			OnExplicitPropertyChanged("FormattedText");
+			Items.Refresh();
+			
+			if (IsEditing) AbortEditing();
+		}
+
 		private void OnEnteredTagsChanged(DependencyPropertyChangedEventArgs e)
 		{
 			if (e.OldValue is TagList vold) vold.OnChanged -= OnEnteredTagsCollectionChanged;
@@ -173,7 +185,7 @@ namespace AlephNote.WPF.Controls
 
 		private void OnEnteredTagsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (suppressItemsRefresh>0) return;
+			if (_suppressItemsRefresh>0) return;
 
 			if (ItemsSource == null) ItemsSource = new ObservableCollection<TokenizedTagItem>();
 
@@ -190,7 +202,7 @@ namespace AlephNote.WPF.Controls
 		{
 			try
 			{
-				suppressItemsRefresh++;
+				_suppressItemsRefresh++;
 				
 				var rm = ((IList<TokenizedTagItem>)ItemsSource).FirstOrDefault(p => p.IsEditing);
 				if (rm != null) ((IList<TokenizedTagItem>)ItemsSource).Remove(rm);
@@ -198,7 +210,7 @@ namespace AlephNote.WPF.Controls
 			}
 			finally
 			{
-				suppressItemsRefresh--;
+				_suppressItemsRefresh--;
 			}
 
 		}
@@ -207,15 +219,15 @@ namespace AlephNote.WPF.Controls
 		{
 			try
 			{
-				suppressItemsRefresh++;
+				_suppressItemsRefresh++;
 				
 				var newvalue = (ItemsSource as IEnumerable<TokenizedTagItem>)?.Where(p => !p.IsEditing).Select(p => p.Text).ToList() ?? new List<string>();
-				EnteredTags.SynchronizeCollection(newvalue);
+				EnteredTags?.SynchronizeCollection(newvalue);
 				OnExplicitPropertyChanged("FormattedText");
 			}
 			finally
 			{
-				suppressItemsRefresh--;
+				_suppressItemsRefresh--;
 			}
 		}
 
@@ -250,7 +262,7 @@ namespace AlephNote.WPF.Controls
 			return newItem;
 		}
 
-		public void AddTag(TokenizedTagItem tag)
+		private void AddTag(TokenizedTagItem tag)
 		{
 			if (IsReadonly) return;
 
@@ -319,7 +331,7 @@ namespace AlephNote.WPF.Controls
 		{
 			if (IsEditing)
 			{
-				_tagsBeforeEdit = EnteredTags.ToList();
+				_tagsBeforeEdit = EnteredTags?.ToList() ?? new List<string>();
 			}
 			else
 			{
@@ -330,7 +342,7 @@ namespace AlephNote.WPF.Controls
 
 				Application.Current?.Dispatcher.BeginInvoke(new Action(() =>
 				{
-					if (!tbe.UnorderedCollectionEquals(EnteredTags.ToList())) TagListChanged?.Invoke(this, new TokenizedTagEventArgs(null));
+					if (!tbe.UnorderedCollectionEquals(EnteredTags?.ToList() ?? new List<string>())) TagListChanged?.Invoke(this, new TokenizedTagEventArgs(null));
 				}));
 			}
 			
