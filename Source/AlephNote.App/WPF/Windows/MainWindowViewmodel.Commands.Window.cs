@@ -72,7 +72,7 @@ namespace AlephNote.WPF.Windows
 		{
 			try
 			{
-				var ghc = new GithubConnection();
+				var ghc = new GithubConnection(Settings);
 				var r = ghc.GetLatestRelease(Settings.UpdateToPrerelease);
 
 				if (r.Item1 > App.APP_VERSION)

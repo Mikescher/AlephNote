@@ -509,7 +509,7 @@ namespace AlephNote.WPF.Windows
 			try
 			{
 				Thread.Sleep(1000);
-				var ghc = new GithubConnection();
+				var ghc = new GithubConnection(Settings);
 				var r = ghc.GetLatestRelease(Settings.UpdateToPrerelease);
 
 				if (r.Item1 > App.APP_VERSION)
