@@ -10,7 +10,6 @@ using AlephNote.WPF.Dialogs;
 using MSHC.WPF.MVVM;
 using Microsoft.Win32;
 using MSHC.Lang.Collections;
-using MSHC.Util.Helper;
 using Ookii.Dialogs.Wpf;
 using ScintillaNET;
 
@@ -18,125 +17,30 @@ namespace AlephNote.WPF.Windows
 {
 	public partial class MainWindowViewmodel
 	{
-		public ICommand CreateNewNoteCommand
-		{
-			get { return new RelayCommand(CreateNote); }
-		}
-
-		public ICommand CreateNewNoteFromClipboardCommand
-		{
-			get { return new RelayCommand(CreateNoteFromClipboard); }
-		}
-
-		public ICommand CreateNewNoteFromTextfileCommand
-		{
-			get { return new RelayCommand(CreateNewNoteFromTextfile); }
-		}
-
-		public ICommand ExportCommand
-		{
-			get { return new RelayCommand(ExportNote); }
-		}
-
-		public ICommand DeleteCommand
-		{
-			get { return new RelayCommand(DeleteNote); }
-		}
-
-		public ICommand DocumentSearchCommand
-		{
-			get { return new RelayCommand(ShowDocSearchBar); }
-		}
-
-		public ICommand DocumentContinueSearchCommand
-		{
-			get { return new RelayCommand(ContinueSearch); }
-		}
-
-		public ICommand CloseDocumentSearchCommand
-		{
-			get { return new RelayCommand(HideDocSearchBar); }
-		}
-
-		public ICommand InsertSnippetCommand
-		{
-			get { return new RelayCommand<string>(InsertSnippet); }
-		}
-
-		public ICommand ChangePathCommand
-		{
-			get { return new RelayCommand(() => Owner.PathEditor.ChangePath()); }
-		}
-
-		public ICommand DuplicateNoteCommand
-		{
-			get { return new RelayCommand(DuplicateNote); }
-		}
-
-		public ICommand PinUnpinNoteCommand
-		{
-			get { return new RelayCommand(PinUnpinNote); }
-		}
-
-		public ICommand LockUnlockNoteCommand
-		{
-			get { return new RelayCommand(LockUnlockNote); }
-		}
-
-		public ICommand InsertHyperlinkCommand
-		{
-			get { return new RelayCommand(InsertHyperlink); }
-		}
-
-		public ICommand InsertFilelinkCommand
-		{
-			get { return new RelayCommand(InsertFilelink); }
-		}
-
-		public ICommand InsertNotelinkCommand
-		{
-			get { return new RelayCommand(InsertNotelink); }
-		}
-
-		public ICommand InsertMaillinkCommand
-		{
-			get { return new RelayCommand(InsertMaillink); }
-		}
-
-		public ICommand MoveCurrentLineUpCommand
-		{
-			get { return new RelayCommand(MoveCurrentLineUp); }
-		}
-
-		public ICommand MoveCurrentLineDownCommand
-		{
-			get { return new RelayCommand(MoveCurrentLineDown); }
-		}
-
-		public ICommand DuplicateCurrentLineCommand
-		{
-			get { return new RelayCommand(DuplicateCurrentLine); }
-		}
-
-		public ICommand CopyCurrentLineCommand
-		{
-			get { return new RelayCommand(CopyCurrentLine); }
-		}
-
-		public ICommand CutCurrentLineCommand
-		{
-			get { return new RelayCommand(CutCurrentLine); }
-		}
-
-		public ICommand CopyAllowLineCommand
-		{
-			get { return new RelayCommand(CopyAllowLine); }
-		}
-
-		public ICommand CutAllowLineCommand
-		{
-			get { return new RelayCommand(CutAllowLine); }
-		}
+		public ICommand CreateNewNoteCommand              => new RelayCommand(CreateNote);
+		public ICommand CreateNewNoteFromClipboardCommand => new RelayCommand(CreateNoteFromClipboard);
+		public ICommand CreateNewNoteFromTextfileCommand  => new RelayCommand(CreateNewNoteFromTextfile);
+		public ICommand ExportCommand                     => new RelayCommand(ExportNote);
+		public ICommand DeleteCommand                     => new RelayCommand(DeleteNote);
+		public ICommand DocumentSearchCommand             => new RelayCommand(ShowDocSearchBar);
+		public ICommand DocumentContinueSearchCommand     => new RelayCommand(ContinueSearch);
+		public ICommand CloseDocumentSearchCommand        => new RelayCommand(HideDocSearchBar);
+		public ICommand InsertSnippetCommand              => new RelayCommand<string>(InsertSnippet);
+		public ICommand ChangePathCommand                 => new RelayCommand(() => Owner.PathEditor.ChangePath());
+		public ICommand DuplicateNoteCommand              => new RelayCommand(DuplicateNote);
+		public ICommand PinUnpinNoteCommand               => new RelayCommand(PinUnpinNote);
+		public ICommand LockUnlockNoteCommand             => new RelayCommand(LockUnlockNote);
+		public ICommand InsertHyperlinkCommand            => new RelayCommand(InsertHyperlink);
+		public ICommand InsertFilelinkCommand             => new RelayCommand(InsertFilelink);
+		public ICommand InsertNotelinkCommand             => new RelayCommand(InsertNotelink);
+		public ICommand InsertMaillinkCommand             => new RelayCommand(InsertMaillink);
+		public ICommand MoveCurrentLineUpCommand          => new RelayCommand(MoveCurrentLineUp);
+		public ICommand MoveCurrentLineDownCommand        => new RelayCommand(MoveCurrentLineDown);
+		public ICommand DuplicateCurrentLineCommand       => new RelayCommand(DuplicateCurrentLine);
+		public ICommand CopyCurrentLineCommand            => new RelayCommand(CopyCurrentLine);
+		public ICommand CutCurrentLineCommand             => new RelayCommand(CutCurrentLine);
+		public ICommand CopyAllowLineCommand              => new RelayCommand(CopyAllowLine);
+		public ICommand CutAllowLineCommand               => new RelayCommand(CutAllowLine);
 
 		private void ExportNote()
 		{

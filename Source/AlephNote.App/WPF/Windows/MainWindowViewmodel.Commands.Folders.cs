@@ -12,10 +12,10 @@ namespace AlephNote.WPF.Windows
 {
 	public partial class MainWindowViewmodel
 	{
-		public ICommand DeleteFolderCommand { get { return new RelayCommand(DeleteFolder); } }
-		public ICommand AddFolderCommand { get { return new RelayCommand(AddRootFolder); } }
-		public ICommand AddSubFolderCommand { get { return new RelayCommand(AddSubFolder); } }
-		public ICommand RenameFolderCommand { get { return new RelayCommand(RenameFolder); } }
+		public ICommand DeleteFolderCommand => new RelayCommand(DeleteFolder);
+		public ICommand AddFolderCommand    => new RelayCommand(AddRootFolder);
+		public ICommand AddSubFolderCommand => new RelayCommand(AddSubFolder);
+		public ICommand RenameFolderCommand => new RelayCommand(RenameFolder);
 		
 		private void DeleteFolder()
 		{

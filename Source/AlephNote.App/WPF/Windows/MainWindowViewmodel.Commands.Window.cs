@@ -17,33 +17,34 @@ namespace AlephNote.WPF.Windows
 {
 	public partial class MainWindowViewmodel
 	{
-		public ICommand SettingsCommand { get { return new RelayCommand(ShowSettings); } }
-		public ICommand ResyncCommand { get { return new RelayCommand(Resync); } }
-		public ICommand ShowMainWindowCommand { get { return new RelayCommand(ShowMainWindow); } }
-		public ICommand ExitCommand { get { return new RelayCommand(Exit); } }
-		public ICommand RestartCommand { get { return new RelayCommand(Restart); } }
-		public ICommand ShowAboutCommand { get { return new RelayCommand(ShowAbout); } }
-		public ICommand ShowLogCommand { get { return new RelayCommand(ShowLog); } }
-		public ICommand SaveAndSyncCommand { get { return new RelayCommand(SaveAndSync); } }
-		public ICommand FullResyncCommand { get { return new RelayCommand(FullResync); } }
-		public ICommand ManuallyCheckForUpdatesCommand { get { return new RelayCommand(ManuallyCheckForUpdates); } }
-		public ICommand HideCommand { get { return new RelayCommand(() => Owner.Hide()); } }
-		public ICommand FocusScintillaCommand { get { return new RelayCommand(() => Owner.FocusScintilla()); } }
-		public ICommand FocusNotesListCommand { get { return new RelayCommand(() => Owner.NotesViewControl.FocusNotesList()); } }
-		public ICommand FocusGlobalSearchCommand { get { return new RelayCommand(() => Owner.FocusGlobalSearch()); } }
-		public ICommand FocusFolderCommand { get { return new RelayCommand(() => Owner.NotesViewControl.FocusFolderList()); } }
-		public ICommand ShowTagFilterCommand { get { return new RelayCommand(ShowTagFilter); } }
+		public ICommand SettingsCommand                => new RelayCommand(ShowSettings);
+		public ICommand ResyncCommand                  => new RelayCommand(Resync);
+		public ICommand ShowMainWindowCommand          => new RelayCommand(ShowMainWindow);
+		public ICommand ExitCommand                    => new RelayCommand(Exit);
+		public ICommand RestartCommand                 => new RelayCommand(Restart);
+		public ICommand ShowAboutCommand               => new RelayCommand(ShowAbout);
+		public ICommand ShowLogCommand                 => new RelayCommand(ShowLog);
+		public ICommand SaveAndSyncCommand             => new RelayCommand(SaveAndSync);
+		public ICommand FullResyncCommand              => new RelayCommand(FullResync);
+		public ICommand ManuallyCheckForUpdatesCommand => new RelayCommand(ManuallyCheckForUpdates);
+		public ICommand HideCommand                    => new RelayCommand(HideMainWindow);
+		public ICommand FocusScintillaCommand          => new RelayCommand(() => Owner.FocusScintilla());
+		public ICommand FocusNotesListCommand          => new RelayCommand(() => Owner.NotesViewControl.FocusNotesList());
+		public ICommand FocusGlobalSearchCommand       => new RelayCommand(() => Owner.FocusGlobalSearch());
+		public ICommand FocusFolderCommand             => new RelayCommand(() => Owner.NotesViewControl.FocusFolderList());
+		public ICommand ShowTagFilterCommand           => new RelayCommand(ShowTagFilter);
+		public ICommand AppToggleVisibilityCommand     => new RelayCommand(AppToggleVisibility);
 		
-		public ICommand FocusNextDirectoryAnyCommand { get { return new RelayCommand(FocusNextDirectoryAny); } }
-		public ICommand FocusPrevDirectoryAnyCommand { get { return new RelayCommand(FocusPrevDirectoryAny); } }
-		public ICommand FocusNextNoteCommand { get { return new RelayCommand(FocusNextNote); } }
-		public ICommand FocusPrevNoteCommand { get { return new RelayCommand(FocusPrevNote); } }
-		public ICommand FocusNextDirectoryCommand { get { return new RelayCommand(FocusNextDirectory); } }
-		public ICommand FocusPrevDirectoryCommand { get { return new RelayCommand(FocusPrevDirectory); } }
-		public ICommand FocusDirectoryLevelDownCommand { get { return new RelayCommand(FocusDirectoryLevelDown); } }
-		public ICommand FocusDirectoryLevelUpCommand { get { return new RelayCommand(FocusDirectoryLevelUp); } }
+		public ICommand FocusNextDirectoryAnyCommand   => new RelayCommand(FocusNextDirectoryAny);
+		public ICommand FocusPrevDirectoryAnyCommand   => new RelayCommand(FocusPrevDirectoryAny);
+		public ICommand FocusNextNoteCommand           => new RelayCommand(FocusNextNote);
+		public ICommand FocusPrevNoteCommand           => new RelayCommand(FocusPrevNote);
+		public ICommand FocusNextDirectoryCommand      => new RelayCommand(FocusNextDirectory);
+		public ICommand FocusPrevDirectoryCommand      => new RelayCommand(FocusPrevDirectory);
+		public ICommand FocusDirectoryLevelDownCommand => new RelayCommand(FocusDirectoryLevelDown);
+		public ICommand FocusDirectoryLevelUpCommand   => new RelayCommand(FocusDirectoryLevelUp);
 
-		public ICommand RotateNoteProviderCommand { get { return new RelayCommand(RotateNoteProvider); } }
+		public ICommand RotateNoteProviderCommand => new RelayCommand(RotateNoteProvider);
 		
 		public void ShowMainWindow()
 		{
@@ -54,6 +55,19 @@ namespace AlephNote.WPF.Windows
 			Owner.FocusScintillaDelayed(150);
 		}
 		
+		private void HideMainWindow()
+		{
+			Owner.Hide();
+		}
+
+		private void AppToggleVisibility()
+		{
+			if (Owner.IsVisible)
+				HideMainWindow();
+			else
+				ShowMainWindow();
+		}
+
 		private void ManuallyCheckForUpdates()
 		{
 			try

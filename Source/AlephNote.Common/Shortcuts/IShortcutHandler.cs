@@ -39,6 +39,7 @@ namespace AlephNote.Common.Shortcuts
 		ICommand ExitCommand { get; }
 		ICommand RestartCommand { get; }
 		ICommand HideCommand { get; }
+		ICommand AppToggleVisibilityCommand { get; }
 		ICommand FocusScintillaCommand { get; }
 		ICommand FocusNotesListCommand { get; }
 		ICommand FocusGlobalSearchCommand { get; }

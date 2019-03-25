@@ -13,21 +13,21 @@ namespace AlephNote.WPF.Windows
 {
 	public partial class MainWindowViewmodel
 	{
-		public ICommand SettingAlwaysOnTopCommand  { get { return new RelayCommand(ChangeSettingAlwaysOnTop); } }
-		public ICommand SettingLineNumbersCommand  { get { return new RelayCommand(ChangeSettingLineNumbers); } }
-		public ICommand SettingsWordWrapCommand    { get { return new RelayCommand(ChangeSettingWordWrap); } }
-		public ICommand SettingsRotateThemeCommand { get { return new RelayCommand(ChangeSettingTheme); } }
-		public ICommand SettingReadonlyModeCommand { get { return new RelayCommand(ChangeSettingReadonlyMode); } }
+		public ICommand SettingAlwaysOnTopCommand               => new RelayCommand(ChangeSettingAlwaysOnTop);
+		public ICommand SettingLineNumbersCommand               => new RelayCommand(ChangeSettingLineNumbers);
+		public ICommand SettingsWordWrapCommand                 => new RelayCommand(ChangeSettingWordWrap);
+		public ICommand SettingsRotateThemeCommand              => new RelayCommand(ChangeSettingTheme);
+		public ICommand SettingReadonlyModeCommand              => new RelayCommand(ChangeSettingReadonlyMode);
 		
-		public ICommand SetPreviewStyleSimpleCommand            { get { return new RelayCommand(SetPreviewStyleSimple); } }
-		public ICommand SetPreviewStyleExtendedCommand          { get { return new RelayCommand(SetPreviewStyleExtended); } }
-		public ICommand SetPreviewStyleSingleLinePreviewCommand { get { return new RelayCommand(SetPreviewStyleSingleLinePreview); } }
-		public ICommand SetPreviewStyleFullPreviewCommand       { get { return new RelayCommand(SetPreviewStyleFullPreview); } }
+		public ICommand SetPreviewStyleSimpleCommand            => new RelayCommand(SetPreviewStyleSimple);
+		public ICommand SetPreviewStyleExtendedCommand          => new RelayCommand(SetPreviewStyleExtended);
+		public ICommand SetPreviewStyleSingleLinePreviewCommand => new RelayCommand(SetPreviewStyleSingleLinePreview);
+		public ICommand SetPreviewStyleFullPreviewCommand       => new RelayCommand(SetPreviewStyleFullPreview);
 		
-		public ICommand SetNoteSortingNoneCommand               { get { return new RelayCommand(SetNoteSortingNone); } }
-		public ICommand SetNoteSortingByNameCommand             { get { return new RelayCommand(SetNoteSortingByName); } }
-		public ICommand SetNoteSortingByCreationDateCommand     { get { return new RelayCommand(SetNoteSortingByCreationDate); } }
-		public ICommand SetNoteSortingByModificationDateCommand { get { return new RelayCommand(SetNoteSortingByModificationDate); } }
+		public ICommand SetNoteSortingNoneCommand               => new RelayCommand(SetNoteSortingNone);
+		public ICommand SetNoteSortingByNameCommand             => new RelayCommand(SetNoteSortingByName);
+		public ICommand SetNoteSortingByCreationDateCommand     => new RelayCommand(SetNoteSortingByCreationDate);
+		public ICommand SetNoteSortingByModificationDateCommand => new RelayCommand(SetNoteSortingByModificationDate);
 
 		private void ChangeSettingAlwaysOnTop()
 		{

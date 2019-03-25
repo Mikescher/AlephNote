@@ -80,6 +80,7 @@ namespace AlephNote.Common.Shortcuts
 			AddCommand(ASS.Window,     "AppExit",                          h => h.ExitCommand,                             "Close the application");
 			AddCommand(ASS.Window,     "AppRestart",                       h => h.RestartCommand,                          "Restart the application");
 			AddCommand(ASS.Window,     "AppHide",                          h => h.HideCommand,                             "Hide main window");
+			AddCommand(ASS.Window,     "AppToggleVisibility",              h => h.AppToggleVisibilityCommand,              "Hide/Show main window (combination of [AppHide] and [ShowMainWindow])");
 			AddCommand(ASS.Window,     "FocusEditor",                      h => h.FocusScintillaCommand,                   "Select the note editor");
 			AddCommand(ASS.Window,     "FocusNotesList",                   h => h.FocusNotesListCommand,                   "Select the note list");
 			AddCommand(ASS.Window,     "FocusGlobalSearch",                h => h.FocusGlobalSearchCommand,                "Select the global search field");
