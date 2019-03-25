@@ -11,6 +11,8 @@ namespace AlephNote.Common.Util.Search
 {
 	public static class SearchStringParser
 	{
+		public const string TAG_SEARCH_EMPTY = "[[EMPTY]]";
+
 		private static readonly LimitedDictionary<string, SearchExpression> _cache = new LimitedDictionary<string, SearchExpression>(64);
 		
 		public static SearchExpression Parse(string searchText)
@@ -30,13 +32,19 @@ namespace AlephNote.Common.Util.Search
 			if (IsRegex(searchText, out var searchRegex)) return new SearchExpression_Regex(searchRegex);
 
 			//   [tag1] [tag2] [tag3]
-			if (IsTagList(searchText, out var tagList)) return new SearchExpression_AND(tagList.Select(p => new SearchExpression_Tag(p, true)).Cast<SearchExpression>().ToArray());
+			if (IsTagList(searchText, out var tagList)) return new SearchExpression_AND(tagList.Select(CreateTagSearchExpr).ToArray());
 			
 			//   "text"
 			if (IsQuoted(searchText)) return new SearchExpression_Text(searchText.Substring(1, searchText.Length-2), true, true);
 
 			//   asdf
 			return new SearchExpression_Text(searchText, true, false);
+		}
+
+		private static SearchExpression CreateTagSearchExpr(string se)
+		{
+			if (se.ToLower() == TAG_SEARCH_EMPTY.ToLower()) return new SearchExpression_NoTag();
+			return new SearchExpression_Tag(se, true);
 		}
 
 		private static bool IsQuoted(string text)
@@ -81,12 +89,43 @@ namespace AlephNote.Common.Util.Search
 
 			if (!text.StartsWith("[") || !text.EndsWith("]")) return false;
 
-			bool intag = false;
+			var intag = false;
+			var intag2 = false;
 			var tagbuilder = new StringBuilder();
-			for (int i = 0; i < text.Length; i++)
+			for (var i = 0; i < text.Length; i++)
 			{
 				var chr = text[i];
-				if (intag)
+				var chrnext = (i+1 < text.Length) ? text[i+1] : (char?)null;
+				if (intag2)
+				{
+					if (chr == '\\' && i+1<text.Length && (text[i+1]=='[' || text[i+1]==']' || text[i+1]=='\\') )
+					{
+						tagbuilder.Append(text[i+1]);
+						i++;
+					}
+					else if (chr == '[')
+					{
+						return false;
+					}
+					else if (chr == ']' && chrnext == ']')
+					{
+						tagbuilder.Append("]]");
+						var t = tagbuilder.ToString();
+						if (string.IsNullOrWhiteSpace(t)) return false;
+						r.Add(t);
+						intag2 = false;
+						i++;
+					}
+					else if (chr == ']')
+					{
+						return false;
+					}
+					else
+					{
+						tagbuilder.Append(chr);
+					}
+				}
+				else if (intag)
 				{
 					if (chr == '\\' && i+1<text.Length && (text[i+1]=='[' || text[i+1]==']' || text[i+1]=='\\') )
 					{
@@ -113,8 +152,18 @@ namespace AlephNote.Common.Util.Search
 				{
 					if (chr=='[')
 					{
-						intag=true;
-						tagbuilder.Clear();
+						if (chrnext == '[')
+						{
+							intag2=true;
+							tagbuilder.Clear();
+							tagbuilder.Append("[[");
+							i++;
+						}
+						else
+						{
+							intag=true;
+							tagbuilder.Clear();
+						}
 					}
 					else if (chr == ' ' || chr == '\t')
 					{
@@ -127,9 +176,15 @@ namespace AlephNote.Common.Util.Search
 				}
 			}
 			if (intag) return false;
+			if (intag2) return false;
 			if (r.Count==0) return false;
 
 			return true;
+		}
+
+		public static string GetTagSearch(string tagname)
+		{
+			return "[" + tagname.Replace("\\", "\\\\").Replace("[", "\\[").Replace("]", "\\]") + "]";
 		}
 	}
 }

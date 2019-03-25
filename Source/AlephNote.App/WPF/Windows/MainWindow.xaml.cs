@@ -35,15 +35,15 @@ namespace AlephNote.WPF.Windows
 	{
 		public static MainWindow Instance { get; private set; }
 
-		private readonly MainWindowViewmodel viewmodel;
+		private readonly MainWindowViewmodel _viewmodel;
 
 		private readonly ScintillaHighlighter _highlighterDefault  = new DefaultHighlighter();
 		private readonly ScintillaHighlighter _highlighterMarkdown = new MarkdownHighlighter();
 
 		private readonly GlobalShortcutManager _scManager;
 
-		public AppSettings Settings => viewmodel?.Settings;
-		public MainWindowViewmodel VM => viewmodel;
+		public AppSettings Settings => _viewmodel?.Settings;
+		public MainWindowViewmodel VM => _viewmodel;
 
 		public INotesViewControl NotesViewControl { get; private set; }
 
@@ -62,15 +62,15 @@ namespace AlephNote.WPF.Windows
 
 			SetupScintilla(settings);
 
-			viewmodel = new MainWindowViewmodel(settings, this);
-			viewmodel.ManuallyTriggerSelectedNoteChanged();
+			_viewmodel = new MainWindowViewmodel(settings, this);
+			_viewmodel.ManuallyTriggerSelectedNoteChanged();
 
-			DataContext = viewmodel;
+			DataContext = _viewmodel;
 
 			FocusScintillaDelayed(250);
 		}
 
-		public IShortcutHandler GetShortcutHandler() => viewmodel;
+		public IShortcutHandler GetShortcutHandler() => _viewmodel;
 
 		protected override void OnSourceInitialized(EventArgs e)
 		{
@@ -159,7 +159,7 @@ namespace AlephNote.WPF.Windows
 			if (s.MarkdownMode == MarkdownHighlightMode.Always)
 				return _highlighterMarkdown;
 
-			if (s.MarkdownMode == MarkdownHighlightMode.WithTag && viewmodel?.SelectedNote?.HasTagCaseInsensitive(AppSettings.TAG_MARKDOWN) == true)
+			if (s.MarkdownMode == MarkdownHighlightMode.WithTag && _viewmodel?.SelectedNote?.HasTagCaseInsensitive(AppSettings.TAG_MARKDOWN) == true)
 				return _highlighterMarkdown;
 
 			return _highlighterDefault;
@@ -226,7 +226,7 @@ namespace AlephNote.WPF.Windows
 		{
 			bool listHighlight =
 				(Settings.ListMode == ListHighlightMode.Always) ||
-				(Settings.ListMode == ListHighlightMode.WithTag && viewmodel?.SelectedNote?.HasTagCaseInsensitive(AppSettings.TAG_LIST) == true);
+				(Settings.ListMode == ListHighlightMode.WithTag && _viewmodel?.SelectedNote?.HasTagCaseInsensitive(AppSettings.TAG_LIST) == true);
 
 			var startPos = NoteEdit.GetEndStyled();
 			var endPos = e.Position;
@@ -290,7 +290,7 @@ namespace AlephNote.WPF.Windows
 			if (Settings.SciZoomable)
 			{
 				Settings.SciZoom = NoteEdit.Zoom;
-				viewmodel.RequestSettingsSave();
+				_viewmodel.RequestSettingsSave();
 			}
 			else
 			{
@@ -300,7 +300,7 @@ namespace AlephNote.WPF.Windows
 					if (Settings.SciZoom != 0)
 					{
 						Settings.SciZoom = NoteEdit.Zoom;
-						viewmodel.RequestSettingsSave();
+						_viewmodel.RequestSettingsSave();
 					}
 				}
 			}
@@ -323,7 +323,7 @@ namespace AlephNote.WPF.Windows
 
 			bool listHighlight = 
 				(s.ListMode == ListHighlightMode.Always) || 
-				(s.ListMode == ListHighlightMode.WithTag && viewmodel?.SelectedNote?.HasTagCaseInsensitive(AppSettings.TAG_LIST) == true);
+				(s.ListMode == ListHighlightMode.WithTag && _viewmodel?.SelectedNote?.HasTagCaseInsensitive(AppSettings.TAG_LIST) == true);
 
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].Width = s.SciLineNumbers ? NoteEdit.TextWidth(ScintillaHighlighter.STYLE_DEFAULT, "5555") : 0;
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].BackColor = theme.Get<ColorRef>("scintilla.margin.numbers:background").ToDCol();
@@ -337,7 +337,7 @@ namespace AlephNote.WPF.Windows
 
 			NoteEdit.Margins[3].Width = 0;
 
-			if (listHighlight && viewmodel?.SelectedNote != null) GetHighlighter(s).UpdateListMargin(NoteEdit, null, null);
+			if (listHighlight && _viewmodel?.SelectedNote != null) GetHighlighter(s).UpdateListMargin(NoteEdit, null, null);
 		}
 
 		public void ScrollScintilla(int? v)
@@ -445,13 +445,13 @@ namespace AlephNote.WPF.Windows
 
 				if (Settings.VSLineCopy && emod == ModifierKeys.Control && ekey == Key.C)
 				{
-					viewmodel.CopyAllowLineCommand.Execute(null);
+					_viewmodel.CopyAllowLineCommand.Execute(null);
 					e.Handled = true;
 				}
 
 				if (Settings.VSLineCopy && emod == ModifierKeys.Control && ekey == Key.X)
 				{
-					viewmodel.CutAllowLineCommand.Execute(null);
+					_viewmodel.CutAllowLineCommand.Execute(null);
 					e.Handled = true;
 				}
 			}
@@ -474,7 +474,7 @@ namespace AlephNote.WPF.Windows
 
 		public void ShowDocSearchBar()
 		{
-			viewmodel.SearchText = string.Empty;
+			_viewmodel.SearchText = string.Empty;
 			DocumentSearchBar.Show();
 		}
 
@@ -513,7 +513,7 @@ namespace AlephNote.WPF.Windows
 
 		private void NotesList_Drop(object sender, System.Windows.DragEventArgs e)
 		{
-			viewmodel.OnNewNoteDrop(e.Data);
+			_viewmodel.OnNewNoteDrop(e.Data);
 		}
 
 		private void NotesList_KeyDown(object sender, KeyEventArgs e)
@@ -529,7 +529,7 @@ namespace AlephNote.WPF.Windows
 				char chr = (char)('A' + (e.Key - Key.A));
 			
 				bool found = false;
-				if (viewmodel.SelectedNote == null) found = true;
+				if (_viewmodel.SelectedNote == null) found = true;
 
 				var visible = NotesViewControl.EnumerateVisibleNotes().ToList();
 
@@ -539,13 +539,13 @@ namespace AlephNote.WPF.Windows
 					{
 						if (note.Title.ToUpper().StartsWith(chr.ToString()))
 						{
-							viewmodel.SetSelectedNoteWithoutFocus(note);
+							_viewmodel.SetSelectedNoteWithoutFocus(note);
 							return;
 						}
 					}
 					else
 					{
-						found = (note.UniqueName== viewmodel.SelectedNote.UniqueName);
+						found = (note.UniqueName== _viewmodel.SelectedNote.UniqueName);
 					}
 				}
 			}
@@ -553,13 +553,13 @@ namespace AlephNote.WPF.Windows
 
 		private void NoteEdit_MarginClick(object sender, MarginClickEventArgs e)
 		{
-			if (viewmodel?.SelectedNote == null) return;
+			if (_viewmodel?.SelectedNote == null) return;
 			
 			if (e.Margin == ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS)
 			{
 				bool listHighlight =
 					(Settings.ListMode == ListHighlightMode.Always) ||
-					(Settings.ListMode == ListHighlightMode.WithTag && viewmodel?.SelectedNote?.HasTagCaseInsensitive(AppSettings.TAG_LIST) == true);
+					(Settings.ListMode == ListHighlightMode.WithTag && _viewmodel?.SelectedNote?.HasTagCaseInsensitive(AppSettings.TAG_LIST) == true);
 
 				if (listHighlight)
 				{
@@ -711,18 +711,24 @@ namespace AlephNote.WPF.Windows
 
 			void Update(string name, bool check)
 			{
-				VM.SearchText = string.Join(" ", tags.Where(t => t.Checked).Select(p => "["+p.Name.Replace("\\", "\\\\").Replace("[", "\\[").Replace("]", "\\]") + "]"));
+				VM.SearchText = string.Join(" ", tags.Where(t => t.Checked).Select(p => (p.Additional=="notag") ? SearchStringParser.TAG_SEARCH_EMPTY : SearchStringParser.GetTagSearch(p.Name)));
 			}
 
 			tags = VM.Repository.EnumerateAllTags().Distinct().OrderBy(p=>p.ToLower()).Select(p => new CheckableTag(p, Update)).ToList();
 
 			if (tags.Count==0) return; // no tags
 
+			tags.Insert(0, new CheckableTag("(No tags)", Update, "notag"));
+
 			var pst = SearchStringParser.Parse(VM.SearchText);
 
 			foreach (var tm in pst.GetPossibleMatchedTags())
 			{
 				foreach (var t in tags.Where(p => p.Name.ToLower()==tm)) t.Checked=true;
+			}
+			if (pst.IsMatchingNoTag())
+			{
+				foreach (var t in tags.Where(p => p.Additional=="notag")) t.Checked=true;
 			}
 
 			TagPopupList.ItemsSource = tags;

@@ -9,6 +9,7 @@ namespace AlephNote.Common.Util.Search
 	{
 		public abstract bool IsMatch(INote n);
 		public abstract IEnumerable<string> GetPossibleMatchedTags();
+		public abstract bool IsMatchingNoTag();
 	}
 
 	public class SearchExpression_Regex : SearchExpression
@@ -30,6 +31,7 @@ namespace AlephNote.Common.Util.Search
 		}
 		
 		public override IEnumerable<string> GetPossibleMatchedTags() => Enumerable.Empty<string>();
+		public override bool IsMatchingNoTag() => false;
 	}
 	
 	public class SearchExpression_Text : SearchExpression
@@ -82,11 +84,12 @@ namespace AlephNote.Common.Util.Search
 		}
 		
 		public override IEnumerable<string> GetPossibleMatchedTags() => Enumerable.Repeat(_needle, 1);
+		public override bool IsMatchingNoTag() => false;
 	}
 	
 	public class SearchExpression_Tag : SearchExpression
 	{
-		public readonly string _tag;
+		private readonly string _tag;
 		private readonly bool _nocase;
 
 		public SearchExpression_Tag(string tag, bool ignorecase)
@@ -104,6 +107,23 @@ namespace AlephNote.Common.Util.Search
 		}
 		
 		public override IEnumerable<string> GetPossibleMatchedTags() => Enumerable.Repeat(_tag, 1);
+		public override bool IsMatchingNoTag() => false;
+	}
+	
+	public class SearchExpression_NoTag : SearchExpression
+	{
+		public SearchExpression_NoTag()
+		{
+			//
+		}
+
+		public override bool IsMatch(INote n)
+		{
+			return n.Tags.Count == 0;
+		}
+		
+		public override IEnumerable<string> GetPossibleMatchedTags() => Enumerable.Empty<string>();
+		public override bool IsMatchingNoTag() => true;
 	}
 	
 	public class SearchExpression_All : SearchExpression
@@ -111,6 +131,7 @@ namespace AlephNote.Common.Util.Search
 		public override bool IsMatch(INote n) => true;
 		
 		public override IEnumerable<string> GetPossibleMatchedTags() => Enumerable.Empty<string>();
+		public override bool IsMatchingNoTag() => false;
 	}
 	
 	public class SearchExpression_None : SearchExpression
@@ -118,11 +139,12 @@ namespace AlephNote.Common.Util.Search
 		public override bool IsMatch(INote n) => false;
 		
 		public override IEnumerable<string> GetPossibleMatchedTags() => Enumerable.Empty<string>();
+		public override bool IsMatchingNoTag() => false;
 	}
 	
 	public class SearchExpression_AND : SearchExpression
 	{
-		private SearchExpression[] _expressions;
+		private readonly SearchExpression[] _expressions;
 
 		public SearchExpression_AND(params SearchExpression[] se)
 		{
@@ -132,11 +154,12 @@ namespace AlephNote.Common.Util.Search
 		public override bool IsMatch(INote n) => _expressions.All(e => e.IsMatch(n));
 		
 		public override IEnumerable<string> GetPossibleMatchedTags() => _expressions.SelectMany(e => e.GetPossibleMatchedTags());
+		public override bool IsMatchingNoTag() => _expressions.Any(e => e.IsMatchingNoTag());
 	}
 	
 	public class SearchExpression_OR : SearchExpression
 	{
-		private SearchExpression[] _expressions;
+		private readonly SearchExpression[] _expressions;
 
 		public SearchExpression_OR(params SearchExpression[] se)
 		{
@@ -146,11 +169,12 @@ namespace AlephNote.Common.Util.Search
 		public override bool IsMatch(INote n) => _expressions.Any(e => e.IsMatch(n));
 		
 		public override IEnumerable<string> GetPossibleMatchedTags() => _expressions.SelectMany(e => e.GetPossibleMatchedTags());
+		public override bool IsMatchingNoTag() => _expressions.Any(e => e.IsMatchingNoTag());
 	}
 	
 	public class SearchExpression_NOT : SearchExpression
 	{
-		private SearchExpression _expression;
+		private readonly SearchExpression _expression;
 
 		public SearchExpression_NOT(SearchExpression se)
 		{
@@ -159,6 +183,7 @@ namespace AlephNote.Common.Util.Search
 
 		public override bool IsMatch(INote n) => !_expression.IsMatch(n);
 		
-		public override IEnumerable<string> GetPossibleMatchedTags() => Enumerable.Empty<string>();
+		public override IEnumerable<string> GetPossibleMatchedTags() => _expression.GetPossibleMatchedTags();
+		public override bool IsMatchingNoTag() => _expression.IsMatchingNoTag();
 	}
 }
