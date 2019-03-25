@@ -90,7 +90,7 @@ namespace AlephNote.Common.Themes
 			}
 
 			_properties = new Dictionary<string, string>();
-			foreach (var prop in _xdoc.XElemList("theme", "data", "*group*", "property@name=~&value=~"))
+			foreach (var prop in _xdoc.XElemList("theme", "data", "*group", "property@name=~&value=~"))
 			{
 				var name  = prop.Attribute("name").Value.ToLower();
 				var value = prop.Attribute("value").Value;
