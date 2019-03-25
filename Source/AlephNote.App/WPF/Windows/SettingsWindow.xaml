@@ -582,6 +582,7 @@
 								<Grid.RowDefinitions>
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 								<Grid Grid.Row="0" Grid.Column="0">
 									<Grid.ColumnDefinitions>
@@ -594,20 +595,21 @@
 										<RowDefinition Height="Auto" />
 										<RowDefinition Height="Auto" />
 										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
 									</Grid.RowDefinitions>
-									
-									<CheckBox Grid.Row="0" Grid.Column="0" Margin="2" Content="Display Line numbers" IsChecked="{Binding Settings.SciLineNumbers}" />
 
-									<CheckBox Grid.Row="1" Grid.Column="0" Margin="2" Content="Enable rectangular selection" IsChecked="{Binding Settings.SciRectSelection}" Checked="RectSelection_Checked" Unchecked="RectSelection_Unchecked" />
+									<CheckBox      Grid.Row="0" Grid.Column="0" Margin="2" Content="Display line numbers" IsChecked="{Binding Settings.SciLineNumbers}" Checked="LineNumbers_Checked" Unchecked="LineNumbers_Unchecked" />
+
+									<CheckBox      Grid.Row="1" Grid.Column="0" Margin="2" Content="Enable rectangular selection" IsChecked="{Binding Settings.SciRectSelection}" Checked="RectSelection_Checked" Unchecked="RectSelection_Unchecked" />
 									<ctrl:PHelpBtn Grid.Row="1" Grid.Column="1" HelpProperty="SciRectSelection" Margin="2,0" VerticalAlignment="Center" />
 
-									<CheckBox Grid.Row="2" Grid.Column="0" Margin="2" Content="Enable multiple selections" IsChecked="{Binding Settings.SciMultiSelection}" IsEnabled="{Binding Settings.SciRectSelection}" />
+									<CheckBox      Grid.Row="2" Grid.Column="0" Margin="2" Content="Enable multiple selections" IsChecked="{Binding Settings.SciMultiSelection}" IsEnabled="{Binding Settings.SciRectSelection}" />
 									<ctrl:PHelpBtn Grid.Row="2" Grid.Column="1" HelpProperty="SciMultiSelection" Margin="2,0" VerticalAlignment="Center" />
 
-									<CheckBox Grid.Row="3" Grid.Column="0" Margin="2" Content="Can zoom" IsChecked="{Binding Settings.SciZoomable}" />
+									<CheckBox      Grid.Row="3" Grid.Column="0" Margin="2" Content="Can zoom" IsChecked="{Binding Settings.SciZoomable}" />
 									<ctrl:PHelpBtn Grid.Row="3" Grid.Column="1" HelpProperty="SciZoomable" Margin="2,0" VerticalAlignment="Center" />
 
-									<CheckBox Grid.Row="4" Grid.Column="0" Margin="2" Content="Use tabs instead of spaces" IsChecked="{Binding Settings.SciUseTabs}" />
+									<CheckBox      Grid.Row="4" Grid.Column="0" Margin="2" Content="Use tabs instead of spaces" IsChecked="{Binding Settings.SciUseTabs}" />
 									<ctrl:PHelpBtn Grid.Row="4" Grid.Column="1" HelpProperty="SciUseTabs" Margin="2,0" VerticalAlignment="Center" />
 								</Grid>
 
@@ -622,24 +624,31 @@
 										<RowDefinition Height="Auto" />
 										<RowDefinition Height="Auto" />
 										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
 									</Grid.RowDefinitions>
+
+									<CheckBox      Grid.Row="0" Grid.Column="0" Margin="2" Content="Hexadecimal line numbers" IsChecked="{Binding Settings.SciHexLineNumber}" IsEnabled="{Binding Settings.SciLineNumbers}" />
+
+									<CheckBox      Grid.Row="1" Grid.Column="0" Margin="2" Content="Word wrap" IsChecked="{Binding Settings.SciWordWrap}" />
 									
-									<CheckBox Grid.Row="0" Grid.Column="0" Margin="2" Content="Word wrap" IsChecked="{Binding Settings.SciWordWrap}" />
-									
-									<CheckBox Grid.Row="1" Grid.Column="0" Margin="2" Content="Show Whitespaces" IsChecked="{Binding Settings.SciShowWhitespace}" />
-									<ctrl:PHelpBtn Grid.Row="1" Grid.Column="1" HelpProperty="SciShowWhitespace" Margin="2,0" VerticalAlignment="Center" />
+									<CheckBox      Grid.Row="2" Grid.Column="0" Margin="2" Content="Show Whitespaces" IsChecked="{Binding Settings.SciShowWhitespace}" />
+									<ctrl:PHelpBtn Grid.Row="2" Grid.Column="1" HelpProperty="SciShowWhitespace" Margin="2,0" VerticalAlignment="Center" />
 
-									<CheckBox Grid.Row="2" Grid.Column="0" Margin="2" Content="Show EOL" IsChecked="{Binding Settings.SciShowEOL}" />
+									<CheckBox      Grid.Row="3" Grid.Column="0" Margin="2" Content="Show EOL" IsChecked="{Binding Settings.SciShowEOL}" />
 
-									<CheckBox Grid.Row="3" Grid.Column="0" Margin="2" Content="Scroll after last line" IsChecked="{Binding Settings.SciScrollAfterLastLine}" />
+									<CheckBox      Grid.Row="4" Grid.Column="0" Margin="2" Content="Scroll after last line" IsChecked="{Binding Settings.SciScrollAfterLastLine}" />
 
-									<CheckBox Grid.Row="4" Grid.Column="0" Margin="2" Content="Extended Line Cut/Copy" IsChecked="{Binding Settings.VSLineCopy}" />
-									<ctrl:PHelpBtn Grid.Row="4" Grid.Column="1" HelpProperty="VSLineCopy" Margin="2,0" VerticalAlignment="Center" />
+									<CheckBox      Grid.Row="5" Grid.Column="0" Margin="2" Content="Extended Line Cut/Copy" IsChecked="{Binding Settings.VSLineCopy}" />
+									<ctrl:PHelpBtn Grid.Row="5" Grid.Column="1" HelpProperty="VSLineCopy" Margin="2,0" VerticalAlignment="Center" />
 								</Grid>
 
-								<TextBlock     Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Tab Width" />
-								<TextBox       Grid.Row="1" Grid.Column="1" Text="{Binding Settings.SciTabWidth}" />
-								<ctrl:PHelpBtn Grid.Row="1" Grid.Column="2" HelpProperty="SciTabWidth" Margin="2,0" VerticalAlignment="Center" />
+								<TextBlock          Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Tab Width" />
+								<xctk:IntegerUpDown Grid.Row="1" Grid.Column="1" Margin="3" Text="{Binding Settings.SciTabWidth}" Minimum="0" Maximum="99" />
+								<ctrl:PHelpBtn      Grid.Row="1" Grid.Column="2" HelpProperty="SciTabWidth" Margin="2,0" VerticalAlignment="Center" />
+
+								<TextBlock          Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Only show every n-th line number" />
+								<xctk:IntegerUpDown Grid.Row="2" Grid.Column="1" Margin="3" Text="{Binding Settings.SciLineNumberSpacing}" Minimum="1" Maximum="1000000" IsEnabled="{Binding Settings.SciLineNumbers}" />
 
 							</Grid>
 						</GroupBox>

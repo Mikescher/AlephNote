@@ -516,6 +516,14 @@ namespace AlephNote.Common.Settings
 		public bool ShowTagButton { get { return _showTagButton; } set { _showTagButton = value; OnPropertyChanged(); } }
 		private bool _showTagButton = false;
 
+		[AlephXMLField]
+		public int SciLineNumberSpacing { get { return _sciLineNumberSpacing; } set { _sciLineNumberSpacing = value; OnPropertyChanged(); } }
+		private int _sciLineNumberSpacing = 1;
+
+		[AlephXMLField]
+		public bool SciHexLineNumber { get { return _sciHexLineNumber; } set { _sciHexLineNumber = value; OnPropertyChanged(); } }
+		private bool _sciHexLineNumber = false;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;
@@ -728,6 +736,11 @@ namespace AlephNote.Common.Settings
 			var p = System.Reflection.Assembly.GetExecutingAssembly().Location;
 			if (!p.ToLower().EndsWith(".exe")) p = Path.Combine(Path.GetDirectoryName(p), "AlephNote.exe");
 			return p;
+		}
+
+		public bool IsCustomLineNumbers()
+		{
+			return SciLineNumbers && (SciLineNumberSpacing>1 || SciHexLineNumber);
 		}
 	}
 }

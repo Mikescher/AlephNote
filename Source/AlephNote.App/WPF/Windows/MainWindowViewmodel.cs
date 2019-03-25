@@ -225,6 +225,7 @@ namespace AlephNote.WPF.Windows
 
 				Owner.SetupScintilla(Settings);
 				Owner.UpdateShortcuts(Settings);
+				Owner.UpdateCustomLineNumbers(0);
 
 				SearchText = string.Empty;
 
@@ -274,6 +275,8 @@ namespace AlephNote.WPF.Windows
 			RequestSettingsSave();
 
 			if (SelectedNote != null) { SelectedNote.PropertyChanged += SelectedNotePropertyChanged; _lastSelectedNote = SelectedNote; }
+
+			Owner.UpdateCustomLineNumbers(0);
 		}
 
 		private void SelectedNotePropertyChanged(object sender, PropertyChangedEventArgs e)

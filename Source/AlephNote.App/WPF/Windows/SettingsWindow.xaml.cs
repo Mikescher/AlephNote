@@ -18,6 +18,7 @@ namespace AlephNote.WPF.Windows
 		private readonly MainWindowViewmodel _ownerVM;
 
 		private bool? _multiSelectBackup = null;
+		private bool? _hexLineNumberBackup = null;
 
 		public SettingsWindow(MainWindowViewmodel owner, AppSettings data)
 		{
@@ -116,6 +117,20 @@ namespace AlephNote.WPF.Windows
 			// Restore
 			if (_multiSelectBackup != null) _viewmodel.Settings.SciMultiSelection = _multiSelectBackup.Value;
 			_multiSelectBackup = null;
+		}
+		
+		private void LineNumbers_Unchecked(object sender, RoutedEventArgs e)
+		{
+			// Save
+			_hexLineNumberBackup = _viewmodel.Settings.SciHexLineNumber;
+			_viewmodel.Settings.SciHexLineNumber = false;
+		}
+		
+		private void LineNumbers_Checked(object sender, RoutedEventArgs e)
+		{
+			// Restore
+			if (_hexLineNumberBackup != null) _viewmodel.Settings.SciHexLineNumber = _hexLineNumberBackup.Value;
+			_hexLineNumberBackup = null;
 		}
 	}
 }

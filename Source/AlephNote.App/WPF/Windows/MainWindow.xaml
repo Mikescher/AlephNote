@@ -336,6 +336,8 @@
 										  StyleNeeded="NoteEdit_StyleNeeded" 
 										  MarginClick="NoteEdit_MarginClick"
 										  HotspotClick="NoteEdit_HotspotClick" 
+										  Insert="NoteEdit_OnInsert"
+										  Delete="NoteEdit_OnDelete"
 										  HotspotDoubleClick="NoteEdit_HotspotDoubleClick" />
 					</WindowsFormsHost.Child>
 				</WindowsFormsHost>

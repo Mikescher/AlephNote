@@ -321,12 +321,24 @@ namespace AlephNote.WPF.Windows
 
 			var theme = ThemeManager.Inst.CurrentThemeSet;
 
-			bool listHighlight = 
+			var listHighlight = 
 				(s.ListMode == ListHighlightMode.Always) || 
 				(s.ListMode == ListHighlightMode.WithTag && _viewmodel?.SelectedNote?.HasTagCaseInsensitive(AppSettings.TAG_LIST) == true);
 
-			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].Width = s.SciLineNumbers ? NoteEdit.TextWidth(ScintillaHighlighter.STYLE_DEFAULT, "5555") : 0;
-			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].BackColor = theme.Get<ColorRef>("scintilla.margin.numbers:background").ToDCol();
+			NoteEdit.Margins.ClearAllText();
+
+			if (s.IsCustomLineNumbers())
+			{
+				NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].Type = MarginType.RightText;
+				NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].Width = NoteEdit.TextWidth(ScintillaHighlighter.STYLE_DEFAULT, "5555");
+				NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].BackColor = theme.Get<ColorRef>("scintilla.margin.numbers:background").ToDCol();
+			}
+			else
+			{
+				NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].Type = MarginType.Number;
+				NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].Width = s.SciLineNumbers ? NoteEdit.TextWidth(ScintillaHighlighter.STYLE_DEFAULT, "5555") : 0;
+				NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].BackColor = theme.Get<ColorRef>("scintilla.margin.numbers:background").ToDCol();
+			}
 
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].Width = listHighlight ? (NoteEdit.Lines.FirstOrDefault()?.Height ?? 32) : 0;
 			NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LISTSYMBOLS].Mask = Marker.MaskAll;
@@ -338,6 +350,31 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.Margins[3].Width = 0;
 
 			if (listHighlight && _viewmodel?.SelectedNote != null) GetHighlighter(s).UpdateListMargin(NoteEdit, null, null);
+		}
+
+		public void UpdateCustomLineNumbers(int startingAtLine)
+		{
+			if (Settings == null) return;
+			if (!Settings.IsCustomLineNumbers()) return;
+
+			// Starting at the specified line index, update each
+			// subsequent line margin text with a hex line number.
+			for (var i = startingAtLine; i < NoteEdit.Lines.Count; i++)
+			{
+				NoteEdit.Lines[i].MarginStyle = ScintillaNET.Style.LineNumber;
+
+				if (i % Settings.SciLineNumberSpacing == 0)
+				{
+					if (Settings.SciHexLineNumber)
+						NoteEdit.Lines[i].MarginText = "0x" + i.ToString("X2");
+					else
+						NoteEdit.Lines[i].MarginText = (i+1).ToString();
+				}
+				else
+				{
+					NoteEdit.Lines[i].MarginText = string.Empty;
+				}
+			}
 		}
 
 		public void ScrollScintilla(int? v)
@@ -736,6 +773,16 @@ namespace AlephNote.WPF.Windows
 			TagPopup.IsOpen=true;
 
 			Update(null, true);
+		}
+
+		private void NoteEdit_OnInsert(object sender, ModificationEventArgs e)
+		{
+			if (Settings.IsCustomLineNumbers() && e.LinesAdded != 0) UpdateCustomLineNumbers(NoteEdit.LineFromPosition(e.Position));
+		}
+
+		private void NoteEdit_OnDelete(object sender, ModificationEventArgs e)
+		{
+			if (Settings.IsCustomLineNumbers() && e.LinesAdded != 0) UpdateCustomLineNumbers(NoteEdit.LineFromPosition(e.Position));
 		}
 	}
 }
