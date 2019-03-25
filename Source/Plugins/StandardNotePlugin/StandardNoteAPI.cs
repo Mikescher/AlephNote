@@ -722,48 +722,49 @@ namespace AlephNote.Plugins.StandardNote
 				throw new StandardNoteAPIException("Cannot decrypt note with local masterkey", e);
 			}
 
-			var n = new StandardFileNote(encNote.uuid, cfg, conn.HConfig)
+			var n = new StandardFileNote(encNote.uuid, cfg, conn.HConfig);
+			using (n.SuppressDirtyChanges())
 			{
-				Text = StandardNoteConfig.REX_LINEBREAK.Replace(content.text, Environment.NewLine),
-				InternalTitle = content.title,
-				AuthHash = encNote.auth_hash,
-				ContentVersion = StandardNoteCrypt.GetSchemaVersion(encNote.content),
-				IsPinned = GetAppDataBool(content.appData, APPDATA_PINNED, false),
-				IsLocked = GetAppDataBool(content.appData, APPDATA_LOCKED, false),
-			};
+				n.Text = StandardNoteConfig.REX_LINEBREAK.Replace(content.text, Environment.NewLine);
+				n.InternalTitle = content.title;
+				n.AuthHash = encNote.auth_hash;
+				n.ContentVersion = StandardNoteCrypt.GetSchemaVersion(encNote.content);
+				n.IsPinned = GetAppDataBool(content.appData, APPDATA_PINNED, false);
+				n.IsLocked = GetAppDataBool(content.appData, APPDATA_LOCKED, false);
 
-			var refTags = new List<StandardFileTagRef>();
-			foreach (var cref in content.references)
-			{
-				if (cref.content_type == "Note")
+				var refTags = new List<StandardFileTagRef>();
+				foreach (var cref in content.references)
 				{
-					// ignore
+					if (cref.content_type == "Note")
+					{
+						// ignore
+					}
+					else if (dat.Tags.Any(t => t.UUID == cref.uuid))
+					{
+						refTags.Add(new StandardFileTagRef(cref.uuid, dat.Tags.First(t => t.UUID == cref.uuid).Title));
+					}
+					else if (cref.content_type == "Tag")
+					{
+						Logger.Warn(StandardNotePlugin.Name, $"Reference to missing tag {cref.uuid} in note {encNote.uuid}");
+					}
+					else
+					{
+						Logger.Error(StandardNotePlugin.Name, $"Downloaded note contains an unknown reference :{cref.uuid} ({cref.content_type}) in note {encNote.uuid}");
+					}
 				}
-				else if (dat.Tags.Any(t => t.UUID == cref.uuid))
+
+				foreach (var tref in dat.Tags.Where(tag => tag.References.Any(tref => tref == encNote.uuid)))
 				{
-					refTags.Add(new StandardFileTagRef(cref.uuid, dat.Tags.First(t => t.UUID == cref.uuid).Title));
+					refTags.Add(new StandardFileTagRef(tref.UUID, tref.Title));
 				}
-				else if (cref.content_type == "Tag")
-				{
-					Logger.Warn(StandardNotePlugin.Name, $"Reference to missing tag {cref.uuid} in note {encNote.uuid}");
-				}
-				else
-				{
-					Logger.Error(StandardNotePlugin.Name, $"Downloaded note contains an unknown reference :{cref.uuid} ({cref.content_type}) in note {encNote.uuid}");
-				}
+
+				refTags = refTags.DistinctBy(t => t.UUID).ToList();
+
+				n.SetTags(refTags);
+				n.SetReferences(content.references);
+				n.CreationDate = encNote.created_at;
+				n.ModificationDate = encNote.updated_at;
 			}
-
-			foreach (var tref in dat.Tags.Where(tag => tag.References.Any(tref => tref == encNote.uuid)))
-			{
-				refTags.Add(new StandardFileTagRef(tref.UUID, tref.Title));
-			}
-
-			refTags = refTags.DistinctBy(t => t.UUID).ToList();
-
-			n.SetTags(refTags);
-			n.SetReferences(content.references);
-			n.CreationDate = encNote.created_at;
-			n.ModificationDate = encNote.updated_at;
 
 			return n;
 		}

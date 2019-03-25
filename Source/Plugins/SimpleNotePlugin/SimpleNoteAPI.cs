@@ -227,19 +227,19 @@ namespace AlephNote.Plugins.SimpleNote
 		{
 			try
 			{
-				var n = new SimpleNote(id, cfg, conn.HConfig)
+				var n = new SimpleNote(id, cfg, conn.HConfig);
+				using (n.SuppressDirtyChanges())
 				{
-					Deleted = r.deleted,
-					ShareURL = r.shareURL,
-					PublicURL = r.publishURL,
-					SystemTags = r.systemTags,
-					Content = r.content,
-					ModificationDate = ConvertFromEpochDate(r.modificationDate),
-					CreationDate = ConvertFromEpochDate(r.creationDate),
-					LocalVersion = int.Parse(c.GetResponseHeader("X-Simperium-Version")),
+					n.Deleted = r.deleted;
+					n.ShareURL = r.shareURL;
+					n.PublicURL = r.publishURL;
+					n.SystemTags = r.systemTags;
+					n.Content = r.content;
+					n.ModificationDate = ConvertFromEpochDate(r.modificationDate);
+					n.CreationDate = ConvertFromEpochDate(r.creationDate);
+					n.LocalVersion = int.Parse(c.GetResponseHeader("X-Simperium-Version"));
+					n.Tags.Synchronize(r.tags);
 				};
-
-				n.Tags.Synchronize(r.tags);
 
 				return n;
 			}
