@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using AlephNote.Common.Settings;
+using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.Dialogs;
 using MSHC.WPF.MVVM;
 using Microsoft.Win32;
@@ -152,7 +153,7 @@ namespace AlephNote.WPF.Windows
 					var directory = dialog.SelectedPath;
 					foreach (var note in selection)
 					{
-						var filenameRaw = FilenameHelper.StripStringForFilename(note.Title, FilenameHelper.ValidityMode.AllowWhitelist);
+						var filenameRaw = ANFilenameHelper.StripStringForFilename(note.Title);
 						var filename = filenameRaw;
 						var ext = SelectedNote.HasTagCaseInsensitive(AppSettings.TAG_MARKDOWN) ? ".md" : ".txt";
 
