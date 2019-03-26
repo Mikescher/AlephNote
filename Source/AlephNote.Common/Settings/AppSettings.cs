@@ -344,7 +344,7 @@ namespace AlephNote.Common.Settings
 
 		[AlephXMLField]
 		public bool AutofocusScintilla { get { return _autofocusScintilla; } set { _autofocusScintilla = value; OnPropertyChanged(); } }
-		private bool _autofocusScintilla = false;
+		private bool _autofocusScintilla = false; // TODO use FocusTarget for more customization (migrate in AutoUpdater)
 
 		[AlephXMLField]
 		public bool FixScintillaScrollMessages { get { return _fixScintillaScrollMessages; } set { _fixScintillaScrollMessages = value; OnPropertyChanged(); } }

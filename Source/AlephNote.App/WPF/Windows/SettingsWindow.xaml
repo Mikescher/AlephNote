@@ -338,7 +338,7 @@
 										<RowDefinition Height="*" />
 									</Grid.RowDefinitions>
 
-									<CheckBox      Grid.Row="0" Grid.Column="0" Margin="2" Content="Show button in the tab bar"  IsChecked="{Binding Settings.ShowTagButton}" />
+									<CheckBox      Grid.Row="0" Grid.Column="0" Margin="2" Content="Show tag button in the tag control"  IsChecked="{Binding Settings.ShowTagButton}" />
 									<ctrl:PHelpBtn Grid.Row="0" Grid.Column="1" HelpProperty="ShowTagButton" Margin="2,0" VerticalAlignment="Center" />
 
 								</Grid>
@@ -1086,6 +1086,9 @@
 
 									<TextBlock     Grid.Row="7" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Keyboard focus after creating a new note" />
 									<ComboBox      Grid.Row="7" Grid.Column="2" Margin="4" ItemsSource="{mext:EnumSource {x:Type settings:FocusTarget}}" SelectedValue="{Binding Settings.FocusAfterCreateNote}" />
+
+									<TextBlock     Grid.Row="8" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Focus note content when pressing enter in title control" />
+									<CheckBox      Grid.Row="8" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.FocusScintillaOnTitleEnter}" />
 
 								</Grid>
 							</GroupBox>
