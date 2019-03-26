@@ -19,6 +19,7 @@ namespace AlephNote.Common.Themes
 			Tuple.Create("window.splitter"                                       , AlephThemePropType.Brush       ),
 
 			Tuple.Create("window.notetitle:foreground"                           , AlephThemePropType.Brush       ),
+			Tuple.Create("window.notetitle.placeholder"                          , AlephThemePropType.Brush       ),
 			Tuple.Create("window.changedate:foreground"                          , AlephThemePropType.Brush       ),
 
 			Tuple.Create("window.menubar:background"                             , AlephThemePropType.Brush       ),

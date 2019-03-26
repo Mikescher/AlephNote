@@ -271,7 +271,8 @@
 					</MultiBinding>
 				</TextBox.IsReadOnly>
 				<services:WatermarkService.Watermark>
-					<TextBlock Text="Empty Title..." VerticalAlignment="Center" Padding="6,0"
+					<TextBlock Text="Empty Title..." VerticalAlignment="Center" Padding="2,0"
+					           Foreground="{ext:ThemeBinding 'window.notetitle.placeholder'}"
 							   FontSize="{Binding Settings.TitleFontSize, Converter={locconv:FontSizeToInt}}" 
 							   FontFamily="{Binding Settings.TitleFontFamily, Converter={locconv:FontNameToFontFamily}}" 
 							   FontWeight="{Binding Settings.TitleFontModifier, Converter={locconv:FontModifierToFontWeight}}" 

@@ -152,6 +152,7 @@ Repository: https://github.com/Mikescher/AlephNote
 
 			<property name="window.notetitle:foreground"  value="@CornflowerBlue"/>
 			<property name="window.changedate:foreground" value="@DarkGray"/>
+			<property name="window.notetitle.placeholder" value="#888888"/>
 
 			<group name="menubar">
 				<property name="window.menubar:background"           value="gradient-v://0.25:#FFF6F6F6|0.25:#FFEAE8E8|0.80:#FFDCD9D9|1.00:#FFFFFFFF"/>
