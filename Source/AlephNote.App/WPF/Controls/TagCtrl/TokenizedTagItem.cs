@@ -126,7 +126,6 @@ namespace AlephNote.WPF.Controls
 					}
 					else if (e1.Key == Key.Escape)
 					{
-						_parent.AbortEditing();
 						_parent.FullResyncWithDataSource();
 					}
 					else if (e1.Key == Key.Back)

@@ -162,11 +162,25 @@ namespace AlephNote.WPF.Controls
 		{
 			if (ItemsSource == null) return;
 
+			if (IsEditing)
+			{
+				try
+				{
+					_suppressItemsRefresh++;
+				
+					var rm = ((IList<TokenizedTagItem>)ItemsSource).FirstOrDefault(p => p.IsEditing);
+					if (rm != null) rm.IsEditing = false;
+					Items.Refresh();
+				}
+				finally
+				{
+					_suppressItemsRefresh--;
+				}
+			}
+
 			((IList<TokenizedTagItem>)ItemsSource).SynchronizeCollection(((IEnumerable<string>)EnteredTags) ?? new List<string>(), (s,t) => s==t.Text, s => new TokenizedTagItem(s, this));
 			OnExplicitPropertyChanged("FormattedText");
 			Items.Refresh();
-			
-			if (IsEditing) AbortEditing();
 		}
 
 		private void OnEnteredTagsChanged(DependencyPropertyChangedEventArgs e)
@@ -213,7 +227,6 @@ namespace AlephNote.WPF.Controls
 			{
 				_suppressItemsRefresh--;
 			}
-
 		}
 
 		private void UpdateEnteredTags()
