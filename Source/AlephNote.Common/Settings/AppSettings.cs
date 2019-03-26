@@ -530,6 +530,10 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public FocusTarget FocusAfterCreateNote { get { return _focusAfterCreateNote; } set { _focusAfterCreateNote = value; OnPropertyChanged(); } }
 		private FocusTarget _focusAfterCreateNote = FocusTarget.NoteTitle;
+		
+		[AlephXMLField]
+		public bool FocusScintillaOnTitleEnter { get { return _focusScintillaOnTitleEnter; } set { _focusScintillaOnTitleEnter = value; OnPropertyChanged(); } }
+		private bool _focusScintillaOnTitleEnter = true;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

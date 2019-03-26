@@ -261,6 +261,9 @@
 					 FontWeight="{Binding Settings.TitleFontModifier, Converter={locconv:FontModifierToFontWeight}}" 
 					 FontStyle="{Binding Settings.TitleFontModifier, Converter={locconv:FontModifierToFontStyle}}" 
 					 Text="{Binding SelectedNote.Title, UpdateSourceTrigger=PropertyChanged}" >
+				<TextBox.InputBindings>
+					<KeyBinding Key="Return" Command="{Binding TitleEnterCommand}"/>
+				</TextBox.InputBindings>
 				<TextBox.IsReadOnly>
 					<MultiBinding Converter="{StaticResource MBOP}" ConverterParameter="OR">
 						<Binding Path="Settings.IsReadOnlyMode" />

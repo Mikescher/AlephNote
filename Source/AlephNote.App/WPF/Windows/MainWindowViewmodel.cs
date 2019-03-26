@@ -33,9 +33,10 @@ namespace AlephNote.WPF.Windows
 {
 	public partial class MainWindowViewmodel : ObservableObject, ISynchronizationFeedback, IThemeListener, IShortcutHandler
 	{
-		public ICommand ClosingEvent { get { return new RelayCommand<CancelEventArgs>(OnClosing); } }
-		public ICommand CloseEvent { get { return new RelayCommand<EventArgs>(OnClose); } }
-		public ICommand StateChangedEvent { get { return new RelayCommand<EventArgs>(OnStateChanged); } }
+		public ICommand ClosingEvent      => new RelayCommand<CancelEventArgs>(OnClosing);
+		public ICommand CloseEvent        => new RelayCommand<EventArgs>(OnClose);
+		public ICommand StateChangedEvent => new RelayCommand<EventArgs>(OnStateChanged);
+		public ICommand TitleEnterCommand => new RelayCommand<EventArgs>(TitleEnter);
 
 		private AppSettings _settings;
 		public AppSettings Settings { get { return _settings; } private set { _settings = value; OnPropertyChanged(); SettingsChanged(); } }
@@ -582,6 +583,11 @@ namespace AlephNote.WPF.Windows
 		public void ShowConflictResolutionDialog(string uuid, string txt0, string ttl0, List<string> tgs0, DirectoryPath ndp0, string txt1, string ttl1, List<string> tgs1, DirectoryPath ndp1)
 		{
 			ConflictWindow.Show(Repository, Owner, uuid, Tuple.Create(txt0, ttl0, tgs0, ndp0), Tuple.Create(txt1, ttl1, tgs1, ndp1));
+		}
+
+		private void TitleEnter(EventArgs e)
+		{
+			if (Settings?.FocusScintillaOnTitleEnter == true) Owner.FocusScintilla();
 		}
 	}
 }
