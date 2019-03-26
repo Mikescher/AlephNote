@@ -229,6 +229,7 @@
 
 
 		<Button Grid.Row="0" Grid.Column="0" Margin="2" Padding="0" FontWeight="Bold" x:Name="TagChoosePopupButton"
+				Focusable="False"
 		        Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
 		        Foreground="{ext:ThemeBinding 'window.tageditor.tagbutton:foreground'}" 
 		        Background="{ext:ThemeBinding 'window.tageditor.tagbutton:background'}" 
