@@ -25,6 +25,7 @@ using AlephNote.WPF.Extensions;
 using AlephNote.Common.Util;
 using AlephNote.Common.Util.Search;
 using AlephNote.Native;
+using AlephNote.WPF.Controls.NotesView;
 using AlephNote.WPF.ScintillaUtil;
 using MSHC.Lang.Collections;
 using Application = System.Windows.Application;

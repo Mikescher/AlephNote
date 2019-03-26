@@ -189,11 +189,12 @@
     <Compile Include="WPF\Controls\GlobalSearchTextBox.xaml.cs">
       <DependentUpon>GlobalSearchTextBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WPF\Controls\INotesViewControl.cs" />
-    <Compile Include="WPF\Controls\NotesViewFlat.xaml.cs">
+    <Compile Include="WPF\Controls\NotesView\INotesViewControl.cs" />
+    <Compile Include="WPF\Controls\NotesView\NotesViewControlCommon.cs" />
+    <Compile Include="WPF\Controls\NotesView\NotesViewFlat.xaml.cs">
       <DependentUpon>NotesViewFlat.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WPF\Controls\NotesViewHierachical.xaml.cs">
+    <Compile Include="WPF\Controls\NotesView\NotesViewHierachical.xaml.cs">
       <DependentUpon>NotesViewHierachical.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Controls\PathEditor.xaml.cs">
@@ -357,11 +358,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WPF\Controls\NotesViewFlat.xaml">
+    <Page Include="WPF\Controls\NotesView\NotesViewFlat.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WPF\Controls\NotesViewHierachical.xaml">
+    <Page Include="WPF\Controls\NotesView\NotesViewHierachical.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

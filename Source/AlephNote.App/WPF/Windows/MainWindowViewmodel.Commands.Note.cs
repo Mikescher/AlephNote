@@ -41,6 +41,8 @@ namespace AlephNote.WPF.Windows
 		public ICommand CutCurrentLineCommand             => new RelayCommand(CutCurrentLine);
 		public ICommand CopyAllowLineCommand              => new RelayCommand(CopyAllowLine);
 		public ICommand CutAllowLineCommand               => new RelayCommand(CutAllowLine);
+		public ICommand AddTagCommand                     => new RelayCommand<string>(AddTagToNote);
+		public ICommand RemoveTagCommand                  => new RelayCommand<string>(RemoveTagFromNote);
 
 		private void ExportNote()
 		{
@@ -110,6 +112,7 @@ namespace AlephNote.WPF.Windows
 			try
 			{
 				if (SelectedNote == null) return;
+				if (Settings.IsReadOnlyMode) return;
 
 				var selection = AllSelectedNotes.ToList();
 				if (selection.Count > 1)
@@ -139,6 +142,7 @@ namespace AlephNote.WPF.Windows
 		private void DuplicateNote()
 		{
 			if (SelectedNote == null) return;
+			if (Settings.IsReadOnlyMode) return;
 
 			if (Owner.Visibility == Visibility.Hidden) ShowMainWindow();
 
@@ -191,9 +195,11 @@ namespace AlephNote.WPF.Windows
 
 		private void PinUnpinNote()
 		{
+			if (Settings.IsReadOnlyMode) return;
+
 			if (!Repository.SupportsPinning)
 			{
-				MessageBox.Show(Owner, "Pinning notes is not supported by your note provider", "Unsupported oprtation!", MessageBoxButton.OK);
+				MessageBox.Show(Owner, "Pinning notes is not supported by your note provider", "Unsupported operation!", MessageBoxButton.OK);
 				return;
 			}
 
@@ -216,9 +222,11 @@ namespace AlephNote.WPF.Windows
 
 		private void LockUnlockNote()
 		{
+			if (Settings.IsReadOnlyMode) return;
+
 			if (!Repository.SupportsLocking)
 			{
-				MessageBox.Show(Owner, "Locking notes is not supported by your note provider", "Unsupported oprtation!", MessageBoxButton.OK);
+				MessageBox.Show(Owner, "Locking notes is not supported by your note provider", "Unsupported operation!", MessageBoxButton.OK);
 				return;
 			}
 
@@ -236,6 +244,67 @@ namespace AlephNote.WPF.Windows
 			else
 			{
 				SelectedNote.IsLocked = !SelectedNote.IsLocked;
+			}
+		}
+
+		private void AddTagToNote(string t)
+		{
+			if (SelectedNote == null) return;
+			if (Settings.IsReadOnlyMode) return;
+
+			if (!Repository.SupportsTags)
+			{
+				MessageBox.Show(Owner, "Tags are not supported by your note provider", "Unsupported operation!", MessageBoxButton.OK);
+				return;
+			}
+			
+			if (SelectedNote == null) return;
+
+			var selection = AllSelectedNotes.ToList();
+			if (selection.Count > 1)
+			{
+				if (MessageBox.Show(Owner, $"Do you really want to add the tag [{t}] to {selection.Count} notes?", $"Add tag?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+
+				foreach (var note in selection)
+				{
+					if (note.IsLocked) continue;
+					if (!note.Tags.Contains(t)) note.Tags.Add(t);
+				}
+			}
+			else
+			{
+				if (SelectedNote.IsLocked) return;
+				if (!SelectedNote.Tags.Contains(t)) SelectedNote.Tags.Add(t);
+			}
+		}
+
+		private void RemoveTagFromNote(string t)
+		{
+			if (SelectedNote == null) return;
+
+			if (!Repository.SupportsTags)
+			{
+				MessageBox.Show(Owner, "Tags are not supported by your note provider", "Unsupported operation!", MessageBoxButton.OK);
+				return;
+			}
+			
+			if (SelectedNote == null) return;
+
+			var selection = AllSelectedNotes.ToList();
+			if (selection.Count > 1)
+			{
+				if (MessageBox.Show(Owner, $"Do you really want to remove the tag [{t}] from {selection.Count} notes?", $"Remove tag?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+
+				foreach (var note in selection)
+				{
+					if (note.IsLocked) continue;
+					if (note.Tags.Contains(t)) note.Tags.Remove(t);
+				}
+			}
+			else
+			{
+				if (SelectedNote.IsLocked) return;
+				if (SelectedNote.Tags.Contains(t)) SelectedNote.Tags.Remove(t);
 			}
 		}
 

@@ -16,7 +16,8 @@
 		xmlns:system="clr-namespace:System;assembly=mscorlib"
 		xmlns:proxy="clr-namespace:MSHC.WPF.BindingProxies;assembly=CSharpUtils"
         xmlns:services="clr-namespace:MSHC.WPF.Services;assembly=CSharpUtils"
-		mc:Ignorable="d" 
+        xmlns:notesView="clr-namespace:AlephNote.WPF.Controls.NotesView"
+        mc:Ignorable="d" 
 		Icon="/Resources/IconMain.png"
 		WindowState="{Binding WindowState}"
 		d:DataContext="{d:DesignInstance windows:MainWindowViewmodel}"
@@ -206,7 +207,7 @@
 				<ContentControl.Resources>
 
 					<ControlTemplate x:Key="TemplateFlat" >
-						<controls:NotesViewFlat
+						<notesView:NotesViewFlat
 									NotesListDrop="NotesList_Drop"
 									NotesListKeyDown="NotesList_KeyDown"
 									ParentAnchor="{Binding ., ElementName=LayoutRoot}"
@@ -218,7 +219,7 @@
 					</ControlTemplate>
 
 					<ControlTemplate x:Key="TemplateHierachical">
-						<controls:NotesViewHierachical
+						<notesView:NotesViewHierachical
 									NotesListDrop="NotesList_Drop"
 									NotesListKeyDown="NotesList_KeyDown"
 									GridSplitterChanged="VertGridSplitterChanged"

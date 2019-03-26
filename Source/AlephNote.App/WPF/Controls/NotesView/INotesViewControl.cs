@@ -1,10 +1,10 @@
-﻿using AlephNote.PluginInterface;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AlephNote.Common.Settings.Types;
+using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.Windows;
 
-namespace AlephNote.WPF.Controls
+namespace AlephNote.WPF.Controls.NotesView
 {
 	public interface INotesViewControl
 	{
