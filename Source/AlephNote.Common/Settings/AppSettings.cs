@@ -522,10 +522,14 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public int SciLineNumberSpacing { get { return _sciLineNumberSpacing; } set { _sciLineNumberSpacing = value; OnPropertyChanged(); } }
 		private int _sciLineNumberSpacing = 1;
-
+		
 		[AlephXMLField]
 		public bool SciHexLineNumber { get { return _sciHexLineNumber; } set { _sciHexLineNumber = value; OnPropertyChanged(); } }
 		private bool _sciHexLineNumber = false;
+
+		[AlephXMLField]
+		public FocusTarget FocusAfterCreateNote { get { return _focusAfterCreateNote; } set { _focusAfterCreateNote = value; OnPropertyChanged(); } }
+		private FocusTarget _focusAfterCreateNote = FocusTarget.NoteTitle;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

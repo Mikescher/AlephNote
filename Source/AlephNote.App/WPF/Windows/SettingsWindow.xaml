@@ -1084,6 +1084,9 @@
 									<TextBlock     Grid.Row="6" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Disable the Application Log" />
 									<CheckBox      Grid.Row="6" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.DisableLogger}" />
 
+									<TextBlock     Grid.Row="7" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Keyboard focus after creating a new note" />
+									<ComboBox      Grid.Row="7" Grid.Column="2" Margin="4" ItemsSource="{mext:EnumSource {x:Type settings:FocusTarget}}" SelectedValue="{Binding Settings.FocusAfterCreateNote}" />
+
 								</Grid>
 							</GroupBox>
 							<GroupBox Padding="4">

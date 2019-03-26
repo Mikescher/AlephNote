@@ -246,6 +246,8 @@ namespace AlephNote.WPF.Windows
 				var path = Owner.NotesViewControl.GetNewNotesPath();
 				if (Owner.Visibility == Visibility.Hidden) ShowMainWindow();
 				SelectedNote = Repository.CreateNewNote(path);
+
+				Owner.SetFocus(Settings.FocusAfterCreateNote);
 			}
 			catch (Exception e)
 			{

@@ -797,5 +797,35 @@ namespace AlephNote.WPF.Windows
 		{
 			if (Settings.IsCustomLineNumbers() && e.LinesAdded != 0) UpdateCustomLineNumbers(NoteEdit.LineFromPosition(e.Position));
 		}
+
+		public void SetFocus(FocusTarget dst)
+		{
+			switch (dst)
+			{
+				case FocusTarget.NoteTitle:
+					FocusTitle();
+					break;
+
+				case FocusTarget.NoteTags:
+					FocusTagEditor();
+					break;
+
+				case FocusTarget.NoteText:
+					FocusScintilla();
+					break;
+
+				case FocusTarget.NoteList:
+					NotesViewControl.FocusNotesList();
+					break;
+
+				case FocusTarget.FolderList:
+					NotesViewControl.FocusFolderList();
+					break;
+				
+				case FocusTarget.Unchanged:
+				default:
+					return; // Nothing
+			}
+		}
 	}
 }
