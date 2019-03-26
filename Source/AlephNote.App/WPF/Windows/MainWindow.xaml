@@ -159,7 +159,7 @@
 			        Background="{ext:ThemeBinding 'window.globalsearch.tagbutton:background'}" 
 			        BorderThickness="{ext:ThemeBinding 'window.globalsearch.tagbutton:border_thickness'}"
 			        BorderBrush="{ext:ThemeBinding 'window.globalsearch.tagbutton:border'}" 
-			        Visibility="{Binding Settings.HideTagChooser, Converter={conv:BoolToVisibility}, ConverterParameter=Hidden;Visible}"
+			        Visibility="{Binding Settings.HideTagChooser, Converter={conv:BoolToVisibility}, ConverterParameter=Collapsed;Visible}"
 			        Command="{Binding ShowTagFilterCommand}">
 				<Image Source="/Resources/tag.png" Margin="2" />
 			</Button>
