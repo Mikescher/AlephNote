@@ -160,5 +160,12 @@ namespace AlephNote.WPF.Controls
 			
 			TagChoosePopup.IsOpen=true;
 		}
+
+		public void StartEditing()
+		{
+			if (Readonly) return;
+
+			TagCtrl.StartEditing();
+		}
 	}
 }

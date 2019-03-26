@@ -362,6 +362,13 @@ namespace AlephNote.WPF.Controls
 			
 		}
 
+		public void StartEditing()
+		{
+			if (IsReadonly) return;
+			Focus();
+			var tti = InitializeNewTag();
+			this.SelectedItem = tti;
+		}
 	}
 
 }

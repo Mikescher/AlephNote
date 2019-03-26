@@ -70,5 +70,7 @@ namespace AlephNote.Common.Shortcuts
 		ICommand SetNoteSortingByModificationDateCommand { get; }
 		ICommand RotateNoteProviderCommand { get; }
 		ICommand InsertSnippetCommand { get; }
+		ICommand FocusTitleCommand { get; }
+		ICommand FocusTagsCommand  { get; }
 	}
 }

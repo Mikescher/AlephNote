@@ -413,6 +413,19 @@ namespace AlephNote.WPF.Windows
 		{
 			GlobalSearchBar.Focus();
 		}
+		
+		public void FocusTitle()
+		{
+			if (!TitleTextBox.IsReadOnly) TitleTextBox.Focus();
+		}
+		
+		public void FocusTagEditor()
+		{
+			if (!TagEditor.Readonly)
+			{
+				TagEditor.StartEditing();
+			}
+		}
 
 		private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
 		{

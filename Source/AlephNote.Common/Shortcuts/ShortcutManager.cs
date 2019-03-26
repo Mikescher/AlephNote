@@ -85,6 +85,8 @@ namespace AlephNote.Common.Shortcuts
 			AddCommand(ASS.Window,     "FocusNotesList",                   h => h.FocusNotesListCommand,                   "Select the note list");
 			AddCommand(ASS.Window,     "FocusGlobalSearch",                h => h.FocusGlobalSearchCommand,                "Select the global search field");
 			AddCommand(ASS.Window,     "FocusFolderList",                  h => h.FocusFolderCommand,                      "Select the folder list");
+			AddCommand(ASS.Window,     "FocusTitle",                       h => h.FocusTitleCommand,                       "Select the note title control");
+			AddCommand(ASS.Window,     "FocusTags",                        h => h.FocusTagsCommand,                        "Select the tags control");
 
 			AddCommand(ASS.NoteEdit,   "FocusPrevNote",                    h => h.FocusPrevNoteCommand,                    "Select the previous note");
 			AddCommand(ASS.NoteEdit,   "FocusNextNote",                    h => h.FocusNextNoteCommand,                    "Select the next note");

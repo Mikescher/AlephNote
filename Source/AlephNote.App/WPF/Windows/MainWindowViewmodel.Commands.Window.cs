@@ -32,6 +32,8 @@ namespace AlephNote.WPF.Windows
 		public ICommand FocusNotesListCommand          => new RelayCommand(() => Owner.NotesViewControl.FocusNotesList());
 		public ICommand FocusGlobalSearchCommand       => new RelayCommand(() => Owner.FocusGlobalSearch());
 		public ICommand FocusFolderCommand             => new RelayCommand(() => Owner.NotesViewControl.FocusFolderList());
+		public ICommand FocusTitleCommand              => new RelayCommand(() => Owner.FocusTitle());
+		public ICommand FocusTagsCommand               => new RelayCommand(() => Owner.FocusTagEditor());
 		public ICommand ShowTagFilterCommand           => new RelayCommand(ShowTagFilter);
 		public ICommand AppToggleVisibilityCommand     => new RelayCommand(AppToggleVisibility);
 		
