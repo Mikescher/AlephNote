@@ -258,11 +258,9 @@ namespace AlephNote.Common.Shortcuts
 					if (!conflictScopes.Contains(s2.Scope)) continue;
 
 					if (s1.Key != s2.Key) continue;
+					if (s1.Modifiers != s2.Modifiers) continue;
 
-					if ((s1.Modifiers & s2.Modifiers) == s1.Modifiers || (s1.Modifiers & s2.Modifiers) == s2.Modifiers)
-					{
-						yield return Tuple.Create(s1, s2);
-					}
+					yield return Tuple.Create(s1, s2);
 				}
 
 			}

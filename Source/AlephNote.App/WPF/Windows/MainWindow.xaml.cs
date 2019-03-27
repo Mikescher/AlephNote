@@ -436,20 +436,22 @@ namespace AlephNote.WPF.Windows
 
 			if (Settings != null && ReferenceEquals(e.OriginalSource, NoteEditHost))
 			{
+				var exec = false;
 				foreach (var sc in Settings.Shortcuts)
 				{
 					if (sc.Value.Scope == AlephShortcutScope.NoteEdit)
 					{
 						var kk = (Key)sc.Value.Key;
 						var mm = (ModifierKeys)sc.Value.Modifiers;
-						if (kk == evtkey && mm == (evtmod & mm))
+						if (kk == evtkey && mm == evtmod)
 						{
 							ShortcutManager.Execute(this, sc.Key);
 							e.Handled = true;
-							return;
+							exec = true;
 						}
 					}
 				}
+				if (exec) return;
 			}
 
 			if (e.Key == Key.System && ReferenceEquals(e.OriginalSource, NoteEditHost) && Settings?.SciRectSelection==true)
@@ -486,7 +488,7 @@ namespace AlephNote.WPF.Windows
 					{
 						var kk = (Key)sc.Value.Key;
 						var mm = (ModifierKeys)sc.Value.Modifiers;
-						if (kk == ekey && mm == (emod & mm))
+						if (kk == ekey && mm == emod)
 						{
 							ShortcutManager.Execute(this, sc.Key);
 							e.Handled = true;
@@ -673,7 +675,7 @@ namespace AlephNote.WPF.Windows
 			}
 
 			// ================ NOTESLIST ================
-			NotesViewControl.SetShortcuts(this, settings.Shortcuts.ToList());
+			NotesViewControl.SetShortcuts(this, settings.Shortcuts.ToList()); // via InputBindings
 
 			// ================ GLOBAL ================
 			_scManager.Clear();
