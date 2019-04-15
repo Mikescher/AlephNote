@@ -179,6 +179,7 @@ namespace AlephNote.WPF.Windows
 
 			NoteEdit.WhitespaceSize = theme.Get<int>("scintilla.whitespace:size");
 			NoteEdit.ViewWhitespace = s.SciShowWhitespace ? WhitespaceMode.VisibleAlways : WhitespaceMode.Invisible;
+			NoteEdit.ViewEol        = s.SciShowEOL;
 			NoteEdit.SetWhitespaceForeColor(!theme.Get<ColorRef>("scintilla.whitespace:color").IsTransparent, theme.Get<ColorRef>("scintilla.whitespace:color").ToDCol());
 			NoteEdit.SetWhitespaceBackColor(!theme.Get<ColorRef>("scintilla.whitespace:background").IsTransparent, theme.Get<ColorRef>("scintilla.whitespace:background").ToDCol());
 
