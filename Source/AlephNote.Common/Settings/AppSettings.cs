@@ -9,6 +9,7 @@ using AlephNote.Common.Shortcuts;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.AppContext;
+using AlephNote.PluginInterface.Objects;
 using AlephNote.PluginInterface.Objects.AXML;
 using AlephNote.PluginInterface.Util;
 using MSHC.WPF.MVVM;

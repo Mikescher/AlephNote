@@ -10,6 +10,7 @@ using AlephNote.Common.Operations;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.Objects;
 using AlephNote.PluginInterface.Util;
 using MSHC.Util.Threads;
 using MSHC.WPF.MVVM;

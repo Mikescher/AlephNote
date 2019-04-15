@@ -12,6 +12,7 @@ using AlephNote.Common.Shortcuts;
 using AlephNote.Common.SPSParser;
 using AlephNote.Common.Themes;
 using AlephNote.Common.Util;
+using AlephNote.PluginInterface.Objects;
 using AlephNote.WPF.Util;
 using MSHC.WPF.MVVM;
 

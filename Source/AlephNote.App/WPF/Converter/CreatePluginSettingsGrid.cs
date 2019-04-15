@@ -12,6 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using AlephNote.PluginInterface.Objects;
 using Xceed.Wpf.Toolkit;
 
 namespace AlephNote.WPF.Converter

@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using AlephNote.Common.Settings;
 using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.Objects;
 
 namespace AlephNote.WPF.Controls
 {

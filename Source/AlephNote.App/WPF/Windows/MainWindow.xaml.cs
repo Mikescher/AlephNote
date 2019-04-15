@@ -308,6 +308,7 @@ namespace AlephNote.WPF.Windows
 			}
 
 			UpdateMargins(Settings);
+			UpdateCustomLineNumbers(0);
 		}
 
 		public void ResetScintillaScrollAndUndo()
@@ -329,7 +330,13 @@ namespace AlephNote.WPF.Windows
 
 			NoteEdit.Margins.ClearAllText();
 
-			if (s.IsCustomLineNumbers())
+			if (s.IsCustomLineNumbers() && s.SciHexLineNumber)
+			{
+				NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].Type = MarginType.RightText;
+				NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].Width = NoteEdit.TextWidth(ScintillaHighlighter.STYLE_DEFAULT, "0xAAAA");
+				NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].BackColor = theme.Get<ColorRef>("scintilla.margin.numbers:background").ToDCol();
+			}
+			else if (s.IsCustomLineNumbers())
 			{
 				NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].Type = MarginType.RightText;
 				NoteEdit.Margins[ScintillaHighlighter.STYLE_MARGIN_LINENUMBERS].Width = NoteEdit.TextWidth(ScintillaHighlighter.STYLE_DEFAULT, "5555");
@@ -562,6 +569,7 @@ namespace AlephNote.WPF.Windows
 			{
 				ForceNewHighlighting(Settings);
 				UpdateMargins(Settings);
+				UpdateCustomLineNumbers(0);
 			}));
 		}
 

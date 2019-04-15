@@ -11,6 +11,7 @@ using AlephNote.Common.Settings;
 using AlephNote.Impl;
 using AlephNote.PluginInterface.Util;
 using AlephNote.Common.Util;
+using AlephNote.PluginInterface.Objects;
 using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.Windows

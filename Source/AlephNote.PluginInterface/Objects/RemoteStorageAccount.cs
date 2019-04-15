@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AlephNote.PluginInterface
+namespace AlephNote.PluginInterface.Objects
 {
 	public class RemoteStorageAccount
 	{
