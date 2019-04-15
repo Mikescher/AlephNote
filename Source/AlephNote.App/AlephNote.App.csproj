@@ -277,7 +277,6 @@
     <Compile Include="WPF\ScintillaUtil\MarkdownHighlighter.cs" />
     <Compile Include="WPF\ScintillaUtil\DefaultHighlighter.cs" />
     <Compile Include="WPF\Controls\BindablePasswordBox.cs" />
-    <Compile Include="WPF\Controls\ClickSelectTextBox.cs" />
     <Compile Include="WPF\Controls\DialogWindow.cs" />
     <Compile Include="WPF\Controls\FontBox.xaml.cs">
       <DependentUpon>FontBox.xaml</DependentUpon>

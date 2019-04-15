@@ -6,6 +6,7 @@
 			 xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
 			 xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
+			 xmlns:controls1="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="28" d:DesignWidth="500">
 
@@ -28,11 +29,11 @@
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 
-				<controls:ClickSelectTextBox Margin="4" Grid.Column="0" 
-											 Background="{ext:ThemeBinding 'window.inlinesearch.textbox:background'}"
-											 Foreground="{ext:ThemeBinding 'window.inlinesearch.textbox:foreground'}"
-											 x:Name="MainTextBox" BorderThickness="0" KeyDown="OnKeyDown" 
-											 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+				<controls1:ClickSelectTextBox Margin="4" Grid.Column="0" 
+											  Background="{ext:ThemeBinding 'window.inlinesearch.textbox:background'}"
+											  Foreground="{ext:ThemeBinding 'window.inlinesearch.textbox:foreground'}"
+											  x:Name="MainTextBox" BorderThickness="0" KeyDown="OnKeyDown" 
+											  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
 				<Button Margin="2" Grid.Column="2" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
 						Background="{ext:ThemeBinding 'window.inlinesearch.btnSearch:background'}"

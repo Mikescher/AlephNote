@@ -7,16 +7,18 @@
 			 xmlns:services="clr-namespace:MSHC.WPF.Services;assembly=CSharpUtils"
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 			 xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
+			 xmlns:controls="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="22" d:DesignWidth="300">
 	<Grid x:Name="LayoutRoot">
 		
-		<local:ClickSelectTextBox 
+		<controls:ClickSelectTextBox 
 				x:Name="SearchControl"
 				Foreground="{ext:ThemeBinding 'window.globalsearch.input:foreground'}" 
 				Background="{ext:ThemeBinding 'window.globalsearch.input:background'}" 
 				BorderBrush="{ext:ThemeBinding 'window.globalsearch.input:border'}" 
-				Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+				Text="{Binding SearchTextInternal, UpdateSourceTrigger=PropertyChanged}"
+				KeyDown="SearchControl_OnKeyDown">
 			<services:WatermarkService.Watermark>
 				<TextBlock 
 						Foreground="{ext:ThemeBinding 'window.globalsearch.placeholder:foreground'}"
@@ -24,7 +26,7 @@
 						Text="Search" 
 						Padding="5,0"/>
 			</services:WatermarkService.Watermark>
-		</local:ClickSelectTextBox>
+		</controls:ClickSelectTextBox>
 
 		<Button 
 			Visibility="{Binding SearchText, Converter={conv:EmptyToVisibility}, ConverterParameter='Hidden;Visible'}"

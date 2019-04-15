@@ -534,6 +534,10 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public bool FocusScintillaOnTitleEnter { get { return _focusScintillaOnTitleEnter; } set { _focusScintillaOnTitleEnter = value; OnPropertyChanged(); } }
 		private bool _focusScintillaOnTitleEnter = true;
+		
+		[AlephXMLField]
+		public SearchDelayMode GlobalSearchDelay { get { return _globalSearchDelay; } set { _globalSearchDelay = value; OnPropertyChanged(); } }
+		private SearchDelayMode _globalSearchDelay = SearchDelayMode.Auto;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

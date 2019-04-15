@@ -1090,6 +1090,9 @@
 									<TextBlock     Grid.Row="8" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Focus note content when pressing enter in title control" />
 									<CheckBox      Grid.Row="8" Grid.Column="2"            VerticalAlignment="Center" IsChecked="{Binding Settings.FocusScintillaOnTitleEnter}" />
 
+									<TextBlock     Grid.Row="9" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Search delay mode for global search box" />
+									<ComboBox      Grid.Row="9" Grid.Column="2" Margin="4" ItemsSource="{mext:EnumSource {x:Type settings:SearchDelayMode}}" SelectedValue="{Binding Settings.GlobalSearchDelay}" />
+
 								</Grid>
 							</GroupBox>
 							<GroupBox Padding="4">
