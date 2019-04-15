@@ -89,6 +89,7 @@ License:    Copyright (c) 2017 Skyler Lee
 		<property name="window.foreground"                                 value="@MK_VeryLightGray" />
 		<property name="window.splitter"                                   value="@Transparent" />
 		<property name="window.notetitle:foreground"                       value="@Mk_Yellow" />
+		<property name="window.notetitle:caret"                            value="@White"/>
 		<property name="window.notetitle.placeholder"                      value="@MK_LightGray" />
 		<property name="window.changedate:foreground"                      value="@MK_LightGray" />
 		<property name="window.menubar:background"                         value="gradient-v://0.00:#3C393E|1.00:#242424" />

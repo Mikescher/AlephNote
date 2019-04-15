@@ -54,6 +54,7 @@ Repository: https://github.com/Mikescher/AlephNote
 		<property name="scintilla.whitespace:color"                   value="@Primary"/>
 
 		<property name="window.notetitle:foreground"                  value="@Primary" />
+		<property name="window.notetitle:caret"                       value="@Primary"/>
 		<property name="window.notetitle.placeholder"                 value="@Primary" />
 
 

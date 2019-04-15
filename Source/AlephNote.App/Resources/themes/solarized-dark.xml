@@ -104,6 +104,7 @@ License:    Copyright (c) 2011 Ethan Schoonover
 			<property name="window.mainmenu:foreground"                   value="@base02"/>
 
 			<property name="window.notetitle:foreground"                  value="@yellow"/>
+			<property name="window.notetitle:caret"                       value="@White"/>
 			<property name="window.notetitle.placeholder"                 value="@base1"/>
 			<property name="window.changedate:foreground"                 value="@base00"/>
 
