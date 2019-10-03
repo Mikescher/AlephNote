@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 using AlephNote.Common.Settings;
+using AlephNote.Common.Settings.Types;
 
 namespace AlephNote.WPF.ScintillaUtil
 {
@@ -51,7 +54,7 @@ namespace AlephNote.WPF.ScintillaUtil
 					if (smode == ParserSuperMode.FencedBacktickBlock || smode == ParserSuperMode.FencedTildeBlock)
 						HighlightFencedLine(sci, text);
 					else if (smode == ParserSuperMode.None)
-						HighlightLine(sci, text);
+						HighlightLine(sci, text, s);
 				}
 
 				if (resetFenceBlock) smode = ParserSuperMode.None;
@@ -67,7 +70,7 @@ namespace AlephNote.WPF.ScintillaUtil
 			sci.SetStyling(text.Length, STYLE_MD_CODE);
 		}
 
-		private void HighlightLine(ScintillaNET.Scintilla sci, string text)
+		private void HighlightLine(ScintillaNET.Scintilla sci, string text, AppSettings s)
 		{
 			if (text.TrimStart().StartsWith("#") && text.TrimStart().TrimStart('#').StartsWith(" "))
 			{
@@ -86,16 +89,16 @@ namespace AlephNote.WPF.ScintillaUtil
 			bool isLineStart = true;
 			for (int i = 0; i < text.Length; i++)
 			{
-				int enumNumLen = 0;
+				var enumNumLen = 0;
 
-				bool isDoubleStar = (i + 2 < text.Length) && text[i] == '*' && text[i + 1] == '*';
-				bool isSingleStar = !isDoubleStar && (i + 1 < text.Length) && text[i] == '*';
-				bool isBacktick   = text[i] == '`';
-				bool isOpenBrace  = text[i] == '[';
-				bool isEnumStar   = isLineStart && (i + 1 < text.Length) && text[i] == '*' && (text[i + 1] == ' ' || text[i + 1] == '\t');
-				bool isEnumDash   = isLineStart && (i + 1 < text.Length) && text[i] == '-' && (text[i + 1] == ' ' || text[i + 1] == '\t');
-				bool isEnumPlus   = isLineStart && (i + 1 < text.Length) && text[i] == '+' && (text[i + 1] == ' ' || text[i + 1] == '\t');
-				bool isEnumNumber = isLineStart && ParseMarkdownEnumNumber(text.Substring(i), out enumNumLen);
+				var isDoubleStar = (i + 2 < text.Length) && text[i] == '*' && text[i + 1] == '*';
+				var isSingleStar = !isDoubleStar && (i + 1 < text.Length) && text[i] == '*';
+				var isBacktick   = text[i] == '`';
+				var isOpenBrace  = text[i] == '[';
+				var isEnumStar   = isLineStart && (i + 1 < text.Length) && text[i] == '*' && (text[i + 1] == ' ' || text[i + 1] == '\t');
+				var isEnumDash   = isLineStart && (i + 1 < text.Length) && text[i] == '-' && (text[i + 1] == ' ' || text[i + 1] == '\t');
+				var isEnumPlus   = isLineStart && (i + 1 < text.Length) && text[i] == '+' && (text[i + 1] == ' ' || text[i + 1] == '\t');
+				var isEnumNumber = isLineStart && ParseMarkdownEnumNumber(text.Substring(i), out enumNumLen);
 
 				if (text[i] != ' ' && text[i] != '\t') isLineStart = false;
 
@@ -124,14 +127,17 @@ namespace AlephNote.WPF.ScintillaUtil
 					}
 					else if (isOpenBrace)
 					{
-						var found = ParseMarkdownLink(text.Substring(i), out int linklen);
+						var found = ParseMarkdownLink(text.Substring(i), s.LinkMode, out var len1, out var len2, out var len3);
 						if (found)
 						{
 							sci.SetStyling(i - position, STYLE_MD_DEFAULT);
 							position += (i - position);
 
-							sci.SetStyling(linklen, STYLE_MD_URL);
-							position += linklen;
+							sci.SetStyling(len1, STYLE_MD_URL);
+							if (len2>0) sci.SetStyling(len2, STYLE_MD_CLICKURL);
+							sci.SetStyling(len3, STYLE_MD_URL);
+
+							position += len1+len2+len3;
 							i = position;
 							continue;
 						}
@@ -222,10 +228,14 @@ namespace AlephNote.WPF.ScintillaUtil
 			return false;
 		}
 
-		private bool ParseMarkdownLink(string v, out int linklen)
+		private bool ParseMarkdownLink(string v, LinkHighlightMode lm, out int lenPrefix, out int lenCore, out int lenSuffix)
 		{
-			int i = 0;
-			linklen = -1;
+			var i = 0;
+
+			var posCoreStart = -1;
+			var posCoreEnd = -1;
+
+			lenPrefix = lenCore = lenSuffix = -1;
 
 			if (v.Length == 0) return false;
 			if (v[0] != '[') return false;
@@ -243,19 +253,74 @@ namespace AlephNote.WPF.ScintillaUtil
 			i++;
 			if (i >= v.Length) return false;
 			if (v[i] != '(') return false;
+			posCoreStart = i;
 			i++;
 
 			for (; ; )
 			{
 				if (i >= v.Length) return false;
 				if (v[i] == '(') return false;
-				if (v[i] == ')') break;
+				if (v[i] == ')')
+				{
+					posCoreEnd = i;
+					break;
+				}
 
 				i++;
 			}
 			i++;
-			linklen = i;
+
+			while (posCoreStart < i-1 && v[posCoreStart + 1] == ' ') posCoreStart++;
+			while (posCoreEnd   > 0   && v[posCoreEnd   - 1] == ' ') posCoreEnd--;
+			
+			lenPrefix = posCoreStart+1;
+			lenCore   = posCoreEnd-lenPrefix;
+			lenSuffix = i - (lenPrefix+lenCore);
+
+			if (lm == LinkHighlightMode.Disabled)
+			{
+				lenPrefix += lenCore;
+				lenCore = 0;
+			}
+			else
+			{
+				var core = v.Substring(lenPrefix, lenCore);
+				var urlmatch = GetURLMatchingRegex().Match(core);
+				if (urlmatch.Success && urlmatch.Groups[0].Value == core)
+				{
+					// url found ... all is good
+				}
+				else
+				{
+					lenPrefix += lenCore;
+					lenCore = 0;
+				}
+			}
+
+
 			return true;
+		}
+
+		public override string GetClickedLink(string text, int pos)
+		{
+			var (line, lineStart, lineLen) = GetLine(text, pos);
+
+			for (;;)
+			{
+				var idx = line.IndexOf('[');
+				if (idx == -1) return null;
+				line = line.Substring(idx);
+				lineStart += idx;
+				
+				var found = ParseMarkdownLink(line, LinkHighlightMode.OnlyHighlight, out var lenPrefix, out var lenCore, out var lenSuffix);
+				if (found && lenCore > 0 && lineStart+lenPrefix <= pos && pos <= lineStart+lenPrefix+lenCore)
+				{
+					return line.Substring(lenPrefix, lenCore);
+				}
+
+				line = line.Substring(lenPrefix+lenCore+lenSuffix);
+				lineStart += lenPrefix+lenCore+lenSuffix;
+			}
 		}
 	}
 }

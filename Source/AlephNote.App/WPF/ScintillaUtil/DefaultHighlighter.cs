@@ -1,4 +1,6 @@
-﻿using AlephNote.Common.Settings;
+﻿using System.Linq;
+using System.Text.RegularExpressions;
+using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
 
 namespace AlephNote.WPF.ScintillaUtil
@@ -42,6 +44,18 @@ namespace AlephNote.WPF.ScintillaUtil
 				sci.StartStyling(start);
 				sci.SetStyling(end-start, STYLE_DEFAULT);
 			}
+		}
+
+		public override string GetClickedLink(string text, int pos)
+		{
+			var (line, lineStart, lineLen) = GetLine(text, pos);
+
+			return GetURLMatchingRegex()
+				.Matches(line)
+				.OfType<Match>()
+				.Where(m => lineStart + m.Index <= pos && pos <= lineStart + m.Index+m.Length)
+				.Select(m => m.Groups[0].Value)
+				.FirstOrDefault();
 		}
 	}
 }

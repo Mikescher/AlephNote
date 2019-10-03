@@ -200,6 +200,7 @@ namespace AlephNote.Common.Themes
 			Tuple.Create("scintilla.markdown.url:foreground"                     , AlephThemePropType.Color     ),
 			Tuple.Create("scintilla.markdown.url:background"                     , AlephThemePropType.Color     ),
 			Tuple.Create("scintilla.markdown.url:underline"                      , AlephThemePropType.Boolean   ),
+			Tuple.Create("scintilla.markdown.url:underline_link"                 , AlephThemePropType.Boolean   ),
 			Tuple.Create("scintilla.markdown.url:bold"                           , AlephThemePropType.Boolean   ),
 			Tuple.Create("scintilla.markdown.url:italic"                         , AlephThemePropType.Boolean   ),
 

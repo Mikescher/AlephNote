@@ -239,27 +239,30 @@ namespace AlephNote.WPF.Windows
 
 		private void NoteEdit_HotspotClick(object sender, HotspotClickEventArgs e)
 		{
+			var settings = VM?.Settings;
+			if (settings == null) return;
+
 			if (Settings.LinkMode == LinkHighlightMode.SingleClick)
 			{
-				var links = _highlighterDefault.FindAllLinks(NoteEdit);
-				var link = links.FirstOrDefault(l => l.Item2 <= e.Position && e.Position <= l.Item3);
-				if (link != null) OpenLink(link.Item1);
+				var link = GetHighlighter(settings).GetClickedLink(NoteEdit.Text, e.Position);
+				if (link != null) OpenLink(link);
 			}
 			else if (Settings.LinkMode == LinkHighlightMode.ControlClick && e.Modifiers.HasFlag(Keys.Control))
 			{
-				var links = _highlighterDefault.FindAllLinks(NoteEdit);
-				var link = links.FirstOrDefault(l => l.Item2 <= e.Position && e.Position <= l.Item3);
-				if (link != null) OpenLink(link.Item1);
+				var link = GetHighlighter(settings).GetClickedLink(NoteEdit.Text, e.Position);
+				if (link != null) OpenLink(link);
 			}
 		}
 
 		private void NoteEdit_HotspotDoubleClick(object sender, HotspotClickEventArgs e)
 		{
+			var settings = VM?.Settings;
+			if (settings == null) return;
+
 			if (Settings.LinkMode == LinkHighlightMode.DoubleClick)
 			{
-				var links = _highlighterDefault.FindAllLinks(NoteEdit);
-				var link = links.FirstOrDefault(l => l.Item2 <= e.Position && e.Position <= l.Item3);
-				if (link != null) OpenLink(link.Item1);
+				var link = GetHighlighter(settings).GetClickedLink(NoteEdit.Text, e.Position);
+				if (link != null) OpenLink(link);
 			}
 		}
 

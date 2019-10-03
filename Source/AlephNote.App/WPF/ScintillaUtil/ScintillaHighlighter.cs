@@ -75,15 +75,16 @@ namespace AlephNote.WPF.ScintillaUtil
 
 		private static readonly Regex REX_MAILTEST_RAW = new Regex(@"^[-+.'\w]+@[-+.'\w]+\.[-+.'\w]{2,63}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-		public const int STYLE_DEFAULT    = 0;
-		public const int STYLE_URL        = 1;
-		public const int STYLE_MD_DEFAULT = 2;
-		public const int STYLE_MD_BOLD    = 3;
-		public const int STYLE_MD_HEADER  = 4;
-		public const int STYLE_MD_CODE    = 5;
-		public const int STYLE_MD_ITALIC  = 6;
-		public const int STYLE_MD_URL     = 7;
-		public const int STYLE_MD_LIST    = 8;
+		public const int STYLE_DEFAULT     = 0;
+		public const int STYLE_URL         = 1;
+		public const int STYLE_MD_DEFAULT  = 2;
+		public const int STYLE_MD_BOLD     = 3;
+		public const int STYLE_MD_HEADER   = 4;
+		public const int STYLE_MD_CODE     = 5;
+		public const int STYLE_MD_ITALIC   = 6;
+		public const int STYLE_MD_URL      = 7;
+		public const int STYLE_MD_LIST     = 8;
+		public const int STYLE_MD_CLICKURL = 9;
 
 		public const int STYLE_MARGIN_LINENUMBERS   = 0;
 		public const int STYLE_MARGIN_LISTSYMBOLS   = 1;
@@ -179,6 +180,15 @@ namespace AlephNote.WPF.ScintillaUtil
 			sci.Styles[STYLE_MD_URL].Underline = theme.Get<bool>(    "scintilla.markdown.url:underline");
 			sci.Styles[STYLE_MD_URL].ForeColor = theme.Get<ColorRef>("scintilla.markdown.url:foreground").ToDCol();
 			sci.Styles[STYLE_MD_URL].BackColor = theme.Get<ColorRef>("scintilla.markdown.url:background").ToDCol();
+			
+			sci.Styles[STYLE_MD_CLICKURL].Size      = (int)s.NoteFontSize;
+			sci.Styles[STYLE_MD_CLICKURL].Font      = s.NoteFontFamily;
+			sci.Styles[STYLE_MD_CLICKURL].Bold      = theme.Get<bool>(    "scintilla.markdown.url:bold");
+			sci.Styles[STYLE_MD_CLICKURL].Italic    = theme.Get<bool>(    "scintilla.markdown.url:italic");
+			sci.Styles[STYLE_MD_CLICKURL].Underline = theme.Get<bool>(    "scintilla.markdown.url:underline_link");
+			sci.Styles[STYLE_MD_CLICKURL].ForeColor = theme.Get<ColorRef>("scintilla.markdown.url:foreground").ToDCol();
+			sci.Styles[STYLE_MD_CLICKURL].BackColor = theme.Get<ColorRef>("scintilla.markdown.url:background").ToDCol();
+			sci.Styles[STYLE_MD_CLICKURL].Hotspot   = (s.LinkMode != LinkHighlightMode.OnlyHighlight);
 
 			sci.Styles[STYLE_MD_LIST].Size      = (int)s.NoteFontSize;
 			sci.Styles[STYLE_MD_LIST].Font      = s.NoteFontFamily;
@@ -277,13 +287,6 @@ namespace AlephNote.WPF.ScintillaUtil
 			return r;
 		}
 
-		public List<Tuple<string, int, int>> FindAllLinks(ScintillaNET.Scintilla noteEdit)
-		{
-			var matched = GetURLMatchingRegex().Matches(noteEdit.Text);
-
-			return matched.OfType<Match>().Select(m => Tuple.Create(m.Groups[0].Value, m.Index, m.Index + m.Length)).ToList();
-		}
-
 		public void UpdateListMargin(ScintillaNET.Scintilla sci, int? start, int? end)
 		{
 			int startLine = (start == null) ? 0                 : sci.LineFromPosition(start.Value);
@@ -367,7 +370,7 @@ namespace AlephNote.WPF.ScintillaUtil
 			return null;
 		}
 
-		private Regex GetURLMatchingRegex()
+		protected Regex GetURLMatchingRegex()
 		{
 			var v = (URLMatchingMode)AlephAppContext.Settings.UsedURLMatchingMode;
 
@@ -384,6 +387,19 @@ namespace AlephNote.WPF.ScintillaUtil
 		public static bool IsRawMail(string link)
 		{
 			return REX_MAILTEST_RAW.IsMatch(link);
+		}
+
+		public abstract string GetClickedLink(string text, int pos);
+
+		protected (string, int, int) GetLine(string text, int pos)
+		{
+			int start = pos;
+			int end = pos;
+
+			while (start>0 && text[start-1] != '\n') start--;
+			while (end<text.Length-1 && text[end] != '\n' && text[end] != '\r') end++;
+
+			return (text.Substring(start, end-start), start, end-start);
 		}
 	}
 }

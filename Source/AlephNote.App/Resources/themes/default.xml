@@ -115,6 +115,7 @@ Repository: https://github.com/Mikescher/AlephNote
 
 				<property name="scintilla.markdown.url:foreground"         value="@Blue"/>
 				<property name="scintilla.markdown.url:underline"          value="false"/>
+				<property name="scintilla.markdown.url:underline_link"     value="true"/>
 				<property name="scintilla.markdown.url:background"         value="$scintilla.markdown.default:background"/>
 				<property name="scintilla.markdown.url:bold"               value="false"/>
 				<property name="scintilla.markdown.url:italic"             value="false"/>
