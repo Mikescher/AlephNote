@@ -19,7 +19,7 @@ REM dotnet msbuild /t:Build /p:Configuration=Release /verbosity:m
 cd ..
 cd Bin
 cd Release
-cd net46
+cd net47
 
 rmdir de /S /Q
 rmdir es /S /Q
@@ -55,7 +55,7 @@ if exist AlephNote.zip del AlephNote.zip
 
 cd Data
 
-7za.exe a .\..\AlephNote.zip .\..\Bin\Release\net46\*
+7za.exe a .\..\AlephNote.zip .\..\Bin\Release\net47\*
 
 @REM ================ FINISHED ================
 
