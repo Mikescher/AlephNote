@@ -60,6 +60,10 @@ Repository: https://github.com/Mikescher/AlephNote
 			<property name="scintilla.caret:background_alpha" value="256"/>
 			<property name="scintilla.caret:visible"          value="false"/>
 
+			<property name="scintilla.selection:foreground"          value="$scintilla.default:foreground"/>
+			<property name="scintilla.selection:override_foreground" value="false"/>
+			<property name="scintilla.selection:background"          value="#C0C0C0"/>
+
 			<group name="default">
 				<property name="scintilla.default:foreground" value="@Black"/>
 				<property name="scintilla.default:underline"  value="false"/>

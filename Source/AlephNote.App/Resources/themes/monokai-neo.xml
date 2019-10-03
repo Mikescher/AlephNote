@@ -84,6 +84,8 @@ License:    Copyright (c) 2017 Skyler Lee
 		<property name="scintilla.search.global:alpha"                     value="100" />
 		<property name="scintilla.search.global:outline_alpha"             value="230" />
 
+		<property name="scintilla.selection:background"                    value="#6E6E6E46"/>
+
 
 		<property name="window.background"                                 value="@MK_VeryDarkGray" />
 		<property name="window.foreground"                                 value="@MK_VeryLightGray" />

@@ -92,6 +92,10 @@ License:    Copyright (c) 2011 Ethan Schoonover
 			<property name="scintilla.margin.numbers:foreground"          value="@base2"/>
 			<property name="scintilla.margin.numbers:background"          value="@base00"/>
 			<property name="scintilla.margin.symbols:background"          value="@base1"/>
+
+			<property name="scintilla.selection:background"               value="@base0"/>
+			<property name="scintilla.selection:override_foreground"      value="true"/>
+			<property name="scintilla.selection:foreground"               value="@base3"/>
 		</group>
 
 		<group name="window">

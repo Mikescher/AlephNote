@@ -177,6 +177,9 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.CaretLineBackColorAlpha = theme.Get<int>("scintilla.caret:background_alpha");
 			NoteEdit.CaretLineVisible        = theme.Get<bool>("scintilla.caret:visible");
 
+			NoteEdit.SetSelectionForeColor(theme.Get<bool>("scintilla.selection:override_foreground"), theme.Get<ColorRef>("scintilla.selection:foreground").ToDCol());
+			NoteEdit.SetSelectionBackColor(true, theme.Get<ColorRef>("scintilla.selection:background").ToDCol()); // https://sourceforge.net/p/scintilla/bugs/538/
+
 			NoteEdit.WhitespaceSize = theme.Get<int>("scintilla.whitespace:size");
 			NoteEdit.ViewWhitespace = s.SciShowWhitespace ? WhitespaceMode.VisibleAlways : WhitespaceMode.Invisible;
 			NoteEdit.ViewEol        = s.SciShowEOL;

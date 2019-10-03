@@ -148,6 +148,10 @@ namespace AlephNote.Common.Themes
 			("scintilla.caret:background_alpha"                      , AlephThemePropType.Integer   ),
 			("scintilla.caret:visible"                               , AlephThemePropType.Boolean   ),
 
+			("scintilla.selection:foreground"                        , AlephThemePropType.Color     ),
+			("scintilla.selection:override_foreground"               , AlephThemePropType.Boolean   ),
+			("scintilla.selection:background"                        , AlephThemePropType.Color     ),
+
 			("scintilla.default:foreground"                          , AlephThemePropType.Color     ),
 			("scintilla.default:background"                          , AlephThemePropType.Color     ),
 			("scintilla.default:underline"                           , AlephThemePropType.Boolean   ),
