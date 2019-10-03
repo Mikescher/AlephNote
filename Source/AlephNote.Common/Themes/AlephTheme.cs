@@ -25,6 +25,7 @@ namespace AlephNote.Common.Themes
 
 			Tuple.Create("window.menubar:background"                             , AlephThemePropType.Brush       ),
 			Tuple.Create("window.menubar:foreground"                             , AlephThemePropType.Brush       ),
+			Tuple.Create("window.menubar.submenu:foreground"                     , AlephThemePropType.Brush       ),
 
 			Tuple.Create("window.tageditor.popup:background"                     , AlephThemePropType.Brush       ),
 			Tuple.Create("window.tageditor.popup:bordercolor"                    , AlephThemePropType.Brush       ),

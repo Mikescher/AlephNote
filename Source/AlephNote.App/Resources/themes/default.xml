@@ -158,6 +158,7 @@ Repository: https://github.com/Mikescher/AlephNote
 			<group name="menubar">
 				<property name="window.menubar:background"           value="gradient-v://0.25:#FFF6F6F6|0.25:#FFEAE8E8|0.80:#FFDCD9D9|1.00:#FFFFFFFF"/>
 				<property name="window.menubar:foreground"           value="@black"/>
+				<property name="window.menubar.submenu:foreground"   value="@black"/>
 			</group>
 			
 			<group name="tageditor">
