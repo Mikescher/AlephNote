@@ -18,7 +18,7 @@ namespace AlephNote.Common.Settings.Types
 
 		public IReadOnlyDictionary<string, TValue> ListData => _data;
 
-		public KeyValueFlatCustomList(IEnumerable<Tuple<string, TValue>> data, TValue ddv)
+		public KeyValueFlatCustomList(IEnumerable<(string, TValue)> data, TValue ddv)
 		{
 			_data = data.ToDictionary(d => d.Item1, d => d.Item2);
 			DefaultDictValue = ddv;
@@ -26,7 +26,7 @@ namespace AlephNote.Common.Settings.Types
 
 		public object DeserializeNew(XElement source, AXMLSerializationSettings opt)
 		{
-			var d = source.Elements("Value").Select(p => Tuple.Create(p.Attribute("Key").Value, (TValue)DefaultDictValue.DeserializeNew(p.Value, opt))).ToArray();
+			var d = source.Elements("Value").Select(p => (p.Attribute("Key").Value, (TValue)DefaultDictValue.DeserializeNew(p.Value, opt))).ToArray();
 			return new KeyValueFlatCustomList<TValue>(d, DefaultDictValue);
 		}
 
@@ -67,12 +67,12 @@ namespace AlephNote.Common.Settings.Types
 			return ListData.GetEnumerator();
 		}
 
-		public KeyValueFlatCustomList<TValue> Concat(Tuple<string, TValue> v)
+		public KeyValueFlatCustomList<TValue> Concat((string, TValue) v)
 		{
 			return new KeyValueFlatCustomList<TValue>(
 				ListData
 					.AsEnumerable()
-					.Select(ld => Tuple.Create(ld.Key, ld.Value))
+					.Select(ld => (ld.Key, ld.Value))
 					.Concat(new []{v})
 					.GroupBy(p => p.Item1)
 					.Select(p => p.First()), 
