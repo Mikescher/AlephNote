@@ -320,9 +320,12 @@ namespace AlephNote.WPF.Windows
 		{
 			if (Settings.AutoSortTags && e.PropertyName == "Tags")
 			{
-				Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+				Application.Current?.Dispatcher?.BeginInvoke(new Action(() =>
 				{
+					var isediting = Owner.TagEditor.TagCtrl.IsEditing;
+					if (isediting) Owner.TagEditor.TagCtrl.AbortEditing();
 					SelectedNote.Tags.SynchronizeCollectionSafe(SelectedNote.Tags.OrderBy(p => p).ToList());
+					if (isediting) Owner.TagEditor.TagCtrl.StartEditing();
 				}));
 			}
 

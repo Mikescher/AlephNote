@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -122,7 +123,9 @@ namespace AlephNote.WPF.Controls
 						if (!string.IsNullOrWhiteSpace(this.Text))
 						{
 							_parent.OnApplyTemplate(this);
-							_parent.SelectedItem = _parent.InitializeNewTag();
+							
+							var newTag = _parent.InitializeNewTag();
+							_parent.SelectedItem = newTag;
 						}
 						else
 						{
