@@ -583,7 +583,7 @@ namespace AlephNote.WPF.Windows
 
 		private void TagEditor_OnChanged(ITagEditor source)
 		{
-			Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+			Application.Current.Dispatcher?.BeginInvoke(new Action(() =>
 			{
 				ForceNewHighlighting(Settings);
 				UpdateMargins(Settings);

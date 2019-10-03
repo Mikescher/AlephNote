@@ -31,7 +31,7 @@ namespace AlephNote.WPF.Controls
 				"IsEditing", 
 				typeof(bool), 
 				typeof(TokenizedTagItem), 
-				new FrameworkPropertyMetadata(false));
+				new FrameworkPropertyMetadata(false, (d,e) => ((TokenizedTagItem)d).OnEditingChanged(e)));
 
 		public static readonly DependencyProperty IsEditingProperty = IsEditingPropertyKey.DependencyProperty;
 		
@@ -54,6 +54,11 @@ namespace AlephNote.WPF.Controls
 		{
 			_parent = parent;
 			this.Text = text;
+		}
+		
+		private void OnEditingChanged(DependencyPropertyChangedEventArgs args)
+		{
+			_parent?.OnEditingOfItemChanged(this, (bool)args.NewValue);
 		}
 
 		public override void OnApplyTemplate()

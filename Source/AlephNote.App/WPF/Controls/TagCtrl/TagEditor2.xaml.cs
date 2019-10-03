@@ -22,8 +22,7 @@ namespace AlephNote.WPF.Controls
 			DependencyProperty.Register(
 				"TagSource",
 				typeof(TagList),
-				typeof(TagEditor2),
-				new FrameworkPropertyMetadata((d,e) => ((TagEditor2)d).TagsChanged(e)));
+				typeof(TagEditor2));
 
 		public TagList TagSource
 		{
@@ -81,11 +80,6 @@ namespace AlephNote.WPF.Controls
 			MainGrid.DataContext = this;
 		}
 
-		private void TagsChanged(DependencyPropertyChangedEventArgs e)
-		{
-			UpdateHintTags();
-		}
-
 		private void RepositoryChanged(DependencyPropertyChangedEventArgs e)
 		{
 			UpdateHintTags();
@@ -98,8 +92,14 @@ namespace AlephNote.WPF.Controls
 
 		private void TokenizedTagControl_OnChange(object sender, TokenizedTagEventArgs e)
 		{
-			Changed?.Invoke(this);
+			TriggerChanged(e?.Item?.Text);
+		}
 
+		private void TriggerChanged(string tag)
+		{
+			App.Logger.Trace("TagEditor", $"Changed('{tag ?? "NULL"}')");
+
+			Changed?.Invoke(this);
 			UpdateHintTags();
 		}
 
@@ -140,11 +140,16 @@ namespace AlephNote.WPF.Controls
 				{
 					if (TagSource.Any(t => t.ToLower() == name.ToLower())) return;
 					TagSource.Add(name);
+					TriggerChanged(name);
 				}
 				else
 				{
 					var rm = TagSource.FirstOrDefault(t => t.ToLower() == name.ToLower());
-					if (rm != null) TagSource.Remove(rm);
+					if (rm != null)
+					{
+						TagSource.Remove(rm);
+						TriggerChanged(name);
+					}
 				}
 			}
 

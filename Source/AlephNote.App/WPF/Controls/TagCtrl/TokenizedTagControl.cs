@@ -303,12 +303,15 @@ namespace AlephNote.WPF.Controls
 			if (IsReadonly) return;
 			if (_lockRemoveTag) return;
 
+			bool success = false;
+
 			if (ItemsSource != null)
 			{
 				try
 				{
 					_lockRemoveTag = true;
 					((IList)ItemsSource).Remove(tag);
+					success = true;
 				}
 				finally
 				{
@@ -328,6 +331,8 @@ namespace AlephNote.WPF.Controls
 			}
 
 			UpdateEnteredTags();
+
+			if (success) TagListChanged?.Invoke(this, new TokenizedTagEventArgs(tag));
 		}
 
 		public void RaiseTagApplied(TokenizedTagItem tag)
@@ -354,9 +359,15 @@ namespace AlephNote.WPF.Controls
 				var tbe = _tagsBeforeEdit;
 				_tagsBeforeEdit = null;
 
-				Application.Current?.Dispatcher.BeginInvoke(new Action(() =>
+				UpdateEnteredTags();
+
+				Application.Current?.Dispatcher?.BeginInvoke(new Action(() =>
 				{
-					if (!tbe.UnorderedCollectionEquals(EnteredTags?.ToList() ?? new List<string>())) TagListChanged?.Invoke(this, new TokenizedTagEventArgs(null));
+					if (!tbe.UnorderedCollectionEquals(EnteredTags?.ToList() ?? new List<string>()))
+					{
+						var t = (EnteredTags?.ToList() ?? new List<string>()).Except(tbe).FirstOrDefault() ?? tbe.Except(EnteredTags?.ToList() ?? new List<string>()).FirstOrDefault();
+						TagListChanged?.Invoke(this, new TokenizedTagEventArgs(new TokenizedTagItem(t, this)));
+					}
 				}));
 			}
 			
@@ -368,6 +379,22 @@ namespace AlephNote.WPF.Controls
 			Focus();
 			var tti = InitializeNewTag();
 			this.SelectedItem = tti;
+		}
+
+		public void OnEditingOfItemChanged(TokenizedTagItem item, bool newValue)
+		{
+			var tbe = EnteredTags?.ToList() ?? new List<string>();
+			
+			UpdateEnteredTags();
+			
+			if (!tbe.UnorderedCollectionEquals(EnteredTags?.ToList() ?? new List<string>()))
+			{
+				Application.Current?.Dispatcher?.BeginInvoke(new Action(() =>
+				{
+					var t = (EnteredTags?.ToList() ?? new List<string>()).Except(tbe).FirstOrDefault() ?? tbe.Except(EnteredTags?.ToList() ?? new List<string>()).FirstOrDefault();
+					TagListChanged?.Invoke(this, new TokenizedTagEventArgs(new TokenizedTagItem(t, this)));
+				}));
+			}
 		}
 	}
 
