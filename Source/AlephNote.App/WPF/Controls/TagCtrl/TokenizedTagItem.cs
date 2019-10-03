@@ -132,6 +132,17 @@ namespace AlephNote.WPF.Controls
 							_parent.Focus();
 						}
 					}
+					else if (e1.Key == Key.Tab)
+					{
+						if (!string.IsNullOrWhiteSpace(this.Text))
+						{
+							_parent.OnApplyTemplate(this);
+							
+							var newTag = _parent.InitializeNewTag();
+							_parent.SelectedItem = newTag;
+							e.Handled=true;
+						}
+					}
 					else if (e1.Key == Key.Escape)
 					{
 						_parent.FullResyncWithDataSource();
