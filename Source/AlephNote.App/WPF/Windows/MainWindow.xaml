@@ -13,7 +13,6 @@
         xmlns:mext="clr-namespace:MSHC.WPF.MarkupExtensions;assembly=CSharpUtils"
 		xmlns:util="clr-namespace:AlephNote.WPF.Util"
 		xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
-		xmlns:system="clr-namespace:System;assembly=mscorlib"
 		xmlns:proxy="clr-namespace:MSHC.WPF.BindingProxies;assembly=CSharpUtils"
         xmlns:services="clr-namespace:MSHC.WPF.Services;assembly=CSharpUtils"
         xmlns:notesView="clr-namespace:AlephNote.WPF.Controls.NotesView"
@@ -27,6 +26,7 @@
 		Closed="{mext:EventBinding CloseEvent, CommandParameter=$e}"
 		Loaded="MainWindow_OnLoaded"
 		KeyDown="MainWindow_OnKeyDown"
+		PreviewKeyDown="MainWindow_OnPreviewKeyDown"
 		Topmost="{Binding Settings.AlwaysOnTop}"
 		Background="{ext:ThemeBinding 'window.background'}"
 		Title="AlephNote" Height="350" Width="525">
@@ -58,6 +58,7 @@
 		</Grid.RowDefinitions>
 
 		<Menu Grid.Row="0" Grid.Column="0" 
+			  Visibility="{Binding MenuIsVisible, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}"
 			  Background="{ext:ThemeBinding 'window.menubar:background'}"
 			  Foreground="{ext:ThemeBinding 'window.menubar:foreground'}"
 			  Grid.ColumnSpan="3">

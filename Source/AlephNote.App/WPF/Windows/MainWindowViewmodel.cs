@@ -85,6 +85,9 @@ namespace AlephNote.WPF.Windows
 				}
 			}
 		}
+		
+		private bool _menuIsVisible = true;
+		public bool MenuIsVisible { get { return _menuIsVisible; } set { _menuIsVisible = value; OnPropertyChanged(); } }
 
 		public string FullVersion { get { return "AlephNote v" + App.APP_VERSION; } }
 
@@ -140,6 +143,8 @@ namespace AlephNote.WPF.Windows
 				t.Start();
 			}
 #endif
+
+			MenuIsVisible = !_settings.AutoHideMainMenu;
 
 			SettingsChanged();
 
@@ -306,6 +311,8 @@ namespace AlephNote.WPF.Windows
 		{
 			if (Settings == null) return;
 			
+			if (!Settings.AutoHideMainMenu && !MenuIsVisible) MenuIsVisible = true;
+
 			ShortcutManager.UpdateSnippetCommands(Settings.Snippets.Data);
 		}
 

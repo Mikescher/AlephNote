@@ -539,6 +539,10 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public SearchDelayMode GlobalSearchDelay { get { return _globalSearchDelay; } set { _globalSearchDelay = value; OnPropertyChanged(); } }
 		private SearchDelayMode _globalSearchDelay = SearchDelayMode.Auto;
+		
+		[AlephXMLField]
+		public bool AutoHideMainMenu { get { return _autoHideMainMenu; } set { _autoHideMainMenu = value; OnPropertyChanged(); } }
+		private bool _autoHideMainMenu = false;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

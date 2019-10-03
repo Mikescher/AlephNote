@@ -396,3 +396,7 @@ Specifies the parallelism settings for uploading new notes (creating them in the
 
 [ShowTagButton]
 Adds a button to the left side of the tagbar to add tags from the list of existing tags
+
+[AutoHideMainMenu]
+Hide the main menu by default. Press [Alt] to show/hide it.
+This setting should not be used in combination with other settings that use the [Alt] key (eg. scintilla rectangular selection)

@@ -435,6 +435,18 @@ namespace AlephNote.WPF.Windows
 				TagEditor.StartEditing();
 			}
 		}
+		
+		private void MainWindow_OnPreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			var evtkey = e.Key;
+			var evtmod = e.KeyboardDevice.Modifiers;
+			if (evtkey == Key.System) evtkey = e.SystemKey;
+
+			if (Settings?.AutoHideMainMenu == true && (evtkey == Key.LeftAlt || evtkey == Key.RightAlt) && !e.IsRepeat && evtmod == ModifierKeys.Alt)
+			{
+				VM.MenuIsVisible = !VM.MenuIsVisible;
+			}
+		}
 
 		private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
 		{
