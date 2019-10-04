@@ -153,6 +153,9 @@ namespace AlephNote.Common.Themes
 			("scintilla.selection:override_foreground",                AlephThemePropType.Boolean     ),
 			("scintilla.selection:background",                         AlephThemePropType.Color       ),
 
+			("scintilla.scrollbar_h:visible",                          AlephThemePropType.Boolean     ),
+			("scintilla.scrollbar_v:visible",                          AlephThemePropType.Boolean     ),
+
 			("scintilla.default:foreground",                           AlephThemePropType.Color       ),
 			("scintilla.default:background",                           AlephThemePropType.Color       ),
 			("scintilla.default:underline",                            AlephThemePropType.Boolean     ),

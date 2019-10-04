@@ -64,6 +64,9 @@ Repository: https://github.com/Mikescher/AlephNote
 			<property name="scintilla.selection:override_foreground" value="false"/>
 			<property name="scintilla.selection:background"          value="#C0C0C0"/>
 
+			<property name="scintilla.scrollbar_h:visible" value="true"/>
+			<property name="scintilla.scrollbar_v:visible" value="true"/>
+
 			<group name="default">
 				<property name="scintilla.default:foreground" value="@Black"/>
 				<property name="scintilla.default:underline"  value="false"/>

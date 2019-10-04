@@ -207,6 +207,9 @@ namespace AlephNote.WPF.Windows
 
 			NoteEdit.WrapMode = s.SciWordWrap ? WrapMode.Whitespace : WrapMode.None;
 
+			NoteEdit.HScrollBar = theme.Get<bool>("scintilla.scrollbar_h:visible");
+			NoteEdit.VScrollBar = theme.Get<bool>("scintilla.scrollbar_v:visible");
+
 			NoteEdit.ZoomChanged -= ZoomChanged;
 			NoteEdit.ZoomChanged += ZoomChanged;
 
