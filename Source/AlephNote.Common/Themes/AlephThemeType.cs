@@ -7,7 +7,7 @@ namespace AlephNote.Common.Themes
 		Fallback,
 		Default,
 		Theme,
-		Modifier,
+		Modifier
 	}
 
 	public static class AlephThemeTypeHelper

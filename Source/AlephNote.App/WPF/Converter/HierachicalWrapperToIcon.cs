@@ -1,14 +1,16 @@
-﻿using MSHC.WPF.MVVM;
+﻿using System.Windows.Media;
+using AlephNote.Common.Util;
+using AlephNote.WPF.Extensions;
+using MSHC.WPF.MVVM;
 using AlephNote.WPF.Util;
-using System.Windows;
 
 namespace AlephNote.WPF.Converter
 {
-	class HierachicalWrapperToIcon : OneWayConverter<HierachicalBaseWrapper, string>
+	public class HierachicalWrapperToIcon : OneWayConverter<HierachicalBaseWrapper, ImageSource>
 	{
-		protected override string Convert(HierachicalBaseWrapper value, object parameter)
+		protected override ImageSource Convert(HierachicalBaseWrapper value, object parameter)
 		{
-			return value.IconSource;
+			return ThemeManager.Inst.CurrentThemeSet.GetBitmapImageResource(value.IconSourceKey);
 		}
 	}
 }

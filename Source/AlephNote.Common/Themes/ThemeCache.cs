@@ -2,8 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
-using AlephNote.PluginInterface;
+using System.Text;
 using AlephNote.PluginInterface.AppContext;
 
 namespace AlephNote.Common.Themes
@@ -29,14 +30,17 @@ namespace AlephNote.Common.Themes
 				return;
 			}
 
-			_filesInBasePath = Directory.EnumerateFiles(_baseThemePath, "*.xml").ToList();
+			_filesInBasePath = Directory
+				.EnumerateFiles(_baseThemePath)
+				.Where(p => p.ToLower().EndsWith(".xml") || p.ToLower().EndsWith(".zip"))
+				.ToList();
 
 			if (!_filesInBasePath.Any())
 			{
 				LoggerSingleton.Inst.ShowExceptionDialog($"No themes found in {_baseThemePath}", null);
 			}
 
-			if (!_filesInBasePath.Any(t => Path.GetFileName(t).ToLower() == "default.xml"))
+			if (_filesInBasePath.All(t => Path.GetFileName(t)?.ToLower() != "default.xml"))
 			{
 				LoggerSingleton.Inst.ShowExceptionDialog($"No default.xml theme found in {_baseThemePath}", null);
 			}
@@ -64,7 +68,7 @@ namespace AlephNote.Common.Themes
 			{
 				if (_cache.TryGetValue(fn.ToLower(), out var cachedtheme)) return cachedtheme;
 
-				var file = _filesInBasePath.FirstOrDefault(p => Path.GetFileName(p).ToLower() == fn.ToLower());
+				var file = _filesInBasePath.FirstOrDefault(p => Path.GetFileName(p)?.ToLower() == fn.ToLower());
 				if (file == null) return null;
 
 				var atheme = LoadFromFile(file);
@@ -83,7 +87,7 @@ namespace AlephNote.Common.Themes
 		public List<AlephTheme> GetAllAvailable()
 		{
 			return _filesInBasePath
-				.Select(p => Path.GetFileName(p))
+				.Select(Path.GetFileName)
 				.Select(p => GetByFilename(p, out _))
 				.Concat(_cache.Values)
 				.Distinct()
@@ -96,7 +100,7 @@ namespace AlephNote.Common.Themes
 		public List<AlephTheme> GetAllAvailableThemes()
 		{
 			return _filesInBasePath
-				.Select(p => Path.GetFileName(p))
+				.Select(Path.GetFileName)
 				.Select(p => GetByFilename(p, out _))
 				.Concat(_cache.Values)
 				.Distinct()
@@ -109,7 +113,7 @@ namespace AlephNote.Common.Themes
 		public List<AlephTheme> GetAllAvailableModifier()
 		{
 			return _filesInBasePath
-				.Select(p => Path.GetFileName(p))
+				.Select(Path.GetFileName)
 				.Select(p => GetByFilename(p, out _))
 				.Concat(_cache.Values)
 				.Distinct()
@@ -136,14 +140,52 @@ namespace AlephNote.Common.Themes
 
 		private AlephTheme LoadFromFile(string file)
 		{
-			var parser = new ThemeParser();
-			parser.Load(file);
-			parser.Parse();
-			var t = parser.Generate();
-			
-			LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded theme {t.Name} v{t.Version} from '{file}'", $"{string.Join("\n", parser.GetProperties().Select(p => $"{p.Key.PadRight(48, ' ')} {p.Value}"))}");
+			if (file.ToLower().EndsWith(".zip"))
+			{
+				var parser = new ThemeParser();
 
-			return t;
+				using (var zip = ZipFile.OpenRead(file))
+				{
+					using (var metadata = zip.GetEntry("metadata.xml")?.Open())
+					{
+						if (metadata == null) throw new Exception("'metadata.xml' not found");
+						using (var reader = new StreamReader(metadata, Encoding.UTF8))
+						{
+							parser.LoadFromString(reader.ReadToEnd(), Path.GetFileName(file));
+						}
+					}
+
+					foreach (var res in zip.Entries.Where(p => p.Name.ToLower().EndsWith(".ico") || p.Name.ToLower().EndsWith(".png")))
+					{
+						using (var stream = res.Open())
+						{
+							using (var ms = new MemoryStream())
+							{
+								stream.CopyTo(ms);
+								parser.AddResource(res.Name, ms.ToArray());
+							}
+						}
+					}
+				}
+
+				parser.Parse();
+				var t = parser.Generate();
+			
+				LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded [zip] theme {t.Name} v{t.Version} from '{file}'", $"{string.Join("\n", parser.GetProperties().Select(p => $"{p.Key.PadRight(48, ' ')} {p.Value}"))}");
+
+				return t;
+			}
+			else
+			{
+				var parser = new ThemeParser();
+				parser.Load(file);
+				parser.Parse();
+				var t = parser.Generate();
+			
+				LoggerSingleton.Inst.Debug("ThemeCache", $"Loaded [xml] theme {t.Name} v{t.Version} from '{file}'", $"{string.Join("\n", parser.GetProperties().Select(p => $"{p.Key.PadRight(48, ' ')} {p.Value}"))}");
+
+				return t;
+			}
 		}
 
 		public void ReplaceTheme(AlephTheme theme)

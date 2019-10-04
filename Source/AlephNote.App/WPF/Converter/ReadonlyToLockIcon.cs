@@ -1,18 +1,16 @@
 ﻿using MSHC.WPF.MVVM;
-using System;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using AlephNote.Common.Util;
+using AlephNote.WPF.Extensions;
 
 namespace AlephNote.WPF.Converter
 {
-	class ReadonlyToLockIcon : OneWayConverter<bool, ImageSource>
+	public class ReadonlyToLockIcon : OneWayConverter<bool, ImageSource>
 	{
 		protected override ImageSource Convert(bool value, object parameter)
 		{
-			if (value)
-				return new BitmapImage(new Uri("pack://application:,,,/AlephNote;component/Resources/lock.png"));
-			else
-				return new BitmapImage(new Uri("pack://application:,,,/AlephNote;component/Resources/lock_open.png"));
+			if (value) return ThemeManager.Inst.CurrentThemeSet.GetBitmapImageResource("lock.png");
+			else       return ThemeManager.Inst.CurrentThemeSet.GetBitmapImageResource("lock_open.png");
 		}
 	}
 }

@@ -47,18 +47,21 @@ namespace AlephNote.Common.Themes
 
 		private Dictionary<string, ValueRef> _references;
 		private Dictionary<string, string> _properties;
+		private Dictionary<string, byte[]> _resources;
 
 		public void LoadFromString(string content, string filename)
 		{
-			_xdoc = XDocument.Parse(_source = content);
-			_filename = filename.ToLower();
+			_xdoc      = XDocument.Parse(_source = content);
+			_filename  = filename.ToLower();
+			_resources = new Dictionary<string, byte[]>();
 		}
 
 		public void Load(string filepath)
 		{
-			_source = File.ReadAllText(filepath);
-			_xdoc = XDocument.Parse(_source);
-			_filename = Path.GetFileName(filepath).ToLower();
+			_source    = File.ReadAllText(filepath);
+			_xdoc      = XDocument.Parse(_source);
+			_filename  = Path.GetFileName(filepath).ToLower();
+			_resources = new Dictionary<string, byte[]>();
 		}
 
 		public void Parse()
@@ -111,7 +114,7 @@ namespace AlephNote.Common.Themes
 
 		public AlephTheme Generate()
 		{
-			var t = new AlephTheme(_name, _version, _compatibility, _filename, _source, _author, _themetype);
+			var t = new AlephTheme(_name, _version, _compatibility, _filename, _source, _author, _themetype, _resources);
 
 			foreach (var propdef in AlephTheme.THEME_PROPERTIES)
 			{
@@ -164,7 +167,7 @@ namespace AlephNote.Common.Themes
 
 		public static AlephTheme GetFallback()
 		{
-			var t = new AlephTheme("DEFAULT_THEME_FALLBACK", new Version(0, 0, 0, 0), CompatibilityVersionRange.ANY, "NULL", "<!-- fallback -->", "auto generated", AlephThemeType.Fallback);
+			var t = new AlephTheme("DEFAULT_THEME_FALLBACK", new Version(0, 0, 0, 0), CompatibilityVersionRange.ANY, "NULL", "<!-- fallback -->", "auto generated", AlephThemeType.Fallback, new Dictionary<string, byte[]>());
 
 			var r = new Random();
 
@@ -235,6 +238,11 @@ namespace AlephNote.Common.Themes
 			}
 
 			return null;
+		}
+
+		public void AddResource(string name, byte[] data)
+		{
+			_resources[name.ToLower()] = data;
 		}
 	}
 }

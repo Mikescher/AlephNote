@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace AlephNote.Common.Themes
 {
@@ -225,6 +226,33 @@ namespace AlephNote.Common.Themes
 			("scintilla.search.global:under_text",                     AlephThemePropType.Boolean     ),
 		};
 
+		public static readonly (string, Uri)[] RESOURCES =
+		{
+			("folder_all.png",       new Uri("pack://application:,,,/AlephNote;component/Resources/folder_all.png")       ),
+			("folder_any.png",       new Uri("pack://application:,,,/AlephNote;component/Resources/folder_any.png")       ),
+			("folder_none.png",      new Uri("pack://application:,,,/AlephNote;component/Resources/folder_none.png")      ),
+			("folder_root.png",      new Uri("pack://application:,,,/AlephNote;component/Resources/folder_root.png")      ),
+
+			("IconGreen.ico",        new Uri("pack://application:,,,/AlephNote;component/Resources/IconGreen.ico")        ),
+			("IconRed.ico",          new Uri("pack://application:,,,/AlephNote;component/Resources/IconRed.ico")          ),
+			("IconSync.ico",         new Uri("pack://application:,,,/AlephNote;component/Resources/IconSync.ico")         ),
+			("IconYellow.ico",       new Uri("pack://application:,,,/AlephNote;component/Resources/IconYellow.ico")       ),
+			
+			("lock.png",             new Uri("pack://application:,,,/AlephNote;component/Resources/lock.png")             ),
+			("lock_open.png",        new Uri("pack://application:,,,/AlephNote;component/Resources/lock_open.png")        ),
+			("lock_small.png",       new Uri("pack://application:,,,/AlephNote;component/Resources/lock_small.png")       ),
+
+			("plus.png",             new Uri("pack://application:,,,/AlephNote;component/Resources/plus.png")             ),
+			("refresh.png",          new Uri("pack://application:,,,/AlephNote;component/Resources/refresh.png")          ),
+			("star.png",             new Uri("pack://application:,,,/AlephNote;component/Resources/star.png")             ),
+			("tag.png",              new Uri("pack://application:,,,/AlephNote;component/Resources/tag.png")              ),
+
+			("margin_check_mix.png", new Uri("pack://application:,,,/AlephNote;component/Resources/margin_check_mix.png") ),
+			("margin_check_off.png", new Uri("pack://application:,,,/AlephNote;component/Resources/margin_check_off.png") ),
+			("margin_check_on.png",  new Uri("pack://application:,,,/AlephNote;component/Resources/margin_check_on.png")  ),
+
+		};
+
 		#endregion
 
 		public string Name { get; }
@@ -234,18 +262,20 @@ namespace AlephNote.Common.Themes
 		public string SourceFilename { get; }
 		public string Source { get; }
 		public AlephThemeType ThemeType { get; }
+		public IReadOnlyDictionary<string, byte[]> Resources { get; }
 		
 		private readonly Dictionary<string, AlephThemePropertyValue> _allProperties = new Dictionary<string, AlephThemePropertyValue>();
 
-		public AlephTheme(string n, Version v, CompatibilityVersionRange c, string fn, string src, string a, AlephThemeType att)
+		public AlephTheme(string n, Version v, CompatibilityVersionRange c, string fn, string src, string a, AlephThemeType att, IReadOnlyDictionary<string, byte[]> res)
 		{
-			Name = n;
-			Version = v;
-			Author = a;
-			Compatibility = c;
+			Name           = n;
+			Version        = v;
+			Author         = a;
+			Compatibility  = c;
 			SourceFilename = fn;
-			Source = src;
-			ThemeType = att;
+			Source         = src;
+			ThemeType      = att;
+			Resources      = res;
 		}
 
 		public void AddProperty(string name, AlephThemePropertyValue value)
@@ -264,5 +294,9 @@ namespace AlephNote.Common.Themes
 			return obj?.XmlDirectValue ?? "N/A";
 		}
 
+		public static Uri GetDefaultResourceUri(string name)
+		{
+			return RESOURCES.First(p => string.Equals(p.Item1, name, StringComparison.CurrentCultureIgnoreCase)).Item2;
+		}
 	}
 }

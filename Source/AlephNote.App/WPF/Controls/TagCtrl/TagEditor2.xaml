@@ -238,7 +238,7 @@
 		        Visibility="{Binding Settings.ShowTagButton, Converter={conv:BoolToVisibility}, ConverterParameter=Visible;Collapsed}"
 				IsEnabled="{Binding Readonly, Converter={conv:NegateBool}}"
 		        Command="{Binding ShowTagChooserCommand}">
-			<Image Grid.Column="0" Source="/Resources/tag.png" Margin="2" />
+			<Image Grid.Column="0" Source="{ext:ThemeBinding 'tag.png', ResType='ImageSource'}" Margin="2" />
 		</Button>
 
 

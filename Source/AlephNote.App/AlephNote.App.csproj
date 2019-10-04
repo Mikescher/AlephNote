@@ -291,7 +291,6 @@
     <Compile Include="WPF\Converter\LogToBackground.cs" />
     <Compile Include="WPF\Converter\LogToFontWeight.cs" />
     <Compile Include="WPF\Converter\LogToForeground.cs" />
-    <Compile Include="WPF\Converter\StateToAppIcon.cs" />
     <Compile Include="WPF\Converter\FontModifierToFontStyle.cs" />
     <Compile Include="WPF\Converter\FontModifierToFontWeight.cs" />
     <Compile Include="WPF\Converter\CreatePluginSettingsGrid.cs" />
@@ -477,28 +476,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="IconMain.ico" />
-    <Resource Include="Resources\IconMain.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\IconGreen.ico" />
-    <Resource Include="Resources\IconRed.ico" />
-    <Resource Include="Resources\IconSync.ico" />
-    <Resource Include="Resources\IconYellow.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\IconMainBig.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\github.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\refresh.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\plus.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\AlephNote.Common\AlephNote.Common.csproj">
       <Project>{1177d8f5-9496-4262-b41f-b31197d851ae}</Project>
       <Name>AlephNote.Common</Name>
@@ -513,27 +490,39 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ui_off.png" />
-    <None Include="Resources\ui_on.png" />
+    <Resource Include="IconMain.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\LoremIpsum.txt" />
-  </ItemGroup>
-  <ItemGroup>
+    <Resource Include="Resources\IconMain.png" />
+    <Resource Include="Resources\IconGreen.ico" />
+    <Resource Include="Resources\IconRed.ico" />
+    <Resource Include="Resources\IconSync.ico" />
+    <Resource Include="Resources\IconYellow.ico" />
+    <Resource Include="Resources\IconMainBig.png" />
+    <Resource Include="Resources\github.png" />
+    <Resource Include="Resources\refresh.png" />
+    <Resource Include="Resources\plus.png" />
     <Resource Include="Resources\HelpTexts.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\folder_all.png" />
     <Resource Include="Resources\folder_any.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\star.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\folder_none.png" />
     <Resource Include="Resources\folder_root.png" />
+    <Resource Include="Resources\lock.png" />
+    <Resource Include="Resources\lock_open.png" />
+    <Resource Include="Resources\tag.png" />
+    <Resource Include="Resources\lock_small.png" />
+    <Resource Include="Resources\margin_check_off.png" />
+    <Resource Include="Resources\margin_check_on.png" />
+    <None Include="Resources\LoremIpsum.txt" />
+    <Resource Include="Resources\margin_check_mix.png" />
   </ItemGroup>
   <ItemGroup>
+    <ContentWithTargetPath Include="Resources\themes\alt_iconset.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Themes\alt_iconset.zip</TargetPath>
+      <SubType>Designer</SubType>
+    </ContentWithTargetPath>
     <ContentWithTargetPath Include="Resources\themes\solarized-dark.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Themes\solarized-dark.xml</TargetPath>
@@ -573,15 +562,6 @@
       <TargetPath>Themes\wide-sidebar.xml</TargetPath>
       <SubType>Designer</SubType>
     </ContentWithTargetPath>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\lock.png" />
-    <Resource Include="Resources\lock_open.png" />
-    <Resource Include="Resources\tag.png" />
-    <Resource Include="Resources\lock_small.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ui-mix.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\Lib\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\..\Lib\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />

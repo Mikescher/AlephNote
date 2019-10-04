@@ -762,5 +762,10 @@ namespace AlephNote.Common.Settings
 		{
 			return SciLineNumbers && (SciLineNumberSpacing>1 || SciHexLineNumber);
 		}
+
+		public void TriggerReadonlyPropertyChanged()
+		{
+			OnExplicitPropertyChanged(nameof(IsReadOnlyMode));
+		}
 	}
 }

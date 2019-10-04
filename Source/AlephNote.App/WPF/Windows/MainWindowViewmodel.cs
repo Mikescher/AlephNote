@@ -23,6 +23,7 @@ using AlephNote.PluginInterface.Util;
 using AlephNote.Common.Util;
 using AlephNote.PluginInterface.Exceptions;
 using AlephNote.WPF.Dialogs;
+using AlephNote.WPF.Extensions;
 using AlephNote.WPF.ScintillaUtil;
 using MSHC.Lang.Collections;
 using MSHC.Lang.Special;
@@ -66,7 +67,7 @@ namespace AlephNote.WPF.Windows
 		public WindowState WindowState { get { return _windowState; } set { _windowState = value; OnPropertyChanged(); } }
 
 		private SynchronizationState _synchronizationState = SynchronizationState.UpToDate;
-		public SynchronizationState SynchronizationState { get { return _synchronizationState; } set { if (value != _synchronizationState) { _synchronizationState = value; OnPropertyChanged(); } } }
+		public SynchronizationState SynchronizationState { get { return _synchronizationState; } set { if (value != _synchronizationState) { _synchronizationState = value; OnPropertyChanged(); UpdateNotificationIcon(value); } } }
 
 		public bool DebugMode { get { return App.DebugMode; } }
 
@@ -588,6 +589,8 @@ namespace AlephNote.WPF.Windows
 		public void OnThemeChanged()
 		{
 			Owner.SetupScintilla(Settings);
+			UpdateNotificationIcon(SynchronizationState);
+			Settings.TriggerReadonlyPropertyChanged();
 		}
 
 		public void ShowConflictResolutionDialog(string uuid, string txt0, string ttl0, List<string> tgs0, DirectoryPath ndp0, string txt1, string ttl1, List<string> tgs1, DirectoryPath ndp1)
@@ -598,6 +601,19 @@ namespace AlephNote.WPF.Windows
 		private void TitleEnter(EventArgs e)
 		{
 			if (Settings?.FocusScintillaOnTitleEnter == true) Owner.FocusScintilla();
+		}
+
+		private void UpdateNotificationIcon(SynchronizationState sstate)
+		{
+			switch (sstate)
+			{
+				case SynchronizationState.NotSynced: Owner.TrayIcon.Icon = ThemeManager.Inst.CurrentThemeSet.GetIconResource("IconYellow.ico");  break;
+				case SynchronizationState.Syncing:   Owner.TrayIcon.Icon = ThemeManager.Inst.CurrentThemeSet.GetIconResource("IconSync.ico");    break;
+				case SynchronizationState.UpToDate:  Owner.TrayIcon.Icon = ThemeManager.Inst.CurrentThemeSet.GetIconResource("IconGreen.ico");   break;
+				case SynchronizationState.Error:     Owner.TrayIcon.Icon = ThemeManager.Inst.CurrentThemeSet.GetIconResource("IconRed.ico");     break;
+
+				default: throw new ArgumentOutOfRangeException(nameof(sstate), sstate, null);
+			}
 		}
 	}
 }

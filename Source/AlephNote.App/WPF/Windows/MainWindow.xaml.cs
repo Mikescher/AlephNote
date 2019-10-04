@@ -189,9 +189,9 @@ namespace AlephNote.WPF.Windows
 			UpdateMargins(s);
 			NoteEdit.BorderStyle = BorderStyle.FixedSingle;
 			
-			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_ON].DefineRgbaImage(Properties.Resources.ui_on);
-			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_OFF].DefineRgbaImage(Properties.Resources.ui_off);
-			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_MIX].DefineRgbaImage(Properties.Resources.ui_mix);
+			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_ON ].DefineRgbaImage(theme.GetDBitmapResource("margin_check_on.png" ));
+			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_OFF].DefineRgbaImage(theme.GetDBitmapResource("margin_check_off.png"));
+			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_MIX].DefineRgbaImage(theme.GetDBitmapResource("margin_check_mix.png"));
 
 
 			NoteEdit.MultipleSelection = s.SciMultiSelection;

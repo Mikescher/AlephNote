@@ -21,10 +21,11 @@ namespace AlephNote.WPF.Extensions
 		{
 			public readonly string Key;
 			public readonly string Convert;
+			public readonly string ResType;
 
-			public object Value => ThemeBindingExtension.GetValue(Key, Convert);
+			public object Value => ThemeBindingExtension.GetValue(Key, Convert, ResType);
 
-			public ThemeBindingProxy(string k, string c) { Key = k; Convert = c; }
+			public ThemeBindingProxy(string k, string c, string t) { Key = k; Convert = c; ResType = t; }
 
 			public event PropertyChangedEventHandler PropertyChanged;
 
@@ -47,6 +48,14 @@ namespace AlephNote.WPF.Extensions
 		public string Convert { get; set; } = "";
 
 		/// <summary>
+		/// optionally convert theme resource
+		/// Supported:
+		///  - "Value"
+		///  - "ImageSource"
+		/// </summary>
+		public string ResType { get; set; } = "Value";
+
+		/// <summary>
 		/// [TRUE]
 		/// Return value direct and update via dependencyObject.SetValue
 		/// Is faster than proxy variant but does not work in Styles and Resources
@@ -58,7 +67,7 @@ namespace AlephNote.WPF.Extensions
 		/// </summary>
 		public bool Proxy { get; set; } = true;
 
-		private static readonly Dictionary<string, ThemeBindingProxy> _proxies = new Dictionary<string, ThemeBindingProxy>();
+		private static readonly Dictionary<(string, string, string), ThemeBindingProxy> _proxies = new Dictionary<(string, string, string), ThemeBindingProxy>();
 		private readonly List<WeakReference> _targetObjects = new List<WeakReference>();
 
 		private object _targetProperty;
@@ -82,11 +91,6 @@ namespace AlephNote.WPF.Extensions
 			ThemeManager.Inst.RegisterSlave(this);
 		}
 
-		/// <summary>
-		/// Returns the object that corresponds to the specified resource key.
-		/// </summary>
-		/// <param name="serviceProvider">An object that can provide services for the markup extension.</param>
-		/// <returns>The object that corresponds to the specified resource key.</returns>
 		public override object ProvideValue(IServiceProvider serviceProvider)
 		{
 			RegisterTarget(serviceProvider);
@@ -96,13 +100,13 @@ namespace AlephNote.WPF.Extensions
 
 			if (Proxy)
 			{
-				var p = GetProxy(ThemeKey, Convert);
+				var p = GetProxy(ThemeKey, Convert, ResType);
 				var binding = new Binding("Value") { Source = p };
 				return binding.ProvideValue(serviceProvider);
 			}
 			else
 			{
-				return GetValue(ThemeKey, Convert);
+				return GetValue(ThemeKey, Convert, ResType);
 			}
 
 		}
@@ -110,15 +114,12 @@ namespace AlephNote.WPF.Extensions
 		protected virtual void RegisterTarget(IServiceProvider serviceProvider)
 		{
 			var provideValueTarget = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
-			if (provideValueTarget != null)
-			{
-				var target = provideValueTarget.TargetObject;
+			var target = provideValueTarget?.TargetObject;
 				
-				if (target != null && target.GetType().FullName != "System.Windows.SharedDp")
-				{
-					_targetProperty = provideValueTarget.TargetProperty;
-					_targetObjects.Add(new WeakReference(target));
-				}
+			if (target != null && target.GetType().FullName != "System.Windows.SharedDp")
+			{
+				_targetProperty = provideValueTarget.TargetProperty;
+				_targetObjects.Add(new WeakReference(target));
 			}
 		}
 
@@ -126,7 +127,7 @@ namespace AlephNote.WPF.Extensions
 		{
 			if (Proxy)
 			{
-				var dictKey = ThemeKey + "@@@" + Convert + ";";
+				var dictKey = (ThemeKey, Convert, ResType);
 				if (_proxies.TryGetValue(dictKey, out var v)) v.TriggerChange();
 			}
 			else
@@ -142,65 +143,73 @@ namespace AlephNote.WPF.Extensions
 		{
 			try
 			{
-				if (_targetProperty is DependencyProperty)
+				if (_targetProperty is DependencyProperty dprop)
 				{
-					var dependencyObject = target as DependencyObject;
-					if (dependencyObject != null)
-					{
-						dependencyObject.SetValue(_targetProperty as DependencyProperty, GetValue(ThemeKey, Convert));
-					}
+					(target as DependencyObject)?.SetValue(dprop, GetValue(ThemeKey, Convert, ResType));
 				}
-				else if (_targetProperty is PropertyInfo)
+				else if (_targetProperty is PropertyInfo propinfo)
 				{
-					(_targetProperty as PropertyInfo).SetValue(target, GetValue(ThemeKey, Convert), null);
+					propinfo.SetValue(target, GetValue(ThemeKey, Convert, ResType), null);
 				}
 			}
 			catch (Exception e)
 			{
-				App.Logger.Error("ThemeBinding", $"UpdateTargetInternal failed for '{ThemeKey}':'{Convert}'", e);
-				App.Logger.ShowExceptionDialog("Update theme failed", e, $"UpdateTargetInternal failed for '{ThemeKey}':'{Convert}'");
+				App.Logger.Error("ThemeBinding", $"UpdateTargetInternal failed for '{ThemeKey}':'{Convert}':'{ResType}'", e);
+				App.Logger.ShowExceptionDialog("Update theme failed", e, $"UpdateTargetInternal failed for '{ThemeKey}':'{Convert}':'{ResType}'");
 			}
 		}
 
-		private static ThemeBindingProxy GetProxy(string key, string convert)
+		private static ThemeBindingProxy GetProxy(string key, string convert, string rtype)
 		{
-			var dictKey = key + "@@@" + convert + ";";
+			var dictKey = (key, convert, rtype);
 
 			if (_proxies.TryGetValue(dictKey, out var proxy)) return proxy;
 
-			proxy = new ThemeBindingProxy(key, convert);
+			proxy = new ThemeBindingProxy(key, convert, rtype);
 			_proxies[dictKey] = proxy;
 			return proxy;
 		}
 
-		private static object GetValue(string key, string converter)
+		private static object GetValue(string key, string converter, string rtype)
 		{
 #if DEBUG
 			if (Application.Current.MainWindow == null) return null; // designmode
 #endif
 
-			var obj = ThemeManager.Inst.CurrentThemeSet.Get(key);
-
-			if (string.IsNullOrWhiteSpace(converter))
+			if (rtype == "Value")
 			{
-				if (obj is ColorRef cref) return ColorRefToBrush.Convert(cref);
-				if (obj is BrushRef bref) return BrushRefToBrush.Convert(bref);
-				if (obj is ThicknessRef tref) return tref.ToWThickness();
-				if (obj is CornerRadiusRef rref) return rref.ToCornerRad();
+				var obj = ThemeManager.Inst.CurrentThemeSet.Get(key);
 
-				throw new Exception($"Cannot convert {obj?.GetType()} to 'brush'");
+				if (string.IsNullOrWhiteSpace(converter))
+				{
+					if (obj is ColorRef cref) return ColorRefToBrush.Convert(cref);
+					if (obj is BrushRef bref) return BrushRefToBrush.Convert(bref);
+					if (obj is ThicknessRef tref) return tref.ToWThickness();
+					if (obj is CornerRadiusRef rref) return rref.ToCornerRad();
+
+					throw new Exception($"Cannot convert {obj?.GetType()} to 'brush'");
+				}
+				else if (converter.Equals("ToColor", StringComparison.InvariantCultureIgnoreCase))
+				{
+					if (obj is ColorRef cref)     return cref.ToWCol();
+					if (obj is BrushRef bref)     return bref.GradientSteps.First().Item2.ToWCol();
+
+					throw new Exception($"Cannot convert {obj?.GetType()} with '{converter}'");
+				}
+				else
+				{
+					throw new Exception($"Unknown converter '{converter}'");
+				}
 			}
-			else if (converter.Equals("ToColor", StringComparison.InvariantCultureIgnoreCase))
+			else if (rtype == "ImageSource")
 			{
-				if (obj is ColorRef cref)     return cref.ToWCol();
-				if (obj is BrushRef bref)     return bref.GradientSteps.First().Item2.ToWCol();
-
-				throw new Exception($"Cannot convert {obj?.GetType()} with '{converter}'");
+				return ThemeManager.Inst.CurrentThemeSet.GetBitmapImageResource(key);
 			}
 			else
 			{
-				throw new Exception($"Unknown converter {converter}");
+				throw new Exception($"Unknown ResType '{rtype}'");
 			}
+
 
 		}
 

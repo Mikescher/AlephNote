@@ -68,8 +68,8 @@
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
-							<Image Grid.Column="0" Source="/Resources/star.png"       VerticalAlignment="Center" Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
-							<Image Grid.Column="1" Source="/Resources/lock_small.png" VerticalAlignment="Center" Visibility="{Binding IsLocked, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
+							<Image Grid.Column="0" Source="{ext:ThemeBinding 'star.png', ResType='ImageSource'}"       VerticalAlignment="Center" Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
+							<Image Grid.Column="1" Source="{ext:ThemeBinding 'lock_small.png', ResType='ImageSource'}" VerticalAlignment="Center" Visibility="{Binding IsLocked, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
 							<TextBlock Grid.Column="2" 
 									   Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" 
 									   Foreground="{ext:ThemeBinding 'window.notesview.flat:foreground'}"
@@ -95,12 +95,12 @@
 							</Grid.RowDefinitions>
 
 							<Rectangle Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Height="2"
-							           Fill="{ext:ThemeBinding 'window.notesview.flat.vborder:background'}" 
-							           Margin="{ext:ThemeBinding     'window.notesview.flat.vborder:margin'}"  />
+							           Fill="{ext:ThemeBinding 'window.notesview.flat.vborder:background'}"
+							           Margin="{ext:ThemeBinding 'window.notesview.flat.vborder:margin'}" />
 
-							<Image     Grid.Row="1" Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" 
+							<Image     Grid.Row="1" Grid.Column="0" Source="{ext:ThemeBinding 'star.png', ResType='ImageSource'}" VerticalAlignment="Center" 
 							           Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
-							<Image     Grid.Row="1" Grid.Column="1" Source="/Resources/lock_small.png" VerticalAlignment="Center" 
+							<Image     Grid.Row="1" Grid.Column="1" Source="{ext:ThemeBinding 'lock_small.png', ResType='ImageSource'}" VerticalAlignment="Center" 
 							           Visibility="{Binding IsLocked, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
 
 							<TextBlock Grid.Row="1" Grid.Column="2" 
@@ -141,9 +141,9 @@
 									<ColumnDefinition Width="Auto"/>
 									<ColumnDefinition Width="*"/>
 								</Grid.ColumnDefinitions>
-								<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" 
+								<Image     Grid.Column="0" Source="{ext:ThemeBinding 'star.png', ResType='ImageSource'}" VerticalAlignment="Center" 
 								           Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
-								<Image     Grid.Column="1" Source="/Resources/lock_small.png" VerticalAlignment="Center" 
+								<Image     Grid.Column="1" Source="{ext:ThemeBinding 'lock_small.png', ResType='ImageSource'}" VerticalAlignment="Center" 
 								           Visibility="{Binding IsLocked, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
 
 								<TextBlock Grid.Column="2" FontWeight="Bold" FontStyle="Normal" 
@@ -192,9 +192,9 @@
 									<ColumnDefinition Width="Auto"/>
 									<ColumnDefinition Width="*"/>
 								</Grid.ColumnDefinitions>
-								<Image     Grid.Column="0" Source="/Resources/star.png" VerticalAlignment="Center" 
+								<Image     Grid.Column="0" Source="{ext:ThemeBinding 'star.png', ResType='ImageSource'}" VerticalAlignment="Center" 
 								           Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
-								<Image     Grid.Column="1" Source="/Resources/lock_small.png" VerticalAlignment="Center" 
+								<Image     Grid.Column="1" Source="{ext:ThemeBinding 'lock_small.png', ResType='ImageSource'}" VerticalAlignment="Center" 
 								           Visibility="{Binding IsLocked, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
 								<TextBlock Grid.Column="2" FontWeight="Bold" FontStyle="Normal"
 										   Foreground="{ext:ThemeBinding 'window.notesview.flat:foreground'}" 

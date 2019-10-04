@@ -35,7 +35,7 @@ namespace AlephNote.WPF.Util
 		private bool _isExpanded = true;
 		public bool IsExpanded { get { return _isExpanded; } set { _isExpanded = value; OnPropertyChanged(); } }
 
-		public abstract string IconSource { get; }
+		public abstract string IconSourceKey { get; }
 		public abstract int Order { get; }
 		public abstract bool IsSpecialNode { get; }
 		public abstract bool IsSpecialNode_AllNotes { get; }
@@ -59,7 +59,7 @@ namespace AlephNote.WPF.Util
 	{
 		private readonly HierachicalWrapper_Folder _baseWrapper;
 
-		public override string IconSource => "/Resources/folder_all.png";
+		public override string IconSourceKey => "folder_all.png";
 		public override int Order => -2;
 		public override bool IsSpecialNode => true;
 		public override bool IsSpecialNode_AllNotes => true;
@@ -89,7 +89,7 @@ namespace AlephNote.WPF.Util
 	{
 		private readonly HierachicalWrapper_Folder _baseWrapper;
 
-		public override string IconSource => "/Resources/folder_none.png";
+		public override string IconSourceKey => "folder_none.png";
 		public override int Order => -1;
 		public override bool IsSpecialNode => true;
 		public override bool IsSpecialNode_AllNotes => false;
@@ -123,7 +123,7 @@ namespace AlephNote.WPF.Util
 
 		private DirectoryPath _path;
 
-		public override string IconSource => _path.IsRoot() ? "/Resources/folder_root.png" : "/Resources/folder_any.png";
+		public override string IconSourceKey => _path.IsRoot() ? "folder_root.png" : "folder_any.png";
 		public override int Order => 0;
 		public override bool IsSpecialNode               => false;
 		public override bool IsSpecialNode_AllNotes      => false;

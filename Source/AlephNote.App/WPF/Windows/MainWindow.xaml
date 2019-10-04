@@ -173,7 +173,7 @@
 			        BorderBrush="{ext:ThemeBinding 'window.globalsearch.tagbutton:border'}" 
 			        Visibility="{Binding Settings.HideTagChooser, Converter={conv:BoolToVisibility}, ConverterParameter=Collapsed;Visible}"
 			        Command="{Binding ShowTagFilterCommand}">
-				<Image Source="/Resources/tag.png" Margin="2" />
+				<Image Source="{ext:ThemeBinding 'tag.png', ResType='ImageSource'}" Margin="2" />
 			</Button>
 
 			
@@ -211,7 +211,7 @@
 					BorderBrush="{ext:ThemeBinding 'window.globalsearch.button:border'}" 
 					IsEnabled="{Binding Settings.IsReadOnlyMode, Converter={conv:NegateBool}}"
 					Command="{Binding CreateNewNoteCommand}">
-				<Image Source="/Resources/plus.png" Margin="2" />
+				<Image Source="{ext:ThemeBinding 'plus.png', ResType='ImageSource'}" Margin="2" />
 			</Button>
 
 			<ContentControl Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3"  x:Name="NotesViewCtrlWrapper">
@@ -390,7 +390,7 @@
 					BorderBrush="{ext:ThemeBinding 'window.statusbar.btnReload:border'}"
 					Command="{Binding ResyncCommand}" 
 					Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"   >
-				<Image Source="/Resources/refresh.png" />
+				<Image Source="{ext:ThemeBinding 'refresh.png', ResType='ImageSource'}" />
 			</Button>
 			<Separator Margin="5,2" Foreground="Beige" />
 			<StatusBarItem Content="Length: " Visibility="{Binding AllSelectedNotes.Count, Converter={conv:IntegerEqualsToVisibility}, ConverterParameter='1;Visible;Collapsed'}" />
@@ -410,7 +410,6 @@
 			x:Name="TrayIcon"
 			Visibility="Visible"
 			ToolTipText="{Binding FullVersion}"
-			IconSource="{Binding SynchronizationState, Converter={locconv:StateToAppIcon}}"
 			TrayRightMouseDown="TrayIcon_TrayRightMouseDown"
 			LeftClickCommand="{Binding ShowMainWindowCommand}"
 			DoubleClickCommand="{Binding ShowMainWindowCommand}">

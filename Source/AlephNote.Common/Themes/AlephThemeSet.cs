@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -9,6 +10,8 @@ namespace AlephNote.Common.Themes
 		public readonly AlephTheme DefaultTheme;
 		public readonly AlephTheme BaseTheme;
 		public readonly IReadOnlyList<AlephTheme> Modifiers;
+
+		private readonly ConcurrentDictionary<(string, Type), object> _resourceCache = new ConcurrentDictionary<(string, Type), object>();
 
 		public AlephThemeSet(AlephTheme t0, AlephTheme t1, IReadOnlyList<AlephTheme> mm)
 		{
@@ -27,6 +30,43 @@ namespace AlephNote.Common.Themes
 		public object Get(string name)
 		{
 			return GetResolved(name).DirectValue;
+		}
+
+		public T GetResource<T>(string name, Func<byte[], T> conv, Func<T> defaultValue) where T : class
+		{
+			if (_resourceCache.TryGetValue((name, typeof(T)), out var r)) return (T)r;
+
+			var res = GetRawResource(name);
+
+			if (res == null)
+			{
+				var dval = defaultValue();
+				_resourceCache.AddOrUpdate((name, typeof(T)), dval, (p1, p2) => dval);
+				return dval;
+			}
+
+			var val = conv(res);
+			_resourceCache.AddOrUpdate((name, typeof(T)), val, (p1, p2) => val);
+			return val;
+		}
+
+		private byte[] GetRawResource(string name)
+		{
+			for (var i = Modifiers.Count - 1; i >= 0; i--)
+			{
+				if (Modifiers[i].Resources.TryGetValue(name.ToLower(), out var r)) return r;
+			}
+
+			if (BaseTheme != null)
+			{
+				if (BaseTheme.Resources.TryGetValue(name.ToLower(), out var r)) return r;
+			}
+
+			if (DefaultTheme != null)
+			{
+				if (DefaultTheme.Resources.TryGetValue(name.ToLower(), out var r)) return r;
+			}
+			return null;
 		}
 
 		public AlephThemePropertyValue GetUnresolved(string name)
