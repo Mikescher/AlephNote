@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<theme>
+	<meta>
+		<name>Hide scrollbars</name>
+		<version>1.0</version>
+		<compatibility>1.6.32+</compatibility>
+		<author>Mike Schwörer</author>
+		<type>modifier</type>
+		<description>Hide both scrollbars from main edit control</description>
+	</meta>
+
+	<data>
+		<property name="scintilla.scrollbar_h:visible" value="false"/>
+		<property name="scintilla.scrollbar_v:visible" value="false"/>
+	</data>
+</theme>
