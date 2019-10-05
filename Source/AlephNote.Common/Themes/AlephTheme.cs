@@ -112,6 +112,7 @@ namespace AlephNote.Common.Themes
 			Tuple.Create("window.notesview.flat.vborder:foreground",               AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.flat.vborder:background",               AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.flat.vborder:margin",                   AlephThemePropType.Thickness   ),
+			Tuple.Create("window.notesview.flat.scrollbar_v:visible",              AlephThemePropType.Boolean     ),
 
 			Tuple.Create("window.notesview.hierachical.list:background",           AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.list:foreground",           AlephThemePropType.Brush       ),
@@ -124,11 +125,13 @@ namespace AlephNote.Common.Themes
 			Tuple.Create("window.notesview.hierachical.list.vborder:foreground",   AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.list.vborder:background",   AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.list.vborder:margin",       AlephThemePropType.Thickness   ),
+			Tuple.Create("window.notesview.hierachical.list.scrollbar_v:visible",  AlephThemePropType.Boolean     ),
 			Tuple.Create("window.notesview.hierachical.splitter",                  AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.tree:background",           AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.tree:foreground",           AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.tree.selected:background",  AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.tree.selected:foreground",  AlephThemePropType.Brush       ),
+			Tuple.Create("window.notesview.hierachical.tree.scrollbar_v:visible",  AlephThemePropType.Boolean     ),
 
 			Tuple.Create("window.statusbar:background",                            AlephThemePropType.Brush       ),
 			Tuple.Create("window.statusbar:foreground",                            AlephThemePropType.Brush       ),

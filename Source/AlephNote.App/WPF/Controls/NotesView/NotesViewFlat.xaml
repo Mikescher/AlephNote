@@ -45,6 +45,7 @@
 					  services:MultiDataTemplateService.MultiDataTemplateSelector="{Binding Settings.NotePreviewStyle}"
 					  HorizontalContentAlignment="Stretch"
 					  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					  ScrollViewer.VerticalScrollBarVisibility="{ext:ThemeBinding 'window.notesview.flat.scrollbar_v:visible', Convert='ToScrollBarVisibility'}"
 					  ScrollViewer.CanContentScroll="{Binding Settings.SmoothScrollNotesView, Converter={conv:NegateBool}}"
 					  SelectionMode="{Binding Settings.MultiNoteSelection, Converter={locconv:BoolToListViewSelectionMode}}"
 					  Background="{ext:ThemeBinding 'window.notesview.flat:background'}"

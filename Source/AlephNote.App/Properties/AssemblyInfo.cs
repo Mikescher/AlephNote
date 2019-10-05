@@ -15,6 +15,8 @@ using System.Windows;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 
+// Also increase version of default theme (!)
+
 [assembly: AssemblyVersion("1.6.32.0")]
 [assembly: AssemblyFileVersion("1.6.32.0")]
 [assembly: AssemblyInformationalVersion("1.6.32.0-master")]

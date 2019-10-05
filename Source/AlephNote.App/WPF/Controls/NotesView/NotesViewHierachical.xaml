@@ -54,6 +54,7 @@
 				  FontFamily="{Binding Settings.ListFontFamily, Converter={locconv:FontNameToFontFamily}}" 
 				  FontWeight="{Binding Settings.ListFontModifier, Converter={locconv:FontModifierToFontWeight}}" 
 				  FontStyle="{Binding Settings.ListFontModifier, Converter={locconv:FontModifierToFontStyle}}"
+				  ScrollViewer.VerticalScrollBarVisibility="{ext:ThemeBinding 'window.notesview.hierachical.tree.scrollbar_v:visible', Convert='ToScrollBarVisibility'}"
 				  PreviewMouseRightButtonDown="FolderTreeView_OnPreviewMouseRightButtonDown"
 				  SelectedItemChanged="TreeView_SelectedItemChanged">
 			
@@ -95,6 +96,7 @@
 					  services:MultiDataTemplateService.MultiDataTemplateSelector="{Binding Settings.NotePreviewStyle}"
 					  HorizontalContentAlignment="Stretch"
 					  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					  ScrollViewer.VerticalScrollBarVisibility="{ext:ThemeBinding 'window.notesview.hierachical.list.scrollbar_v:visible', Convert='ToScrollBarVisibility'}"
 					  ScrollViewer.CanContentScroll="{Binding Settings.SmoothScrollNotesView, Converter={conv:NegateBool}}"
 					  SelectionMode="{Binding Settings.MultiNoteSelection, Converter={locconv:BoolToListViewSelectionMode}}"
 					  Background="{ext:ThemeBinding 'window.notesview.hierachical.list:background'}"

@@ -2,15 +2,21 @@
 <theme>
 	<meta>
 		<name>Hide scrollbars</name>
-		<version>1.0</version>
+		<version>1.1</version>
 		<compatibility>1.6.32+</compatibility>
 		<author>Mike Schwörer</author>
 		<type>modifier</type>
-		<description>Hide both scrollbars from main edit control</description>
+		<description>Hide both scrollbars from main edit control and the notes list</description>
 	</meta>
 
 	<data>
-		<property name="scintilla.scrollbar_h:visible" value="false"/>
-		<property name="scintilla.scrollbar_v:visible" value="false"/>
+		<property name="scintilla.scrollbar_h:visible"                         value="false"/>
+		<property name="scintilla.scrollbar_v:visible"                         value="false"/>
+		
+		<property name="window.notesview.flat.scrollbar_v:visible"             value="false"/>
+		
+		<property name="window.notesview.hierachical.list.scrollbar_v:visible" value="false"/>
+		
+		<property name="window.notesview.hierachical.tree.scrollbar_v:visible" value="false"/>
 	</data>
 </theme>

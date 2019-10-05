@@ -9,6 +9,7 @@ using AlephNote.Common.Themes;
 using AlephNote.WPF.Converter;
 using System.Windows.Media;
 using System.ComponentModel;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace AlephNote.WPF.Extensions
@@ -195,6 +196,11 @@ namespace AlephNote.WPF.Extensions
 					if (obj is BrushRef bref)     return bref.GradientSteps.First().Item2.ToWCol();
 
 					throw new Exception($"Cannot convert {obj?.GetType()} with '{converter}'");
+				}
+				else if (converter.Equals("ToScrollBarVisibility", StringComparison.InvariantCultureIgnoreCase))
+				{
+					var boolobj = (bool)obj;
+					return boolobj ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden;
 				}
 				else
 				{

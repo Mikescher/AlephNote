@@ -14,7 +14,7 @@ Repository: https://github.com/Mikescher/AlephNote
 	<meta>
 		<name>Default</name>
 		<version>1.6.32</version>
-		<compatibility>1.6.X</compatibility>
+		<compatibility>1.6.32+</compatibility>
 		<author>Mike Schwörer</author>
 		<type>default</type>
 	</meta>
@@ -284,6 +284,7 @@ Repository: https://github.com/Mikescher/AlephNote
 					<property name="window.notesview.flat.vborder:foreground"   value="@Transparent"/>
 					<property name="window.notesview.flat.vborder:background"   value="@Transparent"/>
 					<property name="window.notesview.flat.vborder:margin"       value="6,1,6,0"/>
+					<property name="window.notesview.flat.scrollbar_v:visible"  value="true"/>
 				</group>
 				
 				<group name="hierachical">
@@ -298,13 +299,15 @@ Repository: https://github.com/Mikescher/AlephNote
 					<property name="window.notesview.hierachical.list.vborder:foreground"   value="@Transparent"/>
 					<property name="window.notesview.hierachical.list.vborder:background"   value="@Transparent"/>
 					<property name="window.notesview.hierachical.list.vborder:margin"       value="6,1,6,0"/>
-					
+					<property name="window.notesview.hierachical.list.scrollbar_v:visible"  value="true"/>
+
 					<property name="window.notesview.hierachical.splitter"                  value="$window.splitter"/>
 
 					<property name="window.notesview.hierachical.tree:background"           value="$window.notesview.flat:background"/>
 					<property name="window.notesview.hierachical.tree:foreground"           value="$window.notesview.flat:foreground"/>
 					<property name="window.notesview.hierachical.tree.selected:background"  value="#3399FF"/>
 					<property name="window.notesview.hierachical.tree.selected:foreground"  value="@Black"/>
+					<property name="window.notesview.hierachical.tree.scrollbar_v:visible"  value="true"/>
 				</group>
 			</group>
 
