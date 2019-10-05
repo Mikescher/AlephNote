@@ -144,7 +144,7 @@ namespace AlephNote.Common.Themes
 			{
 				var parser = new ThemeParser();
 
-				using (var zip = ZipFile.OpenRead(file))
+				using (var zip = new ZipArchive(File.OpenRead(file), ZipArchiveMode.Read))
 				{
 					using (var metadata = zip.GetEntry("metadata.xml")?.Open())
 					{
