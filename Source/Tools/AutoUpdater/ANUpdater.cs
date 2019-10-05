@@ -17,6 +17,7 @@ namespace AlephNote.AutoUpdater
 			"*.dll",
 			"Plugins/*.dll",
 			"Themes/*.xml",
+			"Themes/*.zip",
 		};
 
 		private readonly Action<int, int, string> _setState;
