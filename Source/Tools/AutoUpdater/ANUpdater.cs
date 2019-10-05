@@ -48,12 +48,18 @@ namespace AlephNote.AutoUpdater
 					.Select(file => Tuple.Create(file, Path.Combine(_targetPath, MakeRelative(file, _sourcePath)))))
 				.ToList();
 
+			List<string> fileDelete = Directory.EnumerateFiles(_targetPath) // old dll files in main directory
+				.Where(p => p.ToLower().EndsWith(".dll"))
+				.Where(p => !File.Exists(Path.Combine(_sourcePath, Path.GetFileName(p))))
+				.ToList();
+
 			int max = 0;
-			max += 1;           // stop running progresses
-			max += 1;           // migrating
-			max += files.Count; // copy
-			max += 1;           // repo-migration
-			max += 1;           // restarting
+			max += 1;                // stop running progresses
+			max += 1;                // migrating
+			max += files.Count;      // copy
+			max += fileDelete.Count; // delete
+			max += 1;                // repo-migration
+			max += 1;                // restarting
 
 			int progress = 1;
 
@@ -79,6 +85,25 @@ namespace AlephNote.AutoUpdater
 				catch (Exception)
 				{
 					_fail("Could not copy " + Path.GetFileName(file.Item1));
+				}
+
+				var delta = 111 - (Environment.TickCount - start);
+				if (delta > 0) Thread.Sleep(delta);
+			}
+
+			foreach (var dfile in fileDelete)
+			{
+				_setState(progress++, max, "Delete " + Path.GetFileName(dfile));
+				
+				var start = Environment.TickCount;
+
+				try
+				{
+					File.Delete(dfile);
+				}
+				catch (Exception)
+				{
+					_fail("Could not delete " + Path.GetFileName(dfile));
 				}
 
 				var delta = 111 - (Environment.TickCount - start);
