@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AlephNote.Common.Themes
 {
 	public class CompatibilityVersionRange
 	{
-		public static readonly CompatibilityVersionRange ANY = new CompatibilityVersionRange(new Version(0, 0, 0, 0), new Version(999999, 0, 0, 0));
+		public static readonly CompatibilityVersionRange ANY = new CompatibilityVersionRange(new Version(0, 0, 0, 0), null);
 
 		public enum CompatibilityVersionRangeType { Greater, Equal }
 
@@ -31,6 +27,15 @@ namespace AlephNote.Common.Themes
 		/// <summary>
 		/// Syntax reference
 		/// https://stackoverflow.com/a/31845544/1761622
+		///
+		/// *                     All versions
+		/// 1.2.3.0-2.3.4.0       Range (both sides inclusive)
+		/// 1.2.3.x               All revisions
+		/// 1.x.x.x               All versions with mayor=1
+		/// ~1.2.3.4              Allow revision (4) level or patch (3) level changes (but must still be bigger or equals specified version)
+		/// ^1.2.3.4              Allow revision (4) level or patch (3) level or minor (2) level or changes (but must still be bigger or equals specified version)
+		/// 1.2.3.4+              All versions bigger/equals than 1.2.3.4+
+		/// 
 		/// </summary>
 		public static CompatibilityVersionRange Parse(string v)
 		{
@@ -47,11 +52,13 @@ namespace AlephNote.Common.Themes
 					return new CompatibilityVersionRange(min, max);
 				}
 
-				bool isTilde = false;
-				bool isCaret = false;
+				var isTilde = false;
+				var isCaret = false;
+				var isPlus  = false;
 
 				if (v.StartsWith("~")) { isTilde = true; v = v.Substring(1); }
-				if (v.StartsWith("^")) { isCaret = true; v = v.Substring(1); }
+				else if (v.StartsWith("^")) { isCaret = true; v = v.Substring(1); }
+				else if (v.EndsWith("+"))   { isPlus  = true; v = v.Substring(0, v.Length-1); }
 
 				if (!isTilde && !isCaret && v.Contains("-"))
 				{
@@ -81,6 +88,11 @@ namespace AlephNote.Common.Themes
 					Version min = new Version( p0 ?? 0,    p1 ?? 0, p2 ?? 0, p3 ?? 0);
 					Version max = new Version((p0 ?? 0)+1, 0,       0,       0      );
 					return new CompatibilityVersionRange(min, max);
+				}
+				else if (isPlus)
+				{
+					Version min = new Version(p0 ?? 0,  p1 ?? 0,    p2 ?? 0, p3 ?? 0);
+					return new CompatibilityVersionRange(min, null);
 				}
 				else
 				{
