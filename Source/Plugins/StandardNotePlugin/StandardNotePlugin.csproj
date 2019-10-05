@@ -6,9 +6,9 @@
 		<AssemblyName>StandardNotePlugin</AssemblyName>
 		<PackageId>StandardNotePlugin</PackageId>
 
-		<AssemblyVersion>1.4.5.0</AssemblyVersion>
-		<FileVersion>1.4.5.0</FileVersion>
-		<Version>1.4.5.0</Version>
+		<AssemblyVersion>1.4.6.0</AssemblyVersion>
+		<FileVersion>1.4.6.0</FileVersion>
+		<Version>1.4.6.0</Version>
 
 		<OutDir>..\..\..\Bin\$(Configuration)\$(TargetFramework)\Plugins\</OutDir>
 
@@ -26,7 +26,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.5.1">
+		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.6.0">
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageReference>
 
