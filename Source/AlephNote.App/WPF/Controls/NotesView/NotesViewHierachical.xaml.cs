@@ -212,8 +212,8 @@ namespace AlephNote.WPF.Controls.NotesView
 		{
 			App.Logger.TraceExt("NotesViewHierachical", 
 				"OnSelectedNoteChanged", 
-				("SelectedNote", SelectedNote?.Title),
-				("SelectedFolder", SelectedFolder?.Header));
+				Tuple.Create("SelectedNote", SelectedNote?.Title),
+				Tuple.Create("SelectedFolder", SelectedFolder?.Header));
 
 			if (SelectedNote != null && (SelectedFolder == null || !SelectedFolder.AllSubNotes.Contains(SelectedNote)))
 			{
@@ -221,7 +221,7 @@ namespace AlephNote.WPF.Controls.NotesView
 				{
 					App.Logger.TraceExt("NotesViewHierachical", 
 						"OnSelectedNoteChanged (1)",
-						("AllNotesWrapper.IsSelected", "true"));
+						Tuple.Create("AllNotesWrapper.IsSelected", "true"));
 
 					DisplayItems.AllNotesViewWrapper.IsSelected = true;
 				}
@@ -232,7 +232,7 @@ namespace AlephNote.WPF.Controls.NotesView
 					{
 						App.Logger.TraceExt("NotesViewHierachical", 
 							"OnSelectedNoteChanged (2)",
-							("DisplayItems.Find(SelectedNote).IsSelected","true"));
+							Tuple.Create("DisplayItems.Find(SelectedNote).IsSelected","true"));
 
 						fldr.IsSelected = true;
 					}
@@ -249,8 +249,8 @@ namespace AlephNote.WPF.Controls.NotesView
 		{
 			App.Logger.TraceExt("NotesViewHierachical", 
 				"OnSelectedFolderChanged",
-				("SelectedNote", SelectedNote?.Title),
-				("SelectedFolder", SelectedFolder?.Header));
+				Tuple.Create("SelectedNote", SelectedNote?.Title),
+				Tuple.Create("SelectedFolder", SelectedFolder?.Header));
 
 			if (SelectedFolder != null && (SelectedNote == null || !SelectedFolder.AllSubNotes.Contains(SelectedNote)) && SelectedFolder.AllSubNotes.Any())
 			{
@@ -272,7 +272,7 @@ namespace AlephNote.WPF.Controls.NotesView
 						{
 							App.Logger.TraceExt("NotesViewHierachical",
 								"OnSelectedFolderChanged (1) [thread]",
-								("SelectedNote" ,n?.Title));
+								Tuple.Create("SelectedNote" ,n?.Title));
 
 							SelectedNote = n;
 						}
@@ -286,7 +286,7 @@ namespace AlephNote.WPF.Controls.NotesView
 			{
 				App.Logger.TraceExt("NotesViewHierachical", 
 					"OnSelectedFolderChanged (2)",
-					("SelectedFolderPath", p.Formatted));
+					Tuple.Create("SelectedFolderPath", p.Formatted));
 
 				SelectedFolderPath = p;
 			}
@@ -296,7 +296,7 @@ namespace AlephNote.WPF.Controls.NotesView
 		{
 			App.Logger.TraceExt("NotesViewHierachical", 
 				"OnSelectedFolderPathChanged",
-				("SelectedFolderPath", SelectedFolderPath?.Formatted));
+				Tuple.Create("SelectedFolderPath", SelectedFolderPath?.Formatted));
 
 			if (SelectedFolderPath == null) return;
 			if (DisplayItems == null) return;
@@ -309,7 +309,7 @@ namespace AlephNote.WPF.Controls.NotesView
 				{
 					App.Logger.TraceExt("NotesViewHierachical", 
 						"OnSelectedFolderPathChanged (1)",
-						("f.IsSelected", "true"));
+						Tuple.Create("f.IsSelected", "true"));
 
 					f.IsSelected = true;
 				}
@@ -319,7 +319,7 @@ namespace AlephNote.WPF.Controls.NotesView
 				if (AllNotes == null && !SelectedFolderPath.IsRoot() && !SelectedFolderPath.EqualsIgnoreCase(SelectedFolder?.GetInternalPath()))
 				{
 					App.Logger.TraceExt("NotesViewHierachical", "OnSelectedFolderPathChanged (2)",
-						("SelectedFolder", SelectedFolder?.Header));
+						Tuple.Create("SelectedFolder", SelectedFolder?.Header));
 
 					_initFolderPath = SelectedFolderPath;
 					SelectedFolderPath = SelectedFolder?.GetInternalPath() ?? DirectoryPath.Root();
@@ -332,7 +332,7 @@ namespace AlephNote.WPF.Controls.NotesView
 						{
 							App.Logger.TraceExt("NotesViewHierachical", 
 								"OnSelectedFolderPathChanged (3)",
-								("DisplayItems.AllNotesWrapper.IsSelected", "true"));
+								Tuple.Create("DisplayItems.AllNotesWrapper.IsSelected", "true"));
 
 							DisplayItems.AllNotesViewWrapper.IsSelected = true;
 						}
@@ -344,7 +344,7 @@ namespace AlephNote.WPF.Controls.NotesView
 						{
 							App.Logger.TraceExt("NotesViewHierachical",
 								"OnSelectedFolderPathChanged (4)",
-								("DisplayItems.SubFolder.FirstOrDefault().IsSelected", "true"));
+								Tuple.Create("DisplayItems.SubFolder.FirstOrDefault().IsSelected", "true"));
 
 							fod.IsSelected = true;
 						}
@@ -375,8 +375,8 @@ namespace AlephNote.WPF.Controls.NotesView
 			if (args.OldValue == null && _initFolderPath != null)
 			{
 				App.Logger.TraceExt("NotesViewHierachical", "OnAllNotesChanged (2)",
-					("SelectedFolderPath", "_initFolderPath"),
-					("_initFolderPath", _initFolderPath?.Formatted));
+					Tuple.Create("SelectedFolderPath", "_initFolderPath"),
+					Tuple.Create("_initFolderPath", _initFolderPath?.Formatted));
 
 				SelectedFolderPath = _initFolderPath;
 				_initFolderPath = null;
@@ -447,7 +447,7 @@ namespace AlephNote.WPF.Controls.NotesView
 			{
 				App.Logger.TraceExt("NotesViewHierachical",
 					"OnSearchTextChanged",
-					("SearchText", SearchText));
+					Tuple.Create("SearchText", SearchText));
 
 				if (AllNotes != null) ResyncDisplayItems(AllNotes);
 				SelectedFolder?.TriggerAllSubNotesChanged();
@@ -456,7 +456,7 @@ namespace AlephNote.WPF.Controls.NotesView
 				{
 					App.Logger.TraceExt("NotesViewHierachical",
 						"OnSearchTextChanged (2)",
-						("SelectedFolderPath", SelectedFolderPath?.Formatted));
+						Tuple.Create("SelectedFolderPath", SelectedFolderPath?.Formatted));
 
 					SelectedFolder = DisplayItems.AllNotesViewWrapper;
 				}
@@ -490,7 +490,7 @@ namespace AlephNote.WPF.Controls.NotesView
 		{
 			App.Logger.TraceExt("NotesViewHierachical", 
 				"AddFolder",
-				("folder", folder.Formatted));
+				Tuple.Create("folder", folder.Formatted));
 
 			var curr = DisplayItems;
 
@@ -581,7 +581,7 @@ namespace AlephNote.WPF.Controls.NotesView
 		{
 			App.Logger.TraceExt("NotesViewHierachical", 
 				"TreeView_SelectedItemChanged",
-				("FolderTreeView.SelectedItem", (FolderTreeView.SelectedItem as HierachicalWrapper_Folder)?.Header));
+				Tuple.Create("FolderTreeView.SelectedItem", (FolderTreeView.SelectedItem as HierachicalWrapper_Folder)?.Header));
 
 			SelectedFolder = FolderTreeView.SelectedItem as HierachicalWrapper_Folder;
 		}
@@ -595,8 +595,8 @@ namespace AlephNote.WPF.Controls.NotesView
 		{
 			App.Logger.TraceExt("NotesViewHierachical", 
 				"HierachicalNotesList_Drop",
-				("e.Data.Data", e?.Data?.GetData("Text", true)?.ToString()),
-				("e.Data.Formats", string.Join("; ", e?.Data?.GetFormats() ?? new string[0])));
+				Tuple.Create("e.Data.Data", e?.Data?.GetData("Text", true)?.ToString()),
+				Tuple.Create("e.Data.Formats", string.Join("; ", e?.Data?.GetFormats() ?? new string[0])));
 
 			NotesListDrop?.Invoke(sender, e);
 		}
@@ -605,7 +605,7 @@ namespace AlephNote.WPF.Controls.NotesView
 		{
 			App.Logger.TraceExt("NotesViewHierachical", 
 				"DeleteFolder",
-				("folder", folder?.Formatted));
+				Tuple.Create("folder", folder?.Formatted));
 
 			DisplayItems.RemoveFind(folder);
 			ResyncDisplayItems(AllNotes);

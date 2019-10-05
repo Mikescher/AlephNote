@@ -95,19 +95,19 @@ namespace AlephNote.WPF.ScintillaUtil
 		public const int INDICATOR_INLINE_SEARCH    = 16; // I'm not sure if styles need to be powers of two and if they need to be distinct from the indicators
 		public const int INDICATOR_GLOBAL_SEARCH    = 32; // but for now I have enough bits, so lets just do it...
 
-		private static readonly (char, ListHighlightValue)[] LIST_MARKERS =
+		private static readonly Tuple<char, ListHighlightValue>[] LIST_MARKERS =
 		{
-			(' ', ListHighlightValue.FALSE),
-			('_', ListHighlightValue.FALSE),
+			Tuple.Create(' ', ListHighlightValue.FALSE),
+			Tuple.Create('_', ListHighlightValue.FALSE),
 
-			('x', ListHighlightValue.TRUE),
-			('X', ListHighlightValue.TRUE),
-			('+', ListHighlightValue.TRUE),
-			('#', ListHighlightValue.TRUE),
+			Tuple.Create('x', ListHighlightValue.TRUE),
+			Tuple.Create('X', ListHighlightValue.TRUE),
+			Tuple.Create('+', ListHighlightValue.TRUE),
+			Tuple.Create('#', ListHighlightValue.TRUE),
 
-			('\\', ListHighlightValue.INTERMED),
-			('/',  ListHighlightValue.INTERMED),
-			('~',  ListHighlightValue.INTERMED),
+			Tuple.Create('\\', ListHighlightValue.INTERMED),
+			Tuple.Create('/',  ListHighlightValue.INTERMED),
+			Tuple.Create('~',  ListHighlightValue.INTERMED),
 		};
 
 		public void SetUpStyles(ScintillaNET.Scintilla sci, AppSettings s)
@@ -391,7 +391,7 @@ namespace AlephNote.WPF.ScintillaUtil
 
 		public abstract string GetClickedLink(string text, int pos);
 
-		protected (string, int, int) GetLine(string text, int pos)
+		protected Tuple<string, int, int> GetLine(string text, int pos)
 		{
 			int start = pos;
 			int end = pos;
@@ -399,7 +399,7 @@ namespace AlephNote.WPF.ScintillaUtil
 			while (start>0 && text[start-1] != '\n') start--;
 			while (end<text.Length-1 && text[end] != '\n' && text[end] != '\r') end++;
 
-			return (text.Substring(start, end-start), start, end-start);
+			return Tuple.Create(text.Substring(start, end-start), start, end-start);
 		}
 	}
 }

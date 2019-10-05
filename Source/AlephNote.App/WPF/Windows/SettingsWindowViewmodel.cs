@@ -122,7 +122,7 @@ namespace AlephNote.WPF.Windows
 			var sdata = ShortcutList
 				.Where(s => s.Key != AlephKey.None)
 				//.Where(s => !s.Identifier.StartsWith("Snippet::") || SnippetList.Any(sl => sl.ID == s.Identifier.Substring("Snippet::".Length)))
-				.Select(s => (s.Identifier, new ShortcutDefinition(s.Scope, s.Modifiers, s.Key)))
+				.Select(s => Tuple.Create(s.Identifier, new ShortcutDefinition(s.Scope, s.Modifiers, s.Key)))
 				.ToList();
 
 			Settings.Shortcuts = new KeyValueFlatCustomList<ShortcutDefinition>(sdata, ShortcutDefinition.DEFAULT);

@@ -6,7 +6,7 @@ namespace AlephNote.PluginInterface
 	public abstract class AlephLogger
 	{
 		[Conditional("DEBUG")] public abstract void Trace(string src, string text, string longtext = null);
-		[Conditional("DEBUG")] public abstract void TraceExt(string src, string text, params (string, string)[] longtexts);
+		[Conditional("DEBUG")] public abstract void TraceExt(string src, string text, params Tuple<string, string>[] longtexts);
 		public abstract void Debug(string src, string text, string longtext = null);
 		public abstract void Info (string src, string text, string longtext = null);
 		public abstract void Warn (string src, string text, string longtext = null);
@@ -24,7 +24,7 @@ namespace AlephNote.PluginInterface
 	public class AlephDummyLoggger : AlephLogger
 	{
 		public override void Trace(string src, string text, string longtext = null) { }
-		public override void TraceExt(string src, string text, params (string, string)[] longtexts) { }
+		public override void TraceExt(string src, string text, params Tuple<string, string>[] longtexts) { }
 		public override void Debug(string src, string text, string longtext = null) { }
 		public override void Info(string src, string text, string longtext = null) { }
 		public override void Warn(string src, string text, string longtext = null) { }

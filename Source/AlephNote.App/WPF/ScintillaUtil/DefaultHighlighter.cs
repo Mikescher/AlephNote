@@ -48,7 +48,9 @@ namespace AlephNote.WPF.ScintillaUtil
 
 		public override string GetClickedLink(string text, int pos)
 		{
-			var (line, lineStart, lineLen) = GetLine(text, pos);
+			var linedata = GetLine(text, pos); // (line, lineStart, lineLen)
+			var line      = linedata.Item1;
+			var lineStart = linedata.Item2;
 
 			return GetURLMatchingRegex()
 				.Matches(line)

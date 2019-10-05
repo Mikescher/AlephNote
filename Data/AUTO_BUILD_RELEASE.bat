@@ -7,7 +7,7 @@ del AlephNote.zip
 
 cd Bin
 cd Release
-cd net47
+cd net46
 
 rmdir de /S /Q
 rmdir es /S /Q
@@ -43,7 +43,7 @@ if exist AlephNote.zip del AlephNote.zip
 
 cd Data
 
-7za.exe a .\..\AlephNote.zip .\..\Bin\Release\net47\*
+7za.exe a .\..\AlephNote.zip .\..\Bin\Release\net46\*
 
 @REM ================ FINISHED ================
 

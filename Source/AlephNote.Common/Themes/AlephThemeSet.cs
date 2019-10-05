@@ -11,7 +11,7 @@ namespace AlephNote.Common.Themes
 		public readonly AlephTheme BaseTheme;
 		public readonly IReadOnlyList<AlephTheme> Modifiers;
 
-		private readonly ConcurrentDictionary<(string, Type), object> _resourceCache = new ConcurrentDictionary<(string, Type), object>();
+		private readonly ConcurrentDictionary<string, object> _resourceCache = new ConcurrentDictionary<string, object>();
 
 		public AlephThemeSet(AlephTheme t0, AlephTheme t1, IReadOnlyList<AlephTheme> mm)
 		{
@@ -34,19 +34,21 @@ namespace AlephNote.Common.Themes
 
 		public T GetResource<T>(string name, Func<byte[], T> conv, Func<T> defaultValue) where T : class
 		{
-			if (_resourceCache.TryGetValue((name, typeof(T)), out var r)) return (T)r;
+			var key = name + "|" + typeof(T).FullName;
+
+			if (_resourceCache.TryGetValue(key, out var r)) return (T)r;
 
 			var res = GetRawResource(name);
 
 			if (res == null)
 			{
 				var dval = defaultValue();
-				_resourceCache.AddOrUpdate((name, typeof(T)), dval, (p1, p2) => dval);
+				_resourceCache.AddOrUpdate(key, dval, (p1, p2) => dval);
 				return dval;
 			}
 
 			var val = conv(res);
-			_resourceCache.AddOrUpdate((name, typeof(T)), val, (p1, p2) => val);
+			_resourceCache.AddOrUpdate(key, val, (p1, p2) => val);
 			return val;
 		}
 

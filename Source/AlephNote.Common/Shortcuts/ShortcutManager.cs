@@ -270,19 +270,19 @@ namespace AlephNote.Common.Shortcuts
 		{
 			return new KeyValueFlatCustomList<ShortcutDefinition>(new[]
 			{
-				("NewNote",              new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.N)),       // v1.6.00
-				("NewNoteFromTextFile",  new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.O)),       // v1.6.06
-				("FocusPrevNote",        new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Alt,     AlephKey.Up)),      // v1.6.19
-				("FocusNextNote",        new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Alt,     AlephKey.Down)),    // v1.6.19
-				("SaveAndSync",          new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.S)),       // v1.6.00
-				("DocumentSearch",       new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Control, AlephKey.F)),       // v1.6.00
-				("DocumentSearchNext",   new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.None,    AlephKey.F3)),      // v1.6.17
-				("CloseDocumentSearch",  new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.None,    AlephKey.Escape)),  // v1.6.00
-				("DuplicateCurrentLine", new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Control, AlephKey.D)),       // v1.6.30
-				("DeleteNote",           new ShortcutDefinition(AlephShortcutScope.NoteList,   AlephModifierKeys.None,    AlephKey.Delete)),  // v1.6.00
-				("AppExit",              new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Alt,     AlephKey.F4)),      // v1.6.00
-				("DeleteFolder",         new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None,    AlephKey.Delete)),  // v1.6.04
-				("RenameFolder",         new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None,    AlephKey.F2)),      // v1.6.04
+				Tuple.Create("NewNote",              new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.N)),       // v1.6.00
+				Tuple.Create("NewNoteFromTextFile",  new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.O)),       // v1.6.06
+				Tuple.Create("FocusPrevNote",        new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Alt,     AlephKey.Up)),      // v1.6.19
+				Tuple.Create("FocusNextNote",        new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Alt,     AlephKey.Down)),    // v1.6.19
+				Tuple.Create("SaveAndSync",          new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Control, AlephKey.S)),       // v1.6.00
+				Tuple.Create("DocumentSearch",       new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Control, AlephKey.F)),       // v1.6.00
+				Tuple.Create("DocumentSearchNext",   new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.None,    AlephKey.F3)),      // v1.6.17
+				Tuple.Create("CloseDocumentSearch",  new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.None,    AlephKey.Escape)),  // v1.6.00
+				Tuple.Create("DuplicateCurrentLine", new ShortcutDefinition(AlephShortcutScope.NoteEdit,   AlephModifierKeys.Control, AlephKey.D)),       // v1.6.30
+				Tuple.Create("DeleteNote",           new ShortcutDefinition(AlephShortcutScope.NoteList,   AlephModifierKeys.None,    AlephKey.Delete)),  // v1.6.00
+				Tuple.Create("AppExit",              new ShortcutDefinition(AlephShortcutScope.Window,     AlephModifierKeys.Alt,     AlephKey.F4)),      // v1.6.00
+				Tuple.Create("DeleteFolder",         new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None,    AlephKey.Delete)),  // v1.6.04
+				Tuple.Create("RenameFolder",         new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None,    AlephKey.F2)),      // v1.6.04
 			}, 
 			ShortcutDefinition.DEFAULT);
 		}
@@ -301,7 +301,7 @@ namespace AlephNote.Common.Shortcuts
 				if (shortcuts.All(sc => sc.Key != "DeleteFolder"))
 				{
 					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [DeleteFolder]");
-					shortcuts = shortcuts.Concat(("DeleteFolder", new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None, AlephKey.Delete)));
+					shortcuts = shortcuts.Concat(Tuple.Create("DeleteFolder", new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None, AlephKey.Delete)));
 				}
 			}
 			if (from < v1_6_04)
@@ -309,7 +309,7 @@ namespace AlephNote.Common.Shortcuts
 				if (shortcuts.All(sc => sc.Key != "RenameFolder"))
 				{
 					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [RenameFolder]");
-					shortcuts = shortcuts.Concat(("RenameFolder", new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None, AlephKey.F2)));
+					shortcuts = shortcuts.Concat(Tuple.Create("RenameFolder", new ShortcutDefinition(AlephShortcutScope.FolderList, AlephModifierKeys.None, AlephKey.F2)));
 				}
 			}
 			if (from < v1_6_06)
@@ -317,7 +317,7 @@ namespace AlephNote.Common.Shortcuts
 				if (shortcuts.All(sc => sc.Key != "NewNoteFromTextFile"))
 				{
 					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [NewNoteFromTextFile]");
-					shortcuts = shortcuts.Concat(("NewNoteFromTextFile", new ShortcutDefinition(AlephShortcutScope.Window, AlephModifierKeys.Control, AlephKey.O)));
+					shortcuts = shortcuts.Concat(Tuple.Create("NewNoteFromTextFile", new ShortcutDefinition(AlephShortcutScope.Window, AlephModifierKeys.Control, AlephKey.O)));
 				}
 			}
 			if (from < v1_6_17)
@@ -325,7 +325,7 @@ namespace AlephNote.Common.Shortcuts
 				if (shortcuts.All(sc => sc.Key != "DocumentSearchNext"))
 				{
 					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [DocumentSearchNext]");
-					shortcuts = shortcuts.Concat(("DocumentSearchNext", new ShortcutDefinition(AlephShortcutScope.Window, AlephModifierKeys.None, AlephKey.F3)));
+					shortcuts = shortcuts.Concat(Tuple.Create("DocumentSearchNext", new ShortcutDefinition(AlephShortcutScope.Window, AlephModifierKeys.None, AlephKey.F3)));
 				}
 			}
 			if (from < v1_6_19)
@@ -333,12 +333,12 @@ namespace AlephNote.Common.Shortcuts
 				if (shortcuts.All(sc => sc.Key != "FocusPrevNote"))
 				{
 					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [FocusPrevNote]");
-					shortcuts = shortcuts.Concat(("FocusPrevNote", new ShortcutDefinition(AlephShortcutScope.NoteEdit, AlephModifierKeys.Alt, AlephKey.Up)));
+					shortcuts = shortcuts.Concat(Tuple.Create("FocusPrevNote", new ShortcutDefinition(AlephShortcutScope.NoteEdit, AlephModifierKeys.Alt, AlephKey.Up)));
 				}
 				if (shortcuts.All(sc => sc.Key != "FocusNextNote"))
 				{
 					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [FocusNextNote]");
-					shortcuts = shortcuts.Concat(("FocusNextNote", new ShortcutDefinition(AlephShortcutScope.NoteEdit, AlephModifierKeys.Alt, AlephKey.Down)));
+					shortcuts = shortcuts.Concat(Tuple.Create("FocusNextNote", new ShortcutDefinition(AlephShortcutScope.NoteEdit, AlephModifierKeys.Alt, AlephKey.Down)));
 				}
 			}
 			if (from < v1_6_30)
@@ -346,7 +346,7 @@ namespace AlephNote.Common.Shortcuts
 				if (shortcuts.All(sc => sc.Key != "DuplicateCurrentLine"))
 				{
 					LoggerSingleton.Inst.Info("AppSettings", "(Migration) Insert shortcut for [DuplicateCurrentLine]");
-					shortcuts = shortcuts.Concat(("DuplicateCurrentLine", new ShortcutDefinition(AlephShortcutScope.NoteEdit, AlephModifierKeys.Control, AlephKey.D)));
+					shortcuts = shortcuts.Concat(Tuple.Create("DuplicateCurrentLine", new ShortcutDefinition(AlephShortcutScope.NoteEdit, AlephModifierKeys.Control, AlephKey.D)));
 				}
 			}
 

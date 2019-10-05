@@ -8,7 +8,7 @@ namespace AlephNote.Log
 	{
 		public override void Trace(string src, string text, string longtext = null) { /* void */ }
 
-		public override void TraceExt(string src, string text, params (string, string)[] longtexts) { /* void */ }
+		public override void TraceExt(string src, string text, params Tuple<string, string>[] longtexts) { /* void */ }
 
 		public override void Debug(string src, string text, string longtext = null) { /* void */ }
 

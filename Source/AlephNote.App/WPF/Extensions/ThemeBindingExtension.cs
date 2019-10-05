@@ -67,7 +67,7 @@ namespace AlephNote.WPF.Extensions
 		/// </summary>
 		public bool Proxy { get; set; } = true;
 
-		private static readonly Dictionary<(string, string, string), ThemeBindingProxy> _proxies = new Dictionary<(string, string, string), ThemeBindingProxy>();
+		private static readonly Dictionary<string, ThemeBindingProxy> _proxies = new Dictionary<string, ThemeBindingProxy>();
 		private readonly List<WeakReference> _targetObjects = new List<WeakReference>();
 
 		private object _targetProperty;
@@ -127,7 +127,7 @@ namespace AlephNote.WPF.Extensions
 		{
 			if (Proxy)
 			{
-				var dictKey = (ThemeKey, Convert, ResType);
+				var dictKey = $"('{ThemeKey}';'{Convert}';'{ResType}')";
 				if (_proxies.TryGetValue(dictKey, out var v)) v.TriggerChange();
 			}
 			else
@@ -161,7 +161,7 @@ namespace AlephNote.WPF.Extensions
 
 		private static ThemeBindingProxy GetProxy(string key, string convert, string rtype)
 		{
-			var dictKey = (key, convert, rtype);
+			var dictKey = $"('{key}';'{convert}';'{rtype}')";
 
 			if (_proxies.TryGetValue(dictKey, out var proxy)) return proxy;
 

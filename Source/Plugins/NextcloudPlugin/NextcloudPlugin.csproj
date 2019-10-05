@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net47</TargetFrameworks>
+		<TargetFrameworks>net46</TargetFrameworks>
 
 		<AssemblyName>NextcloudPlugin</AssemblyName>
 		<PackageId>NextcloudPlugin</PackageId>
