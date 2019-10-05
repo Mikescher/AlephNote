@@ -543,6 +543,10 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public bool AutoHideMainMenu { get { return _autoHideMainMenu; } set { _autoHideMainMenu = value; OnPropertyChanged(); } }
 		private bool _autoHideMainMenu = false;
+		
+		[AlephXMLField]
+		public bool VerticalMainLayout { get { return _verticalMainLayout; } set { _verticalMainLayout = value; OnPropertyChanged(); } }
+		private bool _verticalMainLayout = false;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

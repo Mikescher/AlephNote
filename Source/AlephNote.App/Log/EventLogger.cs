@@ -30,12 +30,12 @@ namespace AlephNote.Log
 			}
 
 			#if DEBUG
-			Console.Out.WriteLine($"[{e.Type}]===== {e.Source} =====");
-			Console.Out.WriteLine(e.Text);
-			if (!string.IsNullOrWhiteSpace(e.LongText)) Console.Out.WriteLine();
-			if (!string.IsNullOrWhiteSpace(e.LongText)) Console.Out.WriteLine(e.LongText);
-			Console.Out.WriteLine("===============");
-			Console.Out.WriteLine();
+			//Console.Out.WriteLine($"[{e.Type}]===== {e.Source} =====");
+			//Console.Out.WriteLine(e.Text);
+			//if (!string.IsNullOrWhiteSpace(e.LongText)) Console.Out.WriteLine();
+			//if (!string.IsNullOrWhiteSpace(e.LongText)) Console.Out.WriteLine(e.LongText);
+			//Console.Out.WriteLine("===============");
+			//Console.Out.WriteLine();
 			#endif
 
 			var disp = curr.Dispatcher;

@@ -189,6 +189,7 @@
     <Compile Include="WPF\Controls\GlobalSearchTextBox.xaml.cs">
       <DependentUpon>GlobalSearchTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPF\Controls\MainCenterGrid.cs" />
     <Compile Include="WPF\Controls\NotesView\INotesViewControl.cs" />
     <Compile Include="WPF\Controls\NotesView\NotesViewControlCommon.cs" />
     <Compile Include="WPF\Controls\NotesView\NotesViewFlat.xaml.cs">
