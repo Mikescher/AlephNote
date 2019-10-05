@@ -432,6 +432,6 @@ $RECYCLE.BIN/
 Lib/
 Bin/
 
-*.zip
+AlephNote.zip
 *.diff
 *.patch
