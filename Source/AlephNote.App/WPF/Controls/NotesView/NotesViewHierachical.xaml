@@ -47,8 +47,9 @@
 		</Grid.RowDefinitions>
 
 		<TreeView x:Name="FolderTreeView" Grid.Row="0"
-				  Background="{ext:ThemeBinding 'window.notesview.hierachical.tree:background'}"
-				  Foreground="{ext:ThemeBinding 'window.notesview.hierachical.tree:foreground'}"
+				  Background="{ext:ThemeBinding  'window.notesview.hierachical.tree:background'}"
+				  Foreground="{ext:ThemeBinding  'window.notesview.hierachical.tree:foreground'}"
+				  BorderBrush="{ext:ThemeBinding 'window.notesview.hierachical.tree:bordercolor'}"
 				  ItemsSource="{Binding DisplayItems.SubFolder}"
 				  FontSize="{Binding Settings.ListFontSize, Converter={locconv:FontSizeToInt}}" 
 				  FontFamily="{Binding Settings.ListFontFamily, Converter={locconv:FontNameToFontFamily}}" 
@@ -89,6 +90,7 @@
 					  Focusable="False"/>
 
 		<ListView x:Name="HierachicalNotesList" Grid.Row="2"
+					  BorderBrush="{ext:ThemeBinding 'window.notesview.hierachical.list:bordercolor'}"
 					  AllowDrop="True"
 					  Drop="HierachicalNotesList_Drop"
 					  KeyDown="HierachicalNotesList_KeyDown"

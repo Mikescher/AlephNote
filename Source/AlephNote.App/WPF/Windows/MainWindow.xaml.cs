@@ -187,7 +187,7 @@ namespace AlephNote.WPF.Windows
 			NoteEdit.SetWhitespaceBackColor(!theme.Get<ColorRef>("scintilla.whitespace:background").IsTransparent, theme.Get<ColorRef>("scintilla.whitespace:background").ToDCol());
 
 			UpdateMargins(s);
-			NoteEdit.BorderStyle = BorderStyle.FixedSingle;
+			NoteEdit.BorderStyle = BorderStyle.None;
 			
 			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_ON ].DefineRgbaImage(theme.GetDBitmapResource("margin_check_on.png" ));
 			NoteEdit.Markers[ScintillaHighlighter.STYLE_MARKER_LIST_OFF].DefineRgbaImage(theme.GetDBitmapResource("margin_check_off.png"));

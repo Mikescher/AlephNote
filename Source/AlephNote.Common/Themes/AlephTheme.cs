@@ -103,6 +103,7 @@ namespace AlephNote.Common.Themes
 
 			Tuple.Create("window.notesview.flat:background",                       AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.flat:foreground",                       AlephThemePropType.Brush       ),
+			Tuple.Create("window.notesview.flat:bordercolor",                      AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.flat.selected:background",              AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.flat.selected:foreground",              AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.flat.datetime1:foreground",             AlephThemePropType.Brush       ),
@@ -116,6 +117,7 @@ namespace AlephNote.Common.Themes
 
 			Tuple.Create("window.notesview.hierachical.list:background",           AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.list:foreground",           AlephThemePropType.Brush       ),
+			Tuple.Create("window.notesview.hierachical.list:bordercolor",          AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.list.selected:background",  AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.list.selected:foreground",  AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.list.datetime1:foreground", AlephThemePropType.Brush       ),
@@ -129,6 +131,7 @@ namespace AlephNote.Common.Themes
 			Tuple.Create("window.notesview.hierachical.splitter",                  AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.tree:background",           AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.tree:foreground",           AlephThemePropType.Brush       ),
+			Tuple.Create("window.notesview.hierachical.tree:bordercolor",          AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.tree.selected:background",  AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.tree.selected:foreground",  AlephThemePropType.Brush       ),
 			Tuple.Create("window.notesview.hierachical.tree.scrollbar_v:visible",  AlephThemePropType.Boolean     ),
@@ -142,6 +145,7 @@ namespace AlephNote.Common.Themes
 			//-------------------------------------------------------------------------------------
 
 			Tuple.Create("scintilla.background",                                   AlephThemePropType.Color       ),
+			Tuple.Create("scintilla.bordercolor",                                  AlephThemePropType.Brush       ),
 
 			Tuple.Create("scintilla.whitespace:size",                              AlephThemePropType.Integer     ),
 			Tuple.Create("scintilla.whitespace:color",                             AlephThemePropType.Color       ),

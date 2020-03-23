@@ -342,21 +342,23 @@
 						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
 
-					<WindowsFormsHost Grid.Row="0" x:Name="NoteEditHost">
-						<WindowsFormsHost.Child>
-							<scinet:Scintilla x:Name="NoteEdit" AllowDrop="True"
-										  UpdateUI="NoteEdit_UpdateUI"
-										  MouseWheel="NoteEdit_OnMouseWheel"
-										  KeyPress="NoteEdit_OnKeyPress" 
-										  KeyDown="NoteEdit_OnKeyDown" 
-										  StyleNeeded="NoteEdit_StyleNeeded" 
-										  MarginClick="NoteEdit_MarginClick"
-										  HotspotClick="NoteEdit_HotspotClick" 
-										  Insert="NoteEdit_OnInsert"
-										  Delete="NoteEdit_OnDelete"
-										  HotspotDoubleClick="NoteEdit_HotspotDoubleClick" />
-						</WindowsFormsHost.Child>
-					</WindowsFormsHost>
+					<Border Grid.Row="0" BorderThickness="1" BorderBrush="{ext:ThemeBinding 'scintilla.bordercolor'}" SnapsToDevicePixels="True" Margin="0,1,2,0" >
+						<WindowsFormsHost x:Name="NoteEditHost">
+							<WindowsFormsHost.Child>
+								<scinet:Scintilla x:Name="NoteEdit" AllowDrop="True"
+								                  UpdateUI="NoteEdit_UpdateUI"
+								                  MouseWheel="NoteEdit_OnMouseWheel"
+								                  KeyPress="NoteEdit_OnKeyPress" 
+								                  KeyDown="NoteEdit_OnKeyDown" 
+								                  StyleNeeded="NoteEdit_StyleNeeded" 
+								                  MarginClick="NoteEdit_MarginClick"
+								                  HotspotClick="NoteEdit_HotspotClick" 
+								                  Insert="NoteEdit_OnInsert"
+								                  Delete="NoteEdit_OnDelete"
+								                  HotspotDoubleClick="NoteEdit_HotspotDoubleClick" />
+							</WindowsFormsHost.Child>
+						</WindowsFormsHost>
+					</Border>
 
 					<ctrl:SearchBox x:Name="DocumentSearchBar" Grid.Row="1" Height="28" HideBox="OnHideDoumentSearchBox" Target="{Binding ElementName=NoteEdit}" Settings="{Binding Settings}" />
 				</Grid>

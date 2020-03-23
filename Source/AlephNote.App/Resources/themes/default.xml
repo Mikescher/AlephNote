@@ -51,6 +51,8 @@ Repository: https://github.com/Mikescher/AlephNote
 
 			<property name="scintilla.background"            value="@White"/>
 			
+			<property name="scintilla.bordercolor"           value="#646464"/>
+			
 			<property name="scintilla.whitespace:size"       value="1"/>
 			<property name="scintilla.whitespace:color"      value="#FFC355"/>
 			<property name="scintilla.whitespace:background" value="@Transparent"/>
@@ -275,6 +277,7 @@ Repository: https://github.com/Mikescher/AlephNote
 				<group name="flat">
 					<property name="window.notesview.flat:background"           value="@White"/>
 					<property name="window.notesview.flat:foreground"           value="@Black"/>
+					<property name="window.notesview.flat:bordercolor"          value="#ABADB3"/>
 					<property name="window.notesview.flat.selected:background"  value="#B9D1EA"/>
 					<property name="window.notesview.flat.selected:foreground"  value="@Black"/>
 					<property name="window.notesview.flat.datetime1:foreground" value="@DimGray"/>
@@ -290,6 +293,7 @@ Repository: https://github.com/Mikescher/AlephNote
 				<group name="hierachical">
 					<property name="window.notesview.hierachical.list:background"           value="$window.notesview.flat:background"/>
 					<property name="window.notesview.hierachical.list:foreground"           value="$window.notesview.flat:foreground"/>
+					<property name="window.notesview.hierachical.list:bordercolor"          value="$window.notesview.flat:bordercolor"/>
 					<property name="window.notesview.hierachical.list.selected:background"  value="$window.notesview.flat.selected:background"/>
 					<property name="window.notesview.hierachical.list.selected:foreground"  value="$window.notesview.flat.selected:foreground"/>
 					<property name="window.notesview.hierachical.list.datetime1:foreground" value="$window.notesview.flat.datetime1:foreground"/>
@@ -305,6 +309,7 @@ Repository: https://github.com/Mikescher/AlephNote
 
 					<property name="window.notesview.hierachical.tree:background"           value="$window.notesview.flat:background"/>
 					<property name="window.notesview.hierachical.tree:foreground"           value="$window.notesview.flat:foreground"/>
+					<property name="window.notesview.hierachical.tree:bordercolor"          value="$window.notesview.hierachical.list:bordercolor"/>
 					<property name="window.notesview.hierachical.tree.selected:background"  value="#3399FF"/>
 					<property name="window.notesview.hierachical.tree.selected:foreground"  value="@Black"/>
 					<property name="window.notesview.hierachical.tree.scrollbar_v:visible"  value="true"/>

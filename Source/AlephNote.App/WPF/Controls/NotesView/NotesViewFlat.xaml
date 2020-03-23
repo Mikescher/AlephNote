@@ -38,6 +38,7 @@
 
 	<Grid x:Name="RootGrid" d:DataContext="{d:DesignInstance notesView:NotesViewFlat}" >
 		<ListView x:Name="NotesList"
+					  BorderBrush="{ext:ThemeBinding 'window.notesview.flat:bordercolor'}"
 					  AllowDrop="True"
 					  Drop="NotesList_Drop"
 					  KeyDown="NotesList_KeyDown"
