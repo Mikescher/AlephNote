@@ -95,12 +95,15 @@
 			<Button    Grid.Column="5" Grid.Row="0" Content="Clear" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="0" Margin="10,4" Command="{Binding ClearCommand}" />
 		</Grid>
 
-		<ListView ItemsSource="{Binding LogView}" SelectedItem="{Binding SelectedLog}" Grid.Row="1">
+		<ListView ItemsSource="{Binding LogView}" SelectedItem="{Binding SelectedLog}" Grid.Row="1" >
 			<ListView.Resources>
 				<Style TargetType="ListViewItem">
 					<Style.Triggers>
 						<Trigger Property="ListViewItem.IsSelected" Value="False">
 							<Setter Property="Background" Value="{Binding Type, Converter={locconv:LogToBackground}}" />
+						</Trigger>
+						<Trigger Property="ListViewItem.IsSelected" Value="True">
+							<Setter Property="Background" Value="LightBlue" />
 						</Trigger>
 					</Style.Triggers>
 				</Style>
