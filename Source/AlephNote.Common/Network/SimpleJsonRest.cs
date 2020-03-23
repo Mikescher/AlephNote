@@ -343,6 +343,8 @@ namespace AlephNote.Common.Network
 						// ignore
 					}
 
+					if (resp.StatusCode == HttpStatusCode.GatewayTimeout) throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, content, true);
+
 					throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, content);
 				}
 
@@ -425,6 +427,8 @@ namespace AlephNote.Common.Network
 
 						return;
 					}
+
+					if (resp.StatusCode == HttpStatusCode.GatewayTimeout) throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, string.Empty, true);
 					
 					throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, string.Empty);
 				}
@@ -503,6 +507,8 @@ namespace AlephNote.Common.Network
 					{
 						// ignore
 					}
+					
+					if (resp.StatusCode == HttpStatusCode.GatewayTimeout) throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, content, true);
 
 					throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, content);
 				}
@@ -577,6 +583,8 @@ namespace AlephNote.Common.Network
 
 						return;
 					}
+					
+					if (resp.StatusCode == HttpStatusCode.GatewayTimeout) throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, string.Empty, true);
 					
 					throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, string.Empty);
 				}
