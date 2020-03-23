@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
+using AlephNote.PluginInterface.AppContext;
 using AlephNote.PluginInterface.Datatypes;
 using AlephNote.PluginInterface.Impl;
 using AlephNote.PluginInterface.Util;
@@ -137,10 +138,16 @@ namespace AlephNote.Plugins.StandardNote
 				_internalTags.Sort((a,b) => Tags.IndexOf(a.Title) - Tags.IndexOf(b.Title));
 			}
 
-#if DEBUG
-			if (!_internalTags.Select(t => t.Title).UnorderedCollectionEquals(Tags.Select(t=>t))) Debugger.Break();
-			Debug.Assert(_internalTags.Select(t => t.Title).UnorderedCollectionEquals(Tags.Select(t=>t)));
-#endif
+			if (!_internalTags.Select(t => t.Title).UnorderedCollectionEquals(Tags.Select(t=>t)))
+			{
+				Debugger.Break();
+				AlephAppContext.Logger.Error(StandardNotePlugin.Name, "Assertion failed (Invalid Tag state)", 
+					$"Action        := {e.Action}\n"+
+					$"inew          := [{string.Join(", ", inew.Select(p => $"'{p}'"))}]\n"+
+					$"iold          := [{string.Join(", ", iold.Select(p => $"'{p}'"))}]\n"+
+					$"_internalTags := [{string.Join(", ", _internalTags.Select(p => $"'{p}'"))}]\n"+
+					$"Tags          := [{string.Join(", ", Tags.Select(p => $"'{p}'"))}]");
+			}
 		}
 
 		public void UpgradeTag(StandardFileTagRef told, StandardFileTagRef tnew)
