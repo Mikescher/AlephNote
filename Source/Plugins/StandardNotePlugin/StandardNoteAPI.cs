@@ -3,6 +3,7 @@ using AlephNote.PluginInterface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using AlephNote.PluginInterface.Exceptions;
 using AlephNote.PluginInterface.Util;
@@ -52,7 +53,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public static APIResultAuthorize Authenticate(ISimpleJsonRest web, string mail, string password, AlephLogger logger)
 		{
-			var apiparams = web.Get<APIAuthParams>("auth/params", "email=" + mail);
+			var apiparams = web.Get<APIAuthParams>("auth/params", "email=" + WebUtility.UrlEncode(mail));
 
 			if (apiparams.version == "001") return Authenticate001(web, apiparams, mail, password, logger);
 			if (apiparams.version == "002") return Authenticate002(web, apiparams, mail, password, logger);
@@ -99,7 +100,7 @@ namespace AlephNote.Plugins.StandardNote
 				APIResultAuthorize tok;
 				try
 				{
-					tok = web.PostDownload<APIResultAuthorize>("auth/sign_in", "email=" + mail, "password=" + reqpw);
+					tok = web.PostDownload<APIResultAuthorize>("auth/sign_in", "email=" + WebUtility.UrlEncode(mail), "password=" + WebUtility.UrlEncode(reqpw));
 				}
 				catch (RestStatuscodeException e1)
 				{

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using AlephNote.PluginInterface.Exceptions;
 using AlephNote.PluginInterface.Util;
 using MSHC.Lang.Collections;
@@ -57,7 +58,7 @@ namespace AlephNote.Plugins.SimpleNote
 
 				while (!string.IsNullOrWhiteSpace(idx.mark))
 				{
-					var idx2 = web.Get<APIResultIndex>("note/index", "mark=" + idx.mark);
+					var idx2 = web.Get<APIResultIndex>("note/index", "mark=" + WebUtility.UrlEncode(idx.mark));
 
 					//idx.current = idx2.current;
 					idx.mark = idx2.mark;
