@@ -28,6 +28,7 @@
         PreviewKeyDown="MainWindow_OnPreviewKeyDown"
         Topmost="{Binding Settings.AlwaysOnTop}"
         Background="{ext:ThemeBinding 'window.background'}"
+        FontFamily="{Binding Settings.UIFontFamily, Converter={locconv:FontNameToFontFamily}}"
         Title="AlephNote" Height="350" Width="525">
 
 	<Window.Resources>
@@ -52,6 +53,7 @@
 		</Grid.RowDefinitions>
 
 		<Menu Grid.Row="0"
+		      FontFamily="{Binding Settings.UIFontFamily, Converter={locconv:FontNameToFontFamily}}"
 			  Visibility="{Binding MenuIsVisible, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}"
 			  Background="{ext:ThemeBinding 'window.menubar:background'}"
 			  Foreground="{ext:ThemeBinding 'window.menubar:foreground'}">
@@ -370,6 +372,7 @@
 		</ctrl:MainCenterGrid>
 
 		<StatusBar Grid.Row="2"
+		           FontFamily="{Binding Settings.UIFontFamily, Converter={locconv:FontNameToFontFamily}}"
 				   Background="{ext:ThemeBinding 'window.statusbar:background'}"
 				   Foreground="{ext:ThemeBinding 'window.statusbar:foreground'}">
 			<StatusBar.Resources>

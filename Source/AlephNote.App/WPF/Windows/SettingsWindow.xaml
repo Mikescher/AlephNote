@@ -1065,6 +1065,8 @@
 									<TextBlock     Grid.Row="9" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Search delay mode for global search box" />
 									<ComboBox      Grid.Row="9" Grid.Column="2" Margin="4" ItemsSource="{mext:EnumSource {x:Type settings:SearchDelayMode}}" SelectedValue="{Binding Settings.GlobalSearchDelay}" />
 
+									<TextBlock     Grid.Row="10" Grid.Column="0" Margin="3" Text="UI Font:" VerticalAlignment="Center" />
+									<ctrl:FontBox  Grid.Row="10" Grid.Column="2" Margin="4" SelectedFont="{Binding Settings.UIFontFamily}" />
 								</Grid>
 							</GroupBox>
 							<GroupBox Padding="4">

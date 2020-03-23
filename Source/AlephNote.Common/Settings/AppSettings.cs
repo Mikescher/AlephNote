@@ -547,6 +547,10 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public bool VerticalMainLayout { get { return _verticalMainLayout; } set { _verticalMainLayout = value; OnPropertyChanged(); } }
 		private bool _verticalMainLayout = false;
+		
+		[AlephXMLField]
+		public string UIFontFamily { get { return _uiFontFamily; } set { _uiFontFamily = value; OnPropertyChanged(); } }
+		private string _uiFontFamily = string.Empty;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
