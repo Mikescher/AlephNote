@@ -57,7 +57,7 @@ namespace AlephNote.WPF.ScintillaUtil
 
 		//(?<=(\s|^))
 		//(?:
-		//    (?:(?:(?:http|https|ftp|irc)://[^\.\s]+\.\w\w+)[^\s]*)
+		//    (?:(?:(?:http|https|ftp|irc)://[^\s]+\.\w\w+)[^\s]*)
 		//    |
 		//    (?:(?:www\.[^\s]+\.\w\w+)[^\s]*)
 		//    |
@@ -70,7 +70,7 @@ namespace AlephNote.WPF.ScintillaUtil
 		//    (?:\w+(?:[-+.']\w+)*@\w+(?:[-.]\w+)*\.\w+([-.]\w+)*)
 		//)
 		//(?=(\s|$))
-		private static readonly Regex REX_URL_TOLERANT = new Regex(@"(?<=(\s|^))(?:(?:(?:(?:http|https|ftp|irc)://[^\.\s]+\.\w\w+)[^\s]*)|(?:(?:www\.[^\s]+\.\w\w+)[^\s]*)|(?:mailto:(?:[^\s]+(?:[._\-][^\s]+)*)@(?:[^\s-]+(?:[.-][^\s]+)*\.[a-z]{2,}))|(?:file://[^\s]+)|(?:note://[^\s]+)|(?:\w+(?:[-+.']\w+)*@\w+(?:[-.]\w+)*\.\w+([-.]\w+)*))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private static readonly Regex REX_URL_TOLERANT = new Regex(@"(?<=(\s|^))(?:(?:(?:(?:http|https|ftp|irc)://[^\s]+\.\w\w+)[^\s]*)|(?:(?:www\.[^\s]+\.\w\w+)[^\s]*)|(?:mailto:(?:[^\s]+(?:[._\-][^\s]+)*)@(?:[^\s-]+(?:[.-][^\s]+)*\.[a-z]{2,}))|(?:file://[^\s]+)|(?:note://[^\s]+)|(?:\w+(?:[-+.']\w+)*@\w+(?:[-.]\w+)*\.\w+([-.]\w+)*))(?=(\s|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 
 		private static readonly Regex REX_MAILTEST_RAW = new Regex(@"^[-+.'\w]+@[-+.'\w]+\.[-+.'\w]{2,63}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
