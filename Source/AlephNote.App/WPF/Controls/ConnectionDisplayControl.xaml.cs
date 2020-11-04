@@ -98,7 +98,7 @@ namespace AlephNote.WPF.Controls
 				owner.ContextMenu = new ContextMenu();
 				foreach (var acc in Settings.Accounts)
 				{
-					var mi = new MenuItem {Header = acc.DisplayTitle};
+					var mi = new MenuItem { Header = acc.DisplayTitle, FontWeight = (Repository.ConnectionID == acc.ID) ? FontWeights.Bold : FontWeights.Normal };
 					mi.Click += (s, e) => SelectAccount(acc);
 					owner.ContextMenu.Items.Add(mi);
 				}
