@@ -45,6 +45,8 @@ namespace AlephNote.Common.Repository
 		private readonly DelayedCombiningInvoker _invSaveNotesRemote;
 		private readonly DelayedCombiningInvoker _invSaveNotesGitBackup;
 
+		private RepoLock _lock;
+
 		public IRemoteStorageConnection Connection { get { return _conn; } }
 		
 		public string ConnectionName { get { return _account.Plugin.DisplayTitleShort; } }
@@ -92,6 +94,8 @@ namespace AlephNote.Common.Repository
 				Directory.CreateDirectory(_pathLocalFolder);
 			}
 
+			_lock = RepoLock.Lock(_logger, _pathLocalFolder);
+
 			LoadNotesFromLocal();
 
 			_thread.Start(_appconfig.GetSyncDelay());
@@ -115,6 +119,9 @@ namespace AlephNote.Common.Repository
 
 			if (lastSync) _dispatcher.Invoke(() => _rawFilesystemRepo.SyncNow());
 			_rawFilesystemRepo.Shutdown();
+
+			_lock.Release();
+			_lock = null;
 
 			_logger.Trace("Repository", $"SyncThread shutdown took {sw.ElapsedMilliseconds}ms");
 		}

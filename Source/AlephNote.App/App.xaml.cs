@@ -18,6 +18,7 @@ using AlephNote.PluginInterface.AppContext;
 using AlephNote.WPF.Dialogs;
 using AlephNote.WPF.Util;
 using MSHC.Util.Helper;
+using AlephNote.Common.Exceptions;
 
 namespace AlephNote
 {
@@ -50,6 +51,24 @@ namespace AlephNote
 		}
 
 		private void Application_Startup(object sender, StartupEventArgs suea)
+		{
+            try
+			{
+				AlephNote_Startup();
+			}
+            catch (RepoLockedException e)
+			{
+				ExceptionDialog.Show(null, "Repository Locked", "The repository you are trying to open is currently locked by another program (probably another instance of AlephNote).", e);
+
+#if DEBUG
+				Debugger.Break();
+#endif
+
+				Current.Shutdown();
+			}
+		}
+
+		private void AlephNote_Startup()
 		{
 			DispatcherUnhandledException += AppDispatcherUnhandledException;
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
