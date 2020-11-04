@@ -104,7 +104,7 @@ namespace AlephNote.Plugins.SimpleNote
 		{
 			note.Deleted = false;
 			note.CreationDate = DateTimeOffset.Now;
-			note.ModificationDate = DateTimeOffset.Now;
+			note.SetModificationDate(DateTimeOffset.Now);
 			
 			APIResultNoteData data = new APIResultNoteData
 			{
@@ -140,8 +140,8 @@ namespace AlephNote.Plugins.SimpleNote
 		{
 			if (note.Deleted) throw new SimpleNoteAPIException("Cannot update an already deleted note");
 			if (note.ID == "") throw new SimpleNoteAPIException("Cannot change a not uploaded note");
-			note.ModificationDate = DateTimeOffset.Now;
-			
+			note.SetModificationDate(DateTimeOffset.Now);
+
 			APISendNoteData data = new APISendNoteData
 			{
 				tags = note.Tags.ToList(),
@@ -183,7 +183,7 @@ namespace AlephNote.Plugins.SimpleNote
 
 			try
 			{
-				note.ModificationDate = DateTimeOffset.Now;
+				note.SetModificationDate(DateTimeOffset.Now);
 				web.DeleteEmpty("note/i/" + note.ID);
 			}
 			catch (RestStatuscodeException e1)
@@ -201,8 +201,8 @@ namespace AlephNote.Plugins.SimpleNote
 		public static void DeleteNote(ISimpleJsonRest web, SimpleNote note)
 		{
 			if (note.ID == "") throw new SimpleNoteAPIException("Cannot delete a not uploaded note");
-			note.ModificationDate = DateTimeOffset.Now;
-			
+			note.SetModificationDate(DateTimeOffset.Now);
+
 			APIDeleteNoteData data = new APIDeleteNoteData
 			{
 				deleted = true
@@ -236,7 +236,7 @@ namespace AlephNote.Plugins.SimpleNote
 					n.PublicURL = r.publishURL;
 					n.SystemTags = r.systemTags;
 					n.Content = r.content;
-					n.ModificationDate = ConvertFromEpochDate(r.modificationDate);
+					n.SetModificationDate(ConvertFromEpochDate(r.modificationDate));
 					n.CreationDate = ConvertFromEpochDate(r.creationDate);
 					n.LocalVersion = int.Parse(c.GetResponseHeader("X-Simperium-Version"));
 					n.Tags.Synchronize(r.tags);

@@ -11,6 +11,7 @@ using MSHC.Lang.Collections;
 using MSHC.Math.Encryption;
 using MSHC.Network;
 using MSHC.Serialization;
+using System.Globalization;
 
 namespace AlephNote.Plugins.StandardNote
 {
@@ -41,13 +42,21 @@ namespace AlephNote.Plugins.StandardNote
 		public class SyncResultTag { public Guid uuid; public string title; public bool deleted; public string enc_item_key, item_key; public List<APIResultContentRef> references; }
 		public class SyncResult { public List<StandardFileNote> retrieved_notes, saved_notes, conflict_notes, error_notes, deleted_notes; public List<SyncResultTag> retrieved_tags, saved_tags, unsaved_tags, deleted_tags; }
 		public class APIResultContentRef { public Guid uuid; public string content_type; }
-		public class ContentNote { public string title, text; public List<APIResultContentRef> references; public Dictionary<string, Dictionary<string, object>> appData; }
+		public class ContentNote { public string title, text; public List<APIResultContentRef> references; public Dictionary<string, Dictionary<string, object>> appData; public bool @protected; public bool hidePreview; }
 		public class ContentTag { public string title; public List<APIResultContentRef> references; }
 		// ReSharper restore All
 #pragma warning restore 0649
 
-		private static readonly Tuple<string, string> APPDATA_PINNED = Tuple.Create("org.standardnotes.sn", "pinned");
-		private static readonly Tuple<string, string> APPDATA_LOCKED = Tuple.Create("org.standardnotes.sn", "locked");
+		private static readonly Tuple<string, string> APPDATA_PINNED          = Tuple.Create("org.standardnotes.sn", "pinned");
+		private static readonly Tuple<string, string> APPDATA_LOCKED          = Tuple.Create("org.standardnotes.sn", "locked");
+		private static readonly Tuple<string, string> APPDATA_CLIENTUPDATEDAT = Tuple.Create("org.standardnotes.sn", "client_updated_at");
+		private static readonly Tuple<string, string> APPDATA_ARCHIVED        = Tuple.Create("org.standardnotes.sn", "archived");
+
+		private static readonly Tuple<string, string> APPDATA_NOTEMDATE        = Tuple.Create("com.mikescher.alephnote", "note_modified_at");
+		private static readonly Tuple<string, string> APPDATA_TEXTMDATE        = Tuple.Create("com.mikescher.alephnote", "text_modified_at");
+		private static readonly Tuple<string, string> APPDATA_TITLEMDATE       = Tuple.Create("com.mikescher.alephnote", "title_modified_at");
+		private static readonly Tuple<string, string> APPDATA_TAGSMDATE        = Tuple.Create("com.mikescher.alephnote", "tags_modified_at");
+		private static readonly Tuple<string, string> APPDATA_PATHMDATE        = Tuple.Create("com.mikescher.alephnote", "path_modified_at");
 
 		public static AlephLogger Logger;
 
@@ -587,8 +596,16 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			var appdata = new Dictionary<string, Dictionary<string, object>>();
 
-			SetAppDataBool(appdata, APPDATA_PINNED, note.IsPinned);
-			SetAppDataBool(appdata, APPDATA_LOCKED, note.IsLocked);
+			SetAppDataBool(appdata, APPDATA_PINNED,          note.IsPinned);
+			SetAppDataBool(appdata, APPDATA_LOCKED,          note.IsLocked);
+			SetAppDataBool(appdata, APPDATA_ARCHIVED,        note.IsArchived);
+
+			if (note.ClientUpdatedAt       != null) SetAppDataDTO(appdata, APPDATA_CLIENTUPDATEDAT, note.ClientUpdatedAt.Value);
+			if (note.NoteModificationDate  != null) SetAppDataDTO(appdata, APPDATA_NOTEMDATE,       note.NoteModificationDate.Value);
+			if (note.TextModificationDate  != null) SetAppDataDTO(appdata, APPDATA_TEXTMDATE,       note.TextModificationDate.Value);
+			if (note.TitleModificationDate != null) SetAppDataDTO(appdata, APPDATA_TITLEMDATE,      note.TitleModificationDate.Value);
+			if (note.TagsModificationDate  != null) SetAppDataDTO(appdata, APPDATA_TAGSMDATE,       note.TagsModificationDate.Value);
+			if (note.PathModificationDate != null)  SetAppDataDTO(appdata, APPDATA_PATHMDATE,       note.PathModificationDate.Value);
 
 			var objContent = new ContentNote
 			{
@@ -596,6 +613,8 @@ namespace AlephNote.Plugins.StandardNote
 				text = note.Text.Replace("\r\n", "\n"),
 				references = new List<APIResultContentRef>(),
 				appData = appdata,
+				@protected = note.IsProtected,
+				hidePreview = note.IsHidePreview,
 			};
 
 			// Set correct tag UUID if tag already exists
@@ -689,16 +708,15 @@ namespace AlephNote.Plugins.StandardNote
 				var nd = new StandardFileNote(encNote.uuid, cfg, conn.HConfig)
 				{
 					CreationDate = encNote.created_at,
-					Text = "",
-					InternalTitle = "",
 					AuthHash = encNote.auth_hash,
 					ContentVersion = StandardNoteCrypt.GetSchemaVersion(encNote.content),
 				};
-				nd.ModificationDate = encNote.updated_at;
+				nd.RawModificationDate = encNote.updated_at;
 				return nd;
 			}
 
 			ContentNote content;
+			string appDataContentString;
 			try
 			{
 				var contentJson = StandardNoteCrypt.DecryptContent(encNote.content, encNote.enc_item_key, encNote.auth_hash, authToken.masterkey, authToken.masterauthkey);
@@ -713,6 +731,7 @@ namespace AlephNote.Plugins.StandardNote
 					$"[contentJson]:\r\n{contentJson}\r\n");
 
 				content = web.ParseJsonWithoutConverter<ContentNote>(contentJson);
+				appDataContentString = web.ParseJsonAndGetSubJson(contentJson, "appData", string.Empty);
 			}
 			catch (RestException)
 			{
@@ -726,12 +745,17 @@ namespace AlephNote.Plugins.StandardNote
 			var n = new StandardFileNote(encNote.uuid, cfg, conn.HConfig);
 			using (n.SuppressDirtyChanges())
 			{
-				n.Text = StandardNoteConfig.REX_LINEBREAK.Replace(content.text, Environment.NewLine);
-				n.InternalTitle = content.title;
-				n.AuthHash = encNote.auth_hash;
+				n.Text           = StandardNoteConfig.REX_LINEBREAK.Replace(content.text, Environment.NewLine);
+				n.InternalTitle  = content.title;
+
+				n.AuthHash       = encNote.auth_hash;
 				n.ContentVersion = StandardNoteCrypt.GetSchemaVersion(encNote.content);
-				n.IsPinned = GetAppDataBool(content.appData, APPDATA_PINNED, false);
-				n.IsLocked = GetAppDataBool(content.appData, APPDATA_LOCKED, false);
+
+				n.IsPinned       = GetAppDataBool(content.appData, APPDATA_PINNED,   false);
+				n.IsLocked       = GetAppDataBool(content.appData, APPDATA_LOCKED,   false);
+				n.IsArchived     = GetAppDataBool(content.appData, APPDATA_ARCHIVED, false);
+				n.IsProtected    = content.@protected;
+				n.IsHidePreview  = content.hidePreview;
 
 				var refTags = new List<StandardFileTagRef>();
 				foreach (var cref in content.references)
@@ -763,8 +787,17 @@ namespace AlephNote.Plugins.StandardNote
 
 				n.SetTags(refTags);
 				n.SetReferences(content.references);
-				n.CreationDate = encNote.created_at;
-				n.ModificationDate = encNote.updated_at;
+
+				n.CreationDate          = encNote.created_at;
+				n.RawModificationDate   = encNote.updated_at;
+				n.ClientUpdatedAt	    = GetAppDataDTO(content.appData, APPDATA_CLIENTUPDATEDAT, null);
+				n.NoteModificationDate  = GetAppDataDTO(content.appData, APPDATA_NOTEMDATE,       null);
+				n.TextModificationDate  = GetAppDataDTO(content.appData, APPDATA_TEXTMDATE,       null);
+				n.TitleModificationDate = GetAppDataDTO(content.appData, APPDATA_TITLEMDATE,      null);
+				n.TagsModificationDate  = GetAppDataDTO(content.appData, APPDATA_TAGSMDATE,       null);
+				n.PathModificationDate  = GetAppDataDTO(content.appData, APPDATA_PATHMDATE,       null);
+
+				n.RawAppData = appDataContentString;
 			}
 
 			return n;
@@ -835,10 +868,41 @@ namespace AlephNote.Plugins.StandardNote
 
 		private static void SetAppDataBool(Dictionary<string, Dictionary<string, object>> appData, Tuple<string, string> path, bool value)
 		{
-			if (!appData.TryGetValue(path.Item1, out var dictNamespace)) 
+			if (!appData.TryGetValue(path.Item1, out var dictNamespace))
 				appData[path.Item1] = dictNamespace = new Dictionary<string, object>();
 
 			dictNamespace[path.Item2] = value;
+		}
+
+		private static void SetAppDataString(Dictionary<string, Dictionary<string, object>> appData, Tuple<string, string> path, string value)
+		{
+			if (!appData.TryGetValue(path.Item1, out var dictNamespace))
+				appData[path.Item1] = dictNamespace = new Dictionary<string, object>();
+
+			dictNamespace[path.Item2] = value;
+		}
+
+		private static DateTimeOffset? GetAppDataDTO(Dictionary<string, Dictionary<string, object>> appData, Tuple<string, string> path, DateTimeOffset? defValue)
+		{
+			if (appData == null) return defValue;
+
+			if (!appData.TryGetValue(path.Item1, out var values)) return defValue;
+
+			if (!values.TryGetValue(path.Item2, out var value)) return defValue;
+
+			if (value is DateTimeOffset sdto) return sdto;
+			if (value is DateTime sdt) return sdt;
+			if (value is string svalue && DateTimeOffset.TryParseExact(svalue, "O", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dto)) return dto;
+
+			return defValue;
+		}
+
+		private static void SetAppDataDTO(Dictionary<string, Dictionary<string, object>> appData, Tuple<string, string> path, DateTimeOffset value)
+		{
+			if (!appData.TryGetValue(path.Item1, out var dictNamespace))
+				appData[path.Item1] = dictNamespace = new Dictionary<string, object>();
+
+			dictNamespace[path.Item2] = value.ToUniversalTime().ToString("O").Replace("+00:00", "Z");
 		}
 	}
 }

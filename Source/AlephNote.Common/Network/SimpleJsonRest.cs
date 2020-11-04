@@ -9,6 +9,7 @@ using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Exceptions;
 using MSHC.Network;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AlephNote.Common.Network
 {
@@ -142,6 +143,20 @@ namespace AlephNote.Common.Network
 				return default(TResult);
 			}
 		}
+
+		public string ParseJsonAndGetSubJson(string content, string key, string defValue)
+		{
+			try
+			{
+				var obj = JObject.Parse(content);
+				if (!obj.ContainsKey(key)) return defValue;
+				return obj[key].ToString(Formatting.None);
+			}
+			catch (Exception)
+			{
+				return defValue;
+			}
+        }
 
 		public string SerializeJson<TResult>(TResult obj)
 		{

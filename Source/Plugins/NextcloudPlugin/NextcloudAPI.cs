@@ -34,9 +34,9 @@ namespace AlephNote.Plugins.Nextcloud
 				RemoteTimestamp = result.modified,
 				Content = result.content,
 				Path = ExtractPathFromCategory(result.category),
-				ModificationDate = ConvertFromEpochDate(result.modified),
 				ETag = result.etag,
 			};
+			rnote.SetModificationDate(ConvertFromEpochDate(result.modified));
 
 			if (rnote.Title.ToLower() != result.title.ToLower())
 			{
@@ -49,16 +49,17 @@ namespace AlephNote.Plugins.Nextcloud
 		{
 			var result = web.Get<ApiNoteResult>("notes/" + id);
 
-			return new NextcloudNote(result.id, Guid.NewGuid(), config)
+			var rnote = new NextcloudNote(result.id, Guid.NewGuid(), config)
 			{
 				CreationDate = DateTime.Now,
 				RemoteTimestamp = result.modified,
 				Content = result.content,
 				Favorite = result.favorite,
 				Path = ExtractPathFromCategory(result.category),
-				ModificationDate = ConvertFromEpochDate(result.modified),
 				ETag = result.etag,
 			};
+			rnote.SetModificationDate(ConvertFromEpochDate(result.modified));
+			return rnote;
 		}
 
 		public static NextcloudNote ChangeExistingNote(ISimpleJsonRest web, NextcloudNote note, NextcloudConfig config)
@@ -73,9 +74,9 @@ namespace AlephNote.Plugins.Nextcloud
 				Content = result.content,
 				Favorite = result.favorite,
 				Path = ExtractPathFromCategory(result.category),
-				ModificationDate = ConvertFromEpochDate(result.modified),
 				ETag = result.etag,
 			};
+			rnote.SetModificationDate(ConvertFromEpochDate(result.modified));
 
 			if (rnote.Title.ToLower() != result.title.ToLower())
 			{

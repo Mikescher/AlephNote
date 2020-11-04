@@ -11,6 +11,7 @@ using AlephNote.PluginInterface.Datatypes;
 using AlephNote.PluginInterface.Impl;
 using AlephNote.PluginInterface.Util;
 using MSHC.Lang.Collections;
+using System.Globalization;
 
 namespace AlephNote.Plugins.StandardNote
 {
@@ -30,8 +31,36 @@ namespace AlephNote.Plugins.StandardNote
 		private DateTimeOffset _creationDate;
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
 
-		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
-		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
+		private DateTimeOffset _rawModificationDate = DateTimeOffset.Now;
+		public DateTimeOffset RawModificationDate { get { return _rawModificationDate; } set { _rawModificationDate = value; OnPropertyChanged(); } }
+
+		private DateTimeOffset? _clientUpdatedAt;
+		public DateTimeOffset? ClientUpdatedAt { get { return _clientUpdatedAt; } set { _clientUpdatedAt = value; OnPropertyChanged(); } }
+
+		private DateTimeOffset? _noteModificationDate = null; // custom AlephNote field: real date when note was last changed
+		public DateTimeOffset? NoteModificationDate { get { return _noteModificationDate; } set { _noteModificationDate = value; OnPropertyChanged(); } }
+
+		private DateTimeOffset? _textModificationDate = null; // custom AlephNote field: real date when note-text was last changed
+		public DateTimeOffset? TextModificationDate { get { return _textModificationDate; } set { _textModificationDate = value; OnPropertyChanged(); } }
+
+		private DateTimeOffset? _titleModificationDate = null; // custom AlephNote field: real date when note-title was last changed
+		public DateTimeOffset? TitleModificationDate { get { return _titleModificationDate; } set { _titleModificationDate = value; OnPropertyChanged(); } }
+
+		private DateTimeOffset? _tagsModificationDate = null; // custom AlephNote field: real date when note-tags were last changed
+		public DateTimeOffset? TagsModificationDate { get { return _tagsModificationDate; } set { _tagsModificationDate = value; OnPropertyChanged(); } }
+
+		private DateTimeOffset? _pathModificationDate = null; // custom AlephNote field: real date when note-path was last changed
+		public DateTimeOffset? PathModificationDate { get { return _pathModificationDate; } set { _pathModificationDate = value; OnPropertyChanged(); } }
+
+		public override DateTimeOffset ModificationDate 
+		{ 
+			get 
+			{
+				if (_noteModificationDate != null) return _noteModificationDate.Value;
+				if (_clientUpdatedAt != null) return _clientUpdatedAt.Value;
+				return _rawModificationDate; 
+			}
+		}
 
 		private string _contentVersion = "";
 		public string ContentVersion { get { return _contentVersion; } set { _contentVersion = value; OnPropertyChanged(); } }
@@ -50,6 +79,18 @@ namespace AlephNote.Plugins.StandardNote
 
 		private bool _isLocked = false;
 		public override bool IsLocked { get { return _isLocked; } set { _isLocked = value; OnPropertyChanged(); } }
+
+		private bool _isArchived = false;
+		public bool IsArchived { get { return _isArchived; } set { _isArchived = value; OnPropertyChanged(); } }
+
+		private bool _isProtected = false;
+		public bool IsProtected { get { return _isProtected; } set { _isProtected = value; OnPropertyChanged(); } }
+
+		private bool _isHidePreview = false;
+		public bool IsHidePreview { get { return _isHidePreview; } set { _isHidePreview = value; OnPropertyChanged(); } }
+
+		private string _rawAppData = null;
+		public string RawAppData { get { return _rawAppData; } set { _rawAppData = value; OnPropertyChanged(); } }
 
 		private readonly ObservableCollection<StandardFileRef> _internalRef = new ObservableCollection<StandardFileRef>();
 		public ObservableCollection<StandardFileRef> InternalReferences { get { return _internalRef; } }
@@ -75,13 +116,24 @@ namespace AlephNote.Plugins.StandardNote
 				new XElement("Tags", _internalTags.Select(t => t.Serialize()).Cast<object>().ToArray()),
 				new XElement("Text", XHelper.ConvertToC80Base64(_text)),
 				new XElement("Title", _internaltitle),
-				new XElement("ModificationDate", XHelper.ToString(ModificationDate)),
+				new XElement("__RealModificationDate", XHelper.ToString(ModificationDate)),
+				new XElement("ModificationDate", XHelper.ToString(RawModificationDate)), // is RawModificationDate but xml tag is still <ModificationDate> for compatibiility
+				CreateNullableDateTimeXElem("NoteModificationDate",  NoteModificationDate),
+				CreateNullableDateTimeXElem("TextModificationDate",  TextModificationDate),
+				CreateNullableDateTimeXElem("TitleModificationDate", TitleModificationDate),
+				CreateNullableDateTimeXElem("TagsModificationDate",  TagsModificationDate),
+				CreateNullableDateTimeXElem("PathModificationDate",  PathModificationDate),
+				CreateNullableDateTimeXElem("ClientUpdatedAt",       ClientUpdatedAt),
 				new XElement("CreationDate", XHelper.ToString(_creationDate)),
 				new XElement("ContentVersion", _contentVersion),
 				new XElement("AuthHash", _authHash),
 				new XElement("InternalReferences", _internalRef.Select(ir => new XElement("Ref", new XAttribute("Type", ir.Type), new XAttribute("UUID", ir.UUID.ToString("P").ToUpper())))),
 				new XElement("IsPinned", _isPinned),
 				new XElement("IsLocked", _isLocked),
+				new XElement("IsArchived", _isArchived),
+				new XElement("IsProtected", _isProtected),
+				new XElement("IsHidePreview", _isHidePreview),
+				new XElement("RawAppData", _rawAppData),
 			};
 
 			var r = new XElement("standardnote", data);
@@ -99,21 +151,31 @@ namespace AlephNote.Plugins.StandardNote
 
 				_id = XHelper.GetChildValueGUID(input, "ID");
 				ResyncTags();
-				_text = XHelper.GetChildBase64String(input, "Text");
-				_internaltitle = XHelper.GetChildValueString(input, "Title");
-				_creationDate = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
-				_modificationDate = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
-				_contentVersion = XHelper.GetChildValueStringOrDefault(input, "ContentVersion", "?");
-				_authHash = XHelper.GetChildValueStringOrDefault(input, "AuthHash", "?");
-				_isPinned = XHelper.GetChildValue(input, "IsPinned", false);
-				_isLocked = XHelper.GetChildValue(input, "IsLocked", false);
+				_text                  = XHelper.GetChildBase64String(input, "Text");
+				_internaltitle         = XHelper.GetChildValueString(input, "Title");
+				_creationDate          = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
+				_rawModificationDate   = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
+				_noteModificationDate  = GetChildValueNullableDateTimeOffset(input, "NoteModificationDate");
+				_textModificationDate  = GetChildValueNullableDateTimeOffset(input, "TextModificationDate");
+				_titleModificationDate = GetChildValueNullableDateTimeOffset(input, "TitleModificationDate");
+				_tagsModificationDate  = GetChildValueNullableDateTimeOffset(input, "TagsModificationDate");
+				_pathModificationDate  = GetChildValueNullableDateTimeOffset(input, "PathModificationDate");
+				_clientUpdatedAt       = GetChildValueNullableDateTimeOffset(input, "ClientUpdatedAt");
+				_contentVersion        = XHelper.GetChildValueStringOrDefault(input, "ContentVersion", "?");
+				_authHash              = XHelper.GetChildValueStringOrDefault(input, "AuthHash", "?");
+				_isPinned              = XHelper.GetChildValue(input, "IsPinned",      false);
+				_isLocked              = XHelper.GetChildValue(input, "IsLocked",      false);
+				_isArchived            = XHelper.GetChildValue(input, "IsArchived",    false);
+				_isProtected           = XHelper.GetChildValue(input, "IsProtected",   false);
+				_isHidePreview         = XHelper.GetChildValue(input, "IsHidePreview", false);
+				_rawAppData            = XHelper.GetChildValue(input, "RawAppData", "");
 
 				var intref = XHelper.GetChildOrNull(input, "InternalReferences")?.Elements("Ref").Select(x => new StandardFileRef {UUID = XHelper.GetAttributeGuid(x, "UUID"), Type = XHelper.GetAttributeString(x, "Type")}).ToList();
 				if (intref != null) _internalRef.Synchronize(intref);
 			}
 		}
 
-		private void TagsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void TagsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (_ignoreTagsChanged) return;
 			
@@ -200,13 +262,27 @@ namespace AlephNote.Plugins.StandardNote
 
 			using (SuppressDirtyChanges())
 			{
-				_modificationDate = other.ModificationDate;
-				_creationDate = other.CreationDate;
-				_internalTags = other._internalTags;
+				_rawModificationDate   = other.RawModificationDate;
+				_noteModificationDate  = other.NoteModificationDate;
+				_textModificationDate  = other.TextModificationDate;
+				_titleModificationDate = other.TitleModificationDate;
+				_tagsModificationDate  = other.TagsModificationDate;
+				_pathModificationDate  = other.PathModificationDate;
+				_clientUpdatedAt       = other.ClientUpdatedAt;
+				_creationDate          = other.CreationDate;
+
+				_internalTags          = other._internalTags;
 				ResyncTags();
+
 				_internalRef.Synchronize(other._internalRef);
-				_isPinned = other._isPinned;
-				_isLocked = other._isLocked;
+
+				_isPinned              = other.IsPinned;
+				_isLocked              = other.IsLocked;
+				_isArchived            = other.IsArchived;
+				_isProtected           = other.IsProtected;
+				_isHidePreview         = other.IsHidePreview;
+
+				_rawAppData            = other.RawAppData;
 			}
 		}
 
@@ -216,31 +292,80 @@ namespace AlephNote.Plugins.StandardNote
 
 			using (SuppressDirtyChanges())
 			{
-				_modificationDate = other.ModificationDate;
-				_creationDate = other.CreationDate;
-				_internalTags = other._internalTags.ToList();
+				_rawModificationDate   = other.RawModificationDate;
+				_noteModificationDate  = other.NoteModificationDate;
+				_textModificationDate  = other.TextModificationDate;
+				_titleModificationDate = other.TitleModificationDate;
+				_tagsModificationDate  = other.TagsModificationDate;
+				_pathModificationDate  = other.PathModificationDate;
+				_clientUpdatedAt       = other.ClientUpdatedAt;
+				_creationDate          = other.CreationDate;
+
+				_internalTags          = other._internalTags.ToList();
 				ResyncTags();
-				_text = other.Text;
-				_internaltitle = other.InternalTitle;
-				_contentVersion = other.ContentVersion;
-				_authHash = other.AuthHash;
+
+				_text                  = other.Text;
+				_internaltitle         = other.InternalTitle;
+				_contentVersion        = other.ContentVersion;
+				_authHash              = other.AuthHash;
+
 				_internalRef.Synchronize(other._internalRef);
-				_isPinned = other._isPinned;
-				_isLocked = other._isLocked;
+
+				_isPinned              = other.IsPinned;
+				_isLocked              = other.IsLocked;
+				_isArchived			   = other.IsArchived;
+				_isProtected		   = other.IsProtected;
+				_isHidePreview		   = other.IsHidePreview;
+
+				_rawAppData            = other.RawAppData;
 			}
 		}
 
-		public bool EqualsIgnoreModificationdate(StandardFileNote other)
+		public bool NoteDataEquals(StandardFileNote other)
 		{
-			if (_id != other._id) return false;
-			if (_creationDate != other._creationDate) return false;
+			if (_id                    != other._id)                    return false;
+
+			if (_rawModificationDate   != other._rawModificationDate)   return false;
+			if (_noteModificationDate  != other._noteModificationDate)  return false;
+			if (_textModificationDate  != other._textModificationDate)  return false;
+			if (_titleModificationDate != other._titleModificationDate) return false;
+			if (_tagsModificationDate  != other._tagsModificationDate)  return false;
+			if (_pathModificationDate  != other._pathModificationDate)  return false;
+			if (_clientUpdatedAt       != other._clientUpdatedAt)       return false;
+			if (_creationDate          != other._creationDate)          return false;
+
 			if (!new HashSet<StandardFileTagRef>(_internalTags).SetEquals(other._internalTags)) return false;
-			if (_text != other._text) return false;
+
+			if (_text          != other._text)          return false;
 			if (_internaltitle != other._internaltitle) return false;
-			if (_isPinned != other._isPinned) return false;
-			if (_isLocked != other._isLocked) return false;
+
+			if (_isPinned      != other._isPinned)      return false;
+			if (_isLocked      != other._isLocked)      return false;
+			if (_isArchived    != other._isArchived	)   return false;
+			if (_isProtected   != other._isProtected)   return false;
+			if (_isHidePreview != other._isHidePreview) return false;
+
+			if (_rawAppData    != other._rawAppData)    return false;
 
 			return true;
+		}
+
+		public override void UpdateModificationDate(string propSource, bool clearConflictFlag)
+		{
+			var dtnow = DateTimeOffset.Now;
+
+			RawModificationDate  = dtnow;
+			ClientUpdatedAt      = dtnow;
+			NoteModificationDate = dtnow;
+
+			if (propSource == "Title") TitleModificationDate = dtnow;
+			if (propSource == "Text")  TextModificationDate  = dtnow;
+			if (propSource == "Tags")  TagsModificationDate  = dtnow;
+			if (propSource == "Path")  PathModificationDate = dtnow;
+
+			OnExplicitPropertyChanged(nameof(ModificationDate));
+
+			if (clearConflictFlag && IsConflictNote) IsConflictNote = false;
 		}
 
 		protected override BasicNoteImpl CreateClone()
@@ -249,22 +374,51 @@ namespace AlephNote.Plugins.StandardNote
 
 			using (n.SuppressDirtyChanges())
 			{
-				n._internalTags     = _internalTags.ToList();
+				n._internalTags          = _internalTags.ToList();
 				n.ResyncTags();
-				n._text             = _text;
-				n._internaltitle    = _internaltitle;
-				n._creationDate     = _creationDate;
-				n._modificationDate = _modificationDate;
-				n._contentVersion   = _contentVersion;
-				n._authHash         = _authHash;
+
+				n._text                  = _text;
+				n._internaltitle         = _internaltitle;
+
+				n._rawModificationDate	 = _rawModificationDate;
+				n._noteModificationDate	 = _noteModificationDate;
+				n._textModificationDate	 = _textModificationDate;
+				n._titleModificationDate = _titleModificationDate;
+				n._tagsModificationDate	 = _tagsModificationDate;
+				n._pathModificationDate	 = _pathModificationDate;
+				n._clientUpdatedAt		 = _clientUpdatedAt;
+				n._creationDate			 = _creationDate;
+
+				n._contentVersion        = _contentVersion;
+				n._authHash              = _authHash;
+
 				n._internalRef.Synchronize(_internalRef);
-				n._isPinned         = _isPinned;
-				n._isLocked         = _isLocked;
+
+				n._isPinned              = _isPinned;
+				n._isLocked              = _isLocked;
 				
 				return n;
 			}
 		}
 
 		public bool ContainsTag(Guid tagID) => _internalTags.Any(t => t.UUID == tagID);
-	}
+
+		public XElement CreateNullableDateTimeXElem(string name, DateTimeOffset? value) //TODO mig to CSharpUtils
+        {
+			if (value != null) 
+				return new XElement(name, value.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture), new XAttribute("null", "false"));
+			else
+				return new XElement(name, string.Empty, new XAttribute("null", "true"));
+		}
+
+		private DateTimeOffset? GetChildValueNullableDateTimeOffset(XElement parent, string childName) //TODO mig to CSharpUtils
+		{
+			var child = parent.Elements(childName).FirstOrDefault();
+			if (child == null) return null;
+
+			if (child.Attribute("null").Value == "true") return null;
+
+			return DateTimeOffset.Parse(child.Value, CultureInfo.InvariantCulture);
+		}
+    }
 }

@@ -1,7 +1,6 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
 using AlephNote.PluginInterface.Datatypes;
@@ -24,7 +23,8 @@ namespace AlephNote.Plugins.Headless
 		public override DirectoryPath Path { get { return _path; } set { _path = value; OnPropertyChanged(); } }
 
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
-		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
+		public override DateTimeOffset ModificationDate { get { return _modificationDate; } }
+		public void SetModificationDate(DateTimeOffset value) { _modificationDate = value; OnPropertyChanged(); }
 
 		private DateTimeOffset _creationDate = DateTimeOffset.Now;
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
@@ -119,5 +119,11 @@ namespace AlephNote.Plugins.Headless
 		{
 			//
 		}
-	}
+
+        public override void UpdateModificationDate(string propSource, bool clearConflictFlag)
+        {
+			SetModificationDate(DateTimeOffset.Now);
+			if (clearConflictFlag && IsConflictNote) IsConflictNote = false;
+        }
+    }
 }

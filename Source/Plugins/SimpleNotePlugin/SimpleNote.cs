@@ -48,7 +48,8 @@ namespace AlephNote.Plugins.SimpleNote
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
 
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
-		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
+		public override DateTimeOffset ModificationDate { get { return _modificationDate; } }
+		public void SetModificationDate(DateTimeOffset value) { _modificationDate = value; OnPropertyChanged(); }
 
 		private int _localVersion;
 		public int LocalVersion { get { return _localVersion; } set { _localVersion = value; OnPropertyChanged(); } }
@@ -241,6 +242,12 @@ namespace AlephNote.Plugins.SimpleNote
 				_deleted = other.Deleted;
 				_content = other.Content;
 			}
+		}
+
+		public override void UpdateModificationDate(string propSource, bool clearConflictFlag)
+		{
+			SetModificationDate(DateTimeOffset.Now);
+			if (clearConflictFlag && IsConflictNote) IsConflictNote = false;
 		}
 	}
 }

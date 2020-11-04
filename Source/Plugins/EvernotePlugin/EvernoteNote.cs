@@ -26,7 +26,8 @@ namespace AlephNote.Plugins.Evernote
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
 
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;
-		public override DateTimeOffset ModificationDate { get { return _modificationDate; } set { _modificationDate = value; OnPropertyChanged(); } }
+		public override DateTimeOffset ModificationDate { get { return _modificationDate; } }
+		public void SetModificationDate(DateTimeOffset value) { _modificationDate = value; OnPropertyChanged(); }
 
 		private readonly VoidTagList _tags = new VoidTagList();
 		public override TagList Tags { get { return _tags; } }
@@ -165,6 +166,12 @@ namespace AlephNote.Plugins.Evernote
 			text = stripFormattingRegex.Replace(text, string.Empty);
 
 			return text;
+		}
+
+		public override void UpdateModificationDate(string propSource, bool clearConflictFlag)
+		{
+			SetModificationDate(DateTimeOffset.Now);
+			if (clearConflictFlag && IsConflictNote) IsConflictNote = false;
 		}
 	}
 }

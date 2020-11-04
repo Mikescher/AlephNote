@@ -56,7 +56,7 @@ namespace AlephNote.PluginInterface.Impl
 		public abstract bool IsPinned { get; set; }
 		public abstract bool IsLocked { get; set; }
 		public abstract DateTimeOffset CreationDate { get; set; }
-		public abstract DateTimeOffset ModificationDate { get; set; }
+		public abstract DateTimeOffset ModificationDate { get; }
 
 		protected abstract BasicNoteImpl CreateClone();
 
@@ -64,6 +64,8 @@ namespace AlephNote.PluginInterface.Impl
 		public abstract void OnAfterUpload(INote clonenote);
 		
 		public abstract void TriggerOnChanged(bool doNotSendChangeEvents);
+
+		public abstract void UpdateModificationDate(string propSource, bool clearConflictFlag);
 
 		public event NoteChangedEventHandler OnChanged;
 		
@@ -97,8 +99,7 @@ namespace AlephNote.PluginInterface.Impl
 			if (propName == "Text" || propName == "Title" || propName == "Path" || propName == "IsPinned" || propName == "IsLocked")
 			{
 				SetDirty($"PropertyChanged called for {propName}");
-				ModificationDate = DateTimeOffset.Now;
-				if (IsConflictNote) IsConflictNote = false;
+				UpdateModificationDate(propName, true);
 				OnChanged?.Invoke(this, new NoteChangedEventArgs(this, propName));
 			}
 		}
@@ -108,8 +109,7 @@ namespace AlephNote.PluginInterface.Impl
 			if (_dirtySupressor > 0) return;
 
 			SetDirty($"TagList.OnChanged called.\n\nAction: [{e.Action}]\nNewItems: [{(e.NewItems==null?"NULL":string.Join(", ", e.NewItems.OfType<string>()))}]\nOldItems: [{(e.OldItems==null?"NULL":string.Join(", ", e.OldItems.OfType<string>()))}]");
-			ModificationDate = DateTimeOffset.Now;
-			if (IsConflictNote) IsConflictNote = false;
+			UpdateModificationDate("Tags", true);
 			OnChanged?.Invoke(this, new NoteChangedEventArgs(this, "Tags"));
 		}
 

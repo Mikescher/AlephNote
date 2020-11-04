@@ -44,7 +44,8 @@ namespace AlephNote.PluginInterface
 		TResult ParseJson<TResult>(string content);
 		TResult ParseJsonWithoutConverter<TResult>(string content);
 		TResult ParseJsonOrNull<TResult>(string content);
+		string ParseJsonAndGetSubJson(string content, string key, string defValue);
 
 		string SerializeJson<TResult>(TResult obj);
-	}
+    }
 }

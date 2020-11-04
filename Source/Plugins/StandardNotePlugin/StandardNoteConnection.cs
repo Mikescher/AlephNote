@@ -175,7 +175,7 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				var bucketNote = _syncResult.retrieved_notes.First(n => n.ID == note.ID);
 
-				if (note.EqualsIgnoreModificationdate(bucketNote))
+				if (note.NoteDataEquals(bucketNote))
 				{
 					note.ApplyUpdatedData(bucketNote);
 					return RemoteDownloadResult.UpToDate;

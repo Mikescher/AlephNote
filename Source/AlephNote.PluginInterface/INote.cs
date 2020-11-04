@@ -38,7 +38,7 @@ namespace AlephNote.PluginInterface
 		bool IsRemoteSaved { get; }
 		bool IsConflictNote { get; set; }
 		DateTimeOffset CreationDate { get; set; }
-		DateTimeOffset ModificationDate { get; set; }
+		DateTimeOffset ModificationDate { get; }
 		
 		bool IsUINote { get; set; } // "Real" Note that is linked to the UI - not a intermediate copy
 

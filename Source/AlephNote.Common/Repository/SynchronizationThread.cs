@@ -444,20 +444,6 @@ namespace AlephNote.Common.Repository
 					{
 						case RemoteDownloadResult.UpToDate:
 							_log.Info("Sync", "Downloading note -> UpToDate");
-							if (realnote.ModificationDate != clonenote.ModificationDate)
-							{
-								_log.Info("Sync", "Downloading note -> UpToDate (but update local mdate)");
-								_dispatcher.Invoke(() =>
-								{
-									if (realnote.IsLocalSaved)
-									{
-										// Even when up to date - perhaps local mod date is wrong ...
-										realnote.ModificationDate = clonenote.ModificationDate;
-										realnote.ResetRemoteDirty("Note was downloaded from remote (no changes - UpToDate)");
-									}
-								});
-							}
-
 							break;
 
 						case RemoteDownloadResult.Updated:

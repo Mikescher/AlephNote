@@ -164,7 +164,7 @@ namespace AlephNote.Plugins.Filesystem
 				note.Title = Path.GetFileNameWithoutExtension(path);
 				note.Text = File.ReadAllText(path, _config.Encoding);
 				note.PathRemote = path;
-				note.ModificationDate = fi.LastWriteTime;
+				note.SetModificationDate(fi.LastWriteTime);
 				note.IsLocked = fi.IsReadOnly;
 			}
 
@@ -219,7 +219,7 @@ namespace AlephNote.Plugins.Filesystem
 				note.Path = ANFileSystemUtil.GetDirectoryPath(_config.Folder, info.DirectoryName);
 				note.Text  = File.ReadAllText(info.FullName, _config.Encoding);
 				note.CreationDate = info.CreationTime;
-				note.ModificationDate = info.LastWriteTime;
+				note.SetModificationDate(info.LastWriteTime);
 				note.PathRemote = info.FullName;
 				note.IsLocked = info.IsReadOnly;
 			}
@@ -238,7 +238,7 @@ namespace AlephNote.Plugins.Filesystem
 
 			new FileInfo(path).IsReadOnly = note.IsLocked;
 
-			note.ModificationDate = new FileInfo(path).LastWriteTime;
+			note.SetModificationDate(new FileInfo(path).LastWriteTime);
 		}
 	}
 }
