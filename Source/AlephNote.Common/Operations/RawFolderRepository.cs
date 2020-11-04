@@ -602,6 +602,7 @@ namespace AlephNote.Common.Operations
 		private string GetFilesystemPath(INote note)
 		{
 			var filename = ANFilenameHelper.ConvertStringForFilename(note.Title);
+			if (string.IsNullOrWhiteSpace(filename)) filename = ANFilenameHelper.ConvertStringForFilename(Limit(FirstLine(note).Trim(), 64));
 			if (string.IsNullOrWhiteSpace(filename)) filename = ANFilenameHelper.ConvertStringForFilename(note.UniqueName);
 
 			var ext = ".txt";
@@ -616,7 +617,21 @@ namespace AlephNote.Common.Operations
 			return Path.Combine(comp.ToArray());
 		}
 
-		private object Fmt(PathEntry d)
+        private string Limit(string str, int len)
+        {
+			if (str.Length > len) return str.Substring(0, len);
+			return str;
+        }
+
+        private string FirstLine(INote note)
+		{
+			var lines = note.Text.Replace("\r\n", "\n").Split('\n');
+			if (lines.Length == 0) return string.Empty;
+			
+			return lines[0];
+		}
+
+        private object Fmt(PathEntry d)
 		{
 			StringBuilder b = new StringBuilder();
 			b.AppendLine("PathEntry");
