@@ -17,6 +17,8 @@ namespace AlephNote.Common.Network
 
 		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
 		{
+			if (reader.Value is DateTimeOffset dto) return _conv1(dto.ToString("O"));
+			if (reader.Value is DateTime dtv) return _conv1(dtv.ToString("O"));
 			return _conv1(reader.Value.ToString());
 		}
 
