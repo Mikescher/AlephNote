@@ -52,7 +52,8 @@ namespace AlephNote.Plugins.StandardNote
 		private static readonly Tuple<string, string> APPDATA_CLIENTUPDATEDAT = Tuple.Create("org.standardnotes.sn", "client_updated_at");
 		private static readonly Tuple<string, string> APPDATA_ARCHIVED        = Tuple.Create("org.standardnotes.sn", "archived");
 
-		private static readonly Tuple<string, string> APPDATA_NOTEMDATE        = Tuple.Create("com.mikescher.alephnote", "note_modified_at");
+		private static readonly Tuple<string, string> APPDATA_NOTECDATE        = Tuple.Create("com.mikescher.alephnote", "note_modified_at");
+		private static readonly Tuple<string, string> APPDATA_NOTEMDATE        = Tuple.Create("com.mikescher.alephnote", "note_created_at");
 		private static readonly Tuple<string, string> APPDATA_TEXTMDATE        = Tuple.Create("com.mikescher.alephnote", "text_modified_at");
 		private static readonly Tuple<string, string> APPDATA_TITLEMDATE       = Tuple.Create("com.mikescher.alephnote", "title_modified_at");
 		private static readonly Tuple<string, string> APPDATA_TAGSMDATE        = Tuple.Create("com.mikescher.alephnote", "tags_modified_at");
@@ -601,11 +602,12 @@ namespace AlephNote.Plugins.StandardNote
 			SetAppDataBool(appdata, APPDATA_ARCHIVED,        note.IsArchived);
 
 			if (note.ClientUpdatedAt       != null) SetAppDataDTO(appdata, APPDATA_CLIENTUPDATEDAT, note.ClientUpdatedAt.Value);
+			if (note.NoteCreationDate      != null) SetAppDataDTO(appdata, APPDATA_NOTECDATE,       note.NoteCreationDate.Value);
 			if (note.NoteModificationDate  != null) SetAppDataDTO(appdata, APPDATA_NOTEMDATE,       note.NoteModificationDate.Value);
 			if (note.TextModificationDate  != null) SetAppDataDTO(appdata, APPDATA_TEXTMDATE,       note.TextModificationDate.Value);
 			if (note.TitleModificationDate != null) SetAppDataDTO(appdata, APPDATA_TITLEMDATE,      note.TitleModificationDate.Value);
 			if (note.TagsModificationDate  != null) SetAppDataDTO(appdata, APPDATA_TAGSMDATE,       note.TagsModificationDate.Value);
-			if (note.PathModificationDate != null)  SetAppDataDTO(appdata, APPDATA_PATHMDATE,       note.PathModificationDate.Value);
+			if (note.PathModificationDate  != null) SetAppDataDTO(appdata, APPDATA_PATHMDATE,       note.PathModificationDate.Value);
 
 			var objContent = new ContentNote
 			{
@@ -791,6 +793,7 @@ namespace AlephNote.Plugins.StandardNote
 				n.CreationDate          = encNote.created_at;
 				n.RawModificationDate   = encNote.updated_at;
 				n.ClientUpdatedAt	    = GetAppDataDTO(content.appData, APPDATA_CLIENTUPDATEDAT, null);
+				n.NoteCreationDate      = GetAppDataDTO(content.appData, APPDATA_NOTECDATE,       null);
 				n.NoteModificationDate  = GetAppDataDTO(content.appData, APPDATA_NOTEMDATE,       null);
 				n.TextModificationDate  = GetAppDataDTO(content.appData, APPDATA_TEXTMDATE,       null);
 				n.TitleModificationDate = GetAppDataDTO(content.appData, APPDATA_TITLEMDATE,      null);

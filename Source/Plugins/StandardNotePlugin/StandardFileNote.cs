@@ -38,6 +38,11 @@ namespace AlephNote.Plugins.StandardNote
 		private DateTimeOffset? _clientUpdatedAt; // Additional ModificationDate used by some official StandardNotes clients (not 100% sure why)
 		public DateTimeOffset? ClientUpdatedAt { get { return _clientUpdatedAt; } set { _clientUpdatedAt = value; OnPropertyChanged(); } }
 
+        #region Custom fields
+
+        private DateTimeOffset? _noteCreationDate = null; // custom AlephNote field: real date when note was created
+		public DateTimeOffset? NoteCreationDate { get { return _noteCreationDate; } set { _noteCreationDate = value; OnPropertyChanged(); } }
+
 		private DateTimeOffset? _noteModificationDate = null; // custom AlephNote field: real date when note was last changed
 		public DateTimeOffset? NoteModificationDate { get { return _noteModificationDate; } set { _noteModificationDate = value; OnPropertyChanged(); } }
 
@@ -52,6 +57,8 @@ namespace AlephNote.Plugins.StandardNote
 
 		private DateTimeOffset? _pathModificationDate = null; // custom AlephNote field: real date when note-path was last changed
 		public DateTimeOffset? PathModificationDate { get { return _pathModificationDate; } set { _pathModificationDate = value; OnPropertyChanged(); } }
+
+		#endregion
 
 		public override DateTimeOffset ModificationDate 
 		{ 
@@ -125,7 +132,18 @@ namespace AlephNote.Plugins.StandardNote
 					// Can happen on re-syncs where StandardNotes updates the modificationtime (even though nothing changed)
 					sb.AppendLine($"Modified: {ModificationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss} ({RawModificationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss})");
 				}
-				sb.AppendLine($"Created: {CreationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}");
+
+				if (NoteCreationDate == null || $"{CreationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}" == $"{NoteCreationDate.Value.ToLocalTime():yyyy-MM-dd HH:mm:ss}")
+				{
+					sb.AppendLine($"Created: {CreationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}");
+				}
+				else
+				{
+					// Our mdate and the "official" mdate differ
+					// Can happen on re-syncs where StandardNotes updates the modificationtime (even though nothing changed)
+					sb.AppendLine($"Created: {NoteCreationDate.Value.ToLocalTime():yyyy-MM-dd HH:mm:ss} ({CreationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss})");
+				}
+
 
 				if (TextModificationDate  != null) sb.AppendLine($"Modified (content): {TextModificationDate.Value.ToLocalTime():yyyy-MM-dd HH:mm:ss}");
 				if (TitleModificationDate != null) sb.AppendLine($"Modified (title): {TitleModificationDate.Value.ToLocalTime():yyyy-MM-dd HH:mm:ss}");
@@ -146,6 +164,7 @@ namespace AlephNote.Plugins.StandardNote
 				new XElement("Title", _internaltitle),
 				new XElement("__RealModificationDate", XHelper.ToString(ModificationDate)),
 				new XElement("ModificationDate", XHelper.ToString(RawModificationDate)), // is RawModificationDate but xml tag is still <ModificationDate> for compatibiility
+				CreateNullableDateTimeXElem("NoteCreationDate",      NoteCreationDate),
 				CreateNullableDateTimeXElem("NoteModificationDate",  NoteModificationDate),
 				CreateNullableDateTimeXElem("TextModificationDate",  TextModificationDate),
 				CreateNullableDateTimeXElem("TitleModificationDate", TitleModificationDate),
@@ -183,6 +202,7 @@ namespace AlephNote.Plugins.StandardNote
 				_internaltitle         = XHelper.GetChildValueString(input, "Title");
 				_creationDate          = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
 				_rawModificationDate   = XHelper.GetChildValueDateTimeOffset(input, "ModificationDate");
+				_noteCreationDate      = GetChildValueNullableDateTimeOffset(input, "NoteCreationDate");
 				_noteModificationDate  = GetChildValueNullableDateTimeOffset(input, "NoteModificationDate");
 				_textModificationDate  = GetChildValueNullableDateTimeOffset(input, "TextModificationDate");
 				_titleModificationDate = GetChildValueNullableDateTimeOffset(input, "TitleModificationDate");
@@ -291,6 +311,7 @@ namespace AlephNote.Plugins.StandardNote
 			using (SuppressDirtyChanges())
 			{
 				_rawModificationDate   = other.RawModificationDate;
+				_noteCreationDate      = other.NoteCreationDate;
 				_noteModificationDate  = other.NoteModificationDate;
 				_textModificationDate  = other.TextModificationDate;
 				_titleModificationDate = other.TitleModificationDate;
@@ -354,6 +375,7 @@ namespace AlephNote.Plugins.StandardNote
 			if (_id                    != other._id)                    return false;
 
 			if (_rawModificationDate   != other._rawModificationDate)   return false;
+			if (_noteCreationDate      != other._noteCreationDate)      return false;
 			if (_noteModificationDate  != other._noteModificationDate)  return false;
 			if (_textModificationDate  != other._textModificationDate)  return false;
 			if (_titleModificationDate != other._titleModificationDate) return false;
@@ -410,6 +432,7 @@ namespace AlephNote.Plugins.StandardNote
 				n._internaltitle         = _internaltitle;
 
 				n._rawModificationDate	 = _rawModificationDate;
+				n._noteCreationDate      = _noteCreationDate;
 				n._noteModificationDate	 = _noteModificationDate;
 				n._textModificationDate	 = _textModificationDate;
 				n._titleModificationDate = _titleModificationDate;

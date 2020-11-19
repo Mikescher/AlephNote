@@ -48,7 +48,7 @@ namespace AlephNote.Plugins.StandardNote
 		public override INote CreateEmptyNote(IRemoteStorageConnection iconn, IRemoteStorageConfiguration cfg)
 		{
 			var conn = (StandardNoteConnection)iconn;
-			return new StandardFileNote(Guid.NewGuid(), (StandardNoteConfig) cfg, conn.HConfig) {ContentVersion = CURRENT_SCHEMA};
+			return new StandardFileNote(Guid.NewGuid(), (StandardNoteConfig) cfg, conn.HConfig) { ContentVersion = CURRENT_SCHEMA, NoteCreationDate = DateTimeOffset.Now };
 		}
 
 		public override IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData()
