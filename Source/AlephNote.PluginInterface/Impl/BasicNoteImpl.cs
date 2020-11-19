@@ -87,6 +87,13 @@ namespace AlephNote.PluginInterface.Impl
 			Tags.OnChanged += TagsChanged;
 		}
 
+		public virtual string DateTooltip
+		{
+			get
+			{
+				return $"Modified: {ModificationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}\nCreated: {CreationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}";
+			}
+		}
 		private void Changed(object sender, PropertyChangedEventArgs e)
 		{
 			if (_dirtySupressor > 0) return;
@@ -101,6 +108,7 @@ namespace AlephNote.PluginInterface.Impl
 				SetDirty($"PropertyChanged called for {propName}");
 				UpdateModificationDate(propName, true);
 				OnChanged?.Invoke(this, new NoteChangedEventArgs(this, propName));
+				OnExplicitPropertyChanged(nameof(DateTooltip));
 			}
 		}
 
@@ -111,6 +119,7 @@ namespace AlephNote.PluginInterface.Impl
 			SetDirty($"TagList.OnChanged called.\n\nAction: [{e.Action}]\nNewItems: [{(e.NewItems==null?"NULL":string.Join(", ", e.NewItems.OfType<string>()))}]\nOldItems: [{(e.OldItems==null?"NULL":string.Join(", ", e.OldItems.OfType<string>()))}]");
 			UpdateModificationDate("Tags", true);
 			OnChanged?.Invoke(this, new NoteChangedEventArgs(this, "Tags"));
+			OnExplicitPropertyChanged(nameof(DateTooltip));
 		}
 
 		public bool EqualID(INote other)

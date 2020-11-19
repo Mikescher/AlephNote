@@ -12,6 +12,7 @@ using AlephNote.PluginInterface.Impl;
 using AlephNote.PluginInterface.Util;
 using MSHC.Lang.Collections;
 using System.Globalization;
+using System.Text;
 
 namespace AlephNote.Plugins.StandardNote
 {
@@ -28,13 +29,13 @@ namespace AlephNote.Plugins.StandardNote
 		private string _internaltitle = "";
 		public override string InternalTitle { get { return _internaltitle ?? string.Empty; } set { _internaltitle = value; OnPropertyChanged(); } }
 
-		private DateTimeOffset _creationDate;
+		private DateTimeOffset _creationDate; // The "real" CreationDate of the StandardNotes API
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
 
-		private DateTimeOffset _rawModificationDate = DateTimeOffset.Now;
+		private DateTimeOffset _rawModificationDate = DateTimeOffset.Now; // The "real" ModificationDate of the StandardNotes API - cannot be chaned by us mere mortals and is used for sync
 		public DateTimeOffset RawModificationDate { get { return _rawModificationDate; } set { _rawModificationDate = value; OnPropertyChanged(); } }
 
-		private DateTimeOffset? _clientUpdatedAt;
+		private DateTimeOffset? _clientUpdatedAt; // Additional ModificationDate used by some official StandardNotes clients (not 100% sure why)
 		public DateTimeOffset? ClientUpdatedAt { get { return _clientUpdatedAt; } set { _clientUpdatedAt = value; OnPropertyChanged(); } }
 
 		private DateTimeOffset? _noteModificationDate = null; // custom AlephNote field: real date when note was last changed
@@ -107,6 +108,33 @@ namespace AlephNote.Plugins.StandardNote
 
 			_tags.OnChanged += TagsChanged;
 		}
+
+		public override string DateTooltip
+        {
+			get
+			{
+				var sb = new StringBuilder();
+
+				if ($"{ModificationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}" == $"{RawModificationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}")
+				{
+					sb.AppendLine($"Modified: {ModificationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}");
+				}
+				else
+				{
+					// Our mdate and the "official" mdate differ
+					// Can happen on re-syncs where StandardNotes updates the modificationtime (even though nothing changed)
+					sb.AppendLine($"Modified: {ModificationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss} ({RawModificationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss})");
+				}
+				sb.AppendLine($"Created: {CreationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}");
+
+				if (TextModificationDate  != null) sb.AppendLine($"Modified (content): {TextModificationDate.Value.ToLocalTime():yyyy-MM-dd HH:mm:ss}");
+				if (TitleModificationDate != null) sb.AppendLine($"Modified (title): {TitleModificationDate.Value.ToLocalTime():yyyy-MM-dd HH:mm:ss}");
+				if (TagsModificationDate  != null) sb.AppendLine($"Modified (tags): {TagsModificationDate.Value.ToLocalTime():yyyy-MM-dd HH:mm:ss}");
+				if (PathModificationDate  != null) sb.AppendLine($"Modified (path): {PathModificationDate.Value.ToLocalTime():yyyy-MM-dd HH:mm:ss}");
+
+				return sb.ToString().TrimEnd();
+			}
+        }
 
 		public override XElement Serialize()
 		{
@@ -361,9 +389,10 @@ namespace AlephNote.Plugins.StandardNote
 			if (propSource == "Title") TitleModificationDate = dtnow;
 			if (propSource == "Text")  TextModificationDate  = dtnow;
 			if (propSource == "Tags")  TagsModificationDate  = dtnow;
-			if (propSource == "Path")  PathModificationDate = dtnow;
+			if (propSource == "Path")  PathModificationDate  = dtnow;
 
 			OnExplicitPropertyChanged(nameof(ModificationDate));
+			OnExplicitPropertyChanged(nameof(DateTooltip));
 
 			if (clearConflictFlag && IsConflictNote) IsConflictNote = false;
 		}

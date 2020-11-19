@@ -6,9 +6,9 @@
 		<AssemblyName>StandardNotePlugin</AssemblyName>
 		<PackageId>StandardNotePlugin</PackageId>
 
-		<AssemblyVersion>1.5.0.0</AssemblyVersion>
-		<FileVersion>1.5.0.0</FileVersion>
-		<Version>1.5.0.0</Version>
+		<AssemblyVersion>1.5.1.0</AssemblyVersion>
+		<FileVersion>1.5.1.0</FileVersion>
+		<Version>1.5.1.0</Version>
 
 		<OutDir>..\..\..\Bin\$(Configuration)\$(TargetFramework)\Plugins\</OutDir>
 

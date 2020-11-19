@@ -1,6 +1,5 @@
 ﻿using AlephNote.PluginInterface.Util;
 using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Xml.Linq;
 using AlephNote.PluginInterface.Datatypes;
@@ -39,7 +38,9 @@ namespace AlephNote.PluginInterface
 		bool IsConflictNote { get; set; }
 		DateTimeOffset CreationDate { get; set; }
 		DateTimeOffset ModificationDate { get; }
-		
+
+		string DateTooltip { get; }
+
 		bool IsUINote { get; set; } // "Real" Note that is linked to the UI - not a intermediate copy
 
 		INote Clone();

@@ -326,7 +326,7 @@
 						   Foreground="{ext:ThemeBinding 'window.changedate:foreground'}" 
 						   Visibility="{Binding SelectedNote.IsLocalSaved, Converter={conv:BoolToVisibility}, ConverterParameter=Collapsed;Visible}" />
 					<TextBlock Text="{Binding SelectedNote.ModificationDate, Converter={conv:SmartDateTimeToDisplay}}" 
-						   ToolTip="{Binding SelectedNote.ModificationDate, Converter={conv:DTOToDisplay}}" 
+						   ToolTip="{Binding SelectedNote.DateTooltip}" 
 						   Foreground="{ext:ThemeBinding 'window.changedate:foreground'}" />
 				</StackPanel>
 
