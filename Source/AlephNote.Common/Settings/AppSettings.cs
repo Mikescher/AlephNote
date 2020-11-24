@@ -23,12 +23,13 @@ namespace AlephNote.Common.Settings
 		public const int DEFAULT_INITIALDOWNLOAD_PARALLELISM_LEVEL     = 10;
 		public const int DEFAULT_INITIALDOWNLOAD_PARALLELISM_THRESHOLD = 100;
 
-		public static readonly string PATH_SETTINGS    = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.config");
-		public static readonly string PATH_SCROLLCACHE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.scrollcache.config");
-		public static readonly string PATH_GCCACHE     = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.gitcleancache.config");
-		public static readonly string PATH_LOCALDB     = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".notes");
-		public static readonly string APPNAME_REG      = "AlephNoteApp_{0:N}";
-		public static readonly string PATH_EXECUTABLE  = GetExePath();
+		public static readonly string PATH_SETTINGS      = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.config");
+		public static readonly string PATH_SCROLLCACHE   = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.scrollcache.config");
+		public static readonly string PATH_GCCACHE       = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.gitcleancache.config");
+		public static readonly string PATH_HIERACHYCACHE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.hierachycache.config");
+		public static readonly string PATH_LOCALDB       = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".notes");
+		public static readonly string APPNAME_REG        = "AlephNoteApp_{0:N}";
+		public static readonly string PATH_EXECUTABLE    = GetExePath();
 
 		public const string ENCRYPTION_KEY = @"jcgkZJvoykjpoGkDWHqiNoXoLZRJxpdb";
 
@@ -551,6 +552,10 @@ namespace AlephNote.Common.Settings
 		[AlephXMLField]
 		public string UIFontFamily { get { return _uiFontFamily; } set { _uiFontFamily = value; OnPropertyChanged(); } }
 		private string _uiFontFamily = string.Empty;
+
+		[AlephXMLField]
+		public bool SortHierachyFoldersByName { get { return _sortHierachyFoldersByName; } set { _sortHierachyFoldersByName = value; OnPropertyChanged(); } }
+		private bool _sortHierachyFoldersByName = false;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 

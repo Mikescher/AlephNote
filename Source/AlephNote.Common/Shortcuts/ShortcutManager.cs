@@ -49,6 +49,8 @@ namespace AlephNote.Common.Shortcuts
 			AddCommand(ASS.FolderList, "AddSubFolder",                     h => h.AddSubFolderCommand,                     "Add a new sub folder under the currently selected folder", ActionModifier.AccessControl);
 			AddCommand(ASS.FolderList, "AddFolder",                        h => h.AddFolderCommand,                        "Add a new folder",                                         ActionModifier.AccessControl);
 			AddCommand(ASS.FolderList, "RenameFolder",                     h => h.RenameFolderCommand,                     "Rename currently selected folder",                         ActionModifier.AccessControl);
+			AddCommand(ASS.FolderList, "MoveFolderUp",                     h => h.MoveFolderUpCommand,                     "Move the currently selected folder one row up",            ActionModifier.AccessControl);
+			AddCommand(ASS.FolderList, "MoveFolderDown",                   h => h.MoveFolderDownCommand,                   "Move the currently selected folder one row down",          ActionModifier.AccessControl);
 			AddCommand(ASS.Window,     "ChangeNotePath",                   h => h.ChangePathCommand,                       "Change the path of the currently selected note",           ActionModifier.AccessControl);
 			AddCommand(ASS.Window,     "DuplicateNote",                    h => h.DuplicateNoteCommand,                    "Create a new note as a copy of the current note",          ActionModifier.AccessControl);
 			AddCommand(ASS.Window,     "PinUnpinNote",                     h => h.PinUnpinNoteCommand,                     "Pin the note to the top (or un-pin the note)",             ActionModifier.AccessControl);

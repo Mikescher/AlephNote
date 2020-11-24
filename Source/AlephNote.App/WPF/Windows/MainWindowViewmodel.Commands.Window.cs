@@ -12,6 +12,7 @@ using MSHC.WPF.MVVM;
 using AlephNote.WPF.Util;
 using Microsoft.Win32;
 using MSHC.Lang.Collections;
+using AlephNote.Common.Hierachy;
 
 namespace AlephNote.WPF.Windows
 {
@@ -129,6 +130,17 @@ namespace AlephNote.WPF.Windows
 			try
 			{
 				Repository.SaveAll();
+
+				_scrollCache.SaveIfDirty();
+
+				Owner.NotesViewControl.SaveIfDirty();
+
+				if (_invSaveSettings.HasPendingRequests())
+				{
+					_invSaveSettings.CancelPendingRequests();
+					SaveSettings();
+				}
+
 				Repository.SyncNow();
 			}
 			catch (Exception e)

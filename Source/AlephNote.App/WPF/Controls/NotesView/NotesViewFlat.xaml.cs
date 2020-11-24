@@ -236,6 +236,12 @@ namespace AlephNote.WPF.Controls.NotesView
 			Debug.Assert(false);
 		}
 
+		public void MoveFolder(DirectoryPath path, int delta)
+		{
+			// no...
+			Debug.Assert(false);
+		}
+
 		public bool ExternalScrollEmulation(int eDelta)
 		{
 			var hit = VisualTreeHelper.HitTest(NotesList, Mouse.GetPosition(NotesList));
@@ -327,6 +333,16 @@ namespace AlephNote.WPF.Controls.NotesView
 		{
 			if (SelectedNotesList == null) SetValue(SelectedNotesListProperty, new ObservableCollection<INote>());
 			SelectedNotesList.SynchronizeCollectionSafe(((ListView)sender).SelectedItems.Cast<INote>().ToList());
+		}
+
+		public void ForceSaveNow()
+		{
+			// NOP
+		}
+
+		public void SaveIfDirty()
+		{
+			// NOP
 		}
 	}
 }

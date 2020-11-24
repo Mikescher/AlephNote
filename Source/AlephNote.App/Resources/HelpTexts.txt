@@ -400,3 +400,11 @@ Adds a button to the left side of the tagbar to add tags from the list of existi
 [AutoHideMainMenu]
 Hide the main menu by default. Press [Alt] to show/hide it.
 This setting should not be used in combination with other settings that use the [Alt] key (eg. scintilla rectangular selection)
+
+[SortHierachyFoldersByName]
+Sort the folders in the folders list by name.
+Remote providers return an unordered set of folders and it is in the responsibility of AlephNote to sort them.
+If this option is deactivated the folders are sorted by a custom order that you can manipulate in the folder context menu ([move up] and [move down]),
+but it also means that new folders are sorted to the bottom of the list by default.
+The special nodes [All Notes] and [Unsorted Notes] are always sorted to the top.
+

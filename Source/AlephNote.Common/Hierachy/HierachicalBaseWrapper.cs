@@ -5,13 +5,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows;
 using MSHC.Lang.Collections;
 using MSHC.WPF.MVVM;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedMemberInSuper.Global
-namespace AlephNote.WPF.Util
+namespace AlephNote.Common.Hierachy
 {
 	public interface IHierachicalWrapperConfig
 	{
@@ -34,6 +33,8 @@ namespace AlephNote.WPF.Util
 
 		private bool _isExpanded = true;
 		public bool IsExpanded { get { return _isExpanded; } set { _isExpanded = value; OnPropertyChanged(); } }
+
+		public int CustomOrder = 0;
 
 		public abstract string IconSourceKey { get; }
 		public abstract int Order { get; }
@@ -180,12 +181,24 @@ namespace AlephNote.WPF.Util
 			return i;
 		}
 
+		public HierachicalWrapper_Folder GetFolder(string txt)
+		{
+			foreach (var item in SubFolder) if (item.Header.ToLower() == txt.ToLower()) return item;
+			return null;
+		}
+
 		public HierachicalWrapper_Folder GetOrCreateRootFolder()
 		{
 			if (RootFolderViewWrapper != null) return RootFolderViewWrapper;
 			RootFolderViewWrapper = new HierachicalWrapper_Folder("[My Notes]", _config, DP_ROOTFOLDER, false, false);
 			SubFolder.Add(RootFolderViewWrapper);
 			return RootFolderViewWrapper;
+		}
+
+		public HierachicalWrapper_Folder GetRootFolder()
+		{
+			if (RootFolderViewWrapper != null) return RootFolderViewWrapper;
+			return null;
 		}
 
 		public void TriggerAllSubNotesChanged()
@@ -212,21 +225,37 @@ namespace AlephNote.WPF.Util
 				return a.Header.ToLower() == b.Header.ToLower();
 			}
 
-			HierachicalWrapper_Folder FCopy(HierachicalWrapper_Folder a)
+			HierachicalWrapper_Folder FCopy(HierachicalWrapper_Folder src)
 			{
-				if (a.GetType() == typeof(HierachicalWrapper_Folder) && a.IsSpecialNode_RootFolder)
-					return me.RootFolderViewWrapper = new HierachicalWrapper_Folder(a.Header, _config, a._path, a._isRoot, a.Permanent);
+				if (src.GetType() == typeof(HierachicalWrapper_Folder) && src.IsSpecialNode_RootFolder)
+					return me.RootFolderViewWrapper = new HierachicalWrapper_Folder(src.Header, _config, src._path, src._isRoot, src.Permanent)
+					{ 
+						IsExpanded = src.IsExpanded,
+						CustomOrder = src.CustomOrder,
+					};
 
-				if (a.GetType() == typeof(HierachicalWrapper_Folder))
-					return new HierachicalWrapper_Folder(a.Header, _config, a._path, a._isRoot, a.Permanent);
+				if (src.GetType() == typeof(HierachicalWrapper_Folder))
+					return new HierachicalWrapper_Folder(src.Header, _config, src._path, src._isRoot, src.Permanent)
+					{
+						IsExpanded = src.IsExpanded,
+						CustomOrder = src.CustomOrder,
+					};
 
-				if (a.GetType() == typeof(HierachicalWrapper_UnsortedNotes))
-					return me.EmptyPathViewWrapper = new HierachicalWrapper_UnsortedNotes(me, _config);
+				if (src.GetType() == typeof(HierachicalWrapper_UnsortedNotes))
+					return me.EmptyPathViewWrapper = new HierachicalWrapper_UnsortedNotes(me, _config)
+					{
+						IsExpanded = src.IsExpanded,
+						CustomOrder = src.CustomOrder,
+					};
 
-				if (a.GetType() == typeof(HierachicalWrapper_AllNotes))
-					return me.AllNotesViewWrapper  = new HierachicalWrapper_AllNotes(me, _config);
-				
-				throw new NotSupportedException(a.GetType().ToString());
+				if (src.GetType() == typeof(HierachicalWrapper_AllNotes))
+					return me.AllNotesViewWrapper  = new HierachicalWrapper_AllNotes(me, _config)
+					{
+						IsExpanded = src.IsExpanded,
+						CustomOrder = src.CustomOrder,
+					};
+
+				throw new NotSupportedException(src.GetType().ToString());
 			}
 
 			SubFolder.SynchronizeCollection(other.SubFolder, FCompare, FCopy);
@@ -257,6 +286,7 @@ namespace AlephNote.WPF.Util
 		}
 
 		public void Add(HierachicalWrapper_Folder elem) { SubFolder.Add(elem); }
+
 		public void Add(INote elem) { _directSubNotes.Add(elem); }
 
 		public void Clear()
@@ -318,10 +348,10 @@ namespace AlephNote.WPF.Util
 			return false;
 		}
 
-		public void Sort()
+		public void Sort(bool rec = true)
 		{
-			SubFolder.SynchronizeCollectionSafe(SubFolder.OrderBy(p => p.Order).ThenBy(p => p.Header.ToLower()));
-			foreach (var sf in SubFolder) sf.Sort();
+			SubFolder.SynchronizeCollectionSafe(SubFolder.OrderBy(p => p.Order).ThenBy(p => p.CustomOrder).ThenBy(p => p.Header.ToLower()));
+			if (rec) foreach (var sf in SubFolder) sf.Sort();
 		}
 
 		public void FinalizeCollection(bool rec)
@@ -338,5 +368,16 @@ namespace AlephNote.WPF.Util
 				foreach (var p in sf.ListPaths()) yield return p;
 			}
 		}
-	}
+
+		public HierachyConfigEntry ToHCEntry()
+        {
+			return new HierachyConfigEntry
+			(
+				Header,
+				IsExpanded,
+				_path,
+				SubFolder.OrderBy(p => p.Order).ThenBy(p => p.CustomOrder).ThenBy(p => p.Header.ToLower()).Select(p => p.ToHCEntry()).ToList()
+			);
+        }
+    }
 }

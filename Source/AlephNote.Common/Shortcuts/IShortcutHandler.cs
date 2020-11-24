@@ -71,6 +71,8 @@ namespace AlephNote.Common.Shortcuts
 		ICommand RotateNoteProviderCommand { get; }
 		ICommand InsertSnippetCommand { get; }
 		ICommand FocusTitleCommand { get; }
-		ICommand FocusTagsCommand  { get; }
+		ICommand FocusTagsCommand { get; }
+		ICommand MoveFolderUpCommand { get; }
+		ICommand MoveFolderDownCommand { get; }
 	}
 }

@@ -233,6 +233,7 @@
 									GridSplitterChanged="VertGridSplitterChanged"
 									ParentAnchor="{Binding ., ElementName=LayoutRoot}"
 									Settings="{Binding Settings}"
+									RepositoryAccountID="{Binding Repository.ConnectionUUID}"
 									AllNotes="{Binding Repository.Notes}" 
 									SelectedNote="{Binding SelectedNote}"
 									SelectedNotesList="{Binding AllSelectedNotes, Mode=OneWayToSource}"

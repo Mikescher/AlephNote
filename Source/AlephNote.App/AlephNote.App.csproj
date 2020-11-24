@@ -217,7 +217,6 @@
     <Compile Include="WPF\Extensions\ThemeBindingExtension.cs" />
     <Compile Include="Native\GlobalShortcutManager.cs" />
     <Compile Include="WPF\Util\HelpTextsLoader.cs" />
-    <Compile Include="WPF\Util\HierachicalBaseWrapper.cs" />
     <Compile Include="WPF\Util\IChangeListener.cs" />
     <Compile Include="WPF\ScintillaUtil\MarkdownHighlighter.cs" />
     <Compile Include="WPF\ScintillaUtil\DefaultHighlighter.cs" />

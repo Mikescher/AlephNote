@@ -29,6 +29,7 @@ using MSHC.Lang.Collections;
 using MSHC.Lang.Special;
 using MSHC.Util.Threads;
 using MSHC.WPF.MVVM;
+using AlephNote.Common.Hierachy;
 
 namespace AlephNote.WPF.Windows
 {
@@ -115,7 +116,7 @@ namespace AlephNote.WPF.Windows
 			Repository.Init();
 
 			_scrollCache = Settings.RememberScroll ? ScrollCache.LoadFromFile(AppSettings.PATH_SCROLLCACHE) : ScrollCache.CreateEmpty(AppSettings.PATH_SCROLLCACHE);
-
+			
 			Owner.TrayIcon.Visibility = (Settings.CloseToTray || Settings.MinimizeToTray) ? Visibility.Visible : Visibility.Collapsed;
 
 
@@ -137,13 +138,11 @@ namespace AlephNote.WPF.Windows
 				t.Start();
 			}
 
-#if !DEBUG
-			if (settings.SendAnonStatistics)
+			if (!App.DebugMode && settings.SendAnonStatistics)
 			{
 				var t = new Thread(UploadUsageStatsAsync) { Name = "STATISTICS_UPLOAD" };
 				t.Start();
 			}
-#endif
 
 			MenuIsVisible = !_settings.AutoHideMainMenu;
 
@@ -435,6 +434,7 @@ namespace AlephNote.WPF.Windows
 			}
 
 			if (Settings.RememberScroll) _scrollCache.ForceSaveNow();
+			Owner.NotesViewControl.ForceSaveNow();
 
 			if (Settings.RememberPositionAndSize || Settings.RememberWindowState)
 			{

@@ -7,16 +7,19 @@ using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.Dialogs;
 using MSHC.WPF.MVVM;
 using AlephNote.WPF.Util;
+using AlephNote.Common.Hierachy;
 
 namespace AlephNote.WPF.Windows
 {
 	public partial class MainWindowViewmodel
 	{
-		public ICommand DeleteFolderCommand => new RelayCommand(DeleteFolder);
-		public ICommand AddFolderCommand    => new RelayCommand(AddRootFolder);
-		public ICommand AddSubFolderCommand => new RelayCommand(AddSubFolder);
-		public ICommand RenameFolderCommand => new RelayCommand(RenameFolder);
-		
+		public ICommand DeleteFolderCommand   => new RelayCommand(DeleteFolder);
+		public ICommand AddFolderCommand      => new RelayCommand(AddRootFolder);
+		public ICommand AddSubFolderCommand   => new RelayCommand(AddSubFolder);
+		public ICommand RenameFolderCommand   => new RelayCommand(RenameFolder);
+		public ICommand MoveFolderUpCommand   => new RelayCommand(MoveFolderUp);
+		public ICommand MoveFolderDownCommand => new RelayCommand(MoveFolderDown);
+
 		private void DeleteFolder()
 		{
 			try
@@ -98,6 +101,26 @@ namespace AlephNote.WPF.Windows
 				App.Logger.Error("Main", "Could not rename folder", e);
 				ExceptionDialog.Show(Owner, "Could not rename folder", e, string.Empty);
 			}
+		}
+
+		private void MoveFolderUp()
+		{
+			if (Settings.SortHierachyFoldersByName) return;
+
+			var path = SelectedFolderPath;
+			if (HierachicalBaseWrapper.IsSpecial(path)) return;
+
+			Owner.NotesViewControl.MoveFolder(path, -1);
+		}
+
+		private void MoveFolderDown()
+		{
+			if (Settings.SortHierachyFoldersByName) return;
+
+			var path = SelectedFolderPath;
+			if (HierachicalBaseWrapper.IsSpecial(path)) return;
+
+			Owner.NotesViewControl.MoveFolder(path, +1);
 		}
 	}
 }

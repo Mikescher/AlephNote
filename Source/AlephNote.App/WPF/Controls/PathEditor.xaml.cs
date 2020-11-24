@@ -7,6 +7,7 @@ using AlephNote.WPF.Windows;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using AlephNote.Common.Hierachy;
 
 namespace AlephNote.WPF.Controls
 {

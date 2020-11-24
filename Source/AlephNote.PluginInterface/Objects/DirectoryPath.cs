@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace AlephNote.PluginInterface.Util
@@ -54,11 +55,25 @@ namespace AlephNote.PluginInterface.Util
 				}
 				else
 				{
-					b.Append("&#x"+Convert.ToString((int)chr, 16).ToUpper() + ";");
+					b.Append("&#x" + Convert.ToString((int)chr, 16).ToUpper() + ";");
 				}
 			}
 			return b.ToString();
 		}
+
+		private static string SerializeUnescape(string txt)
+		{
+			var rex = new Regex(@"&(?<chr>[0-9A-F]+);");
+
+			return rex.Replace(txt, (m) => "" + (char)Convert.ToInt32(m.Groups["chr"].Value, 16));
+		}
+
+		public static DirectoryPath StrDeserialize(string v)
+        {
+			if (v == "/") return ROOT;
+
+			return new DirectoryPath(v.Split('/').Select(SerializeUnescape));
+        }
 
 		public static DirectoryPath Deserialize(IEnumerable<XElement> childs)
 		{

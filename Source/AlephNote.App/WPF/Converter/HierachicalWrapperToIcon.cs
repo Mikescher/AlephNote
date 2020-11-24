@@ -3,6 +3,7 @@ using AlephNote.Common.Util;
 using AlephNote.WPF.Extensions;
 using MSHC.WPF.MVVM;
 using AlephNote.WPF.Util;
+using AlephNote.Common.Hierachy;
 
 namespace AlephNote.WPF.Converter
 {

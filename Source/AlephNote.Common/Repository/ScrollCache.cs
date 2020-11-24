@@ -27,6 +27,8 @@ namespace AlephNote.Common.Repository
 
 		public static ScrollCache LoadFromFile(string path)
 		{
+			LoggerSingleton.Inst.Trace("ScrollCache", $"Load '{path}'");
+
 			try
 			{
 				var sc = new ScrollCache(path);
@@ -54,6 +56,8 @@ namespace AlephNote.Common.Repository
 
 		public static ScrollCache CreateEmpty(string path)
 		{
+			LoggerSingleton.Inst.Trace("ScrollCache", $"Create Empty");
+
 			return new ScrollCache(path);
 		}
 
@@ -87,18 +91,24 @@ namespace AlephNote.Common.Repository
 
 		public void SetDirty()
 		{
+			LoggerSingleton.Inst.Trace("ScrollCache", $"Request Save (SetDirty)");
+
 			invSave.Request();
 		}
 
 		public void ForceSaveNow()
 		{
+			LoggerSingleton.Inst.Trace("ScrollCache", $"Force Save");
+
 			invSave.CancelPendingRequests();
 			SaveDirect();
 		}
 
 		private void SaveDirect()
 		{
-			lock(_masterLock)
+			LoggerSingleton.Inst.Trace("ScrollCache", $"Execute Save");
+
+			lock (_masterLock)
 			{
 				try
 				{
@@ -112,5 +122,10 @@ namespace AlephNote.Common.Repository
 				}
 			}
 		}
-	}
+
+        public void SaveIfDirty()
+        {
+			if (invSave.HasPendingRequests()) ForceSaveNow();
+        }
+    }
 }

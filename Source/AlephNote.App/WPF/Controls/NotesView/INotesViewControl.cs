@@ -16,6 +16,7 @@ namespace AlephNote.WPF.Controls.NotesView
 
 		void DeleteFolder(DirectoryPath folder);
 		void AddFolder(DirectoryPath folder);
+		void MoveFolder(DirectoryPath path, int delta);
 		bool ExternalScrollEmulation(int eDelta);
 
 		IEnumerable<INote> EnumerateVisibleNotes();
@@ -24,5 +25,8 @@ namespace AlephNote.WPF.Controls.NotesView
 
 		void FocusNotesList();
 		void FocusFolderList();
-	}
+
+        void ForceSaveNow();
+        void SaveIfDirty();
+    }
 }
