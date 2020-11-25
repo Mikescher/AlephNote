@@ -9,5 +9,6 @@ namespace AlephNote.PluginInterface.AppContext
 		Guid ClientID { get; }
 		int UsedURLMatchingMode { get; }
 		bool SortHierachyFoldersByName { get; }
+		bool RememberHierachyExpandedState { get; }
 	}
 }

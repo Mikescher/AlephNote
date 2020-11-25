@@ -774,6 +774,7 @@
 										<RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="1*" />
@@ -807,6 +808,9 @@
                                     <TextBlock     Grid.Row="6" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Sort directories by custom order" />
                                     <CheckBox      Grid.Row="6" Grid.Column="1" IsChecked="{Binding Settings.SortHierachyFoldersByCustom}" VerticalAlignment="Center"/>
                                     <ctrl:PHelpBtn Grid.Row="6" Grid.Column="2" HelpProperty="SortHierachyFoldersByName" Margin="2,0" VerticalAlignment="Center" />
+
+                                    <TextBlock     Grid.Row="7" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Remember collapsed directories" />
+                                    <CheckBox      Grid.Row="7" Grid.Column="1" IsChecked="{Binding Settings.RememberHierachyExpandedState}" VerticalAlignment="Center"/>
                                 </Grid>
 
 							</Grid>

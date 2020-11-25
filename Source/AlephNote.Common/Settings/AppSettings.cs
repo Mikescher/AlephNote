@@ -557,6 +557,10 @@ namespace AlephNote.Common.Settings
 		public bool SortHierachyFoldersByName { get { return _sortHierachyFoldersByName; } set { _sortHierachyFoldersByName = value; OnPropertyChanged(); } }
 		private bool _sortHierachyFoldersByName = false;
 
+		[AlephXMLField]
+		public bool RememberHierachyExpandedState { get { return _rememberHierachyExpandedState; } set { _rememberHierachyExpandedState = value; OnPropertyChanged(); } }
+		private bool _rememberHierachyExpandedState = true;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

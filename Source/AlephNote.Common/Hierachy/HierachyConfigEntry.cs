@@ -57,7 +57,7 @@ namespace AlephNote.Common.Hierachy
                 return;
             }
 
-            dst.IsExpanded = Expanded;
+            if (settings.RememberHierachyExpandedState) dst.IsExpanded = Expanded;
 
             var counter = 1;
             foreach (var subthis in Children)
