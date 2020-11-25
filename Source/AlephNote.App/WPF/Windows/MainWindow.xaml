@@ -198,7 +198,11 @@
 					</Border>
 				</Popup>
 
-				<ctrl:GlobalSearchTextBox Grid.Row="0" Grid.Column="1" Margin="0,2" SearchText="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" SearchDelayMode="{Binding Settings.GlobalSearchDelay}"  x:Name="GlobalSearchBar" />
+				<ctrl:GlobalSearchTextBox Grid.Row="0" Grid.Column="1" Margin="0,2" 
+                                          SearchText="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                                          SearchDelayMode="{Binding Settings.GlobalSearchDelay}" 
+                                          NoteCount="{Binding Repository.Notes.Count}"
+                                          x:Name="GlobalSearchBar" />
 
 				<Button Grid.Row="0" Grid.Column="2" Margin="2" Padding="0" FontWeight="Bold" 
 					Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 

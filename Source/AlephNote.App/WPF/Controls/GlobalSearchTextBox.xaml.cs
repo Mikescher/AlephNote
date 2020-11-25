@@ -50,17 +50,17 @@ namespace AlephNote.WPF.Controls
 			set { SetValue(SearchDelayModeProperty, value); }
 		}
 		
-		public static readonly DependencyProperty NodeCountProperty =
+		public static readonly DependencyProperty NoteCountProperty =
 			DependencyProperty.Register(
-				"NodeCount",
+				"NoteCount",
 				typeof(int),
 				typeof(GlobalSearchTextBox),
 				new FrameworkPropertyMetadata(0));
 
-		public int NodeCount
+		public int NoteCount
 		{
-			get { return (int)GetValue(NodeCountProperty); }
-			set { SetValue(NodeCountProperty, value); }
+			get { return (int)GetValue(NoteCountProperty); }
+			set { SetValue(NoteCountProperty, value); }
 		}
 		
 		private readonly DelayedCombiningInvoker _invSearch;
@@ -77,7 +77,7 @@ namespace AlephNote.WPF.Controls
 		{
 			if (SearchDelayMode == SearchDelayMode.Auto)
 			{
-				return NodeCount>200 ? SearchDelayMode.Delayed : SearchDelayMode.Direct;
+				return NoteCount > 200 ? SearchDelayMode.Delayed : SearchDelayMode.Direct;
 			}
 			return SearchDelayMode;
 		}
