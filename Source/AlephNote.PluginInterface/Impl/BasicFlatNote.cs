@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Linq;
 using AlephNote.PluginInterface.Util;
+using MSHC.Lang.Special;
 
 namespace AlephNote.PluginInterface.Impl
 {
 	public abstract class BasicFlatNote : BasicNoteImpl
 	{
-		public override string Title { get { return GetTitle(); } set { SetInternalTitle(GetPath(), value); OnPropertyChanged(); } }
+		public override string Title { get { return GetTitle(); } set { SetInternalTitle(value); OnPropertyChanged(); } }
 
-		public override DirectoryPath Path { get { return GetPath(); } set { SetInternalTitle(value, GetTitle()); OnPropertyChanged(); } }
+		public override DirectoryPath Path { get { return GetPath(); } set { SetInternalTitle(value); OnPropertyChanged(); } }
 		
 		protected readonly HierarchyEmulationConfig _hConfig;
 
 		private Tuple<string, DirectoryPath, string> _pathCache = null;
+
+		public readonly StackingBool PreventTitleChangeEventOnInternalTitleChanged = new StackingBool();
+		public readonly StackingBool PreventPathChangeEventOnInternalTitleChanged  = new StackingBool();
 
 		protected BasicFlatNote(HierarchyEmulationConfig hcfg) : base()
 		{
@@ -23,8 +27,8 @@ namespace AlephNote.PluginInterface.Impl
 		{
 			if (propName == "InternalTitle")
 			{
-				OnExplicitPropertyChanged("Title");
-				OnExplicitPropertyChanged("Path");
+				if (!PreventTitleChangeEventOnInternalTitleChanged.Get()) OnExplicitPropertyChanged("Title");
+				if (!PreventPathChangeEventOnInternalTitleChanged.Get()) OnExplicitPropertyChanged("Path");
 			}
 
 			base.OnInternalChanged(propName);
@@ -60,7 +64,23 @@ namespace AlephNote.PluginInterface.Impl
 				OnExplicitPropertyChanged("IsLocked");
 			}
 		}
-		
+
+		private void SetInternalTitle(string value)
+		{
+			using (PreventPathChangeEventOnInternalTitleChanged.Set())
+			{
+				SetInternalTitle(GetPath(), value);
+			}
+		}
+
+		private void SetInternalTitle(DirectoryPath value)
+		{
+			using (PreventTitleChangeEventOnInternalTitleChanged.Set())
+			{
+				SetInternalTitle(value, GetTitle());
+			}
+		}
+
 		private void SetInternalTitle(DirectoryPath p, string t)
 		{
 			if (!_hConfig.EmulateSubfolders)
