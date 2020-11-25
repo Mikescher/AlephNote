@@ -342,7 +342,7 @@ namespace AlephNote.Common.Settings
 
 		[AlephXMLField]
 		public bool SmoothScrollNotesView { get { return _smoothScrollNotesView; } set { _smoothScrollNotesView = value; OnPropertyChanged(); } }
-		private bool _smoothScrollNotesView = false;
+		private bool _smoothScrollNotesView = false; // true = performance problems with many notes
 
 		[AlephXMLField]
 		public bool AutofocusScintilla { get { return _autofocusScintilla; } set { _autofocusScintilla = value; OnPropertyChanged(); } }

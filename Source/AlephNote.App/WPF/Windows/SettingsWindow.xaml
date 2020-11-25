@@ -359,7 +359,7 @@
 										<RowDefinition Height="*" />
 									</Grid.RowDefinitions>
 
-									<CheckBox      Grid.Row="0" Grid.Column="0" Margin="2" Content="Smooth scrolling"  IsChecked="{Binding Settings.SmoothScrollNotesView}" />
+                                    <CheckBox      Grid.Row="0" Grid.Column="0" Margin="2" Content="Smooth scrolling"  IsChecked="{Binding Settings.SmoothScrollNotesView}" Checked="SmoothScrollNotesView_Checked" />
 									<ctrl:PHelpBtn Grid.Row="0" Grid.Column="1" HelpProperty="SmoothScrollNotesView" Margin="2,0" VerticalAlignment="Center" />
 								</Grid>
 

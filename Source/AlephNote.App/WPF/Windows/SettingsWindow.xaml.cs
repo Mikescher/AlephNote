@@ -132,5 +132,17 @@ namespace AlephNote.WPF.Windows
 			if (_hexLineNumberBackup != null) _viewmodel.Settings.SciHexLineNumber = _hexLineNumberBackup.Value;
 			_hexLineNumberBackup = null;
 		}
-	}
+
+        private void SmoothScrollNotesView_Checked(object sender, RoutedEventArgs e)
+        {
+			if (_ownerVM.Settings.SmoothScrollNotesView) return;
+
+			MessageBox.Show("If you have _many_ notes (100+) this can negatively impact performance.\n"+
+						    "Especially in combination with a folder hierarchy this setting can introduce a notable delay when switching the current folder.\n"+
+						    "Only enable this setting with a moderate amount of notes", 
+							"Warning!", 
+							MessageBoxButton.OK, 
+							MessageBoxImage.Warning);
+        }
+    }
 }
