@@ -18,7 +18,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand DebugCreateIpsumNotesCommand  => new RelayCommand<string>(s => { DebugCreateIpsumNotes(int.Parse(s)); });
 		public ICommand DebugSerializeSettingsCommand => new RelayCommand(DebugSerializeSettings);
 		public ICommand DebugSerializeNoteCommand     => new RelayCommand(DebugSerializeNote);
-		public ICommand DebugRefreshViewCommand       => new RelayCommand(()=> { Owner.NotesViewControl.RefreshView(); });
+		public ICommand DebugRefreshViewCommand       => new RelayCommand(()=> { Owner.NotesViewControl.RefreshView(true); });
 		public ICommand DebugShowThemeEditorCommand   => new RelayCommand(DebugShowThemeEditor);
 		public ICommand DebugShowDefaultThemeCommand  => new RelayCommand(DebugShowDefaultTheme);
 		public ICommand DebugDiscoThemeCommand        => new RelayCommand(DebugDiscoTheme);

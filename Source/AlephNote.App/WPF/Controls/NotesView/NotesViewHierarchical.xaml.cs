@@ -195,6 +195,8 @@ namespace AlephNote.WPF.Controls.NotesView
 		private bool _isNotesInitialized = false;
 		private readonly HierarchyConfigCache _hierarchyCache;
 
+		private readonly Dictionary<string, bool> _filterData = new Dictionary<string, bool>();
+
 		private DirectoryPath _initFolderPath = null;
 
 		public NotesViewHierarchical()
@@ -459,7 +461,7 @@ namespace AlephNote.WPF.Controls.NotesView
 			DisplayItems.CopyPermanentsTo(root);
 			_hierarchyCache.Get(Settings.ActiveAccount.ID).ApplyTo(Settings, root);
 			root.Sort();
-			root.FinalizeCollection(Settings?.DeepFolderView ?? false);
+			root.FinalizeCollection(Settings?.DeepFolderView ?? false); // Also refreshes/synchronizes SelectedFolder.AllSubNotes
 
 			DisplayItems.Sync(root, new HierarchicalWrapper_Folder[0]);
 
@@ -468,7 +470,9 @@ namespace AlephNote.WPF.Controls.NotesView
 
 		public bool SearchFilter(INote note)
 		{
-			return SearchStringParser.Parse(SearchText).IsMatch(note);
+			if (_filterData.TryGetValue(note.UniqueName, out var cachedResult)) return cachedResult;
+
+			return _filterData[note.UniqueName] = SearchStringParser.Parse(SearchText).IsMatch(note);
 		}
 
 		public IComparer<INote> DisplaySorter()
@@ -484,6 +488,7 @@ namespace AlephNote.WPF.Controls.NotesView
 					"OnSearchTextChanged",
 					Tuple.Create("SearchText", SearchText));
 
+				_filterData.Clear();
 				if (AllNotes != null) ResyncDisplayItems(AllNotes);
 				SelectedFolder?.TriggerAllSubNotesChanged();
 
@@ -511,8 +516,12 @@ namespace AlephNote.WPF.Controls.NotesView
 				return EnumerateVisibleNotes().FirstOrDefault() == n;
 		}
 
-		public void RefreshView()
+		public void RefreshView(bool refreshFilter)
 		{
+			App.Logger.Trace("NotesViewHierarchical", $"RefreshView({refreshFilter})");
+
+			if (refreshFilter) _filterData.Clear();
+
 			if (AllNotes != null) ResyncDisplayItems(AllNotes);
 		}
 

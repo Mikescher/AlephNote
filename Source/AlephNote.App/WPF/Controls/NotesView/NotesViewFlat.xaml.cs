@@ -150,6 +150,8 @@ namespace AlephNote.WPF.Controls.NotesView
 
 		public List<INote> NotesViewManual => AllNotes.Where(SearchFilter).OrderBy(x => x, Settings.GetNoteComparator()).ToList();
 
+		private readonly Dictionary<string, bool> _filterData = new Dictionary<string, bool>();
+
 		public NotesViewFlat()
 		{
 			App.Logger.Trace("NotesViewFlat", ".ctr()");
@@ -181,12 +183,14 @@ namespace AlephNote.WPF.Controls.NotesView
 
 		private void OnSearchTextChanged()
 		{
-			//
+			_filterData.Clear();
 		}
 
 		private bool SearchFilter(INote note)
 		{
-			return SearchStringParser.Parse(SearchText).IsMatch(note);
+			if (_filterData.TryGetValue(note.UniqueName, out var cachedResult)) return cachedResult;
+
+			return _filterData[note.UniqueName] = SearchStringParser.Parse(SearchText).IsMatch(note);
 		}
 
 		private void NotesList_Drop(object sender, DragEventArgs e)
@@ -213,9 +217,12 @@ namespace AlephNote.WPF.Controls.NotesView
 				return NotesList.Items.FirstOrDefault<INote>() == n;
 		}
 
-		public void RefreshView()
+		public void RefreshView(bool refreshFilter)
 		{
-			App.Logger.Trace("NotesViewFlat", "RefreshView()");
+			App.Logger.Trace("NotesViewFlat", $"RefreshView({refreshFilter})");
+
+			if (refreshFilter) _filterData.Clear();
+
 			NotesView.Refresh();
 		}
 

@@ -227,7 +227,7 @@ namespace AlephNote.WPF.Windows
 				// refresh Template
 				if (refreshNotesViewTemplate) Owner.UpdateNotesViewComponent(Settings);
 
-				if (refreshNotesCtrlView)  Owner.NotesViewControl.RefreshView();
+				if (refreshNotesCtrlView)  Owner.NotesViewControl.RefreshView(true);
 
 				Owner.SetupScintilla(Settings);
 				Owner.UpdateShortcuts(Settings);
@@ -331,19 +331,19 @@ namespace AlephNote.WPF.Windows
 
 			if (Settings.NoteSorting == SortingMode.ByModificationDate && !Owner.NotesViewControl.IsTopSortedNote(e.Note))
 			{
-				Owner.NotesViewControl.RefreshView();
+				Owner.NotesViewControl.RefreshView(false);
 			}
 			else if (Settings.NoteSorting == SortingMode.ByName && e.PropertyName == "Title")
 			{
-				Owner.NotesViewControl.RefreshView();
+				Owner.NotesViewControl.RefreshView(false);
 			}
 			else if (Settings.UseHierarchicalNoteStructure && e.PropertyName == "Path")
 			{
-				Owner.NotesViewControl.RefreshView();
+				Owner.NotesViewControl.RefreshView(false);
 			}
 			else if (Settings.SortByPinned && e.PropertyName == "IsPinned")
 			{
-				Owner.NotesViewControl.RefreshView();
+				Owner.NotesViewControl.RefreshView(false);
 			}
 		}
 
@@ -471,7 +471,7 @@ namespace AlephNote.WPF.Windows
 
 			using (PreventScintillaFocusLock.Set())
 			{
-				Owner.NotesViewControl.RefreshView();
+				Owner.NotesViewControl.RefreshView(true);
 				if (Owner.NotesViewControl.Contains(sn))
 					SelectedNote = sn;
 				else

@@ -10,7 +10,7 @@ namespace AlephNote.WPF.Controls.NotesView
 	{
 		INote GetTopNote();
 		bool IsTopSortedNote(INote n);
-		void RefreshView();
+		void RefreshView(bool refreshFilter);
 		bool Contains(INote n);
 		DirectoryPath GetNewNotesPath();
 
