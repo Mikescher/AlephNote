@@ -326,7 +326,7 @@ namespace AlephNote.Plugins.StandardNote
 				.ToList();
 			
 			syncresult.deleted_notes = result
-				.retrieved_items
+				.saved_items
 				.Where(p => p.content_type.ToLower() == "note")
 				.Where(p => p.deleted)
 				.Select(n => CreateNote(web, conn, n, authToken, cfg, dat))
