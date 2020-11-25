@@ -136,12 +136,12 @@ namespace AlephNote.PluginInterface.Impl
 				$"Note-Title:    {Title}\n" +
 				$"IsLocalSaved:  {localOld} --> {localNew}\n" +
 				$"IsRemoteSaved: {remoteOld} --> {remoteNew}\n\n" +
-				$"EventSource:\n{sourceinfo}");
+				$"EventSource:\n{sourceinfo ?? "<NULL>"}");
 		}
 
 		public void SetDirty(string sourceinfo)
 		{
-			if (IsUINote && IsLocalSaved || IsRemoteSaved) LogDirtyChanged(IsLocalSaved, false, IsRemoteSaved, false, "SetDirty", sourceinfo);
+			if (IsUINote && (IsLocalSaved || IsRemoteSaved)) LogDirtyChanged(IsLocalSaved, false, IsRemoteSaved, false, "SetDirty", sourceinfo);
 			IsLocalSaved = false;
 			IsRemoteSaved = false;
 		}

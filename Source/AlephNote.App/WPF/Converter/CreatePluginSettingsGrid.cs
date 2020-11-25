@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using AlephNote.PluginInterface.Objects;
 using Xceed.Wpf.Toolkit;
+using MSHC.WPF.MarkupExtensions;
 
 namespace AlephNote.WPF.Converter
 {
@@ -71,6 +72,13 @@ namespace AlephNote.WPF.Converter
 						ob.SelectedItem = xprop.CurrentValue;
 						ob.SelectionChanged += (s, a) => { cfg.SetProperty(xprop.ID, (string)ob.SelectedValue); listener?.OnChanged("pluginconfig", xprop.ID, ob.SelectedValue); };
 						AddComponent(prop, plugin, ref row, grid, ob);
+						break;
+
+					case DynamicSettingValue.SettingType.EnumComboBox:
+						var eb = new AutoEnumComboBox(xprop.ValueType);
+						eb.SelectedValue = xprop.Arguments[0];
+						eb.SelectionChanged += (s, a) => { cfg.SetEnumProperty(xprop.ID, eb.SelectedValue, xprop.ValueType); listener?.OnChanged("pluginconfig", xprop.ID, eb.SelectedValue); };
+						AddComponent(prop, plugin, ref row, grid, eb);
 						break;
 
 					case DynamicSettingValue.SettingType.Folder:

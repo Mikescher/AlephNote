@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System;
 using System.Linq;
 using System.Collections.Specialized;
+using MSHC.Util.Helper;
 
 namespace AlephNote.WPF.Windows
 {
@@ -55,15 +56,21 @@ namespace AlephNote.WPF.Windows
 
         private void OnLogEvent(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			foreach (var src in e.NewItems.Cast<LogEvent>().Select(p => p.Source).Distinct()) if (!Filters.Contains(src)) Filters.Add(src);
-			foreach (var src in e.NewItems.Cast<LogEvent>().Select(p => p.Source).Distinct()) if (!Filters.Contains(src)) Filters.Add(src);
+			if (e.NewItems != null) foreach (var src in e.NewItems.Cast<LogEvent>().Select(p => p.Source).Distinct()) if (!Filters.Contains(src)) Filters.Add(src);
 
 			DoAutoScroll();
 		}
 
 		private void DoAutoScroll()
 		{
-			if (Autoscroll) _parent.MainListView.ScrollIntoView(_parent.MainListView.Items[_parent.MainListView.Items.Count - 1]);
+			if (Autoscroll) 
+			{
+				// somwhow ScrollIntoView can sometimes result in ConcurrentModificationException, I think/hope that fixes it...
+				DispatcherHelper.InvokeDelayed(() =>
+				{
+					if (Autoscroll && _parent.MainListView.Items.Count > 0) _parent.MainListView.ScrollIntoView(_parent.MainListView.Items[_parent.MainListView.Items.Count - 1]);
+				}, 1);
+			}
 		}
 
         private bool Filter(LogEvent p)

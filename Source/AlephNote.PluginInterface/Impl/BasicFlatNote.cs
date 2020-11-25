@@ -18,6 +18,8 @@ namespace AlephNote.PluginInterface.Impl
 		public readonly StackingBool PreventTitleChangeEventOnInternalTitleChanged = new StackingBool();
 		public readonly StackingBool PreventPathChangeEventOnInternalTitleChanged  = new StackingBool();
 
+		public bool IsEmulateSubfolders => _hConfig.EmulateSubfolders;
+
 		protected BasicFlatNote(HierarchyEmulationConfig hcfg) : base()
 		{
 			_hConfig = hcfg;

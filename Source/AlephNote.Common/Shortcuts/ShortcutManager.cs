@@ -40,9 +40,9 @@ namespace AlephNote.Common.Shortcuts
 
 		static ShortcutManager()
 		{
-			AddCommand(ASS.Window,     "NewNote",                          h => h.CreateNewNoteCommand,                    "Create a new note",                                        ActionModifier.AccessControl); 
-			AddCommand(ASS.Window,     "NewNoteFromClipboard",             h => h.CreateNewNoteFromClipboardCommand,       "Create a new note from current clipboard content",         ActionModifier.AccessControl);
-			AddCommand(ASS.Window,     "NewNoteFromTextFile",              h => h.CreateNewNoteFromTextfileCommand,        "Create a new note from a file",                            ActionModifier.AccessControl);
+			AddCommand(ASS.Window,     "NewNote",                          h => h.CreateNewNoteCommand,                    "Create a new note",                                ActionModifier.AccessControl); 
+			AddCommand(ASS.Window,     "NewNoteFromClipboard",             h => h.CreateNewNoteFromClipboardCommand,       "Create a new note from current clipboard content", ActionModifier.AccessControl);
+			AddCommand(ASS.Window,     "NewNoteFromTextFile",              h => h.CreateNewNoteFromTextfileCommand,        "Create a new note from a file",                    ActionModifier.AccessControl);
 			AddCommand(ASS.Window,     "ExportNote",                       h => h.ExportCommand,                           "Export the current note");
 			AddCommand(ASS.Window,     "DeleteNote",                       h => h.DeleteCommand,                           "Delete the current note",                                  ActionModifier.AccessControl);
 			AddCommand(ASS.FolderList, "DeleteFolder",                     h => h.DeleteFolderCommand,                     "Delete the current selected folder",                       ActionModifier.AccessControl);
@@ -56,20 +56,21 @@ namespace AlephNote.Common.Shortcuts
 			AddCommand(ASS.Window,     "PinUnpinNote",                     h => h.PinUnpinNoteCommand,                     "Pin the note to the top (or un-pin the note)",             ActionModifier.AccessControl);
 			AddCommand(ASS.Window,     "LockUnlockNote",                   h => h.LockUnlockNoteCommand,                   "Lock/Unlock the note (prevent editing)",                   ActionModifier.AccessControl);
 
-			AddCommand(ASS.NoteEdit,   "InsertHyperlink",                  h => h.InsertHyperlinkCommand,                  "Insert a Hyperlink",                                       ActionModifier.AccessControl);
-			AddCommand(ASS.NoteEdit,   "InsertFilelink",                   h => h.InsertFilelinkCommand,                   "Insert a link to a local file",                            ActionModifier.AccessControl);
-			AddCommand(ASS.NoteEdit,   "InsertNotelink",                   h => h.InsertNotelinkCommand,                   "Insert a link to another note",                            ActionModifier.AccessControl);
-			AddCommand(ASS.NoteEdit,   "InsertMaillink",                   h => h.InsertMaillinkCommand,                   "Insert a clickable mail address",                          ActionModifier.AccessControl);
+			AddCommand(ASS.NoteEdit,   "InsertHyperlink",                  h => h.InsertHyperlinkCommand,                  "Insert a Hyperlink",              ActionModifier.AccessControl);
+			AddCommand(ASS.NoteEdit,   "InsertFilelink",                   h => h.InsertFilelinkCommand,                   "Insert a link to a local file",   ActionModifier.AccessControl);
+			AddCommand(ASS.NoteEdit,   "InsertNotelink",                   h => h.InsertNotelinkCommand,                   "Insert a link to another note",   ActionModifier.AccessControl);
+			AddCommand(ASS.NoteEdit,   "InsertMaillink",                   h => h.InsertMaillinkCommand,                   "Insert a clickable mail address", ActionModifier.AccessControl);
 
-			AddCommand(ASS.NoteEdit,   "MoveCurrentLineUp",                h => h.MoveCurrentLineUpCommand,                "Move the currently selected line one up",                  ActionModifier.AccessControl);
-			AddCommand(ASS.NoteEdit,   "MoveCurrentLineDown",              h => h.MoveCurrentLineDownCommand,              "Move the currently selected line one down",                ActionModifier.AccessControl);
-			AddCommand(ASS.NoteEdit,   "DuplicateCurrentLine",             h => h.DuplicateCurrentLineCommand,             "Duplicate the current line",                               ActionModifier.AccessControl);
-			AddCommand(ASS.NoteEdit,   "CopyCurrentLine",                  h => h.CopyCurrentLineCommand,                  "Copy the currently selected line to the clipboard",        ActionModifier.AccessControl);
-			AddCommand(ASS.NoteEdit,   "CutCurrentLine",                   h => h.CutCurrentLineCommand,                   "Cut the currently selected line to the clipboard",         ActionModifier.AccessControl);
+			AddCommand(ASS.NoteEdit,   "MoveCurrentLineUp",                h => h.MoveCurrentLineUpCommand,                "Move the currently selected line one up",           ActionModifier.AccessControl);
+			AddCommand(ASS.NoteEdit,   "MoveCurrentLineDown",              h => h.MoveCurrentLineDownCommand,              "Move the currently selected line one down",         ActionModifier.AccessControl);
+			AddCommand(ASS.NoteEdit,   "DuplicateCurrentLine",             h => h.DuplicateCurrentLineCommand,             "Duplicate the current line",                        ActionModifier.AccessControl);
+			AddCommand(ASS.NoteEdit,   "CopyCurrentLine",                  h => h.CopyCurrentLineCommand,                  "Copy the currently selected line to the clipboard", ActionModifier.AccessControl);
+			AddCommand(ASS.NoteEdit,   "CutCurrentLine",                   h => h.CutCurrentLineCommand,                   "Cut the currently selected line to the clipboard",  ActionModifier.AccessControl);
 
 			AddCommand(ASS.Window,     "SaveAndSync",                      h => h.SaveAndSyncCommand,                      "Save current note and synchronize");
 			AddCommand(ASS.Window,     "Resync",                           h => h.ResyncCommand,                           "Start synchronization with remote");
-			AddCommand(ASS.Window,     "FullResync",                       h => h.FullResyncCommand,                       "Delete local data and do a full resync",                   ActionModifier.AccessControl);
+			AddCommand(ASS.Window,     "FullResync",                       h => h.FullResyncCommand,                       "Delete local data and do a full resync",                         ActionModifier.AccessControl);
+			AddCommand(ASS.Window,     "FullUpload",                       h => h.FullUploadCommand,                       "Mark all local notes as dirty and force a sync for all of them", ActionModifier.AccessControl);
 
 			AddCommand(ASS.NoteEdit,   "DocumentSearch",                   h => h.DocumentSearchCommand,                   "Search in current note");
 			AddCommand(ASS.NoteEdit,   "DocumentSearchNext",               h => h.DocumentContinueSearchCommand,           "Find next occurence of search");

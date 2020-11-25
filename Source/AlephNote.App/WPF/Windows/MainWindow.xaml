@@ -74,8 +74,9 @@
 				<ctrl:AutoActionMenuItem Header="Settings" AlephAction="ShowSettings" Settings="{Binding Settings}"  />
 				<Separator />
 				<ctrl:AutoActionMenuItem Header="Synchronize now" AlephAction="Resync" Settings="{Binding Settings}"  />
-				<ctrl:AutoActionMenuItem Header="Delete local data and sync new" AlephAction="FullResync" Settings="{Binding Settings}" />
-				<Separator />
+                <ctrl:AutoActionMenuItem Header="Delete local data and sync new" AlephAction="FullResync" Settings="{Binding Settings}" />
+                <ctrl:AutoActionMenuItem Header="Force send all local notes to the server" AlephAction="FullUpload" Settings="{Binding Settings}" />
+                <Separator />
 				<MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Insert Snippet" UsesItemContainerTemplate="True" ItemsSource="{Binding Settings.Snippets, Converter={locconv:SnippetsToSnippetSource}}" >
 					<MenuItem.Resources>
 						<ItemContainerTemplate DataType="{x:Type locconv:SnippetElem}">

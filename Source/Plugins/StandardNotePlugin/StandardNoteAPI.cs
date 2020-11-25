@@ -601,7 +601,8 @@ namespace AlephNote.Plugins.StandardNote
 			SetAppDataBool(appdata, APPDATA_LOCKED,          note.IsLocked);
 			SetAppDataBool(appdata, APPDATA_ARCHIVED,        note.IsArchived);
 
-			if (note.ClientUpdatedAt       != null) SetAppDataDTO(appdata, APPDATA_CLIENTUPDATEDAT, note.ClientUpdatedAt.Value);
+			SetAppDataDTO(appdata, APPDATA_CLIENTUPDATEDAT, note.ModificationDate);
+
 			if (note.NoteCreationDate      != null) SetAppDataDTO(appdata, APPDATA_NOTECDATE,       note.NoteCreationDate.Value);
 			if (note.NoteModificationDate  != null) SetAppDataDTO(appdata, APPDATA_NOTEMDATE,       note.NoteModificationDate.Value);
 			if (note.TextModificationDate  != null) SetAppDataDTO(appdata, APPDATA_TEXTMDATE,       note.TextModificationDate.Value);

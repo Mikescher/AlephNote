@@ -75,6 +75,11 @@ namespace AlephNote.Plugins.SimpleNote
 			throw new NotImplementedException();
 		}
 
+		public void SetEnumProperty(int id, object value, Type valueType)
+		{
+			throw new NotSupportedException();
+		}
+
 		public bool IsEqual(IRemoteStorageConfiguration iother)
 		{
 			var other = iother as SimpleNoteConfig;

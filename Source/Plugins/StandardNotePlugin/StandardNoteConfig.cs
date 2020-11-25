@@ -1,31 +1,48 @@
 ﻿using AlephNote.PluginInterface;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using AlephNote.PluginInterface.Objects;
 using AlephNote.PluginInterface.Objects.AXML;
 using AlephNote.PluginInterface.Util;
-using MSHC.Encryption;
+using MSHC.Lang.Attributes;
 
 namespace AlephNote.Plugins.StandardNote
 {
+	public enum MDateSource
+	{
+		[EnumDescriptor("From Server")]
+		RawServer,
+
+		[EnumDescriptor("From Metadata")]
+		Metadata,
+
+		[EnumDescriptor("Intelligent")]
+		Intelligent,
+
+		[EnumDescriptor("Intelligent (content changes only)")]
+		IntelligentContent,
+	}
+
 	public class StandardNoteConfig : IRemoteStorageConfiguration
 	{
 		private const string ENCRYPTION_KEY = @"HuIpJachKuRyJuOmVelThufCeck"; // https://duckduckgo.com/?q=random+password+32+characters
 
 		public static readonly Regex REX_LINEBREAK = new Regex(@"\r?\n", RegexOptions.Compiled);
 
-		private const int ID_EMAIL    = 6251;
-		private const int ID_PASSWORD = 6252;
-		private const int ID_SERVER   = 6253;
-		private const int ID_REMTAGS  = 6255;
+		private const int ID_EMAIL         = 6251;
+		private const int ID_PASSWORD      = 6252;
+		private const int ID_SERVER        = 6253;
+		private const int ID_REMTAGS       = 6255;
+		private const int ID_HIERARCHYTAGS = 6256;
+		private const int ID_MDATESOURCE   = 6257;
 
-		public string Email       = string.Empty;
-		public string Password    = string.Empty;
-		public string Server      = @"https://sync.standardnotes.org";
-		public bool RemEmptyTags  = true;
+		public string      Email                  = string.Empty;
+		public string      Password               = string.Empty;
+		public string      Server                 = @"https://sync.standardnotes.org";
+		public bool        RemEmptyTags           = true;
+		public bool        CreateHierarchyTags    = false;
+		public MDateSource ModificationDateSource = MDateSource.Metadata;
 
 		public XElement Serialize(AXMLSerializationSettings opt)
 		{
@@ -35,6 +52,8 @@ namespace AlephNote.Plugins.StandardNote
 				new XElement("Password", Encrypt(Password, opt)),
 				new XElement("Server", Server),
 				new XElement("RemEmptyTags", RemEmptyTags),
+				new XElement("CreateHierarchyTags", CreateHierarchyTags),
+				new XElement("ModificationDateSource", ModificationDateSource),
 			};
 
 			var r = new XElement("config", data);
@@ -47,10 +66,12 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			if (input.Name.LocalName != "config") throw new Exception("LocalName != 'config'");
 
-			Email = XHelper.GetChildValue(input, "Email", Email);
-			Password = Decrypt(XHelper.GetChildValue(input, "Password", string.Empty), opt);
-			Server = XHelper.GetChildValue(input, "Server", Server);
-			RemEmptyTags = XHelper.GetChildValue(input, "RemEmptyTags", RemEmptyTags);
+			Email                  = XHelper.GetChildValue(input, "Email", Email);
+			Password               = Decrypt(XHelper.GetChildValue(input, "Password", string.Empty), opt);
+			Server                 = XHelper.GetChildValue(input, "Server", Server);
+			RemEmptyTags           = XHelper.GetChildValue(input, "RemEmptyTags", RemEmptyTags);
+			CreateHierarchyTags    = XHelper.GetChildValue(input, "CreateHierarchyTags", CreateHierarchyTags);
+			ModificationDateSource = XHelper.GetChildValue(input, "ModificationDateSource", ModificationDateSource);
 		}
 
 		public IEnumerable<DynamicSettingValue> ListProperties()
@@ -59,24 +80,32 @@ namespace AlephNote.Plugins.StandardNote
 			yield return DynamicSettingValue.CreatePassword(ID_PASSWORD, "Password", Password);
 			yield return DynamicSettingValue.CreateText(ID_SERVER, "Host", Server);
 			yield return DynamicSettingValue.CreateCheckbox(ID_REMTAGS, "Delete unused tags", RemEmptyTags, "RemEmptyTags");
+			yield return DynamicSettingValue.CreateEnumCombobox(ID_MDATESOURCE, "Source for modification date", ModificationDateSource, "ModificationDateSource");
+			yield return DynamicSettingValue.CreateCheckbox(ID_HIERARCHYTAGS, "Create folder tags", CreateHierarchyTags, "CreateHierarchyTags");
 			yield return DynamicSettingValue.CreateHyperlink("Create Standard Notes account", "https://standardnotes.org/");
 		}
 
 		public void SetProperty(int id, string value)
 		{
-			if (id == ID_EMAIL) Email = value;
-			if (id == ID_PASSWORD) Password = value;
-			if (id == ID_SERVER) Server = value;
+			if (id == ID_EMAIL)       Email                  = value;
+			if (id == ID_PASSWORD)    Password               = value;
+			if (id == ID_SERVER)      Server                 = value;
 		}
 
 		public void SetProperty(int id, bool value)
 		{
-			if (id == ID_REMTAGS) RemEmptyTags = value;
+			if (id == ID_REMTAGS)       RemEmptyTags        = value;
+			if (id == ID_HIERARCHYTAGS) CreateHierarchyTags = value;
 		}
 
 		public void SetProperty(int id, int value)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
+		}
+
+		public void SetEnumProperty(int id, object value, Type valueType)
+		{
+			if (id == ID_MDATESOURCE) ModificationDateSource = (MDateSource)value;
 		}
 
 		public bool IsEqual(IRemoteStorageConfiguration iother)
@@ -84,10 +113,12 @@ namespace AlephNote.Plugins.StandardNote
 			var other = iother as StandardNoteConfig;
 			if (other == null) return false;
 
-			if (this.Email         != other.Email)         return false;
-			if (this.Password      != other.Password)      return false;
-			if (this.Server        != other.Server)        return false;
-			if (this.RemEmptyTags  != other.RemEmptyTags)  return false;
+			if (this.Email                  != other.Email)                  return false;
+			if (this.Password               != other.Password)               return false;
+			if (this.Server                 != other.Server)                 return false;
+			if (this.RemEmptyTags           != other.RemEmptyTags)           return false;
+			if (this.CreateHierarchyTags    != other.CreateHierarchyTags)    return false;
+			if (this.ModificationDateSource != other.ModificationDateSource) return false;
 
 			return true;
 		}
@@ -96,10 +127,12 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			return new StandardNoteConfig
 			{
-				Email         = this.Email,
-				Password      = this.Password,
-				Server        = this.Server,
-				RemEmptyTags  = this.RemEmptyTags,
+				Email                  = this.Email,
+				Password               = this.Password,
+				Server                 = this.Server,
+				RemEmptyTags           = this.RemEmptyTags,
+				CreateHierarchyTags    = this.CreateHierarchyTags,
+				ModificationDateSource = this.ModificationDateSource,
 			};
 		}
 

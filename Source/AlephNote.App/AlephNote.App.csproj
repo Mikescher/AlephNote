@@ -181,6 +181,7 @@
     </Compile>
     <Compile Include="WPF\Extensions\ThemeSlaveBinding.cs" />
     <Compile Include="WPF\Util\AlephWPFContext.cs" />
+    <Compile Include="WPF\Util\AutoEnumComboBox.cs" />
     <Compile Include="WPF\Util\CaptureMouseWheelWhenUnfocusedBehavior.cs" />
     <Compile Include="WPF\Util\CheckableTag.cs" />
     <Compile Include="WPF\ScintillaUtil\ListHighlightValue.cs" />

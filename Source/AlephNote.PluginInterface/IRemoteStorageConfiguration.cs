@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
-using AlephNote.PluginInterface.Objects;
 using AlephNote.PluginInterface.Objects.AXML;
 
 namespace AlephNote.PluginInterface
@@ -14,6 +14,7 @@ namespace AlephNote.PluginInterface
 		void SetProperty(int id, string value);
 		void SetProperty(int id, bool value);
 		void SetProperty(int id, int value);
+		void SetEnumProperty(int id, object value, Type valueType);
 
 		bool IsEqual(IRemoteStorageConfiguration other);
 		IRemoteStorageConfiguration Clone();

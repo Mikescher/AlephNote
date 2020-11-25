@@ -27,6 +27,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand ShowLogCommand                 => new RelayCommand(ShowLog);
 		public ICommand SaveAndSyncCommand             => new RelayCommand(SaveAndSync);
 		public ICommand FullResyncCommand              => new RelayCommand(FullResync);
+		public ICommand FullUploadCommand              => new RelayCommand(FullUpload);
 		public ICommand ManuallyCheckForUpdatesCommand => new RelayCommand(ManuallyCheckForUpdates);
 		public ICommand HideCommand                    => new RelayCommand(HideMainWindow);
 		public ICommand FocusScintillaCommand          => new RelayCommand(() => Owner.FocusScintilla());
@@ -175,7 +176,24 @@ namespace AlephNote.WPF.Windows
 				ExceptionDialog.Show(Owner, "Full Synchronization failed", e, string.Empty);
 			}
 		}
-		
+
+		private void FullUpload()
+		{
+			try
+			{
+				if (MessageBox.Show(Owner, "Do you really want to trigger a full upload of your local data?\nNormally this should never be necessary, because modified notes will be automatically marked as dirty and uploaded", "Full upload?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+
+                foreach (var n in Repository.Notes) n.SetDirty(null);
+
+				Repository.SyncNow();
+			}
+			catch (Exception e)
+			{
+				App.Logger.Error("Main", "Full Upload failed", e);
+				ExceptionDialog.Show(Owner, "Full Upload failed", e, string.Empty);
+			}
+		}
+
 		private void ShowSettings()
 		{
 			var registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);

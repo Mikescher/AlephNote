@@ -29,6 +29,7 @@ namespace AlephNote.Common.Shortcuts
 		ICommand SaveAndSyncCommand { get; }
 		ICommand ResyncCommand { get; }
 		ICommand FullResyncCommand { get; }
+		ICommand FullUploadCommand { get; }
 		ICommand DocumentSearchCommand { get; }
 		ICommand DocumentContinueSearchCommand { get; }
 		ICommand CloseDocumentSearchCommand { get; }

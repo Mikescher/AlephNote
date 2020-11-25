@@ -64,13 +64,36 @@ namespace AlephNote.Plugins.StandardNote
 		{ 
 			get 
 			{
-				if (_noteModificationDate != null) return _noteModificationDate.Value;
-				if (_clientUpdatedAt != null) return _clientUpdatedAt.Value;
-				return _rawModificationDate; 
+				if (_config.ModificationDateSource == MDateSource.RawServer)
+                {
+					return _rawModificationDate;
+				}
+				else if (_config.ModificationDateSource == MDateSource.Metadata)
+				{
+					if (_clientUpdatedAt != null) return _clientUpdatedAt.Value;
+					return _rawModificationDate;
+				}
+				else if (_config.ModificationDateSource == MDateSource.Intelligent)
+				{
+					if (_noteModificationDate != null) return _noteModificationDate.Value;
+					if (_clientUpdatedAt != null) return _clientUpdatedAt.Value;
+					return _rawModificationDate;
+				}
+				else if (_config.ModificationDateSource == MDateSource.IntelligentContent)
+				{
+					if (_textModificationDate != null || _titleModificationDate != null) return Max(_textModificationDate, _titleModificationDate) ?? _rawModificationDate;
+					if (_noteModificationDate != null) return _noteModificationDate.Value;
+					if (_clientUpdatedAt != null) return _clientUpdatedAt.Value;
+					return _rawModificationDate;
+				}
+				else
+                {
+					throw new Exception("Invalid value for ModificationDateSource");
+                }
 			}
 		}
 
-		private string _contentVersion = "";
+        private string _contentVersion = "";
 		public string ContentVersion { get { return _contentVersion; } set { _contentVersion = value; OnPropertyChanged(); } }
 
 		private string _authHash = "";
@@ -220,6 +243,8 @@ namespace AlephNote.Plugins.StandardNote
 
 				var intref = XHelper.GetChildOrNull(input, "InternalReferences")?.Elements("Ref").Select(x => new StandardFileRef {UUID = XHelper.GetAttributeGuid(x, "UUID"), Type = XHelper.GetAttributeString(x, "Type")}).ToList();
 				if (intref != null) _internalRef.Synchronize(intref);
+
+				AddPathToInternalTags();
 			}
 		}
 
@@ -248,7 +273,9 @@ namespace AlephNote.Plugins.StandardNote
 				_internalTags.Sort((a,b) => Tags.IndexOf(a.Title) - Tags.IndexOf(b.Title));
 			}
 
-			if (!_internalTags.Select(t => t.Title).UnorderedCollectionEquals(Tags.Select(t=>t)))
+			AddPathToInternalTags();
+
+			if (!_internalTags.Where(p => !IsPathInternalTag(p)).Select(t => t.Title).UnorderedCollectionEquals(Tags.Select(t=>t)))
 			{
 				Debugger.Break();
 				AlephAppContext.Logger.Error(StandardNotePlugin.Name, "Assertion failed (Invalid Tag state)", 
@@ -286,10 +313,12 @@ namespace AlephNote.Plugins.StandardNote
 
 		private void ResyncTags()
 		{
+			AddPathToInternalTags();
+
 			try
 			{
 				_ignoreTagsChanged = true;
-				_tags.Synchronize(_internalTags.Select(it => it.Title));
+				_tags.Synchronize(_internalTags.Where(p => !IsPathInternalTag(p)).Select(it => it.Title));
 			}
 			finally
 			{
@@ -455,6 +484,28 @@ namespace AlephNote.Plugins.StandardNote
 
 		public bool ContainsTag(Guid tagID) => _internalTags.Any(t => t.UUID == tagID);
 
+		private void AddPathToInternalTags()
+		{
+			if (!_config.CreateHierarchyTags) return;
+			if (!_hConfig.EmulateSubfolders) return;
+
+			var tag = "[Notes]";
+			if (!_internalTags.Any(p => p.Title == tag)) _internalTags.Insert(0, new StandardFileTagRef(null, tag));
+			int i = 1;
+            foreach (var comp in Path.Enumerate())
+            {
+				tag += "."+comp;
+				if (!_internalTags.Any(p => p.Title == tag)) _internalTags.Insert(i, new StandardFileTagRef(null, tag));
+				i++;
+			}
+
+		}
+
+		private bool IsPathInternalTag(StandardFileTagRef tref)
+        {
+			return tref != null && tref.Title.StartsWith("[Notes].") || tref.Title == "[Notes]";
+		}
+
 		public XElement CreateNullableDateTimeXElem(string name, DateTimeOffset? value) //TODO mig to CSharpUtils
         {
 			if (value != null) 
@@ -472,5 +523,12 @@ namespace AlephNote.Plugins.StandardNote
 
 			return DateTimeOffset.Parse(child.Value, CultureInfo.InvariantCulture);
 		}
-    }
+
+		private DateTimeOffset? Max(DateTimeOffset? da, DateTimeOffset? db) //TODO mig to CSharpUtils
+		{
+			if (da == null || db == null) return da ?? db;
+
+			return (da.Value > db.Value) ? da.Value : da.Value;
+		}
+	}
 }
