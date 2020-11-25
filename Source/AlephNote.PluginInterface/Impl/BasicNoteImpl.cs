@@ -94,6 +94,7 @@ namespace AlephNote.PluginInterface.Impl
 				return $"Modified: {ModificationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}\nCreated: {CreationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}";
 			}
 		}
+
 		private void Changed(object sender, PropertyChangedEventArgs e)
 		{
 			if (_dirtySupressor > 0) return;

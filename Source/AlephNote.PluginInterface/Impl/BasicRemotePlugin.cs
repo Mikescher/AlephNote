@@ -1,4 +1,5 @@
 ﻿using AlephNote.PluginInterface.Util;
+using MSHC.WPF.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -71,6 +72,22 @@ namespace AlephNote.PluginInterface.Impl
 		public abstract bool SupportsDownloadMultithreading    { get; }
 		public abstract bool SupportsNewDownloadMultithreading { get; }
 		public abstract bool SupportsUploadMultithreading      { get; }
+
+		public virtual List<UICommand> DebugCommands
+		{
+			get
+			{
+				return new List<UICommand>
+				{
+					new UICommand("Set all Dirty",       new RelayCommand<INoteRepository>((repo) => { foreach (var n in repo.EnumerateNotes()) n.SetDirty(null); })),
+					new UICommand("Set all LocalDirty",  new RelayCommand<INoteRepository>((repo) => { foreach (var n in repo.EnumerateNotes()) n.SetLocalDirty(null); })),
+					new UICommand("Set all RemoteDirty", new RelayCommand<INoteRepository>((repo) => { foreach (var n in repo.EnumerateNotes()) n.SetRemoteDirty(null); })),
+
+					new UICommand("Reset all LocalDirty",  new RelayCommand<INoteRepository>((repo) => { foreach (var n in repo.EnumerateNotes()) n.ResetLocalDirty(null); })),
+					new UICommand("Reset all RemoteDirty", new RelayCommand<INoteRepository>((repo) => { foreach (var n in repo.EnumerateNotes()) n.ResetRemoteDirty(null); })),
+				};
+			}
+		}
 
 		protected virtual IEnumerable<Tuple<string, string>> CreateHelpTexts()
 		{

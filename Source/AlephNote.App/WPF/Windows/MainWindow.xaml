@@ -146,8 +146,18 @@
 				<MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Serialize Settings" Command="{Binding DebugSerializeSettingsCommand}" />
 				<MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Serialize CurrentNote" Command="{Binding DebugSerializeNoteCommand}" />
 				<Separator/>
-				<MenuItem Style="{StaticResource SubMenuItemStyle}" Header="NotesViewControl.RefreshView()" Command="{Binding DebugRefreshViewCommand}" />
-			</MenuItem>
+                <MenuItem Style="{StaticResource SubMenuItemStyle}" Header="NotesViewControl.RefreshView()" Command="{Binding DebugRefreshViewCommand}" />
+                <Separator/>
+                <MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Remote" ItemsSource="{Binding Repository.RemoteAccountDebugCommands}">
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource SubMenuItemStyle}">
+                            <Setter Property="Command" Value="{Binding Command}" />
+                            <Setter Property="CommandParameter" Value="{Binding DataContext.Repository, ElementName=LayoutRoot}" />
+                            <Setter Property="Header" Value="{Binding Header}" />
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
+            </MenuItem>
 		</Menu>
 
 		<ctrl:MainCenterGrid Grid.Row="1" OverviewWidth="{Binding OverviewListWidth, Mode=TwoWay}" VerticalMode="{Binding Settings.VerticalMainLayout}">

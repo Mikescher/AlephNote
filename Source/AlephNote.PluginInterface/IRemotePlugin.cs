@@ -24,6 +24,8 @@ namespace AlephNote.PluginInterface
 		bool SupportsNewDownloadMultithreading { get; }
 		bool SupportsUploadMultithreading      { get; }
 
+		List<UICommand> DebugCommands { get; }
+
 		IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
 		IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierarchyEmulationConfig hierarchicalConfig);
 		IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData();

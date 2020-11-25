@@ -1,8 +1,10 @@
 ﻿using AlephNote.PluginInterface;
 using AlephNote.PluginInterface.Impl;
 using AlephNote.PluginInterface.Util;
+using MSHC.WPF.MVVM;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 
@@ -30,7 +32,31 @@ namespace AlephNote.Plugins.StandardNote
 			//
 		}
 
-		public override void Init(AlephLogger logger)
+        public override List<UICommand> DebugCommands => base.DebugCommands.Concat(new List<UICommand>
+                {
+                    new UICommand("Set custom creation dates (if unset) to server creation date", new RelayCommand<INoteRepository>((repo) =>
+                    {
+                        foreach (var n in repo.EnumerateNotes().Cast<StandardFileNote>())
+                        {
+                            if (n.NoteCreationDate == null) n.NoteCreationDate = n.ClientUpdatedAt ?? n.RawModificationDate;
+                        }
+                    })),
+
+                    new UICommand("Set custom modification dates (if unset) to server modification date", new RelayCommand<INoteRepository>((repo) =>
+                    {
+                        foreach (var n in repo.EnumerateNotes().Cast<StandardFileNote>())
+                        {
+                            if (n.NoteModificationDate  == null) n.NoteModificationDate  = n.ClientUpdatedAt ?? n.RawModificationDate;
+                            if (n.TextModificationDate  == null) n.TextModificationDate  = n.ClientUpdatedAt ?? n.RawModificationDate;
+                            if (n.TitleModificationDate == null) n.TitleModificationDate = n.ClientUpdatedAt ?? n.RawModificationDate;
+                            if (n.TagsModificationDate  == null) n.TagsModificationDate  = n.ClientUpdatedAt ?? n.RawModificationDate;
+                            if (n.PathModificationDate  == null) n.PathModificationDate  = n.ClientUpdatedAt ?? n.RawModificationDate;
+                        }
+                    })),
+                }).ToList();
+
+
+        public override void Init(AlephLogger logger)
 		{
 			_logger = logger;
 		}

@@ -17,7 +17,7 @@ using MSHC.WPF.MVVM;
 
 namespace AlephNote.Common.Repository
 {
-	public class NoteRepository : ObservableObject, ISynchronizationFeedback, IRepository
+	public class NoteRepository : ObservableObject, ISynchronizationFeedback, IRepository, INoteRepository
 	{
 		private readonly AlephLogger _logger = LoggerSingleton.Inst;
 
@@ -56,12 +56,13 @@ namespace AlephNote.Common.Repository
 		public string ProviderID { get { return _account.Plugin.GetUniqueID().ToString("B"); } }
 		public Guid ProviderUID { get { return _account.Plugin.GetUniqueID(); } }
 
-		public bool SupportsPinning                   => _account.Plugin.SupportsPinning;
-		public bool SupportsLocking                   => _account.Plugin.SupportsLocking;
-		public bool SupportsTags                      => _account.Plugin.SupportsTags;
-		public bool SupportsDownloadMultithreading    => _account.Plugin.SupportsDownloadMultithreading;
-		public bool SupportsNewDownloadMultithreading => _account.Plugin.SupportsNewDownloadMultithreading;
-		public bool SupportsUploadMultithreading      => _account.Plugin.SupportsUploadMultithreading;
+		public bool SupportsPinning                       => _account.Plugin.SupportsPinning;
+		public bool SupportsLocking                       => _account.Plugin.SupportsLocking;
+		public bool SupportsTags                          => _account.Plugin.SupportsTags;
+		public bool SupportsDownloadMultithreading        => _account.Plugin.SupportsDownloadMultithreading;
+		public bool SupportsNewDownloadMultithreading     => _account.Plugin.SupportsNewDownloadMultithreading;
+		public bool SupportsUploadMultithreading          => _account.Plugin.SupportsUploadMultithreading;
+		public List<UICommand> RemoteAccountDebugCommands => _account.Plugin.DebugCommands;
 
 		public NoteRepository(string path, ISynchronizationFeedback fb, AppSettings cfg, RemoteStorageAccount acc, IAlephDispatcher disp)
 		{
@@ -154,6 +155,8 @@ namespace AlephNote.Common.Repository
 
 			_logger.Trace("Repository", "Loaded " + Notes.Count + " notes from local repository");
 		}
+
+		public IEnumerable<INote> EnumerateNotes() => Notes;
 
 		private INote LoadNoteFromFile(string noteFile)
 		{
