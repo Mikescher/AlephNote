@@ -18,9 +18,9 @@ namespace AlephNote.WPF.Windows
 		{
 			InitializeComponent();
 
-			DataContext = VM = new LogWindowViewmodel();
+			DataContext = VM = new LogWindowViewmodel(this);
 			
-			VM.ShowDebug=AlephAppContext.DebugMode;
+			VM.ShowDebug = AlephAppContext.DebugMode;
 		}
 
 		private void ButtonExport_Click(object sender, RoutedEventArgs e)

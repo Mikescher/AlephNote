@@ -4,6 +4,10 @@ using System.Windows.Data;
 using System.Windows.Input;
 using AlephNote.PluginInterface.AppContext;
 using MSHC.WPF.MVVM;
+using System.Collections.ObjectModel;
+using System;
+using System.Linq;
+using System.Collections.Specialized;
 
 namespace AlephNote.WPF.Windows
 {
@@ -11,39 +15,63 @@ namespace AlephNote.WPF.Windows
 	{
 		public ICommand ClearCommand { get { return new RelayCommand(App.Logger.Clear); } }
 
-		private ListCollectionView _logView;
-		public ListCollectionView LogView
-		{
-			get
-			{
-				if (_logView != null) return _logView;
+        public ListCollectionView LogView { get; }
 
-				var events = App.Logger?.GetEventSource();
-
-				if (events == null) return (ListCollectionView)CollectionViewSource.GetDefaultView(new List<LogEvent>());
-
-				var source = (ListCollectionView)CollectionViewSource.GetDefaultView(events);
-				source.Filter = p => Filter((LogEvent)p);
-
-				return _logView = source;
-			}
-		}
-
-		private LogEvent _selectedLog = null;
+        private LogEvent _selectedLog = null;
 		public LogEvent SelectedLog { get { return _selectedLog; } set { _selectedLog = value; OnPropertyChanged(); } }
 
 		public bool IsDebugMode => AlephAppContext.DebugMode;
 		
 		private bool _showTrace = false;
-		public bool ShowTrace { get { return _showTrace; } set { _showTrace = value; OnPropertyChanged(); LogView.Refresh(); } }
+		public bool ShowTrace { get { return _showTrace; } set { _showTrace = value; OnPropertyChanged(); LogView.Refresh(); DoAutoScroll(); } }
 
 		private bool _showDebug = false;
-		public bool ShowDebug { get { return _showDebug; } set { _showDebug = value; OnPropertyChanged(); LogView.Refresh(); if (ShowTrace) ShowTrace=false; } }
+		public bool ShowDebug { get { return _showDebug; } set { _showDebug = value; OnPropertyChanged(); LogView.Refresh(); if (ShowTrace) ShowTrace=false; DoAutoScroll(); } }
 
-		private bool Filter(LogEvent p)
+		private bool _autoscroll = false;
+		public bool Autoscroll { get { return _autoscroll; } set { _autoscroll = value; OnPropertyChanged(); DoAutoScroll(); } }
+
+		private int _selectedFilterIndex = 0;
+		public int SelectedFilterIndex { get { return _selectedFilterIndex; } set { _selectedFilterIndex = value; OnPropertyChanged(); LogView.Refresh(); DoAutoScroll(); } }
+
+		public ObservableCollection<string> Filters { get; } = new ObservableCollection<string>();
+
+		private LogWindow _parent;
+
+		public LogWindowViewmodel(LogWindow lw)
+		{
+			_parent = lw;
+
+			var events = App.Logger?.GetEventSource();
+            events.CollectionChanged += OnLogEvent;
+
+			var source = (ListCollectionView)CollectionViewSource.GetDefaultView(events);
+			source.Filter = p => Filter((LogEvent)p);
+			LogView = source;
+
+			Filters.Add("[All]");
+            foreach (var src in events.Select(p => p.Source).Distinct()) if (!Filters.Contains(src)) Filters.Add(src);
+		}
+
+        private void OnLogEvent(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			foreach (var src in e.NewItems.Cast<LogEvent>().Select(p => p.Source).Distinct()) if (!Filters.Contains(src)) Filters.Add(src);
+			foreach (var src in e.NewItems.Cast<LogEvent>().Select(p => p.Source).Distinct()) if (!Filters.Contains(src)) Filters.Add(src);
+
+			DoAutoScroll();
+		}
+
+		private void DoAutoScroll()
+		{
+			if (Autoscroll) _parent.MainListView.ScrollIntoView(_parent.MainListView.Items[_parent.MainListView.Items.Count - 1]);
+		}
+
+        private bool Filter(LogEvent p)
 		{
 			if (!ShowTrace && p.Type == LogEventType.Trace) return false;
 			if (!ShowDebug && p.Type == LogEventType.Debug) return false;
+
+			if (SelectedFilterIndex != 0 && p.Source != Filters[SelectedFilterIndex]) return false;
 
 			return true;
 		}
