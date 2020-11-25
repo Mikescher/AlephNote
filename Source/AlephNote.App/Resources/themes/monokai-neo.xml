@@ -32,8 +32,8 @@ License:    Copyright (c) 2017 Skyler Lee
 <theme>
 	<meta>
 		<name>Monokai Neo</name>
-		<version>1.3</version>
-		<compatibility>*</compatibility>
+		<version>1.4</version>
+		<compatibility>1.6.35+</compatibility>
 		<author>Mike Schwörer</author>
 		<type>theme</type>
 	</meta>
@@ -152,8 +152,8 @@ License:    Copyright (c) 2017 Skyler Lee
 		<property name="window.notesview.flat.datetime2:foreground"        value="@MK_Brown" />
 		<property name="window.notesview.flat.preview:foreground"          value="@MK_LightGray" />
 		<property name="window.notesview.flat.separator"                   value="@MK_LightGray" />
-		<property name="window.notesview.hierachical.tree.selected:background" value="@MK_Gray" />
-		<property name="window.notesview.hierachical.tree.selected:foreground" value="@MK_Green" />
+		<property name="window.notesview.hierarchical.tree.selected:background" value="@MK_Gray" />
+		<property name="window.notesview.hierarchical.tree.selected:foreground" value="@MK_Green" />
 
 		<property name="window.statusbar:background"                       value="@MK_DarkGray" />
 		<property name="window.statusbar:foreground"                       value="@MK_VeryLightGray" />

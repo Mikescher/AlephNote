@@ -10,9 +10,9 @@ using MSHC.WPF.MVVM;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedMemberInSuper.Global
-namespace AlephNote.Common.Hierachy
+namespace AlephNote.Common.Hierarchy
 {
-	public interface IHierachicalWrapperConfig
+	public interface IHierarchicalWrapperConfig
 	{
 		bool SearchFilter(INote note);
 		IComparer<INote> DisplaySorter();
@@ -20,7 +20,7 @@ namespace AlephNote.Common.Hierachy
 		bool ShowEmptyPathNode { get; }
 	}
 
-	public abstract class HierachicalBaseWrapper : ObservableObject
+	public abstract class HierarchicalBaseWrapper : ObservableObject
 	{
 		public static readonly DirectoryPath DP_ALLNOTES      = DirectoryPath.Create(".~AlephNote.Wrapper.AllNotes~");
 		public static readonly DirectoryPath DP_UNSORTEDNOTES = DirectoryPath.Create(".~AlephNote.Wrapper.UnsortedNotes~");
@@ -43,7 +43,7 @@ namespace AlephNote.Common.Hierachy
 		public abstract bool IsSpecialNode_UnsortedNotes { get; }
 		public abstract bool IsSpecialNode_RootFolder { get; }
 
-		public abstract void Sync(HierachicalBaseWrapper aother, HierachicalWrapper_Folder[] parents);
+		public abstract void Sync(HierarchicalBaseWrapper aother, HierarchicalWrapper_Folder[] parents);
 		
 		public static bool IsSpecial(DirectoryPath p)
 		{
@@ -56,9 +56,9 @@ namespace AlephNote.Common.Hierachy
 		}
 	}
 
-	public class HierachicalWrapper_AllNotes : HierachicalWrapper_Folder
+	public class HierarchicalWrapper_AllNotes : HierarchicalWrapper_Folder
 	{
-		private readonly HierachicalWrapper_Folder _baseWrapper;
+		private readonly HierarchicalWrapper_Folder _baseWrapper;
 
 		public override string IconSourceKey => "folder_all.png";
 		public override int Order => -2;
@@ -67,9 +67,9 @@ namespace AlephNote.Common.Hierachy
 		public override bool IsSpecialNode_UnsortedNotes => false;
 		public override bool IsSpecialNode_RootFolder => false;
 
-		public override void Sync(HierachicalBaseWrapper aother, HierachicalWrapper_Folder[] parents)
+		public override void Sync(HierarchicalBaseWrapper aother, HierarchicalWrapper_Folder[] parents)
 		{
-			var other = (HierachicalWrapper_AllNotes)aother;
+			var other = (HierarchicalWrapper_AllNotes)aother;
 
 			AllSubNotes.SynchronizeCollectionSafe(other.AllSubNotes);
 		}
@@ -78,7 +78,7 @@ namespace AlephNote.Common.Hierachy
 
 		public override DirectoryPath GetNewNotePath() => DirectoryPath.Root();
 
-		public HierachicalWrapper_AllNotes(HierachicalWrapper_Folder baseWrapper, IHierachicalWrapperConfig cfg) 
+		public HierarchicalWrapper_AllNotes(HierarchicalWrapper_Folder baseWrapper, IHierarchicalWrapperConfig cfg) 
 			: base("All notes", cfg, DP_ALLNOTES, false, false)
 		{
 			_baseWrapper = baseWrapper;
@@ -86,9 +86,9 @@ namespace AlephNote.Common.Hierachy
 		}
 	}
 
-	public class HierachicalWrapper_UnsortedNotes : HierachicalWrapper_Folder
+	public class HierarchicalWrapper_UnsortedNotes : HierarchicalWrapper_Folder
 	{
-		private readonly HierachicalWrapper_Folder _baseWrapper;
+		private readonly HierarchicalWrapper_Folder _baseWrapper;
 
 		public override string IconSourceKey => "folder_none.png";
 		public override int Order => -1;
@@ -97,9 +97,9 @@ namespace AlephNote.Common.Hierachy
 		public override bool IsSpecialNode_UnsortedNotes => true;
 		public override bool IsSpecialNode_RootFolder => false;
 
-		public override void Sync(HierachicalBaseWrapper aother, HierachicalWrapper_Folder[] parents)
+		public override void Sync(HierarchicalBaseWrapper aother, HierarchicalWrapper_Folder[] parents)
 		{
-			var other = (HierachicalWrapper_UnsortedNotes)aother;
+			var other = (HierarchicalWrapper_UnsortedNotes)aother;
 
 			AllSubNotes.SynchronizeCollectionSafe(other.AllSubNotes);
 		}
@@ -108,17 +108,17 @@ namespace AlephNote.Common.Hierachy
 
 		public override DirectoryPath GetNewNotePath() => DirectoryPath.Root();
 
-		public HierachicalWrapper_UnsortedNotes(HierachicalWrapper_Folder baseWrapper, IHierachicalWrapperConfig cfg) 
+		public HierarchicalWrapper_UnsortedNotes(HierarchicalWrapper_Folder baseWrapper, IHierarchicalWrapperConfig cfg) 
 			: base("Unsorted notes", cfg, DP_UNSORTEDNOTES, false, false)
 		{
 			_baseWrapper = baseWrapper;
 		}
 	}
 
-	public class HierachicalWrapper_Folder : HierachicalBaseWrapper
+	public class HierarchicalWrapper_Folder : HierarchicalBaseWrapper
 	{
 		private readonly bool _isRoot;
-		private readonly IHierachicalWrapperConfig _config;
+		private readonly IHierarchicalWrapperConfig _config;
 		private string _header;
 		public override string Header => _header;
 
@@ -131,12 +131,12 @@ namespace AlephNote.Common.Hierachy
 		public override bool IsSpecialNode_UnsortedNotes => false;
 		public override bool IsSpecialNode_RootFolder    => _path.IsRoot();
 
-		public HierachicalWrapper_AllNotes      AllNotesViewWrapper;   // [All Notes]
-		public HierachicalWrapper_UnsortedNotes EmptyPathViewWrapper;  // [Unsorted Notes]
-		public HierachicalWrapper_Folder        RootFolderViewWrapper; // [My Notes]
+		public HierarchicalWrapper_AllNotes      AllNotesViewWrapper;   // [All Notes]
+		public HierarchicalWrapper_UnsortedNotes EmptyPathViewWrapper;  // [Unsorted Notes]
+		public HierarchicalWrapper_Folder        RootFolderViewWrapper; // [My Notes]
 
-		private ObservableCollection<HierachicalWrapper_Folder> _subFolders = new ObservableCollection<HierachicalWrapper_Folder>();
-		public ObservableCollection<HierachicalWrapper_Folder> SubFolder { get { return _subFolders; } }
+		private ObservableCollection<HierarchicalWrapper_Folder> _subFolders = new ObservableCollection<HierarchicalWrapper_Folder>();
+		public ObservableCollection<HierarchicalWrapper_Folder> SubFolder { get { return _subFolders; } }
 
 		public ObservableCollection<INote> AllSubNotes { get; set; } = new ObservableCollection<INote>();
 		private List<INote> _directSubNotes = new List<INote>();
@@ -157,7 +157,7 @@ namespace AlephNote.Common.Hierachy
 
 		public bool Permanent = false;
 
-		public HierachicalWrapper_Folder(string header, IHierachicalWrapperConfig cfg, DirectoryPath path, bool root, bool perm)
+		public HierarchicalWrapper_Folder(string header, IHierarchicalWrapperConfig cfg, DirectoryPath path, bool root, bool perm)
 		{
 			_isRoot = root;
 			_path = path;
@@ -165,37 +165,37 @@ namespace AlephNote.Common.Hierachy
 			_config = cfg;
 			Permanent = perm;
 
-			if (_isRoot && cfg.ShowAllNotesNode) SubFolder.Add(AllNotesViewWrapper  = new HierachicalWrapper_AllNotes(this, cfg));
-			if (_isRoot && cfg.ShowEmptyPathNode) SubFolder.Add(EmptyPathViewWrapper = new HierachicalWrapper_UnsortedNotes(this, cfg));
+			if (_isRoot && cfg.ShowAllNotesNode) SubFolder.Add(AllNotesViewWrapper  = new HierarchicalWrapper_AllNotes(this, cfg));
+			if (_isRoot && cfg.ShowEmptyPathNode) SubFolder.Add(EmptyPathViewWrapper = new HierarchicalWrapper_UnsortedNotes(this, cfg));
 		}
 
-		public HierachicalWrapper_Folder GetOrCreateFolder(string txt, out bool created)
+		public HierarchicalWrapper_Folder GetOrCreateFolder(string txt, out bool created)
 		{
 			foreach (var item in SubFolder)
 			{
 				if (item.Header.ToLower() == txt.ToLower()) { created = false; return item;}
 			}
-			var i = new HierachicalWrapper_Folder(txt, _config, _path.SubDir(txt), false, false);
+			var i = new HierarchicalWrapper_Folder(txt, _config, _path.SubDir(txt), false, false);
 			SubFolder.Add(i);
 			created = true;
 			return i;
 		}
 
-		public HierachicalWrapper_Folder GetFolder(string txt)
+		public HierarchicalWrapper_Folder GetFolder(string txt)
 		{
 			foreach (var item in SubFolder) if (item.Header.ToLower() == txt.ToLower()) return item;
 			return null;
 		}
 
-		public HierachicalWrapper_Folder GetOrCreateRootFolder()
+		public HierarchicalWrapper_Folder GetOrCreateRootFolder()
 		{
 			if (RootFolderViewWrapper != null) return RootFolderViewWrapper;
-			RootFolderViewWrapper = new HierachicalWrapper_Folder("[My Notes]", _config, DP_ROOTFOLDER, false, false);
+			RootFolderViewWrapper = new HierarchicalWrapper_Folder("[My Notes]", _config, DP_ROOTFOLDER, false, false);
 			SubFolder.Add(RootFolderViewWrapper);
 			return RootFolderViewWrapper;
 		}
 
-		public HierachicalWrapper_Folder GetRootFolder()
+		public HierarchicalWrapper_Folder GetRootFolder()
 		{
 			if (RootFolderViewWrapper != null) return RootFolderViewWrapper;
 			return null;
@@ -207,9 +207,9 @@ namespace AlephNote.Common.Hierachy
 			OnPropertyChanged("AllSubNotes");
 		}
 
-		public override void Sync(HierachicalBaseWrapper aother, HierachicalWrapper_Folder[] parents)
+		public override void Sync(HierarchicalBaseWrapper aother, HierarchicalWrapper_Folder[] parents)
 		{
-			var other = (HierachicalWrapper_Folder)aother;
+			var other = (HierarchicalWrapper_Folder)aother;
 
 			Debug.Assert(this.Header.ToLower() == other.Header.ToLower());
 			Debug.Assert(this._isRoot == other._isRoot);
@@ -220,36 +220,36 @@ namespace AlephNote.Common.Hierachy
 
 			var me = this;
 
-			bool FCompare(HierachicalWrapper_Folder a, HierachicalWrapper_Folder b)
+			bool FCompare(HierarchicalWrapper_Folder a, HierarchicalWrapper_Folder b)
 			{
 				return a.Header.ToLower() == b.Header.ToLower();
 			}
 
-			HierachicalWrapper_Folder FCopy(HierachicalWrapper_Folder src)
+			HierarchicalWrapper_Folder FCopy(HierarchicalWrapper_Folder src)
 			{
-				if (src.GetType() == typeof(HierachicalWrapper_Folder) && src.IsSpecialNode_RootFolder)
-					return me.RootFolderViewWrapper = new HierachicalWrapper_Folder(src.Header, _config, src._path, src._isRoot, src.Permanent)
+				if (src.GetType() == typeof(HierarchicalWrapper_Folder) && src.IsSpecialNode_RootFolder)
+					return me.RootFolderViewWrapper = new HierarchicalWrapper_Folder(src.Header, _config, src._path, src._isRoot, src.Permanent)
 					{ 
 						IsExpanded = src.IsExpanded,
 						CustomOrder = src.CustomOrder,
 					};
 
-				if (src.GetType() == typeof(HierachicalWrapper_Folder))
-					return new HierachicalWrapper_Folder(src.Header, _config, src._path, src._isRoot, src.Permanent)
+				if (src.GetType() == typeof(HierarchicalWrapper_Folder))
+					return new HierarchicalWrapper_Folder(src.Header, _config, src._path, src._isRoot, src.Permanent)
 					{
 						IsExpanded = src.IsExpanded,
 						CustomOrder = src.CustomOrder,
 					};
 
-				if (src.GetType() == typeof(HierachicalWrapper_UnsortedNotes))
-					return me.EmptyPathViewWrapper = new HierachicalWrapper_UnsortedNotes(me, _config)
+				if (src.GetType() == typeof(HierarchicalWrapper_UnsortedNotes))
+					return me.EmptyPathViewWrapper = new HierarchicalWrapper_UnsortedNotes(me, _config)
 					{
 						IsExpanded = src.IsExpanded,
 						CustomOrder = src.CustomOrder,
 					};
 
-				if (src.GetType() == typeof(HierachicalWrapper_AllNotes))
-					return me.AllNotesViewWrapper  = new HierachicalWrapper_AllNotes(me, _config)
+				if (src.GetType() == typeof(HierarchicalWrapper_AllNotes))
+					return me.AllNotesViewWrapper  = new HierarchicalWrapper_AllNotes(me, _config)
 					{
 						IsExpanded = src.IsExpanded,
 						CustomOrder = src.CustomOrder,
@@ -264,7 +264,7 @@ namespace AlephNote.Common.Hierachy
 			for (int i = 0; i < SubFolder.Count; i++) SubFolder[i].Sync(other.SubFolder[i], parents.Concat(new []{this}).ToArray());
 		}
 
-		public void CopyPermanentsTo(HierachicalWrapper_Folder other)
+		public void CopyPermanentsTo(HierarchicalWrapper_Folder other)
 		{
 			foreach (var folder1 in SubFolder)
 			{
@@ -285,14 +285,14 @@ namespace AlephNote.Common.Hierachy
 			foreach (var sf in SubFolder) sf.ClearPermanents();
 		}
 
-		public void Add(HierachicalWrapper_Folder elem) { SubFolder.Add(elem); }
+		public void Add(HierarchicalWrapper_Folder elem) { SubFolder.Add(elem); }
 
 		public void Add(INote elem) { _directSubNotes.Add(elem); }
 
 		public void Clear()
 		{
 			SubFolder.Clear();
-			if (_isRoot) SubFolder.Add(new HierachicalWrapper_AllNotes(this, _config));
+			if (_isRoot) SubFolder.Add(new HierarchicalWrapper_AllNotes(this, _config));
 
 			_directSubNotes.Clear();
 
@@ -304,7 +304,7 @@ namespace AlephNote.Common.Hierachy
 			return $"{{{Header}}}::[{string.Join(", ", _directSubNotes)}]";
 		}
 
-		public HierachicalWrapper_Folder Find(INote note)
+		public HierarchicalWrapper_Folder Find(INote note)
 		{
 			foreach (var item in SubFolder)
 			{
@@ -319,7 +319,7 @@ namespace AlephNote.Common.Hierachy
 			return null;
 		}
 
-		public HierachicalWrapper_Folder Find(DirectoryPath path, bool includeSpec)
+		public HierarchicalWrapper_Folder Find(DirectoryPath path, bool includeSpec)
 		{
 			foreach (var item in SubFolder)
 			{
@@ -369,9 +369,9 @@ namespace AlephNote.Common.Hierachy
 			}
 		}
 
-		public HierachyConfigEntry ToHCEntry()
+		public HierarchyConfigEntry ToHCEntry()
         {
-			return new HierachyConfigEntry
+			return new HierarchyConfigEntry
 			(
 				Header,
 				IsExpanded,

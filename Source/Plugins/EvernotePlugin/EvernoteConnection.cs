@@ -36,9 +36,9 @@ namespace AlephNote.Plugins.Evernote
 		private NoteStore.Client nsClient;
 		private string _token = null;
 
-		public readonly HierachyEmulationConfig HConfig;
+		public readonly HierarchyEmulationConfig HConfig;
 
-		public EvernoteConnection(AlephLogger log, IWebProxy proxy, EvernoteConfig config, HierachyEmulationConfig hConfig)
+		public EvernoteConnection(AlephLogger log, IWebProxy proxy, EvernoteConfig config, HierarchyEmulationConfig hConfig)
 		{
 			HConfig = hConfig;
 

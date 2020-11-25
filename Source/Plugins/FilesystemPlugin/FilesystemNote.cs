@@ -11,7 +11,7 @@ using AlephNote.PluginInterface.Datatypes;
 
 namespace AlephNote.Plugins.Filesystem
 {
-	class FilesystemNote : BasicHierachicalNote
+	class FilesystemNote : BasicHierarchicalNote
 	{
 		private Guid _id;
 		public Guid ID { get { return _id; } set { _id = value; OnPropertyChanged(); } }

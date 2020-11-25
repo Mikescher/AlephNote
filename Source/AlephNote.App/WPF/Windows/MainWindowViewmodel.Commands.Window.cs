@@ -12,7 +12,7 @@ using MSHC.WPF.MVVM;
 using AlephNote.WPF.Util;
 using Microsoft.Win32;
 using MSHC.Lang.Collections;
-using AlephNote.Common.Hierachy;
+using AlephNote.Common.Hierarchy;
 
 namespace AlephNote.WPF.Windows
 {
@@ -256,14 +256,14 @@ namespace AlephNote.WPF.Windows
 
 			folders = folders.Take(idx).Reverse().Concat(folders.Skip(idx+1).Reverse()).ToList();
 			
-			if (HierachicalBaseWrapper.IsSpecialOrRoot(SelectedFolderPath))
+			if (HierarchicalBaseWrapper.IsSpecialOrRoot(SelectedFolderPath))
 			{
-				var found = folders.FirstOrDefault(HierachicalBaseWrapper.IsSpecialOrRoot);
+				var found = folders.FirstOrDefault(HierarchicalBaseWrapper.IsSpecialOrRoot);
 				if (found != null) SelectedFolderPath = found;
 			}
 			else
 			{
-				var found = folders.FirstOrDefault(p => !HierachicalBaseWrapper.IsSpecialOrRoot(p) && p.IsDirectSubPathOf(SelectedFolderPath.ParentPath(), true));
+				var found = folders.FirstOrDefault(p => !HierarchicalBaseWrapper.IsSpecialOrRoot(p) && p.IsDirectSubPathOf(SelectedFolderPath.ParentPath(), true));
 				if (found != null) SelectedFolderPath = found;
 			}
 		}
@@ -279,14 +279,14 @@ namespace AlephNote.WPF.Windows
 
 			folders = folders.Skip(idx+1).Concat(folders.Take(idx)).ToList();
 
-			if (HierachicalBaseWrapper.IsSpecialOrRoot(SelectedFolderPath))
+			if (HierarchicalBaseWrapper.IsSpecialOrRoot(SelectedFolderPath))
 			{
-				var found = folders.FirstOrDefault(HierachicalBaseWrapper.IsSpecialOrRoot);
+				var found = folders.FirstOrDefault(HierarchicalBaseWrapper.IsSpecialOrRoot);
 				if (found != null) SelectedFolderPath = found;
 			}
 			else
 			{
-				var found = folders.FirstOrDefault(p => !HierachicalBaseWrapper.IsSpecialOrRoot(p) && p.IsDirectSubPathOf(SelectedFolderPath.ParentPath(), true));
+				var found = folders.FirstOrDefault(p => !HierarchicalBaseWrapper.IsSpecialOrRoot(p) && p.IsDirectSubPathOf(SelectedFolderPath.ParentPath(), true));
 				if (found != null) SelectedFolderPath = found;
 			}
 		}
@@ -297,9 +297,9 @@ namespace AlephNote.WPF.Windows
 			
 			var folders = Owner.NotesViewControl.ListFolder().ToList();
 
-			if (HierachicalBaseWrapper.IsSpecial(SelectedFolderPath))
+			if (HierarchicalBaseWrapper.IsSpecial(SelectedFolderPath))
 			{
-				var found = folders.FirstOrDefault(p => !HierachicalBaseWrapper.IsSpecial(p));
+				var found = folders.FirstOrDefault(p => !HierarchicalBaseWrapper.IsSpecial(p));
 				if (found != null) SelectedFolderPath = found;
 				return;
 			}
@@ -314,7 +314,7 @@ namespace AlephNote.WPF.Windows
 		{
 			if (SelectedFolderPath == null) return;
 			if (SelectedFolderPath.IsRoot()) return;
-			if (HierachicalBaseWrapper.IsSpecial(SelectedFolderPath)) return;
+			if (HierarchicalBaseWrapper.IsSpecial(SelectedFolderPath)) return;
 
 			SelectedFolderPath = SelectedFolderPath.ParentPath();
 		}

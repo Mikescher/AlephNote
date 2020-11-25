@@ -35,7 +35,7 @@ namespace AlephNote.Plugins.Headless
 			return new HeadlessConfig();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hConfig)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierarchyEmulationConfig hConfig)
 		{
 			return new HeadlessConnection();
 		}

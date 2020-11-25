@@ -29,7 +29,7 @@ using MSHC.Lang.Collections;
 using MSHC.Lang.Special;
 using MSHC.Util.Threads;
 using MSHC.WPF.MVVM;
-using AlephNote.Common.Hierachy;
+using AlephNote.Common.Hierarchy;
 
 namespace AlephNote.WPF.Windows
 {
@@ -300,7 +300,7 @@ namespace AlephNote.WPF.Windows
 				Settings.LastSelectedNote = SelectedNote?.UniqueName;
 				Settings.LastSelectedFolder = SelectedFolderPath ?? DirectoryPath.Root();
 			}
-			if (!string.IsNullOrEmpty(SearchText) && (Settings != null && Settings.ClearSearchOnFolderClick) && !(SelectedFolderPath == null || HierachicalBaseWrapper.IsSpecial(SelectedFolderPath)))
+			if (!string.IsNullOrEmpty(SearchText) && (Settings != null && Settings.ClearSearchOnFolderClick) && !(SelectedFolderPath == null || HierarchicalBaseWrapper.IsSpecial(SelectedFolderPath)))
 			{
 				SearchText = ""; // clear serach on subfolder click 
 			}
@@ -337,7 +337,7 @@ namespace AlephNote.WPF.Windows
 			{
 				Owner.NotesViewControl.RefreshView();
 			}
-			else if (Settings.UseHierachicalNoteStructure && e.PropertyName == "Path")
+			else if (Settings.UseHierarchicalNoteStructure && e.PropertyName == "Path")
 			{
 				Owner.NotesViewControl.RefreshView();
 			}

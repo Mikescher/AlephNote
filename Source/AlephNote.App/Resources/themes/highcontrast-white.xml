@@ -13,8 +13,8 @@ Repository: https://github.com/Mikescher/AlephNote
 <theme>
 	<meta>
 		<name>High Contrast (White)</name>
-		<version>1.2</version>
-		<compatibility>*</compatibility>
+		<version>1.3</version>
+		<compatibility>1.6.35+</compatibility>
 		<author>Mike Schwörer</author>
 		<type>theme</type>
 	</meta>
@@ -127,9 +127,9 @@ Repository: https://github.com/Mikescher/AlephNote
 		<property name="window.notesview.flat.preview:foreground"          value="@Primary" />
 		<property name="window.notesview.flat.separator"                   value="@Primary" />
 
-		<property name="window.notesview.hierachical.splitter"                 value="@Secondary" />
-		<property name="window.notesview.hierachical.tree.selected:background" value="@Secondary2" />
-		<property name="window.notesview.hierachical.tree.selected:foreground" value="@Primary" />
+		<property name="window.notesview.hierarchical.splitter"                 value="@Secondary" />
+		<property name="window.notesview.hierarchical.tree.selected:background" value="@Secondary2" />
+		<property name="window.notesview.hierarchical.tree.selected:foreground" value="@Primary" />
 
 		<property name="window.statusbar:background"                       value="@Secondary" />
 		<property name="window.statusbar:foreground"                       value="@Primary" />

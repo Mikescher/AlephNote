@@ -40,7 +40,7 @@ namespace AlephNote.Plugins.StandardNote
 			return new StandardNoteConfig();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hConfig)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierarchyEmulationConfig hConfig)
 		{
 			return new StandardNoteConnection(_logger, proxy, (StandardNoteConfig)config, hConfig);
 		}

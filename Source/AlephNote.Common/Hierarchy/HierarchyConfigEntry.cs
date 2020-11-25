@@ -7,16 +7,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace AlephNote.Common.Hierachy
+namespace AlephNote.Common.Hierarchy
 {
-    public class HierachyConfigEntry
+    public class HierarchyConfigEntry
     {
         public string Name = string.Empty;
         public bool Expanded = true;
         public DirectoryPath Path = DirectoryPath.Root();
-        public List<HierachyConfigEntry> Children = new List<HierachyConfigEntry>();
+        public List<HierarchyConfigEntry> Children = new List<HierarchyConfigEntry>();
 
-        public HierachyConfigEntry(string name, bool expanded, DirectoryPath path, List<HierachyConfigEntry> childs)
+        public HierarchyConfigEntry(string name, bool expanded, DirectoryPath path, List<HierarchyConfigEntry> childs)
         {
             Name      = name;
             Expanded  = expanded;
@@ -36,11 +36,11 @@ namespace AlephNote.Common.Hierachy
             return xelem;
         }
 
-        public static HierachyConfigEntry Deserialize(XElement xelem)
+        public static HierarchyConfigEntry Deserialize(XElement xelem)
         {
             if (xelem.Name != "dir") throw new Exception("missing <dir> element");
 
-            return new HierachyConfigEntry
+            return new HierarchyConfigEntry
             (
                 xelem.Attribute("name").Value,
                 XElementExtensions.ParseBool(xelem.Attribute("expanded").Value),
@@ -49,15 +49,15 @@ namespace AlephNote.Common.Hierachy
             );
         }
 
-        public void ApplyTo(IReadonlyAlephSettings settings, HierachicalWrapper_Folder dst)
+        public void ApplyTo(IReadonlyAlephSettings settings, HierarchicalWrapper_Folder dst)
         {
             if (!dst.GetInternalPath().Equals(Path))
             {
-                LoggerSingleton.Inst.Warn("HierachyConfigCache", $"Path mismatch in ApplyTo: '{Path}' <> '{dst.GetInternalPath()}'");
+                LoggerSingleton.Inst.Warn("HierarchyConfigCache", $"Path mismatch in ApplyTo: '{Path}' <> '{dst.GetInternalPath()}'");
                 return;
             }
 
-            if (settings.RememberHierachyExpandedState) dst.IsExpanded = Expanded;
+            if (settings.RememberHierarchyExpandedState) dst.IsExpanded = Expanded; else dst.IsExpanded = true;
 
             var counter = 1;
             foreach (var subthis in Children)
@@ -65,16 +65,16 @@ namespace AlephNote.Common.Hierachy
                 var subdst = dst.SubFolder.FirstOrDefault(p => p.Header == subthis.Name);
                 if (subdst == null) continue;
 
-                if (!settings.SortHierachyFoldersByName) subdst.CustomOrder = counter * 100;
+                if (!settings.SortHierarchyFoldersByName) subdst.CustomOrder = counter * 100;
                 subthis.ApplyTo(settings, subdst);
 
                 counter++;
             }
 
-            // (new) folders not in hierachy cache
+            // (new) folders not in hierarchy cache
             foreach (var subdst in dst.SubFolder.Where(subdst => !Children.Any(subthis => subdst.Header == subthis.Name)).OrderBy(p => p.Header))
             {
-                if (!settings.SortHierachyFoldersByName) subdst.CustomOrder = counter * 100;
+                if (!settings.SortHierarchyFoldersByName) subdst.CustomOrder = counter * 100;
                 subdst.IsExpanded = true;
                 counter++;
             }

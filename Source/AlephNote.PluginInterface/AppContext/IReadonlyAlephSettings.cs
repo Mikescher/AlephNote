@@ -8,7 +8,7 @@ namespace AlephNote.PluginInterface.AppContext
 		bool AllowAllLettersInFilename { get; }
 		Guid ClientID { get; }
 		int UsedURLMatchingMode { get; }
-		bool SortHierachyFoldersByName { get; }
-		bool RememberHierachyExpandedState { get; }
+		bool SortHierarchyFoldersByName { get; }
+		bool RememberHierarchyExpandedState { get; }
 	}
 }

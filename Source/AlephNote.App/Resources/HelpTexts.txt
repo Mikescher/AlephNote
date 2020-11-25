@@ -192,7 +192,7 @@ The shortcut is only available while the focus is in the list on the left side
 
 ### Folder list ###
 The shortcut is only available while the focus is in the folder list on the left side
-(Folder list only visible if "hierachical note structure" is enabled)
+(Folder list only visible if "hierarchical note structure" is enabled)
 
 ### Notes edit area ###
 The shortcut is only available while the focus is in edit area
@@ -203,13 +203,13 @@ The shortcut is always available, even when the application is minimized or in t
 [RememberLastSelectedNote]
 On startup remember and show the note that was selected last time
 
-[UseHierachicalNoteStructure]
+[UseHierarchicalNoteStructure]
 If selected you can put notes in folders and subfolders.
 Only works if the remote plugin and the remote server support directory information or if "Emulate directories" is enabled.
 
 This replaces the notes view control in the main window to display subfolders in a treeview.
 
-[EmulateHierachicalStructure]
+[EmulateHierarchicalStructure]
 Not all remote account types support subdirectories for notes.
 For all unsupported plugins we can "emulate" a directory structure by writing the full path into the note title, seperated by a special character.
 
@@ -401,7 +401,7 @@ Adds a button to the left side of the tagbar to add tags from the list of existi
 Hide the main menu by default. Press [Alt] to show/hide it.
 This setting should not be used in combination with other settings that use the [Alt] key (eg. scintilla rectangular selection)
 
-[SortHierachyFoldersByName]
+[SortHierarchyFoldersByName]
 Sort the folders in the folders list by name.
 Remote providers return an unordered set of folders and it is in the responsibility of AlephNote to sort them.
 If this option is deactivated the folders are sorted by a custom order that you can manipulate in the folder context menu ([move up] and [move down]),

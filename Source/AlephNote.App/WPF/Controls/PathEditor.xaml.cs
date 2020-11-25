@@ -7,7 +7,7 @@ using AlephNote.WPF.Windows;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using AlephNote.Common.Hierachy;
+using AlephNote.Common.Hierarchy;
 
 namespace AlephNote.WPF.Controls
 {
@@ -67,7 +67,7 @@ namespace AlephNote.WPF.Controls
 		public void ChangePath()
 		{
 			if (SelectedNote == null) return;
-			if (!Settings.UseHierachicalNoteStructure) return;
+			if (!Settings.UseHierarchicalNoteStructure) return;
 			if (Settings.IsReadOnlyMode) return;
 			if (SelectedNote.IsLocked) return;
 
@@ -75,7 +75,7 @@ namespace AlephNote.WPF.Controls
 
 			foreach (var folder in MainWindow.Instance.NotesViewControl.ListFolder())
 			{
-				if (HierachicalBaseWrapper.IsSpecial(folder) && ! folder.IsRoot()) continue;
+				if (HierarchicalBaseWrapper.IsSpecial(folder) && ! folder.IsRoot()) continue;
 				FolderPopupListView.Items.Add(folder);
 			}
 

@@ -25,7 +25,7 @@ namespace AlephNote.PluginInterface
 		bool SupportsUploadMultithreading      { get; }
 
 		IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
-		IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hierachicalConfig);
+		IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierarchyEmulationConfig hierarchicalConfig);
 		IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData();
 		INote CreateEmptyNote(IRemoteStorageConnection conn, IRemoteStorageConfiguration cfg);
 

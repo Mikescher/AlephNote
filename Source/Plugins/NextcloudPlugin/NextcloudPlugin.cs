@@ -38,7 +38,7 @@ namespace AlephNote.Plugins.Nextcloud
 			return new NextcloudConfig();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hConfig)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierarchyEmulationConfig hConfig)
 		{
 			return new NextcloudConnection(_logger, proxy, (NextcloudConfig)config);
 		}

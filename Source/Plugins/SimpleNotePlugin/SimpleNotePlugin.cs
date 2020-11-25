@@ -39,7 +39,7 @@ namespace AlephNote.Plugins.SimpleNote
 			return new SimpleNoteConfig();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hConfig)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierarchyEmulationConfig hConfig)
 		{
 			return new SimpleNoteConnection(_logger, proxy, (SimpleNoteConfig)config, hConfig);
 		}

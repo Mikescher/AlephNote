@@ -222,7 +222,7 @@ namespace AlephNote.WPF.Windows
 		{
 			var data = SelectedProvider.CreateEmptyRemoteSyncData();
 
-			var conn = acc.Plugin.CreateRemoteStorageConnection(PluginManagerSingleton.Inst.GetProxyFactory().Build(), acc.Config, new HierachyEmulationConfig(false, "\\", '\\'));
+			var conn = acc.Plugin.CreateRemoteStorageConnection(PluginManagerSingleton.Inst.GetProxyFactory().Build(), acc.Config, new HierarchyEmulationConfig(false, "\\", '\\'));
 
 			var resultNotes  = new ConcurrentQueue<INote>();
 			var resultErrors = new ConcurrentQueue<string>();

@@ -106,7 +106,7 @@ namespace AlephNote.Plugins.StandardNote
 		private bool _ignoreTagsChanged = false;
 		private readonly StandardNoteConfig _config;
 
-		public StandardFileNote(Guid uid, StandardNoteConfig cfg, HierachyEmulationConfig hcfg)
+		public StandardFileNote(Guid uid, StandardNoteConfig cfg, HierarchyEmulationConfig hcfg)
 			: base(hcfg)
 		{
 			_id = uid;

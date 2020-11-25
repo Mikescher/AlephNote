@@ -39,6 +39,8 @@ namespace AlephNote.Common.AlephXMLSerialization
 		public readonly PropertyInfo PropInfo;
 		public readonly AlephXMLFieldAttribute Attribute;
 
+		public string XMLName => Attribute.XMLName ?? PropInfo.Name;
+
 		public AXMLFieldInfo(SettingObjectTypeEnum t, PropertyInfo i, AlephXMLFieldAttribute a)
 		{
 			_objectType = t;
@@ -94,23 +96,23 @@ namespace AlephNote.Common.AlephXMLSerialization
 					break;
 
 				case SettingObjectTypeEnum.ListRemoteStorageAccount:
-					var x1 = CreateXElem(PropInfo.Name, SettingObjectTypeEnum.ListRemoteStorageAccount, null, opt);
+					var x1 = CreateXElem(XMLName, SettingObjectTypeEnum.ListRemoteStorageAccount, null, opt);
 					x1.Add(((IList<RemoteStorageAccount>)objdata).Select(rsa => SerializeRemoteStorageAccount(rsa, opt)));
 					return x1;
 
 				case SettingObjectTypeEnum.CustomSerializable:
 					var d = ((IAlephCustomSerializableField)objdata);
-					var x2 = CreateXElem(PropInfo.Name, d.GetTypeStr(), null, opt);
+					var x2 = CreateXElem(XMLName, d.GetTypeStr(), null, opt);
 					d.Serialize(x2, opt);
 					return x2;
 
 				case SettingObjectTypeEnum.DirectoryPath:
-					var x3= CreateXElem(PropInfo.Name, _objectType, ((DirectoryPath)objdata).Serialize(), opt);
+					var x3= CreateXElem(XMLName, _objectType, ((DirectoryPath)objdata).Serialize(), opt);
 					x3.Add(new XAttribute("path", ((DirectoryPath)objdata).StrSerialize()));
 					return x3;
 
 				case SettingObjectTypeEnum.StringSet:
-					var x4 = CreateXElem(PropInfo.Name, SettingObjectTypeEnum.StringSet, null, opt);
+					var x4 = CreateXElem(XMLName, SettingObjectTypeEnum.StringSet, null, opt);
 					x4.Add(((ISet<string>)objdata).Select(val => new XElement("Entry", val)));
 					return x4;
 
@@ -118,7 +120,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 					throw new ArgumentOutOfRangeException(nameof(objdata), _objectType, null);
 			}
 
-			return CreateXElem(PropInfo.Name, _objectType, resultdata, opt);
+			return CreateXElem(XMLName, _objectType, resultdata, opt);
 		}
 
 		public void Deserialize(object obj, XElement root, AXMLSerializationSettings opt)
@@ -128,49 +130,49 @@ namespace AlephNote.Common.AlephXMLSerialization
 			switch (_objectType)
 			{
 				case SettingObjectTypeEnum.Integer:
-					PropInfo.SetValue(obj, XHelper.GetChildValue(root, PropInfo.Name, (int)current));
+					PropInfo.SetValue(obj, XHelper.GetChildValue(root, XMLName, (int)current));
 					return;
 
 				case SettingObjectTypeEnum.Double:
-					PropInfo.SetValue(obj, XHelper.GetChildValue(root, PropInfo.Name, (double)current));
+					PropInfo.SetValue(obj, XHelper.GetChildValue(root, XMLName, (double)current));
 					return;
 
 				case SettingObjectTypeEnum.NullableInteger:
-					PropInfo.SetValue(obj, XHelper.GetChildValue(root, PropInfo.Name, (int?)current));
+					PropInfo.SetValue(obj, XHelper.GetChildValue(root, XMLName, (int?)current));
 					return;
 
 				case SettingObjectTypeEnum.Boolean:
-					PropInfo.SetValue(obj, XHelper.GetChildValue(root, PropInfo.Name, (bool)current));
+					PropInfo.SetValue(obj, XHelper.GetChildValue(root, XMLName, (bool)current));
 					return;
 
 				case SettingObjectTypeEnum.Guid:
-					PropInfo.SetValue(obj, XHelper.GetChildValue(root, PropInfo.Name, (Guid)current));
+					PropInfo.SetValue(obj, XHelper.GetChildValue(root, XMLName, (Guid)current));
 					return;
 
 				case SettingObjectTypeEnum.NGuid:
-					PropInfo.SetValue(obj, XHelper.GetChildValue(root, PropInfo.Name, (Guid?)current));
+					PropInfo.SetValue(obj, XHelper.GetChildValue(root, XMLName, (Guid?)current));
 					return;
 
 				case SettingObjectTypeEnum.EncryptedString:
-					PropInfo.SetValue(obj, AlephXMLSerializerHelper.Decrypt(XHelper.GetChildValue(root, PropInfo.Name, AlephXMLSerializerHelper.Encrypt((string)current, opt)), opt));
+					PropInfo.SetValue(obj, AlephXMLSerializerHelper.Decrypt(XHelper.GetChildValue(root, XMLName, AlephXMLSerializerHelper.Encrypt((string)current, opt)), opt));
 					return;
 
 				case SettingObjectTypeEnum.String:
-					PropInfo.SetValue(obj, XHelper.GetChildValue(root, PropInfo.Name, (string)current));
+					PropInfo.SetValue(obj, XHelper.GetChildValue(root, XMLName, (string)current));
 					return;
 
 				case SettingObjectTypeEnum.Enum:
-					PropInfo.SetValue(obj, XHelper.GetChildValue(root, PropInfo.Name, current, PropInfo.PropertyType));
+					PropInfo.SetValue(obj, XHelper.GetChildValue(root, XMLName, current, PropInfo.PropertyType));
 					break;
 
 				case SettingObjectTypeEnum.RemoteStorageAccount:
 					var currUUID = ((RemoteStorageAccount)current).ID;
-					PropInfo.SetValue(obj, new RemoteStorageAccount(XHelper.GetChildValue(root, PropInfo.Name, currUUID), null, null));
+					PropInfo.SetValue(obj, new RemoteStorageAccount(XHelper.GetChildValue(root, XMLName, currUUID), null, null));
 					break;
 
 				case SettingObjectTypeEnum.ListRemoteStorageAccount:
 					var list = (IList<RemoteStorageAccount>)current;
-					var child = XHelper.GetChildOrNull(root, PropInfo.Name);
+					var child = XHelper.GetChildOrNull(root, XMLName);
 					if (child != null)
 					{
 						list.Clear();
@@ -183,18 +185,18 @@ namespace AlephNote.Common.AlephXMLSerialization
 
 				case SettingObjectTypeEnum.CustomSerializable:
 					var currCust = ((IAlephCustomSerializableField)current);
-					var cchild = XHelper.GetChildOrNull(root, PropInfo.Name);
+					var cchild = XHelper.GetChildOrNull(root, XMLName);
 					if (cchild != null) PropInfo.SetValue(obj, currCust.DeserializeNew(cchild, opt));
 					break;
 
 				case SettingObjectTypeEnum.DirectoryPath:
-					var dp = DirectoryPath.Deserialize(XHelper.GetChildrenOrEmpty(root, PropInfo.Name, "PathComponent"));
+					var dp = DirectoryPath.Deserialize(XHelper.GetChildrenOrEmpty(root, XMLName, "PathComponent"));
 					PropInfo.SetValue(obj, dp);
 					break;
 
 				case SettingObjectTypeEnum.StringSet:
 					var set = (ISet<string>)current;
-					var setchild = XHelper.GetChildOrNull(root, PropInfo.Name);
+					var setchild = XHelper.GetChildOrNull(root, XMLName);
 					if (setchild != null)
 					{
 						set.Clear();

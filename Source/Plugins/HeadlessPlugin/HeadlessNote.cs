@@ -9,7 +9,7 @@ using MSHC.Lang.Collections;
 
 namespace AlephNote.Plugins.Headless
 {
-	class HeadlessNote : BasicHierachicalNote
+	class HeadlessNote : BasicHierarchicalNote
 	{
 		private Guid _id;
 

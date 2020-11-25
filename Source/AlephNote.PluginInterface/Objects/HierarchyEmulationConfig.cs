@@ -3,13 +3,13 @@ using System.Text;
 
 namespace AlephNote.PluginInterface.Util
 {
-	public class HierachyEmulationConfig
+	public class HierarchyEmulationConfig
 	{
 		public readonly bool EmulateSubfolders;
 		public readonly string SeperatorString;
 		public readonly char EscapeChar;
 
-		public HierachyEmulationConfig(bool enabled, string seperator, char escape)
+		public HierarchyEmulationConfig(bool enabled, string seperator, char escape)
 		{
 			EmulateSubfolders = enabled;
 			SeperatorString = seperator;

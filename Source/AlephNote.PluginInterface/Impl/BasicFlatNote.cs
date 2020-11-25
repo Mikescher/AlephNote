@@ -10,11 +10,11 @@ namespace AlephNote.PluginInterface.Impl
 
 		public override DirectoryPath Path { get { return GetPath(); } set { SetInternalTitle(value, GetTitle()); OnPropertyChanged(); } }
 		
-		protected readonly HierachyEmulationConfig _hConfig;
+		protected readonly HierarchyEmulationConfig _hConfig;
 
 		private Tuple<string, DirectoryPath, string> _pathCache = null;
 
-		protected BasicFlatNote(HierachyEmulationConfig hcfg) : base()
+		protected BasicFlatNote(HierarchyEmulationConfig hcfg) : base()
 		{
 			_hConfig = hcfg;
 		}

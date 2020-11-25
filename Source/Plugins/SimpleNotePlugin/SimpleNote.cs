@@ -56,7 +56,7 @@ namespace AlephNote.Plugins.SimpleNote
 
 		private readonly SimpleNoteConfig _config;
 
-		public SimpleNote(string uid, SimpleNoteConfig cfg, HierachyEmulationConfig hcfg)
+		public SimpleNote(string uid, SimpleNoteConfig cfg, HierarchyEmulationConfig hcfg)
 			: base(hcfg)
 		{
 			_id = uid;

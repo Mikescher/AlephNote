@@ -37,7 +37,7 @@ namespace AlephNote.Plugins.Evernote
 			return new EvernoteConfig();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hConfig)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierarchyEmulationConfig hConfig)
 		{
 			return new EvernoteConnection(_logger, proxy, (EvernoteConfig)config, hConfig);
 		}

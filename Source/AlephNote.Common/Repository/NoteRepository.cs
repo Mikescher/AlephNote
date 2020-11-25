@@ -68,7 +68,7 @@ namespace AlephNote.Common.Repository
 			_pathLocalBase = path;
 			_pathLocalFolder = Path.Combine(path, acc.ID.ToString("B"));
 			_pathLocalData = Path.Combine(path, acc.ID.ToString("B") + ".xml");
-			_conn = acc.Plugin.CreateRemoteStorageConnection(cfg.CreateProxy(), acc.Config, cfg.GetHierachicalConfig());
+			_conn = acc.Plugin.CreateRemoteStorageConnection(cfg.CreateProxy(), acc.Config, cfg.GetHierarchicalConfig());
 			_account = acc;
 			_appconfig = cfg;
 			_listener = fb;

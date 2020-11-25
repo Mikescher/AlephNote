@@ -23,9 +23,9 @@ namespace AlephNote.Plugins.StandardNote
 		private StandardNoteAPI.SyncResult _syncResult = null;
 		private List<Guid> _lastUploadBatch = new List<Guid>();
 
-		public readonly HierachyEmulationConfig HConfig;
+		public readonly HierarchyEmulationConfig HConfig;
 
-		public StandardNoteConnection(AlephLogger log, IWebProxy proxy, StandardNoteConfig config, HierachyEmulationConfig hConfig)
+		public StandardNoteConnection(AlephLogger log, IWebProxy proxy, StandardNoteConfig config, HierarchyEmulationConfig hConfig)
 		{
 			HConfig = hConfig;
 

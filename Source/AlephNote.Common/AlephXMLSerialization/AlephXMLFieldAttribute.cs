@@ -10,6 +10,7 @@ namespace AlephNote.Common.AlephXMLSerialization
 		public bool RefreshNotesViewTemplate { get; set; } = false;
 		public bool RefreshNotesControlView { get; set; } = false;
 		public bool RefreshNotesTheme { get; set; } = false;
+		public string XMLName { get; set; } = null; // [null] == use property name
 
 		public AlephXMLFieldAttribute()
 		{

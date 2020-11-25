@@ -41,7 +41,7 @@ namespace AlephNote.Plugins.Evernote
 
 		private readonly EvernoteConfig _config;
 
-		public EvernoteNote(Guid id, EvernoteConfig cfg, HierachyEmulationConfig hcfg)
+		public EvernoteNote(Guid id, EvernoteConfig cfg, HierarchyEmulationConfig hcfg)
 			:base(hcfg)
 		{
 			_id = id;

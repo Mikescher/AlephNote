@@ -744,7 +744,7 @@ namespace AlephNote.WPF.Windows
 
 		public void UpdateNotesViewComponent(AppSettings settings)
 		{
-			var templ = (ControlTemplate) NotesViewCtrlWrapper.Resources[(settings.UseHierachicalNoteStructure) ? "TemplateHierachical" : "TemplateFlat"];
+			var templ = (ControlTemplate) NotesViewCtrlWrapper.Resources[(settings.UseHierarchicalNoteStructure) ? "TemplateHierarchical" : "TemplateFlat"];
 
 			var ctrl = templ.LoadContent();
 

@@ -1,6 +1,6 @@
 ﻿namespace AlephNote.PluginInterface.Impl
 {
-	public abstract class BasicHierachicalNote : BasicNoteImpl
+	public abstract class BasicHierarchicalNote : BasicNoteImpl
 	{
 		public override void TriggerOnChanged(bool doNotSendChangeEvents)
 		{

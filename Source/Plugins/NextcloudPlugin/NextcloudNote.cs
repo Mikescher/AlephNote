@@ -10,7 +10,7 @@ using MSHC.Lang.Collections;
 
 namespace AlephNote.Plugins.Nextcloud
 {
-	public class NextcloudNote : BasicHierachicalNote
+	public class NextcloudNote : BasicHierarchicalNote
 	{
 		private int _remoteID;
 		public int RemoteID { get { return _remoteID; } set { _remoteID = value; OnPropertyChanged(); } }

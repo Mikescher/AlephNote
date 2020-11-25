@@ -60,7 +60,7 @@ namespace AlephNote.PluginInterface.Impl
 		public abstract void Init(AlephLogger logger);
 
 		public abstract IRemoteStorageConfiguration CreateEmptyRemoteStorageConfiguration();
-		public abstract IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hierachicalConfig);
+		public abstract IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierarchyEmulationConfig hierarchicalConfig);
 		public abstract IRemoteStorageSyncPersistance CreateEmptyRemoteSyncData();
 		public abstract INote CreateEmptyNote(IRemoteStorageConnection conn, IRemoteStorageConfiguration cfg);
 		

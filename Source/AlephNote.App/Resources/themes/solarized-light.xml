@@ -32,8 +32,8 @@ License:    Copyright (c) 2011 Ethan Schoonover
 <theme>
 	<meta>
 		<name>Solarized Light</name>
-		<version>1.3</version>
-		<compatibility>*</compatibility>
+		<version>1.4</version>
+		<compatibility>1.6.35+</compatibility>
 		<author>Mike Schwörer</author>
 		<type>theme</type>
 	</meta>
@@ -172,9 +172,9 @@ License:    Copyright (c) 2011 Ethan Schoonover
 			<property name="window.notesview.flat.preview:foreground"     value="@base1"/>
 			<property name="window.notesview.flat.separator"              value="@base2"/>
 
-			<property name="window.notesview.hierachical.tree.selected:background"  value="$window.notesview.flat.selected:background"/>
-			<property name="window.notesview.hierachical.tree.selected:foreground"  value="$window.notesview.flat.selected:foreground"/>
-			<property name="window.notesview.hierachical.tree:foreground"           value="$window.notesview.flat:foreground"/>
+			<property name="window.notesview.hierarchical.tree.selected:background"  value="$window.notesview.flat.selected:background"/>
+			<property name="window.notesview.hierarchical.tree.selected:foreground"  value="$window.notesview.flat.selected:foreground"/>
+			<property name="window.notesview.hierarchical.tree:foreground"           value="$window.notesview.flat:foreground"/>
 
 			<property name="window.statusbar:background"                  value="@base3"/>
 			<property name="window.statusbar:foreground"                  value="@base00"/>

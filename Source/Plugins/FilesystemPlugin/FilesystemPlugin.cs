@@ -41,7 +41,7 @@ namespace AlephNote.Plugins.Filesystem
 			return new FilesystemConfig();
 		}
 
-		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierachyEmulationConfig hConfig)
+		public override IRemoteStorageConnection CreateRemoteStorageConnection(IWebProxy proxy, IRemoteStorageConfiguration config, HierarchyEmulationConfig hConfig)
 		{
 			return new FilesystemConnection(logger, (FilesystemConfig)config);
 		}

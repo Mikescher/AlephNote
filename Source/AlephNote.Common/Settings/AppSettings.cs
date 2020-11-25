@@ -23,13 +23,13 @@ namespace AlephNote.Common.Settings
 		public const int DEFAULT_INITIALDOWNLOAD_PARALLELISM_LEVEL     = 10;
 		public const int DEFAULT_INITIALDOWNLOAD_PARALLELISM_THRESHOLD = 100;
 
-		public static readonly string PATH_SETTINGS      = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.config");
-		public static readonly string PATH_SCROLLCACHE   = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.scrollcache.config");
-		public static readonly string PATH_GCCACHE       = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.gitcleancache.config");
-		public static readonly string PATH_HIERACHYCACHE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.hierachycache.config");
-		public static readonly string PATH_LOCALDB       = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".notes");
-		public static readonly string APPNAME_REG        = "AlephNoteApp_{0:N}";
-		public static readonly string PATH_EXECUTABLE    = GetExePath();
+		public static readonly string PATH_SETTINGS       = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.config");
+		public static readonly string PATH_SCROLLCACHE    = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.scrollcache.config");
+		public static readonly string PATH_GCCACHE        = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.gitcleancache.config");
+		public static readonly string PATH_HIERARCHYCACHE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"noteapp.hierarchycache.config");
+		public static readonly string PATH_LOCALDB        = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".notes");
+		public static readonly string APPNAME_REG         = "AlephNoteApp_{0:N}";
+		public static readonly string PATH_EXECUTABLE     = GetExePath();
 
 		public const string ENCRYPTION_KEY = @"jcgkZJvoykjpoGkDWHqiNoXoLZRJxpdb";
 
@@ -320,17 +320,17 @@ namespace AlephNote.Common.Settings
 		public bool RememberScroll { get { return _rememberScroll; } set { _rememberScroll = value; OnPropertyChanged(); } }
 		private bool _rememberScroll = false;
 
-		[AlephXMLField(ReconnectRepo=true, RefreshNotesViewTemplate=true)]
-		public bool UseHierachicalNoteStructure { get { return _useHierachicalNoteStructure; } set { _useHierachicalNoteStructure = value; OnPropertyChanged(); } }
-		private bool _useHierachicalNoteStructure = false;
+		[AlephXMLField(ReconnectRepo=true, RefreshNotesViewTemplate=true, XMLName="UseHierachicalNoteStructure")]
+		public bool UseHierarchicalNoteStructure { get { return _useHierarchicalNoteStructure; } set { _useHierarchicalNoteStructure = value; OnPropertyChanged(); } }
+		private bool _useHierarchicalNoteStructure = false;
+
+		[AlephXMLField(ReconnectRepo=true, XMLName="EmulateHierachicalStructure")]
+		public bool EmulateHierarchicalStructure { get { return _emulateHierarchicalStructure; } set { _emulateHierarchicalStructure = value; OnPropertyChanged(); } }
+		private bool _emulateHierarchicalStructure = true;
 
 		[AlephXMLField(ReconnectRepo=true)]
-		public bool EmulateHierachicalStructure { get { return _emulateHierachicalStructure; } set { _emulateHierachicalStructure = value; OnPropertyChanged(); } }
-		private bool _emulateHierachicalStructure = true;
-
-		[AlephXMLField(ReconnectRepo=true)]
-		public HierachicalStructureSeperator HStructureSeperator { get { return _hStructureSeperator; } set { _hStructureSeperator = value; OnPropertyChanged(); } }
-		private HierachicalStructureSeperator _hStructureSeperator = HierachicalStructureSeperator.SeperatorForwardSlash;
+		public HierarchicalStructureSeperator HStructureSeperator { get { return _hStructureSeperator; } set { _hStructureSeperator = value; OnPropertyChanged(); } }
+		private HierarchicalStructureSeperator _hStructureSeperator = HierarchicalStructureSeperator.SeperatorForwardSlash;
 
 		[AlephXMLField]
 		public double NotesViewFolderHeight { get { return _notesViewFolderHeight; } set { _notesViewFolderHeight = value; OnPropertyChanged(); } }
@@ -554,12 +554,12 @@ namespace AlephNote.Common.Settings
 		private string _uiFontFamily = string.Empty;
 
 		[AlephXMLField]
-		public bool SortHierachyFoldersByName { get { return _sortHierachyFoldersByName; } set { _sortHierachyFoldersByName = value; OnPropertyChanged(); } }
-		private bool _sortHierachyFoldersByName = false;
+		public bool SortHierarchyFoldersByName { get { return _sortHierarchyFoldersByName; } set { _sortHierarchyFoldersByName = value; OnPropertyChanged(); } }
+		private bool _sortHierarchyFoldersByName = false;
 
 		[AlephXMLField]
-		public bool RememberHierachyExpandedState { get { return _rememberHierachyExpandedState; } set { _rememberHierachyExpandedState = value; OnPropertyChanged(); } }
-		private bool _rememberHierachyExpandedState = true;
+		public bool RememberHierarchyExpandedState { get { return _rememberHierarchyExpandedState; } set { _rememberHierarchyExpandedState = value; OnPropertyChanged(); } }
+		private bool _rememberHierarchyExpandedState = true;
 
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
@@ -735,14 +735,14 @@ namespace AlephNote.Common.Settings
 			}
 		}
 
-		public HierachyEmulationConfig GetHierachicalConfig()
+		public HierarchyEmulationConfig GetHierarchicalConfig()
 		{
-			bool enabled = UseHierachicalNoteStructure && EmulateHierachicalStructure;
+			bool enabled = UseHierarchicalNoteStructure && EmulateHierarchicalStructure;
 
 			var sep = StructureSeperatorHelper.GetSeperator(HStructureSeperator);
 			var esc = StructureSeperatorHelper.GetEscapeChar(HStructureSeperator);
 
-			return new HierachyEmulationConfig(enabled, sep, esc);
+			return new HierarchyEmulationConfig(enabled, sep, esc);
 		}
 
 		private static KeyValueCustomList<SnippetDefinition> CreateDefaultSnippetList()

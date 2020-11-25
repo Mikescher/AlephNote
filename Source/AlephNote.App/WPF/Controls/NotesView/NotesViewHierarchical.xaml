@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="AlephNote.WPF.Controls.NotesView.NotesViewHierachical"
+﻿<UserControl x:Class="AlephNote.WPF.Controls.NotesView.NotesViewHierarchical"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,7 +7,7 @@
 			 xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
 			 xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
 			 xmlns:settings="clr-namespace:AlephNote.Common.Settings.Types;assembly=AlephNote.Common"
-             xmlns:hier="clr-namespace:AlephNote.Common.Hierachy;assembly=AlephNote.Common"
+             xmlns:hier="clr-namespace:AlephNote.Common.Hierarchy;assembly=AlephNote.Common"
 			 xmlns:services="clr-namespace:MSHC.WPF.Services;assembly=CSharpUtils"
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 			 xmlns:locconv="clr-namespace:AlephNote.WPF.Converter"
@@ -27,8 +27,8 @@
 						</Border>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsSelected" Value="true">
-								<Setter Property="Background" TargetName="Bd" Value="{ext:ThemeBinding 'window.notesview.hierachical.list.selected:background'}"/>
-								<Setter Property="Foreground"                 Value="{ext:ThemeBinding 'window.notesview.hierachical.list.selected:foreground'}"/>
+								<Setter Property="Background" TargetName="Bd" Value="{ext:ThemeBinding 'window.notesview.hierarchical.list.selected:background'}"/>
+								<Setter Property="Foreground"                 Value="{ext:ThemeBinding 'window.notesview.hierarchical.list.selected:foreground'}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -38,7 +38,7 @@
 	</UserControl.Resources>
 
 
-	<Grid x:Name="RootGrid" d:DataContext="{d:DesignInstance notesView:NotesViewHierachical}" >
+	<Grid x:Name="RootGrid" d:DataContext="{d:DesignInstance notesView:NotesViewHierarchical}" >
 		
 		<Grid.RowDefinitions>
 			<RowDefinition Height="{Binding NotesViewFolderHeight, Mode=TwoWay}" MinHeight="20" />
@@ -47,15 +47,15 @@
 		</Grid.RowDefinitions>
 
 		<TreeView x:Name="FolderTreeView" Grid.Row="0"
-				  Background="{ext:ThemeBinding  'window.notesview.hierachical.tree:background'}"
-				  Foreground="{ext:ThemeBinding  'window.notesview.hierachical.tree:foreground'}"
-				  BorderBrush="{ext:ThemeBinding 'window.notesview.hierachical.tree:bordercolor'}"
+				  Background="{ext:ThemeBinding  'window.notesview.hierarchical.tree:background'}"
+				  Foreground="{ext:ThemeBinding  'window.notesview.hierarchical.tree:foreground'}"
+				  BorderBrush="{ext:ThemeBinding 'window.notesview.hierarchical.tree:bordercolor'}"
 				  ItemsSource="{Binding DisplayItems.SubFolder}"
 				  FontSize="{Binding Settings.ListFontSize, Converter={locconv:FontSizeToInt}}" 
 				  FontFamily="{Binding Settings.ListFontFamily, Converter={locconv:FontNameToFontFamily}}" 
 				  FontWeight="{Binding Settings.ListFontModifier, Converter={locconv:FontModifierToFontWeight}}" 
 				  FontStyle="{Binding Settings.ListFontModifier, Converter={locconv:FontModifierToFontStyle}}"
-				  ScrollViewer.VerticalScrollBarVisibility="{ext:ThemeBinding 'window.notesview.hierachical.tree.scrollbar_v:visible', Convert='ToScrollBarVisibility'}"
+				  ScrollViewer.VerticalScrollBarVisibility="{ext:ThemeBinding 'window.notesview.hierarchical.tree.scrollbar_v:visible', Convert='ToScrollBarVisibility'}"
 				  PreviewMouseRightButtonDown="FolderTreeView_OnPreviewMouseRightButtonDown"
 				  SelectedItemChanged="TreeView_SelectedItemChanged">
 			
@@ -69,19 +69,19 @@
                     <EventSetter Event="TreeViewItem.Collapsed" Handler="OnTreeCollapsed" />
                 </Style>
 
-				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"     Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:background', Convert='ToColor'}" />
-				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:foreground', Convert='ToColor'}" />
-				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"                      Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:background', Convert='ToColor'}" />
-				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"                  Color="{ext:ThemeBinding 'window.notesview.hierachical.tree.selected:foreground', Convert='ToColor'}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"     Color="{ext:ThemeBinding 'window.notesview.hierarchical.tree.selected:background', Convert='ToColor'}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{ext:ThemeBinding 'window.notesview.hierarchical.tree.selected:foreground', Convert='ToColor'}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"                      Color="{ext:ThemeBinding 'window.notesview.hierarchical.tree.selected:background', Convert='ToColor'}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"                  Color="{ext:ThemeBinding 'window.notesview.hierarchical.tree.selected:foreground', Convert='ToColor'}" />
 				
 			</TreeView.Resources>
 
             <TreeView.ItemTemplate>
-				<HierarchicalDataTemplate ItemsSource="{Binding SubFolder}" DataType="{x:Type hier:HierachicalWrapper_Folder}">
+				<HierarchicalDataTemplate ItemsSource="{Binding SubFolder}" DataType="{x:Type hier:HierarchicalWrapper_Folder}">
 
 					<StackPanel Orientation="Horizontal">
-						<Image Width="16" Height="16" Margin="2" Stretch="Fill" Source="{Binding ., Converter={locconv:HierachicalWrapperToIcon}}"/>
-						<TextBlock Text="{Binding Header}" Foreground="{ext:ThemeBinding 'window.notesview.hierachical.tree:foreground'}" />
+						<Image Width="16" Height="16" Margin="2" Stretch="Fill" Source="{Binding ., Converter={locconv:HierarchicalWrapperToIcon}}"/>
+						<TextBlock Text="{Binding Header}" Foreground="{ext:ThemeBinding 'window.notesview.hierarchical.tree:foreground'}" />
 					</StackPanel>
 				</HierarchicalDataTemplate>
 			</TreeView.ItemTemplate>
@@ -89,23 +89,23 @@
 		</TreeView>
 
 		<GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="3" 
-					  Background="{ext:ThemeBinding 'window.notesview.hierachical.splitter'}"
+					  Background="{ext:ThemeBinding 'window.notesview.hierarchical.splitter'}"
 					  Focusable="False"/>
 
-		<ListView x:Name="HierachicalNotesList" Grid.Row="2"
-					  BorderBrush="{ext:ThemeBinding 'window.notesview.hierachical.list:bordercolor'}"
+		<ListView x:Name="HierarchicalNotesList" Grid.Row="2"
+					  BorderBrush="{ext:ThemeBinding 'window.notesview.hierarchical.list:bordercolor'}"
 					  AllowDrop="True"
-					  Drop="HierachicalNotesList_Drop"
-					  KeyDown="HierachicalNotesList_KeyDown"
-					  SelectionChanged="HierachicalNotesList_OnSelectionChanged"
+					  Drop="HierarchicalNotesList_Drop"
+					  KeyDown="HierarchicalNotesList_KeyDown"
+					  SelectionChanged="HierarchicalNotesList_OnSelectionChanged"
 					  services:MultiDataTemplateService.MultiDataTemplateSelector="{Binding Settings.NotePreviewStyle}"
 					  HorizontalContentAlignment="Stretch"
 					  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-					  ScrollViewer.VerticalScrollBarVisibility="{ext:ThemeBinding 'window.notesview.hierachical.list.scrollbar_v:visible', Convert='ToScrollBarVisibility'}"
+					  ScrollViewer.VerticalScrollBarVisibility="{ext:ThemeBinding 'window.notesview.hierarchical.list.scrollbar_v:visible', Convert='ToScrollBarVisibility'}"
 					  ScrollViewer.CanContentScroll="{Binding Settings.SmoothScrollNotesView, Converter={conv:NegateBool}}"
 					  SelectionMode="{Binding Settings.MultiNoteSelection, Converter={locconv:BoolToListViewSelectionMode}}"
-					  Background="{ext:ThemeBinding 'window.notesview.hierachical.list:background'}"
-					  Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list:foreground'}"
+					  Background="{ext:ThemeBinding 'window.notesview.hierarchical.list:background'}"
+					  Foreground="{ext:ThemeBinding 'window.notesview.hierarchical.list:foreground'}"
 					  ItemsSource="{Binding SelectedFolder.AllSubNotes}" 
 					  SelectedValue="{Binding SelectedNote}"
 					  MouseRightButtonUp="NotesList_MouseRightButtonUp"
@@ -129,7 +129,7 @@
 							<Image Grid.Column="1" Source="{ext:ThemeBinding 'lock_small.png', ResType='ImageSource'}" VerticalAlignment="Center" Visibility="{Binding IsLocked, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
 							<TextBlock Grid.Column="2" 
 									   Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" 
-									   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list:foreground'}"
+									   Foreground="{ext:ThemeBinding 'window.notesview.hierarchical.list:foreground'}"
 									   TextTrimming="CharacterEllipsis" />
 						</Grid>
 					</DataTemplate>
@@ -153,7 +153,7 @@
 
 							<Rectangle Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Height="2"
 							           Fill="{ext:ThemeBinding   'window.notesview.flat.vborder:background'}" 
-							           Margin="{ext:ThemeBinding     'window.notesview.hierachical.list.vborder:margin'}"  />
+							           Margin="{ext:ThemeBinding     'window.notesview.hierarchical.list.vborder:margin'}"  />
 
 							<Image     Grid.Row="1" Grid.Column="0" Source="{ext:ThemeBinding 'star.png', ResType='ImageSource'}" VerticalAlignment="Center" 
 							           Visibility="{Binding IsPinned, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
@@ -161,12 +161,12 @@
 							           Visibility="{Binding IsLocked, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
 
 							<TextBlock Grid.Row="1" Grid.Column="2" 
-									   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list:foreground'}"
+									   Foreground="{ext:ThemeBinding 'window.notesview.hierarchical.list:foreground'}"
 									   Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" 
 									   TextTrimming="CharacterEllipsis" />
 
 							<TextBlock Grid.Row="1" Grid.Column="3" 
-									   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.datetime1:foreground'}"
+									   Foreground="{ext:ThemeBinding 'window.notesview.hierarchical.list.datetime1:foreground'}"
 									   Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" 
 									   VerticalAlignment="Center">
 								<TextBlock.LayoutTransform>
@@ -176,7 +176,7 @@
 
 							<Rectangle Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" Height="2"
 							           Fill="{ext:ThemeBinding   'window.notesview.flat.vborder:background'}" 
-							           Margin="{ext:ThemeBinding     'window.notesview.hierachical.list.vborder:margin'}"  />
+							           Margin="{ext:ThemeBinding     'window.notesview.hierarchical.list.vborder:margin'}"  />
 						</Grid>
 					</DataTemplate>
 				</services:ConditionalDataTemplate>
@@ -204,31 +204,31 @@
 								           Visibility="{Binding IsLocked, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
 
 								<TextBlock Grid.Column="2" FontWeight="Bold" FontStyle="Normal" 
-										   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list:foreground'}" 
+										   Foreground="{ext:ThemeBinding 'window.notesview.hierarchical.list:foreground'}" 
 										   Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" 
 										   TextTrimming="CharacterEllipsis" />
 							</Grid>
 
 							<TextBlock Grid.Row="1" TextWrapping="NoWrap">
 								<Run FontWeight="Normal" FontStyle="Normal" 
-									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.datetime2:foreground'}" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.hierarchical.list.datetime2:foreground'}" 
 									 Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
 								<Run FontWeight="Normal" FontStyle="Normal" 
-									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.preview:foreground'}" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.hierarchical.list.preview:foreground'}" 
 									 Text="{Binding Text, Converter={conv:GetStringLine}, ConverterParameter=0, Mode=OneWay}" />
 							</TextBlock>
 							<TextBlock Grid.Row="2" TextWrapping="NoWrap">
 								<Run FontWeight="Normal" FontStyle="Normal" 
-									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.preview:foreground'}" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.hierarchical.list.preview:foreground'}" 
 									 Text="{Binding Text, Converter={conv:GetStringLine}, ConverterParameter=1, Mode=OneWay}" />
 							</TextBlock>
 							<TextBlock Grid.Row="3" TextWrapping="NoWrap">
 								<Run FontWeight="Normal" FontStyle="Normal" 
-									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.preview:foreground'}" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.hierarchical.list.preview:foreground'}" 
 									 Text="{Binding Text, Converter={conv:GetStringLine}, ConverterParameter=2, Mode=OneWay}" />
 							</TextBlock>
 							<Rectangle Grid.Row="4" Height="2"
-							           Fill="{ext:ThemeBinding 'window.notesview.hierachical.list.separator'}" 
+							           Fill="{ext:ThemeBinding 'window.notesview.hierarchical.list.separator'}" 
 									   Margin="6,7,6,7" />
 						</Grid>
 					</DataTemplate>
@@ -254,20 +254,20 @@
 								<Image     Grid.Column="1" Source="{ext:ThemeBinding 'lock_small.png', ResType='ImageSource'}" VerticalAlignment="Center" 
 								           Visibility="{Binding IsLocked, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}" />
 								<TextBlock Grid.Column="2" FontWeight="Bold" FontStyle="Normal"
-										   Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list:foreground'}" 
+										   Foreground="{ext:ThemeBinding 'window.notesview.hierarchical.list:foreground'}" 
 										   Text="{Binding Title, Converter={conv:StringCoalesce}, ConverterParameter='New Note...', Mode=OneWay}" TextTrimming="CharacterEllipsis" />
 							</Grid>
 
 							<TextBlock Grid.Row="1" TextWrapping="NoWrap">
 								<Run FontWeight="Normal" FontStyle="Normal" 
-									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.datetime2:foreground'}" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.hierarchical.list.datetime2:foreground'}" 
 									 Text="{Binding ModificationDate, Converter={conv:SmallDateTimeToDisplay}, Mode=OneWay}" />
 								<Run FontWeight="Normal" FontStyle="Normal" 
-									 Foreground="{ext:ThemeBinding 'window.notesview.hierachical.list.preview:foreground'}" 
+									 Foreground="{ext:ThemeBinding 'window.notesview.hierarchical.list.preview:foreground'}" 
 									 Text="{Binding Text, Converter={conv:GetStringLine}, ConverterParameter=0, Mode=OneWay}" />
 							</TextBlock>
 							<Rectangle Grid.Row="2" Height="2"
-							           Fill="{ext:ThemeBinding 'window.notesview.hierachical.list.separator'}" 
+							           Fill="{ext:ThemeBinding 'window.notesview.hierarchical.list.separator'}" 
 									   Margin="6,7,6,7" />
 						</Grid>
 					</DataTemplate>

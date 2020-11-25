@@ -9,20 +9,20 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-namespace AlephNote.Common.Hierachy
+namespace AlephNote.Common.Hierarchy
 {
-    public class HierachyConfigCache
+    public class HierarchyConfigCache
     {
         private readonly string _filepath;
 
         private readonly object _masterLock = new object();
 
 		private string _xml;
-		private readonly Dictionary<Guid, HierachyConfigData> _data = new Dictionary<Guid, HierachyConfigData>();
+		private readonly Dictionary<Guid, HierarchyConfigData> _data = new Dictionary<Guid, HierarchyConfigData>();
 
         private readonly DelayedCombiningInvoker invSave;
 
-        private HierachyConfigCache(string fp, string xml)
+        private HierarchyConfigCache(string fp, string xml)
         {
             _filepath = fp;
 			_xml      = xml;
@@ -30,22 +30,22 @@ namespace AlephNote.Common.Hierachy
 			invSave = DelayedCombiningInvoker.Create(SaveDirect, 15 * 1000, 2 * 60 * 1000);
         }
 
-		public static HierachyConfigCache LoadFromFile(string path)
+		public static HierarchyConfigCache LoadFromFile(string path)
 		{
 
 			try
 			{
 				if (!File.Exists(path))
 				{
-					LoggerSingleton.Inst.Trace("HierachyConfigCache", $"Load '{path}' (file not found)");
-					return new HierachyConfigCache(path, string.Empty);
+					LoggerSingleton.Inst.Trace("HierarchyConfigCache", $"Load '{path}' (file not found)");
+					return new HierarchyConfigCache(path, string.Empty);
 				}
 
 				var xml = File.ReadAllText(path);
 
-				LoggerSingleton.Inst.Trace("HierachyConfigCache", $"Load '{path}'", xml);
+				LoggerSingleton.Inst.Trace("HierarchyConfigCache", $"Load '{path}'", xml);
 
-				var hcc = new HierachyConfigCache(path, xml);
+				var hcc = new HierarchyConfigCache(path, xml);
 				
 				var xdoc = XDocument.Parse(xml);
 				if (xdoc.Root.Name != "cache") throw new Exception("Missing <cache> element");
@@ -55,7 +55,7 @@ namespace AlephNote.Common.Hierachy
 
                 foreach (var acc in data.Elements("account"))
 				{
-					var d = HierachyConfigData.Deserialize(acc);
+					var d = HierarchyConfigData.Deserialize(acc);
 					hcc._data[d.Item2] = d.Item1;
 				}
 
@@ -63,8 +63,8 @@ namespace AlephNote.Common.Hierachy
 			}
 			catch (Exception e)
 			{
-				LoggerSingleton.Inst.Error("HierachyConfigCache", $"Could not load HierachyConfig from file '{path}'", e);
-				var hce = new HierachyConfigCache(path, string.Empty);
+				LoggerSingleton.Inst.Error("HierarchyConfigCache", $"Could not load HierarchyConfig from file '{path}'", e);
+				var hce = new HierarchyConfigCache(path, string.Empty);
 				hce.ForceSaveNow();
 				return hce;
 			}
@@ -72,7 +72,7 @@ namespace AlephNote.Common.Hierachy
 
 		public void ForceSaveNow()
 		{
-			LoggerSingleton.Inst.Trace("HierachyConfigCache", $"Force Save");
+			LoggerSingleton.Inst.Trace("HierarchyConfigCache", $"Force Save");
 
 			invSave.CancelPendingRequests();
 			SaveDirect();
@@ -85,7 +85,7 @@ namespace AlephNote.Common.Hierachy
 
 		private void SaveDirect()
 		{
-			LoggerSingleton.Inst.Trace("HierachyConfigCache", $"Execute Save");
+			LoggerSingleton.Inst.Trace("HierarchyConfigCache", $"Execute Save");
 
 			lock (_masterLock)
 			{
@@ -104,27 +104,27 @@ namespace AlephNote.Common.Hierachy
 
 					if (xmlcontent == _xml)
 					{
-						LoggerSingleton.Inst.Trace("HierachyConfigCache", $"Not Saved (no xml diff)");
+						LoggerSingleton.Inst.Trace("HierarchyConfigCache", $"Not Saved (no xml diff)");
 						return;
 					}
 
 					File.WriteAllText(_filepath, xmlcontent, Encoding.UTF8);
 					_xml = xmlcontent;
 
-					LoggerSingleton.Inst.Trace("HierachyConfigCache", $"Saved", xmlcontent);
+					LoggerSingleton.Inst.Trace("HierarchyConfigCache", $"Saved", xmlcontent);
 				}
 				catch (Exception e)
 				{
-					LoggerSingleton.Inst.Error("HierachyConfigCache", $"Could not save HierachyConfig to file '{_filepath}'", e);
+					LoggerSingleton.Inst.Error("HierarchyConfigCache", $"Could not save HierarchyConfig to file '{_filepath}'", e);
 				}
 			}
 		}
 
-        public void UpdateAndRequestSave(Guid account, HierachicalWrapper_Folder folders, DirectoryPath selectedFolderPath, string selectedNote)
+        public void UpdateAndRequestSave(Guid account, HierarchicalWrapper_Folder folders, DirectoryPath selectedFolderPath, string selectedNote)
         {
-			LoggerSingleton.Inst.Trace("HierachyConfigCache", $"Request Save (full)");
+			LoggerSingleton.Inst.Trace("HierarchyConfigCache", $"Request Save (full)");
 
-            var dat = new HierachyConfigData
+            var dat = new HierarchyConfigData
             {
                 SelectedFolder = selectedFolderPath,
                 SelectedNote   = selectedNote,
@@ -140,11 +140,11 @@ namespace AlephNote.Common.Hierachy
 
 		public void UpdateAndRequestSave(Guid account, DirectoryPath selectedFolderPath, string selectedNote)
 		{
-			LoggerSingleton.Inst.Trace("HierachyConfigCache", $"Request Save (selection)");
+			LoggerSingleton.Inst.Trace("HierarchyConfigCache", $"Request Save (selection)");
 
 			lock (_masterLock)
 			{
-				if (!_data.ContainsKey(account)) new HierachyConfigData();
+				if (!_data.ContainsKey(account)) new HierarchyConfigData();
 
 				_data[account].SelectedNote   = selectedNote;
 				_data[account].SelectedFolder = selectedFolderPath;
@@ -153,12 +153,12 @@ namespace AlephNote.Common.Hierachy
 			invSave.Request();
 		}
 
-		public HierachyConfigData Get(Guid id)
+		public HierarchyConfigData Get(Guid id)
 		{
 			lock (_masterLock)
 			{
 				if (_data.ContainsKey(id)) return _data[id];
-				return _data[id] = new HierachyConfigData();
+				return _data[id] = new HierarchyConfigData();
 			}
 		}
     }

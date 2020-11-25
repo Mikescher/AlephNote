@@ -139,8 +139,8 @@
     <Compile Include="WPF\Controls\NotesView\NotesViewFlat.xaml.cs">
       <DependentUpon>NotesViewFlat.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WPF\Controls\NotesView\NotesViewHierachical.xaml.cs">
-      <DependentUpon>NotesViewHierachical.xaml</DependentUpon>
+    <Compile Include="WPF\Controls\NotesView\NotesViewHierarchical.xaml.cs">
+      <DependentUpon>NotesViewHierarchical.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPF\Controls\PathEditor.xaml.cs">
       <DependentUpon>PathEditor.xaml</DependentUpon>
@@ -164,7 +164,7 @@
     <Compile Include="WPF\Converter\ColorRefToBrush.cs" />
     <Compile Include="WPF\Converter\FontNameToFontFamily.cs" />
     <Compile Include="WPF\Converter\FontSizeToInt.cs" />
-    <Compile Include="WPF\Converter\HierachicalWrapperToIcon.cs" />
+    <Compile Include="WPF\Converter\HierarchicalWrapperToIcon.cs" />
     <Compile Include="WPF\Converter\ReadonlyToLockIcon.cs" />
     <Compile Include="WPF\Converter\PropertyToHelpText.cs" />
     <Compile Include="WPF\Converter\KeyToWeight.cs" />
@@ -304,7 +304,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WPF\Controls\NotesView\NotesViewHierachical.xaml">
+    <Page Include="WPF\Controls\NotesView\NotesViewHierarchical.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

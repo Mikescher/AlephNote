@@ -5,15 +5,15 @@ using System;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace AlephNote.Common.Hierachy
+namespace AlephNote.Common.Hierarchy
 {
-    public class HierachyConfigData
+    public class HierarchyConfigData
     {
         public DirectoryPath SelectedFolder = null;
         public string SelectedNote          = null;
-        public HierachyConfigEntry Entry    = null;
+        public HierarchyConfigEntry Entry    = null;
 
-        public HierachyConfigData()
+        public HierarchyConfigData()
         {
 
         }
@@ -43,9 +43,9 @@ namespace AlephNote.Common.Hierachy
             return acc;
         }
 
-        public static Tuple<HierachyConfigData, Guid> Deserialize(XElement xelem)
+        public static Tuple<HierarchyConfigData, Guid> Deserialize(XElement xelem)
         {
-            var hcd = new HierachyConfigData();
+            var hcd = new HierarchyConfigData();
 
             var guid = Guid.Parse(xelem.Attribute("id").Value);
 
@@ -59,7 +59,7 @@ namespace AlephNote.Common.Hierachy
                 }
                 else
                 {
-                    var dat = HierachyConfigEntry.Deserialize(dir.Elements().Single());
+                    var dat = HierarchyConfigEntry.Deserialize(dir.Elements().Single());
                     hcd.Entry = dat;
                 }
             }
@@ -93,7 +93,7 @@ namespace AlephNote.Common.Hierachy
             return Tuple.Create(hcd, guid);
         }
 
-        public void ApplyTo(IReadonlyAlephSettings settings, HierachicalWrapper_Folder dst)
+        public void ApplyTo(IReadonlyAlephSettings settings, HierarchicalWrapper_Folder dst)
         {
             Entry?.ApplyTo(settings, dst);
         }

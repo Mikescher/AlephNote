@@ -25,9 +25,9 @@ namespace AlephNote.Plugins.SimpleNote
 
 		private SimpleNoteData _data;
 
-		public readonly HierachyEmulationConfig HConfig;
+		public readonly HierarchyEmulationConfig HConfig;
 
-		public SimpleNoteConnection(AlephLogger log, IWebProxy proxy, SimpleNoteConfig config, HierachyEmulationConfig hConfig)
+		public SimpleNoteConnection(AlephLogger log, IWebProxy proxy, SimpleNoteConfig config, HierarchyEmulationConfig hConfig)
 		{
 			HConfig = hConfig;
 

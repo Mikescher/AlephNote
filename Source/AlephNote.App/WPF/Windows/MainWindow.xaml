@@ -226,8 +226,8 @@
 									SearchText="{Binding SearchText}" />
 						</ControlTemplate>
 
-						<ControlTemplate x:Key="TemplateHierachical">
-							<notesView:NotesViewHierachical
+						<ControlTemplate x:Key="TemplateHierarchical">
+							<notesView:NotesViewHierarchical
 									NotesListDrop="NotesList_Drop"
 									NotesListKeyDown="NotesList_KeyDown"
 									GridSplitterChanged="VertGridSplitterChanged"
@@ -332,7 +332,7 @@
 				</StackPanel>
 
 				<ctrl:PathEditor Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="PathEditor"
-							 Visibility="{Binding Settings.UseHierachicalNoteStructure, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}"
+							 Visibility="{Binding Settings.UseHierarchicalNoteStructure, Converter={conv:BoolToVisibility}, ConverterParameter='Visible;Collapsed'}"
 							 Settings="{Binding Settings}"
 							 SelectedNote="{Binding SelectedNote}"
 							 SelectedFolderPath="{Binding SelectedFolderPath}" />

@@ -745,7 +745,7 @@
 					</StackPanel>
 				</ScrollViewer>
 			</TabItem>
-			<TabItem Header="Note hierachy">
+			<TabItem Header="Note hierarchy">
 				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 					<StackPanel Orientation="Vertical">
 						<GroupBox Header="Directory structure for notes" Padding="4">
@@ -761,11 +761,11 @@
 									<ColumnDefinition Width="Auto" />
 								</Grid.ColumnDefinitions>
 
-								<TextBlock     Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Enable hierachical note structure" />
-								<CheckBox      Grid.Row="0" Grid.Column="1" IsChecked="{Binding Settings.UseHierachicalNoteStructure}" VerticalAlignment="Center"/>
-								<ctrl:PHelpBtn Grid.Row="0" Grid.Column="2" HelpProperty="UseHierachicalNoteStructure" Margin="2,0" VerticalAlignment="Center" />
+								<TextBlock     Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Enable hierarchical note structure" />
+								<CheckBox      Grid.Row="0" Grid.Column="1" IsChecked="{Binding Settings.UseHierarchicalNoteStructure}" VerticalAlignment="Center"/>
+								<ctrl:PHelpBtn Grid.Row="0" Grid.Column="2" HelpProperty="UseHierarchicalNoteStructure" Margin="2,0" VerticalAlignment="Center" />
 
-								<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" IsEnabled="{Binding Settings.UseHierachicalNoteStructure}">
+								<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" IsEnabled="{Binding Settings.UseHierarchicalNoteStructure}">
 									<Grid.RowDefinitions>
 										<RowDefinition Height="Auto"/>
 										<RowDefinition Height="Auto"/>
@@ -783,11 +783,11 @@
 									</Grid.ColumnDefinitions>
 
 									<TextBlock     Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Emulate directories in note title" />
-									<CheckBox      Grid.Row="0" Grid.Column="1" IsChecked="{Binding Settings.EmulateHierachicalStructure}" VerticalAlignment="Center"/>
-									<ctrl:PHelpBtn Grid.Row="0" Grid.Column="2" HelpProperty="EmulateHierachicalStructure" Margin="2,0" VerticalAlignment="Center" />
+									<CheckBox      Grid.Row="0" Grid.Column="1" IsChecked="{Binding Settings.EmulateHierarchicalStructure}" VerticalAlignment="Center"/>
+									<ctrl:PHelpBtn Grid.Row="0" Grid.Column="2" HelpProperty="EmulateHierarchicalStructure" Margin="2,0" VerticalAlignment="Center" />
 
 									<TextBlock     Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Emulated directory seperator" />
-									<ComboBox      Grid.Row="1" Grid.Column="1" Margin="0,3" ItemsSource="{mext:EnumSource settings:HierachicalStructureSeperator}" SelectedValue="{Binding Settings.HStructureSeperator}" />
+									<ComboBox      Grid.Row="1" Grid.Column="1" Margin="0,3" ItemsSource="{mext:EnumSource settings:HierarchicalStructureSeperator}" SelectedValue="{Binding Settings.HStructureSeperator}" />
 
 									<TextBlock     Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Show all notes from all subfolder" />
 									<CheckBox      Grid.Row="2" Grid.Column="1" IsChecked="{Binding Settings.DeepFolderView}" VerticalAlignment="Center"/>
@@ -806,11 +806,11 @@
                                     <ctrl:PHelpBtn Grid.Row="5" Grid.Column="2" HelpProperty="FolderViewShowAllNotesNode" Margin="2,0" VerticalAlignment="Center" />
 
                                     <TextBlock     Grid.Row="6" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Sort directories by custom order" />
-                                    <CheckBox      Grid.Row="6" Grid.Column="1" IsChecked="{Binding Settings.SortHierachyFoldersByCustom}" VerticalAlignment="Center"/>
-                                    <ctrl:PHelpBtn Grid.Row="6" Grid.Column="2" HelpProperty="SortHierachyFoldersByName" Margin="2,0" VerticalAlignment="Center" />
+                                    <CheckBox      Grid.Row="6" Grid.Column="1" IsChecked="{Binding Settings.SortHierarchyFoldersByCustom}" VerticalAlignment="Center"/>
+                                    <ctrl:PHelpBtn Grid.Row="6" Grid.Column="2" HelpProperty="SortHierarchyFoldersByName" Margin="2,0" VerticalAlignment="Center" />
 
                                     <TextBlock     Grid.Row="7" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="Remember collapsed directories" />
-                                    <CheckBox      Grid.Row="7" Grid.Column="1" IsChecked="{Binding Settings.RememberHierachyExpandedState}" VerticalAlignment="Center"/>
+                                    <CheckBox      Grid.Row="7" Grid.Column="1" IsChecked="{Binding Settings.RememberHierarchyExpandedState}" VerticalAlignment="Center"/>
                                 </Grid>
 
 							</Grid>

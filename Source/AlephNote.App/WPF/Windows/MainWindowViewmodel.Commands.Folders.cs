@@ -7,7 +7,7 @@ using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.Dialogs;
 using MSHC.WPF.MVVM;
 using AlephNote.WPF.Util;
-using AlephNote.Common.Hierachy;
+using AlephNote.Common.Hierarchy;
 
 namespace AlephNote.WPF.Windows
 {
@@ -26,7 +26,7 @@ namespace AlephNote.WPF.Windows
 			{
 				var fp = SelectedFolderPath;
 
-				if (fp == null || HierachicalBaseWrapper.IsSpecial(fp)) return;
+				if (fp == null || HierarchicalBaseWrapper.IsSpecial(fp)) return;
 
 				var delNotes = Repository.Notes.Where(n => n.Path.IsPathOrSubPath(fp)).ToList();
 
@@ -54,7 +54,7 @@ namespace AlephNote.WPF.Windows
 			if (string.IsNullOrWhiteSpace(foldercomponent)) return;
 
 			var currentPath = SelectedFolderPath;
-			if (currentPath == null || HierachicalBaseWrapper.IsSpecial(currentPath)) currentPath = DirectoryPath.Root();
+			if (currentPath == null || HierarchicalBaseWrapper.IsSpecial(currentPath)) currentPath = DirectoryPath.Root();
 
 			var path = currentPath.SubDir(foldercomponent);
 
@@ -76,7 +76,7 @@ namespace AlephNote.WPF.Windows
 			try
 			{
 				var oldPath = SelectedFolderPath;
-				if (HierachicalBaseWrapper.IsSpecial(oldPath)) return;
+				if (HierarchicalBaseWrapper.IsSpecial(oldPath)) return;
 
 				if (!GenericInputDialog.ShowInputDialog(Owner, "Insert the name for the folder", "Folder name", oldPath.GetLastComponent(), out var newFolderName)) return;
 
@@ -105,20 +105,20 @@ namespace AlephNote.WPF.Windows
 
 		private void MoveFolderUp()
 		{
-			if (Settings.SortHierachyFoldersByName) return;
+			if (Settings.SortHierarchyFoldersByName) return;
 
 			var path = SelectedFolderPath;
-			if (HierachicalBaseWrapper.IsSpecial(path)) return;
+			if (HierarchicalBaseWrapper.IsSpecial(path)) return;
 
 			Owner.NotesViewControl.MoveFolder(path, -1);
 		}
 
 		private void MoveFolderDown()
 		{
-			if (Settings.SortHierachyFoldersByName) return;
+			if (Settings.SortHierarchyFoldersByName) return;
 
 			var path = SelectedFolderPath;
-			if (HierachicalBaseWrapper.IsSpecial(path)) return;
+			if (HierarchicalBaseWrapper.IsSpecial(path)) return;
 
 			Owner.NotesViewControl.MoveFolder(path, +1);
 		}
