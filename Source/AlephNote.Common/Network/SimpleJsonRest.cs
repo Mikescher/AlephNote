@@ -326,13 +326,12 @@ namespace AlephNote.Common.Network
 					Content = new StringContent(upload, Encoding.UTF8, "application/json"),
 					RequestUri = uri,
 					Method = method,
-					
 				};
 				_headers.ToList().ForEach(h => request.Headers.Add(h.Key, h.Value));
 				
 				LoggerSingleton.Inst.Debug("REST", 
 					$"{ident} SendRequest<GenericTwoWay> [START] ({uri} :: {method})", 
-					$"RequestUri := {uri}\nMethod := {method}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
+					$"RequestUri := {uri}\nMethod := {method}\nBody := {body?.GetType()?.FullName ?? "NULL"}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
 
 				resp = _client.SendAsync(request).Result;
 
@@ -357,6 +356,13 @@ namespace AlephNote.Common.Network
 					{
 						// ignore
 					}
+
+					LoggerSingleton.Inst.Warn("REST",
+						$"{ident} SendRequest<GenericTwoWay> [ERRORED] ({uri} :: {method})",
+						$"REST call to '{uri}' [{method}] returned (not-allowed) statuscode {(int)resp.StatusCode} ({resp.StatusCode})\n\n" +
+						$"Send:\r\n{CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH)}\n\n" +
+						"---------------------\n\n" +
+						$"Recieved:\n{content}");
 
 					if (resp.StatusCode == HttpStatusCode.GatewayTimeout) throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, content, true);
 
@@ -427,7 +433,7 @@ namespace AlephNote.Common.Network
 				
 				LoggerSingleton.Inst.Debug("REST", 
 					$"{ident} SendRequest<GenericUpload> [START] ({uri} :: {method})", 
-					$"RequestUri := {uri}\nMethod := {method}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
+					$"RequestUri := {uri}\nMethod := {method}\nBody := {body?.GetType()?.FullName ?? "NULL"}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
 
 				resp = _client.SendAsync(request).Result;
 
@@ -442,6 +448,11 @@ namespace AlephNote.Common.Network
 
 						return;
 					}
+
+					LoggerSingleton.Inst.Warn("REST",
+						$"{ident} SendRequest<GenericTwoWay> [ERRORED] ({uri} :: {method})",
+						$"REST call to '{uri}' [{method}] returned (not-allowed) statuscode {(int)resp.StatusCode} ({resp.StatusCode})\n\n" +
+						$"Send:\r\n{CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH)}");
 
 					if (resp.StatusCode == HttpStatusCode.GatewayTimeout) throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, string.Empty, true);
 					
@@ -522,7 +533,12 @@ namespace AlephNote.Common.Network
 					{
 						// ignore
 					}
-					
+
+					LoggerSingleton.Inst.Warn("REST",
+						$"{ident} SendRequest<GenericTwoWay> [ERRORED] ({uri} :: {method})",
+						$"REST call to '{uri}' [{method}] returned (not-allowed) statuscode {(int)resp.StatusCode} ({resp.StatusCode})\n\n" +
+						$"Recieved:\n{content}");
+
 					if (resp.StatusCode == HttpStatusCode.GatewayTimeout) throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, content, true);
 
 					throw new RestStatuscodeException(uri.Host, (int)resp.StatusCode, resp.ReasonPhrase, content);
