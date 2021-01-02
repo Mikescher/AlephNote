@@ -7,5 +7,8 @@ namespace AlephNote.PluginInterface
         IEnumerable<INote> EnumerateNotes();
         INote FindNoteByID(string nid);
         void SyncNow();
+
+        IRemoteStorageSyncPersistance GetSyncData();
+        void WriteSyncData(IRemoteStorageSyncPersistance data);
     }
 }

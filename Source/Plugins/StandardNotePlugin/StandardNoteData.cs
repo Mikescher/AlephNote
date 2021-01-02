@@ -9,6 +9,7 @@ namespace AlephNote.Plugins.StandardNote
 	public class StandardNoteData : IRemoteStorageSyncPersistance
 	{
 		public string SyncToken = "";
+		public StandardNoteSessionData SessionData = null;
 
 		public List<StandardFileTag> Tags = new List<StandardFileTag>(); 
 
@@ -17,6 +18,7 @@ namespace AlephNote.Plugins.StandardNote
 			var data = new object[]
 			{
 				new XElement("SyncToken", SyncToken),
+				StandardNoteSessionData.Serialize("SessionData", SessionData),
 				new XElement("Tags", Tags.Select(t => t.Serialize()).Cast<object>().ToArray()),
 			};
 
@@ -30,6 +32,8 @@ namespace AlephNote.Plugins.StandardNote
 		public void Deserialize(XElement input)
 		{
 			SyncToken = XHelper.GetChildValueString(input, "SyncToken");
+
+			SessionData = StandardNoteSessionData.Deserialize(XHelper.GetChildOrNull(input, "SessionData"));
 
 			Tags = XHelper.GetChildOrThrow(input, "Tags").Elements().Select(StandardFileTag.Deserialize).ToList();
 		}

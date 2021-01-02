@@ -19,7 +19,6 @@ namespace AlephNote.Plugins.StandardNote
 		private readonly IWebProxy _proxy;
 		private readonly AlephLogger _logger;
 
-		private StandardNoteAPI.APIResultAuthorize _token = null;
 		private StandardNoteAPI.SyncResult _syncResult = null;
 		private List<Guid> _lastUploadBatch = new List<Guid>();
 
@@ -34,20 +33,21 @@ namespace AlephNote.Plugins.StandardNote
 			_logger = log;
 		}
 
-		private void RefreshToken()
+		private void RefreshToken(StandardNoteData dat)
 		{
 			try
 			{
-				if (_token == null)
+				if (dat.SessionData == null || dat.SessionData.AccessExpiration > DateTime.Now) dat.SessionData = null;
+
+				if (dat.SessionData != null) return;
+
+				using (var web = CreateJsonRestClient(_proxy, _config.Server))
 				{
-					using (var web = CreateJsonRestClient(_proxy, _config.Server))
-					{
-						_logger.Debug(StandardNotePlugin.Name, "Requesting token from StandardNoteServer");
+					_logger.Debug(StandardNotePlugin.Name, "Requesting token from StandardNoteServer");
 
-						_token = StandardNoteAPI.Authenticate(web, _config.Email, _config.Password, _logger);
+					dat.SessionData = StandardNoteAPI.Authenticate(web, _config.Email, _config.Password, _logger);
 
-						_logger.Debug(StandardNotePlugin.Name, "StandardNoteServer returned token for user " + _token.user.uuid);
-					}
+					_logger.Debug(StandardNotePlugin.Name, $"StandardNoteServer returned token for user {dat.SessionData.Token} (until {dat.SessionData.AccessExpiration:yyyy-MM-dd HH:mm:ss})");
 				}
 			}
 			catch (StandardNoteAPIException)
@@ -64,12 +64,12 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		private ISimpleJsonRest CreateAuthenticatedClient()
+		private ISimpleJsonRest CreateAuthenticatedClient(StandardNoteData dat)
 		{
-			RefreshToken();
+			RefreshToken(dat);
 
 			var client = CreateJsonRestClient(_proxy, _config.Server);
-			client.AddHeader("Authorization", "Bearer " + _token.token);
+			client.AddHeader("Authorization", "Bearer " + dat.SessionData.Token);
 			client.AddDTOConverter(ConvertToDTO, ConvertFromDTO);
 
 			return client;
@@ -91,17 +91,17 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			StandardNoteAPI.Logger = _logger;
 
-			using (var web = CreateAuthenticatedClient())
-			{
-				var data = (StandardNoteData)idata;
+			var data = (StandardNoteData)idata;
 
+			using (var web = CreateAuthenticatedClient(data))
+			{
 				var localnotes = ilocalnotes.Cast<StandardFileNote>().ToList();
 
 				var upNotes = localnotes.Where(NeedsUploadReal).ToList();
 				var delNotes = localdeletednotes.Cast<StandardFileNote>().ToList();
 				var delTags = data.GetUnusedTags(localnotes.ToList());
 
-				_syncResult = StandardNoteAPI.Sync(web, this, _token, _config, data, localnotes, upNotes, delNotes, delTags);
+				_syncResult = StandardNoteAPI.Sync(web, this, _config, data, localnotes, upNotes, delNotes, delTags);
 				_lastUploadBatch = upNotes.Select(p => p.ID).ToList();
 
 				_logger.Debug(StandardNotePlugin.Name, "StandardFile sync finished.",

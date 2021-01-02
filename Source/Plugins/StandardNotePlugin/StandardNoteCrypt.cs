@@ -3,6 +3,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using AlephNote.PluginInterface.Util;
+using Konscious.Security.Cryptography;
 using MSHC.Math.Encryption;
 
 // ReSharper disable InconsistentNaming
@@ -14,13 +15,14 @@ namespace AlephNote.Plugins.StandardNote
 
 		public class EncryptResult { public string enc_item_key, auth_hash, enc_content; }
 
-		public static string DecryptContent(string encContent, string encItemKey, string authHash, byte[] masterMK, byte[] masterAK)
+		public static string DecryptContent(string encContent, string encItemKey, StandardNoteSessionData sdat)
 		{
 			if (encContent.StartsWith("000")) return DecryptContent000(encContent);
 			if (encContent.StartsWith("001")) return DecryptContent001(encContent, encItemKey, authHash, masterMK);
 			if (encContent.StartsWith("002")) return DecryptContent002(encContent, encItemKey, masterMK, masterAK);
 			if (encContent.StartsWith("003")) return DecryptContent003(encContent, encItemKey, masterMK, masterAK);
-			if (encContent.StartsWith("004")) throw new StandardNoteAPIException("Unsupported encryption scheme 004 in note content");
+			if (encContent.StartsWith("003")) throw new StandardNoteAPIException("Unsupported encryption scheme 004 in note content");
+			if (encContent.StartsWith("004")) throw new StandardNoteAPIException("Unsupported encryption scheme 004 in note content"); //TODO
 			if (encContent.StartsWith("005")) throw new StandardNoteAPIException("Unsupported encryption scheme 005 in note content");
 			if (encContent.StartsWith("006")) throw new StandardNoteAPIException("Unsupported encryption scheme 006 in note content");
 			if (encContent.StartsWith("007")) throw new StandardNoteAPIException("Unsupported encryption scheme 007 in note content");
@@ -159,14 +161,42 @@ namespace AlephNote.Plugins.StandardNote
 				return EncodingConverter.ByteToHexBitFiddleLowercase(hash);
 			}
 		}
-		
-		public static EncryptResult EncryptContent(string scheme, string content, Guid uuid, byte[] globalMK, byte[] globalAK)
-		{
-			if (scheme == "001") return EncryptContent001(content, globalMK);
-			if (scheme == "002") return EncryptContent002(content, uuid, globalMK, globalAK);
-			if (scheme == "003") return EncryptContent003(content, uuid, globalMK, globalAK);
 
-			throw new Exception("Unsupported encryption scheme: " + scheme);
+		public static string RandomSeed(int len)
+		{
+			byte[] seed = new byte[len];
+			RNG.GetBytes(seed);
+
+			return EncodingConverter.ByteToHexBitFiddleLowercase(seed);
+		}
+
+		public static byte[] Argon2(byte[] password, byte[] salt, int iterations, int memory, int outputLength)
+        {
+            var argon2 = new Argon2id(password)
+            {
+                Salt                = salt,
+                DegreeOfParallelism = Environment.ProcessorCount,
+                Iterations          = iterations,
+                MemorySize          = memory
+            };
+
+            return argon2.GetBytes(outputLength);
+		}
+
+		public static EncryptResult EncryptContent(string content, Guid uuid, StandardNoteSessionData sdat)
+		{
+			if (sdat.Version == "001") return EncryptContent001(content, sdat.RootKey_MasterKey);
+			if (sdat.Version == "002") return EncryptContent002(content, uuid, sdat.RootKey_MasterKey, sdat.RootKey_MasterAuthKey);
+			if (sdat.Version == "003") return EncryptContent003(content, uuid, sdat.RootKey_MasterKey, sdat.RootKey_MasterAuthKey);
+			if (sdat.Version == "004") throw new StandardNoteAPIException("Unsupported encryption scheme 004 in note content");
+			if (sdat.Version == "005") throw new StandardNoteAPIException("Unsupported encryption scheme 005 in note content");
+			if (sdat.Version == "006") throw new StandardNoteAPIException("Unsupported encryption scheme 006 in note content");
+			if (sdat.Version == "007") throw new StandardNoteAPIException("Unsupported encryption scheme 007 in note content");
+			if (sdat.Version == "008") throw new StandardNoteAPIException("Unsupported encryption scheme 008 in note content");
+			if (sdat.Version == "009") throw new StandardNoteAPIException("Unsupported encryption scheme 009 in note content");
+			if (sdat.Version == "010") throw new StandardNoteAPIException("Unsupported encryption scheme 010 in note content");
+
+			throw new Exception("Unsupported encryption scheme: " + sdat.Version);
 		}
 
 		private static EncryptResult EncryptContent001(string content, byte[] mk)
@@ -192,7 +222,7 @@ namespace AlephNote.Plugins.StandardNote
 			};
 		}
 
-		private static EncryptResult EncryptContent002(string rawContent, Guid uuid, byte[] masterMK, byte[] masterAK)
+        private static EncryptResult EncryptContent002(string rawContent, Guid uuid, byte[] masterMK, byte[] masterAK)
 		{
 			byte[] itemKey = new byte[512 / 8];
 			RNG.GetBytes(itemKey);

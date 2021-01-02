@@ -23,7 +23,8 @@ namespace AlephNote.Plugins.StandardNote
 		public override bool SupportsNewDownloadMultithreading => false;
 		public override bool SupportsUploadMultithreading      => false;
 
-		public const string CURRENT_SCHEMA = "003";
+		public const string CURRENT_SCHEMA = "004";
+		public const string CURRENT_API_VERSION = "20200115";
 
 		private AlephLogger _logger;
 
@@ -53,7 +54,22 @@ namespace AlephNote.Plugins.StandardNote
                             if (n.PathModificationDate  == null) n.PathModificationDate  = n.ClientUpdatedAt ?? n.RawModificationDate;
                         }
                     })),
-                }).ToList();
+
+					new UICommand("Clear Auth Token (fore new sign_in)", new RelayCommand<INoteRepository>((repo) =>
+					{
+						var d = (StandardNoteData)repo.GetSyncData();
+						d.SessionData = null;
+						repo.WriteSyncData(d);
+					})),
+
+					new UICommand("Clear Sync Token (fore new sync re-start from beginning)", new RelayCommand<INoteRepository>((repo) =>
+					{
+						var d = (StandardNoteData)repo.GetSyncData();
+						d.SyncToken = null;
+						repo.WriteSyncData(d);
+					})),
+
+				}).ToList();
 
 
         public override void Init(AlephLogger logger)

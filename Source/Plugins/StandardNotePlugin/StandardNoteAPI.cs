@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using AlephNote.PluginInterface.Exceptions;
-using AlephNote.PluginInterface.Util;
 using MSHC.Lang.Collections;
 using MSHC.Math.Encryption;
 using MSHC.Network;
@@ -25,6 +24,9 @@ namespace AlephNote.Plugins.StandardNote
 	/// https://github.com/standardnotes/docs/blob/main/docs/specification/encryption-003.md
 	/// 
 	/// https://github.com/standardnotes/docs/blob/main/docs/specification/encryption-004.md
+	///
+	/// https://github.com/jonhadfield/awesome-standard-notes
+	///
 	/// </summary>
 	public static class StandardNoteAPI
 	{
@@ -33,17 +35,25 @@ namespace AlephNote.Plugins.StandardNote
 		public enum PasswordAlg { sha512, sha256 }
 		public enum PasswordFunc { pbkdf2 }
 
-		public class APIAuthParams { public string version, pw_salt, pw_nonce; public PasswordAlg pw_alg; public PasswordFunc pw_func; public int pw_cost, pw_key_size; }
+		public class APIRequestUser { public string email, password, api; }
+		public class APIRequestSync { public int limit; public List<APIRequestBodyItem> items; public string sync_token, cursor_token, api; }
+		public class APIRequestBodyItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at; public bool deleted; }
+
+		public class APIResultAuthParams { public string identifier; public string pw_nonce; public string version; }
+		public class APIResultAuthorize001 { public APIResultUser user; public string token; public byte[] masterkey, masterauthkey; public string version; }
+		public class APIResultAuthorize004 { public APIResultUser user; public APIResultSession session; public APIResultKeyParams key_params; }
+		public class APIResultSync { public List<APIResultItem> retrieved_items, saved_items; public List<APIResultErrorItem> unsaved; public List<APIResultConflictItem> conflicts; public string sync_token, cursor_token; }
+
 		public class APIResultUser { public Guid uuid; public string email; }
-		public class APIRequestUser { public string email, password, api; } //TODO remove `api` fields (only temp. bugfix)
-		public class APIResultAuthorize { public APIResultUser user; public string token; public byte[] masterkey, masterauthkey; public string version; }
-		public class APIBodyItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at; public bool deleted; }
-		public class APIRawBodyItem { public Guid uuid; public string content_type, content; public DateTimeOffset created_at; public bool deleted; }
 		public class APIResultItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at, updated_at; public bool deleted; }
-		public class APIBodySync { public int limit; public List<APIBodyItem> items; public string sync_token, cursor_token; }
 		public class APIResultErrorItem { public APIResultItem item; public APISyncResultError error; }
+		public class APIResultConflictItem { public APIResultItem unsaved_item, server_item; public string type; }
 		public class APISyncResultError { public string tag; }
-		public class APIResultSync { public List<APIResultItem> retrieved_items, saved_items; public List<APIResultErrorItem> unsaved; public string sync_token, cursor_token; }
+		public class APIResultSession { public string access_token, refresh_token; public DateTimeOffset access_expiration, refresh_expiration; }
+		public class APIResultKeyParams { public DateTimeOffset created; public string identifier, origination, pw_nonce, version; }
+
+		public class APIRawBodyItem { public Guid uuid; public string content_type, content; public DateTimeOffset created_at; public bool deleted; }
+
 		public class APIBadRequest { public APIError error; }
 		public class APIError { public string message; public int status; }
 		public class SyncResultTag { public Guid uuid; public string title; public bool deleted; public string enc_item_key, item_key; public List<APIResultContentRef> references; }
@@ -68,14 +78,14 @@ namespace AlephNote.Plugins.StandardNote
 
 		public static AlephLogger Logger;
 
-		public static APIResultAuthorize Authenticate(ISimpleJsonRest web, string mail, string password, AlephLogger logger)
+		public static StandardNoteSessionData Authenticate(ISimpleJsonRest web, string mail, string password, AlephLogger logger)
 		{
-			var apiparams = web.Get<APIAuthParams>("auth/params", "email=" + WebUtility.UrlEncode(mail));
+			var apiparams = web.Get<APIResultAuthParams>("auth/params", "email=" + WebUtility.UrlEncode(mail), "api=" + StandardNotePlugin.CURRENT_API_VERSION);
 
 			if (apiparams.version == "001") return Authenticate001(web, apiparams, mail, password, logger);
 			if (apiparams.version == "002") return Authenticate002(web, apiparams, mail, password, logger);
 			if (apiparams.version == "003") return Authenticate003(web, apiparams, mail, password, logger);
-			if (apiparams.version == "004") throw new StandardNoteAPIException("Unsupported encryption scheme 004 in auth-params");
+			if (apiparams.version == "004") return Authenticate004(web, apiparams, mail, password, logger);
 			if (apiparams.version == "005") throw new StandardNoteAPIException("Unsupported encryption scheme 005 in auth-params");
 			if (apiparams.version == "006") throw new StandardNoteAPIException("Unsupported encryption scheme 006 in auth-params");
 			if (apiparams.version == "007") throw new StandardNoteAPIException("Unsupported encryption scheme 007 in auth-params");
@@ -86,7 +96,7 @@ namespace AlephNote.Plugins.StandardNote
 			throw new Exception("Unsupported auth API version: " + apiparams.version);
 		}
 
-		private static APIResultAuthorize Authenticate001(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string uip, AlephLogger logger)
+		private static StandardNoteSessionData Authenticate001(ISimpleJsonRest web, APIResultAuthParams apiparams, string mail, string uip, AlephLogger logger)
 		{
 			try
 			{
@@ -114,14 +124,14 @@ namespace AlephNote.Plugins.StandardNote
 
 				var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
 
-				APIResultAuthorize tok;
+				APIResultAuthorize001 tok;
 				try
 				{
-					tok = web.PostDownload<APIResultAuthorize>("auth/sign_in", "email=" + WebUtility.UrlEncode(mail), "password=" + WebUtility.UrlEncode(reqpw));
+					tok = web.PostDownload<APIResultAuthorize001>("auth/sign_in", "email=" + WebUtility.UrlEncode(mail), "password=" + WebUtility.UrlEncode(reqpw));
 				}
 				catch (RestStatuscodeException e1)
 				{
-					if (e1.StatusCode/100 == 4 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
+					if (e1.StatusCode / 100 == 4 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
 					{
 						var req = web.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
 						if (req != null) throw new StandardNoteAPIException($"Server returned status {e1.StatusCode}.\nMessage: '{req.error.message}'", e1);
@@ -130,9 +140,12 @@ namespace AlephNote.Plugins.StandardNote
 					throw;
 				}
 
-				tok.masterkey = mk;
-				tok.version = "001";
-				return tok;
+				return new StandardNoteSessionData
+				{
+					Version = "002",
+					Token = tok.token,
+					RootKey_MasterKey = mk,
+				};
 			}
 			catch (StandardNoteAPIException)
 			{
@@ -148,7 +161,7 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		private static APIResultAuthorize Authenticate002(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string uip, AlephLogger logger)
+		private static StandardNoteSessionData Authenticate002(ISimpleJsonRest web, APIResultAuthParams apiparams, string mail, string uip, AlephLogger logger)
 		{
 			try
 			{
@@ -156,17 +169,17 @@ namespace AlephNote.Plugins.StandardNote
 
 				if (apiparams.pw_func != PasswordFunc.pbkdf2) throw new Exception("Unknown pw_func: " + apiparams.pw_func);
 
-				byte[] bytes = PBKDF2.GenerateDerivedKey(768/8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
-				
+				byte[] bytes = PBKDF2.GenerateDerivedKey(768 / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+
 				var pw = bytes.Skip(0 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
 				var mk = bytes.Skip(1 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
 				var ak = bytes.Skip(2 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
 
 				var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
-				APIResultAuthorize tok;
+				APIResultAuthorize001 tok;
 				try
 				{
-					tok = web.PostTwoWay<APIResultAuthorize>(new APIRequestUser { email = mail, password = reqpw }, "auth/sign_in");
+					tok = web.PostTwoWay<APIResultAuthorize001>(new APIRequestUser { email = mail, password = reqpw }, "auth/sign_in");
 				}
 				catch (RestStatuscodeException e1)
 				{
@@ -179,10 +192,13 @@ namespace AlephNote.Plugins.StandardNote
 					throw;
 				}
 
-				tok.masterkey = mk;
-				tok.masterauthkey = ak;
-				tok.version = "002";
-				return tok;
+				return new StandardNoteSessionData
+				{
+					Version = "002",
+					Token = tok.token,
+					RootKey_MasterKey = mk,
+					RootKey_MasterAuthKey = ak,
+				};
 			}
 			catch (RestException)
 			{
@@ -198,7 +214,7 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 		
-		private static APIResultAuthorize Authenticate003(ISimpleJsonRest web, APIAuthParams apiparams, string mail, string uip, AlephLogger logger)
+		private static StandardNoteSessionData Authenticate003(ISimpleJsonRest web, APIResultAuthParams apiparams, string mail, string uip, AlephLogger logger)
 		{
 			try
 			{
@@ -207,17 +223,17 @@ namespace AlephNote.Plugins.StandardNote
 				if (apiparams.pw_cost < 100000) throw new StandardNoteAPIException($"Account pw_cost is too small ({apiparams.pw_cost})");
 
 				var salt = StandardNoteCrypt.SHA256(string.Join(":", mail, "SF", "003", apiparams.pw_cost.ToString(), apiparams.pw_nonce));
-				byte[] bytes = PBKDF2.GenerateDerivedKey(768/8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
-				
+				byte[] bytes = PBKDF2.GenerateDerivedKey(768 / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+
 				var pw = bytes.Skip(0 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
 				var mk = bytes.Skip(1 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
 				var ak = bytes.Skip(2 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
 
 				var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
-				APIResultAuthorize tok;
+				APIResultAuthorize001 tok;
 				try
 				{
-					tok = web.PostTwoWay<APIResultAuthorize>(new APIRequestUser { email = mail, password = reqpw, api = "20200115" }, "auth/sign_in");
+					tok = web.PostTwoWay<APIResultAuthorize001>(new APIRequestUser { email = mail, password = reqpw, api = "20200115" }, "auth/sign_in");
 				}
 				catch (RestStatuscodeException e1)
 				{
@@ -230,10 +246,13 @@ namespace AlephNote.Plugins.StandardNote
 					throw;
 				}
 
-				tok.masterkey = mk;
-				tok.masterauthkey = ak;
-				tok.version = "003";
-				return tok;
+				return new StandardNoteSessionData
+				{
+					Version = "002",
+					Token = tok.token,
+					RootKey_MasterKey = mk,
+					RootKey_MasterAuthKey = ak,
+				};
 			}
 			catch (RestException)
 			{
@@ -249,13 +268,84 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		public static SyncResult Sync(ISimpleJsonRest web, StandardNoteConnection conn, APIResultAuthorize authToken, StandardNoteConfig cfg, StandardNoteData dat, List<StandardFileNote> allNotes, List<StandardFileNote> notesUpload, List<StandardFileNote> notesDelete, List<StandardFileTag> tagsDelete)
+		private static StandardNoteSessionData Authenticate004(ISimpleJsonRest web, APIResultAuthParams apiparams, string mail, string uip, AlephLogger logger)
 		{
-			APIBodySync d = new APIBodySync();
+			try
+			{
+				logger.Debug(StandardNotePlugin.Name, $"AutParams[version:{apiparams.version}, identifier:{apiparams.identifier}, pw_nonce:{apiparams.pw_nonce}]");
+
+				var seed = StandardNoteCrypt.RandomSeed(32);
+
+				var salt = StandardNoteCrypt.SHA256(string.Join(":", apiparams.identifier, seed));
+
+				var derivedKey = StandardNoteCrypt.Argon2(Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(salt), 5, 64 * 1024, 64);
+
+				var masterKey      = EncodingConverter.ByteToHexBitFiddleLowercase(derivedKey.Skip(00).Take(32).ToArray());
+				var serverPassword = EncodingConverter.ByteToHexBitFiddleLowercase(derivedKey.Skip(32).Take(32).ToArray());
+
+				try
+				{
+					var request = new APIRequestUser 
+					{ 
+						email    = mail,
+						api      = StandardNotePlugin.CURRENT_API_VERSION,
+						password = serverPassword,
+					};
+
+					var result = web.PostTwoWay<APIResultAuthorize004>(request, "auth/sign_in");
+
+					return new StandardNoteSessionData
+					{
+						Token        = result.session.access_token,
+						RefreshToken = result.session.refresh_token,
+
+						AccessExpiration  = result.session.access_expiration,
+						RefreshExpiration = result.session.refresh_expiration,
+
+						Identifier     = result.key_params.identifier,
+						PasswordNonce  = result.key_params.pw_nonce,
+						ParamsCreated  = result.key_params.created,
+
+						AccountEmail    = result.user.email,
+						AccountUUID     = result.user.uuid,
+
+						RootKey_MasterKey      = masterKey,
+						RootKey_ServerPassword = serverPassword,
+					};
+				}
+				catch (RestStatuscodeException e1)
+				{
+					if (e1.StatusCode / 100 == 4 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
+					{
+						var req = web.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
+						if (req != null) throw new StandardNoteAPIException($"Server returned status {e1.StatusCode}.\nMessage: '{req.error.message}'", e1);
+					}
+
+					throw;
+				}
+			}
+			catch (RestException)
+			{
+				throw;
+			}
+			catch (StandardNoteAPIException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				throw new StandardNoteAPIException("Authentification with StandardNoteAPI failed.", e);
+			}
+		}
+
+		public static SyncResult Sync(ISimpleJsonRest web, StandardNoteConnection conn, StandardNoteConfig cfg, StandardNoteData dat, List<StandardFileNote> allNotes, List<StandardFileNote> notesUpload, List<StandardFileNote> notesDelete, List<StandardFileTag> tagsDelete)
+		{
+			APIRequestSync d = new APIRequestSync();
+			d.api = StandardNotePlugin.CURRENT_API_VERSION;
 			d.cursor_token = null;
 			d.sync_token = string.IsNullOrWhiteSpace(dat.SyncToken) ? null : dat.SyncToken;
 			d.limit = 150;
-			d.items = new List<APIBodyItem>();
+			d.items = new List<APIRequestBodyItem>();
 
 			var items_raw = new List<APIRawBodyItem>();
 
@@ -264,19 +354,19 @@ namespace AlephNote.Plugins.StandardNote
 			// Upload new notes
 			foreach (var mvNote in notesUpload)
 			{
-				PrepareNoteForUpload(web, d, ref items_raw, mvNote, allTags, authToken, cfg, false);
+				PrepareNoteForUpload(web, d, ref items_raw, mvNote, allTags, dat, cfg, false);
 			}
 
 			// Delete deleted notes
 			foreach (var rmNote in notesDelete)
 			{
-				PrepareNoteForUpload(web, d, ref items_raw, rmNote, allTags, authToken, cfg, true);
+				PrepareNoteForUpload(web, d, ref items_raw, rmNote, allTags, dat, cfg, true);
 			}
 
 			// Update references on tags (from changed notes)
 			foreach (var upTag in GetTagsInNeedOfUpdate(dat.Tags, notesUpload, notesDelete))
 			{
-				PrepareTagForUpload(web, d, ref items_raw, upTag, authToken, false);
+				PrepareTagForUpload(web, d, ref items_raw, upTag, dat, false);
 			}
 
 			// Remove unused tags
@@ -284,7 +374,7 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				foreach (var rmTag in tagsDelete)
 				{
-					PrepareTagForUpload(web, d, ref items_raw, rmTag, authToken, true);
+					PrepareTagForUpload(web, d, ref items_raw, rmTag, dat, true);
 				}
 			}
 			
@@ -301,26 +391,26 @@ namespace AlephNote.Plugins.StandardNote
 				.retrieved_items
 				.Where(p => p.content_type.ToLower() == "tag")
 				.Where(p => !p.deleted)
-				.Select(n => CreateTag(web, n, authToken))
+				.Select(n => CreateTag(web, n, dat))
 				.ToList();
 
 			syncresult.deleted_tags = result
 				.retrieved_items
 				.Where(p => p.content_type.ToLower() == "tag")
 				.Where(p => p.deleted)
-				.Select(n => CreateTag(web, n, authToken))
+				.Select(n => CreateTag(web, n, dat))
 				.ToList();
 
 			syncresult.saved_tags = result
 				.saved_items
 				.Where(p => p.content_type.ToLower() == "tag")
-				.Select(n => CreateTag(web, n, authToken))
+				.Select(n => CreateTag(web, n, dat))
 				.ToList();
 
 			syncresult.unsaved_tags = result
 				.unsaved
 				.Where(p => p.item.content_type.ToLower() == "tag")
-				.Select(n => CreateTag(web, n.item, authToken))
+				.Select(n => CreateTag(web, n.item, dat))
 				.ToList();
 
 			dat.UpdateTags(syncresult.retrieved_tags, syncresult.saved_tags, syncresult.unsaved_tags, syncresult.deleted_tags);
@@ -329,34 +419,34 @@ namespace AlephNote.Plugins.StandardNote
 				.retrieved_items
 				.Where(p => p.content_type.ToLower() == "note")
 				.Where(p => !p.deleted)
-				.Select(n => CreateNote(web, conn, n, authToken, cfg, dat))
+				.Select(n => CreateNote(web, conn, n, dat, cfg))
 				.ToList();
 			
 			syncresult.deleted_notes = result
 				.saved_items
 				.Where(p => p.content_type.ToLower() == "note")
 				.Where(p => p.deleted)
-				.Select(n => CreateNote(web, conn, n, authToken, cfg, dat))
+				.Select(n => CreateNote(web, conn, n, dat, cfg))
 				.ToList();
 
 			syncresult.saved_notes = result
 				.saved_items
 				.Where(p => p.content_type.ToLower() == "note")
-				.Select(n => CreateNote(web, conn, n, authToken, cfg, dat))
+				.Select(n => CreateNote(web, conn, n, dat, cfg))
 				.ToList();
 
 			syncresult.conflict_notes = result
 				.unsaved
 				.Where(p => p.item.content_type.ToLower() == "note")
 				.Where(p => p.error.tag == "sync_conflict")
-				.Select(n => CreateNote(web, conn, n.item, authToken, cfg, dat))
+				.Select(n => CreateNote(web, conn, n.item, dat, cfg)) //TODO real conflicts
 				.ToList();
 
 			syncresult.error_notes = result
 				.unsaved
 				.Where(p => p.item.content_type.ToLower() == "note")
 				.Where(p => p.error.tag != "sync_conflict")
-				.Select(n => CreateNote(web, conn, n.item, authToken, cfg, dat))
+				.Select(n => CreateNote(web, conn, n.item, dat, cfg))
 				.ToList();
 
 			syncresult.retrieved_notes.AddRange(GetMissingNoteUpdates(syncresult.retrieved_tags.Concat(syncresult.saved_tags), dat.Tags, allNotes, syncresult.retrieved_notes));
@@ -573,7 +663,7 @@ namespace AlephNote.Plugins.StandardNote
 			return result.DistinctBy(n => n.ID);
 		}
 
-		private static APIResultSync GetCursorResult(ISimpleJsonRest web, StandardNoteData dat, APIBodySync d)
+		private static APIResultSync GetCursorResult(ISimpleJsonRest web, StandardNoteData dat, APIRequestSync d)
 		{
 			var masterResult = new APIResultSync
 			{
@@ -600,7 +690,7 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		private static void PrepareNoteForUpload(ISimpleJsonRest web, APIBodySync body, ref List<APIRawBodyItem> bodyraw, StandardFileNote note, List<StandardFileTag> allTags, APIResultAuthorize token, StandardNoteConfig cfg, bool delete)
+		private static void PrepareNoteForUpload(ISimpleJsonRest web, APIRequestSync body, ref List<APIRawBodyItem> bodyraw, StandardFileNote note, List<StandardFileTag> allTags, StandardNoteData dat, StandardNoteConfig cfg, bool delete)
 		{
 			var appdata = new Dictionary<string, Dictionary<string, object>>();
 
@@ -654,9 +744,9 @@ namespace AlephNote.Plugins.StandardNote
 
 			var jsonContent = web.SerializeJson(objContent);
 
-			var cryptData = StandardNoteCrypt.EncryptContent(token.version, jsonContent, note.ID, token.masterkey, token.masterauthkey);
+			var cryptData = StandardNoteCrypt.EncryptContent(jsonContent, note.ID, dat.SessionData);
 
-			body.items.Add(new APIBodyItem
+			body.items.Add(new APIRequestBodyItem
 			{
 				content_type = "Note",
 				uuid         = note.ID,
@@ -676,7 +766,7 @@ namespace AlephNote.Plugins.StandardNote
 			});
 		}
 
-		private static void PrepareTagForUpload(ISimpleJsonRest web, APIBodySync body, ref List<APIRawBodyItem> bodyraw, StandardFileTag tag, APIResultAuthorize token, bool delete)
+		private static void PrepareTagForUpload(ISimpleJsonRest web, APIRequestSync body, ref List<APIRawBodyItem> bodyraw, StandardFileTag tag, StandardNoteData dat, bool delete)
 		{
 			var objContent = new ContentTag
 			{
@@ -691,9 +781,9 @@ namespace AlephNote.Plugins.StandardNote
 			
 			var jsonContent = web.SerializeJson(objContent);
 
-			var cryptData = StandardNoteCrypt.EncryptContent(token.version, jsonContent, tag.UUID.Value, token.masterkey, token.masterauthkey);
+			var cryptData = StandardNoteCrypt.EncryptContent(jsonContent, tag.UUID.Value, dat.SessionData);
 
-			body.items.Add(new APIBodyItem
+			body.items.Add(new APIRequestBodyItem
 			{
 				content_type = "Tag",
 				uuid         = tag.UUID.Value,
@@ -711,7 +801,7 @@ namespace AlephNote.Plugins.StandardNote
 			});
 		}
 
-		private static StandardFileNote CreateNote(ISimpleJsonRest web, StandardNoteConnection conn, APIResultItem encNote, APIResultAuthorize authToken, StandardNoteConfig cfg, StandardNoteData dat)
+		private static StandardFileNote CreateNote(ISimpleJsonRest web, StandardNoteConnection conn, APIResultItem encNote, StandardNoteData dat, StandardNoteConfig cfg)
 		{
 			if (encNote.deleted)
 			{
@@ -729,7 +819,7 @@ namespace AlephNote.Plugins.StandardNote
 			string appDataContentString;
 			try
 			{
-				var contentJson = StandardNoteCrypt.DecryptContent(encNote.content, encNote.enc_item_key, encNote.auth_hash, authToken.masterkey, authToken.masterauthkey);
+				var contentJson = StandardNoteCrypt.DecryptContent(encNote.content, encNote.enc_item_key, encNote.auth_hash, dat.SessionData);
 
 				Logger.Debug(
 					StandardNotePlugin.Name, 
@@ -814,7 +904,7 @@ namespace AlephNote.Plugins.StandardNote
 			return n;
 		}
 
-		private static SyncResultTag CreateTag(ISimpleJsonRest web, APIResultItem encTag, APIResultAuthorize authToken)
+		private static SyncResultTag CreateTag(ISimpleJsonRest web, APIResultItem encTag, StandardNoteData dat)
 		{
 			if (encTag.deleted)
 			{
@@ -832,7 +922,7 @@ namespace AlephNote.Plugins.StandardNote
 			ContentTag content;
 			try
 			{
-				var contentJson = StandardNoteCrypt.DecryptContent(encTag.content, encTag.enc_item_key, encTag.auth_hash, authToken.masterkey, authToken.masterauthkey);
+				var contentJson = StandardNoteCrypt.DecryptContent(encTag.content, encTag.enc_item_key, encTag.auth_hash, dat.SessionData);
 
 				Logger.Debug(
 					StandardNotePlugin.Name,
