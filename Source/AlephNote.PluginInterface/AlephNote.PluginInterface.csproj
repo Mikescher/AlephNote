@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net46</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 
 		<AssemblyVersion>0.0.0.0</AssemblyVersion>
 		<FileVersion>0.0.0.0</FileVersion>
@@ -13,7 +13,15 @@
 		<OutDir>..\..\Bin\$(Configuration)\$(TargetFramework)\</OutDir>
 	</PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\External\CSharpUtils\LanguageUtils\LanguageUtils.csproj" />
+  </ItemGroup>
+
 	<ItemGroup>
+		<PackageReference Include="Isopoh.Cryptography.Argon2" Version="1.1.10">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    
 		<PackageReference Include="System.Xml.XDocument" Version="4.3.0">
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageReference>
@@ -21,18 +29,6 @@
 		<PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.3.0">
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageReference>
-
-		<ProjectReference Include="..\External\CSharpUtils\CSharpUtils.csproj" >
-			<Private>false</Private>
-		</ProjectReference>
-</ItemGroup>
-
-	<ItemGroup>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="System" />
-		<Reference Include="Microsoft.CSharp" />
 	</ItemGroup>
 
 </Project>

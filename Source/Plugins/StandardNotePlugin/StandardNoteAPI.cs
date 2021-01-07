@@ -11,6 +11,7 @@ using MSHC.Math.Encryption;
 using MSHC.Network;
 using MSHC.Serialization;
 using System.Globalization;
+using AlephNote.PluginInterface.Util;
 
 namespace AlephNote.Plugins.StandardNote
 {
@@ -278,7 +279,7 @@ namespace AlephNote.Plugins.StandardNote
 
 				var salt = StandardNoteCrypt.SHA256(string.Join(":", apiparams.identifier, seed));
 
-				var derivedKey = StandardNoteCrypt.Argon2(Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(salt), 5, 64 * 1024, 64);
+				var derivedKey = ANCrypt.Argon2(Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(salt), 5, 64 * 1024, 64);
 
 				var masterKey      = EncodingConverter.ByteToHexBitFiddleLowercase(derivedKey.Skip(00).Take(32).ToArray());
 				var serverPassword = EncodingConverter.ByteToHexBitFiddleLowercase(derivedKey.Skip(32).Take(32).ToArray());
@@ -819,7 +820,7 @@ namespace AlephNote.Plugins.StandardNote
 			string appDataContentString;
 			try
 			{
-				var contentJson = StandardNoteCrypt.DecryptContent(encNote.content, encNote.enc_item_key, encNote.auth_hash, dat.SessionData);
+				var contentJson = StandardNoteCrypt.DecryptContent(encNote.content, encNote.enc_item_key, dat.SessionData);
 
 				Logger.Debug(
 					StandardNotePlugin.Name, 
@@ -922,7 +923,7 @@ namespace AlephNote.Plugins.StandardNote
 			ContentTag content;
 			try
 			{
-				var contentJson = StandardNoteCrypt.DecryptContent(encTag.content, encTag.enc_item_key, encTag.auth_hash, dat.SessionData);
+				var contentJson = StandardNoteCrypt.DecryptContent(encTag.content, encTag.enc_item_key, dat.SessionData);
 
 				Logger.Debug(
 					StandardNotePlugin.Name,

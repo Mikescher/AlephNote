@@ -5,7 +5,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:windows="clr-namespace:AlephNote.WPF.Windows"
 		xmlns:log="clr-namespace:AlephNote.Log"
-		xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
+		xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=WPFUtils"
 		xmlns:locconv="clr-namespace:AlephNote.WPF.Converter"
 		mc:Ignorable="d" 
 		d:DataContext="{d:DesignInstance windows:LogWindowViewmodel}"

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using AlephNote.PluginInterface.Util;
-using Konscious.Security.Cryptography;
 using MSHC.Math.Encryption;
 
 // ReSharper disable InconsistentNaming
@@ -170,18 +169,6 @@ namespace AlephNote.Plugins.StandardNote
 			return EncodingConverter.ByteToHexBitFiddleLowercase(seed);
 		}
 
-		public static byte[] Argon2(byte[] password, byte[] salt, int iterations, int memory, int outputLength)
-        {
-            var argon2 = new Argon2id(password)
-            {
-                Salt                = salt,
-                DegreeOfParallelism = Environment.ProcessorCount,
-                Iterations          = iterations,
-                MemorySize          = memory
-            };
-
-            return argon2.GetBytes(outputLength);
-		}
 
 		public static EncryptResult EncryptContent(string content, Guid uuid, StandardNoteSessionData sdat)
 		{

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2003
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{CB81B812-6639-4CA4-A949-1C952858B263}"
 	ProjectSection(SolutionItems) = preProject
@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StandardNotePlugin", "Plugi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvernotePlugin", "Plugins\EvernotePlugin\EvernotePlugin.csproj", "{B1C3FBFF-533B-4189-9FC0-F63859A8DF90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlephNote.App", "AlephNote.App\AlephNote.App.csproj", "{C6A3DA36-849B-4048-9F40-5F3F7A9D2026}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlephNote.App", "AlephNote.App\AlephNote.App.csproj", "{C6A3DA36-849B-4048-9F40-5F3F7A9D2026}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F1BC6C1B-E5CD-4995-B4F1-F1E31BBE8211} = {F1BC6C1B-E5CD-4995-B4F1-F1E31BBE8211}
 		{A9696B27-551E-462D-B2B0-069391414474} = {A9696B27-551E-462D-B2B0-069391414474}
@@ -45,7 +45,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlephNote.Eto", "AlephNote.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{379E5A1E-B36A-4FB5-834E-34CA8E94C16D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpUtils", "External\CSharpUtils\CSharpUtils.csproj", "{D661CD9F-8934-496D-8332-BC82AAB77598}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LanguageUtils", "External\CSharpUtils\LanguageUtils\LanguageUtils.csproj", "{C640CAD3-ECB6-4C4E-9609-E8260EC2B94D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFUtils", "External\CSharpUtils\WPFUtils\WPFUtils.csproj", "{74924BF3-919A-4B16-B2E1-A4938EC27B5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,10 +99,14 @@ Global
 		{B45A313A-E966-4717-9FD4-D932A7D1FD1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B45A313A-E966-4717-9FD4-D932A7D1FD1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B45A313A-E966-4717-9FD4-D932A7D1FD1E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D661CD9F-8934-496D-8332-BC82AAB77598}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D661CD9F-8934-496D-8332-BC82AAB77598}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D661CD9F-8934-496D-8332-BC82AAB77598}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D661CD9F-8934-496D-8332-BC82AAB77598}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C640CAD3-ECB6-4C4E-9609-E8260EC2B94D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C640CAD3-ECB6-4C4E-9609-E8260EC2B94D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C640CAD3-ECB6-4C4E-9609-E8260EC2B94D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C640CAD3-ECB6-4C4E-9609-E8260EC2B94D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74924BF3-919A-4B16-B2E1-A4938EC27B5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74924BF3-919A-4B16-B2E1-A4938EC27B5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74924BF3-919A-4B16-B2E1-A4938EC27B5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74924BF3-919A-4B16-B2E1-A4938EC27B5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -113,7 +119,8 @@ Global
 		{C32C0E4F-5552-49EB-93B3-BCBA8F4C8515} = {0B76231E-AA47-46DF-A894-ACBE698F2ECE}
 		{F1BC6C1B-E5CD-4995-B4F1-F1E31BBE8211} = {0B76231E-AA47-46DF-A894-ACBE698F2ECE}
 		{B1C3FBFF-533B-4189-9FC0-F63859A8DF90} = {0B76231E-AA47-46DF-A894-ACBE698F2ECE}
-		{D661CD9F-8934-496D-8332-BC82AAB77598} = {379E5A1E-B36A-4FB5-834E-34CA8E94C16D}
+		{C640CAD3-ECB6-4C4E-9609-E8260EC2B94D} = {379E5A1E-B36A-4FB5-834E-34CA8E94C16D}
+		{74924BF3-919A-4B16-B2E1-A4938EC27B5B} = {379E5A1E-B36A-4FB5-834E-34CA8E94C16D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0FE378A1-7351-4E0F-AD83-0FE44BF03489}

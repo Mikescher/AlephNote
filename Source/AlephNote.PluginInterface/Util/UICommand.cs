@@ -1,13 +1,13 @@
-﻿using MSHC.WPF.MVVM;
+﻿using MSHC.WPFStub;
 
 namespace AlephNote.PluginInterface.Util
 {
     public class UICommand
     {
         public string Header { get; }
-        public RelayCommand<INoteRepository> Command { get; }
+        public ITypedCommand<INoteRepository> Command { get; }
 
-        public UICommand(string header, RelayCommand<INoteRepository> command)
+        public UICommand(string header, ITypedCommand<INoteRepository> command)
         {
             Header = header;
             Command = command;

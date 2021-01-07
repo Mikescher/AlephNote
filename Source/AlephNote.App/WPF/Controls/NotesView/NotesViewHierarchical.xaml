@@ -4,11 +4,11 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:self="clr-namespace:AlephNote.WPF.Controls"
-			 xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
+			 xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=WPFUtils"
 			 xmlns:pi="clr-namespace:AlephNote.PluginInterface;assembly=AlephNote.PluginInterface"
 			 xmlns:settings="clr-namespace:AlephNote.Common.Settings.Types;assembly=AlephNote.Common"
              xmlns:hier="clr-namespace:AlephNote.Common.Hierarchy;assembly=AlephNote.Common"
-			 xmlns:services="clr-namespace:MSHC.WPF.Services;assembly=CSharpUtils"
+			 xmlns:services="clr-namespace:MSHC.WPF.Services;assembly=WPFUtils"
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 			 xmlns:locconv="clr-namespace:AlephNote.WPF.Converter"
 			 xmlns:notesView="clr-namespace:AlephNote.WPF.Controls.NotesView"
@@ -77,7 +77,7 @@
 			</TreeView.Resources>
 
             <TreeView.ItemTemplate>
-				<HierarchicalDataTemplate ItemsSource="{Binding SubFolder}" DataType="{x:Type hier:HierarchicalWrapper_Folder}">
+                <HierarchicalDataTemplate ItemsSource="{Binding SubFolder}" DataType="{x:Type hier:HierarchicalWrapper_Folder}">
 
 					<StackPanel Orientation="Horizontal">
 						<Image Width="16" Height="16" Margin="2" Stretch="Fill" Source="{Binding ., Converter={locconv:HierarchicalWrapperToIcon}}"/>

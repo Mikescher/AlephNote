@@ -10,7 +10,8 @@ namespace AlephNote.WPF.Windows
 	{
 		public string Appversion => App.AppVersionProperty;
 
-		public string CSUtilsVersion => CSharpUtils.VERSION.Revision==0 ? CSharpUtils.VERSION.ToString(4) : CSharpUtils.VERSION.ToString(3);
+		public string LanguageUtilsVersion => LanguageUtils.VERSION.Revision==0 ? LanguageUtils.VERSION.ToString(4) : LanguageUtils.VERSION.ToString(3);
+		public string WPFUtilsVersion      => WPFUtils.VERSION.Revision==0      ? WPFUtils.VERSION.ToString(4)      : WPFUtils.VERSION.ToString(3);
 
 		public IEnumerable<IRemotePlugin> AvailableProvider { get { return PluginManager.Inst.LoadedPlugins; } }
 	}

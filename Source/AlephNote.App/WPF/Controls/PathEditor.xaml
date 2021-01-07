@@ -4,7 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:self="clr-namespace:AlephNote.WPF.Controls"
-			 xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
+			 xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=WPFUtils"
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="40" d:DesignWidth="100">

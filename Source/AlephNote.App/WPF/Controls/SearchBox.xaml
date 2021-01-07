@@ -3,10 +3,10 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
+			 xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=WPFUtils"
 			 xmlns:controls="clr-namespace:AlephNote.WPF.Controls"
 			 xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
-			 xmlns:controls1="clr-namespace:MSHC.WPF.Controls;assembly=CSharpUtils"
+			 xmlns:controls1="clr-namespace:MSHC.WPF.Controls;assembly=WPFUtils"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="28" d:DesignWidth="500">
 
