@@ -40,7 +40,7 @@ namespace AlephNote.Plugins.StandardNote
 		public class APIRequestSync { public int limit; public List<APIRequestBodyItem> items; public string sync_token, cursor_token, api; }
 		public class APIRequestBodyItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at; public bool deleted; }
 
-		public class APIResultAuthParams { public string identifier; public string pw_nonce; public string version; }
+		public class APIResultAuthParams { public string identifier; public string pw_nonce; public string version; public string pw_salt; public PasswordAlg pw_alg; public PasswordFunc pw_func; public int pw_cost, pw_key_size; }
 		public class APIResultAuthorize001 { public APIResultUser user; public string token; public byte[] masterkey, masterauthkey; public string version; }
 		public class APIResultAuthorize004 { public APIResultUser user; public APIResultSession session; public APIResultKeyParams key_params; }
 		public class APIResultSync { public List<APIResultItem> retrieved_items, saved_items; public List<APIResultErrorItem> unsaved; public List<APIResultConflictItem> conflicts; public string sync_token, cursor_token; }
@@ -223,7 +223,7 @@ namespace AlephNote.Plugins.StandardNote
 
 				if (apiparams.pw_cost < 100000) throw new StandardNoteAPIException($"Account pw_cost is too small ({apiparams.pw_cost})");
 
-				var salt = StandardNoteCrypt.SHA256(string.Join(":", mail, "SF", "003", apiparams.pw_cost.ToString(), apiparams.pw_nonce));
+				var salt = StandardNoteCrypt.SHA256Hex(string.Join(":", mail, "SF", "003", apiparams.pw_cost.ToString(), apiparams.pw_nonce));
 				byte[] bytes = PBKDF2.GenerateDerivedKey(768 / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
 
 				var pw = bytes.Skip(0 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
@@ -279,8 +279,8 @@ namespace AlephNote.Plugins.StandardNote
 
 				var derivedKey = ANCrypt.Argon2(Encoding.UTF8.GetBytes(uip), salt, 5, 64 * 1024, 64);
 
-				var masterKey      = EncodingConverter.ByteToHexBitFiddleLowercase(derivedKey.Skip(00).Take(32).ToArray());
-				var serverPassword = EncodingConverter.ByteToHexBitFiddleLowercase(derivedKey.Skip(32).Take(32).ToArray());
+				var masterKey      = derivedKey.Skip(00).Take(32).ToArray();
+				var serverPassword = derivedKey.Skip(32).Take(32).ToArray();
 
 				try
 				{
@@ -288,7 +288,7 @@ namespace AlephNote.Plugins.StandardNote
 					{ 
 						email    = mail,
 						api      = StandardNotePlugin.CURRENT_API_VERSION,
-						password = serverPassword,
+						password = EncodingConverter.ByteToHexBitFiddleLowercase(serverPassword),
 					};
 
 					var result = web.PostTwoWay<APIResultAuthorize004>(request, "auth/sign_in");
@@ -818,7 +818,7 @@ namespace AlephNote.Plugins.StandardNote
 			string appDataContentString;
 			try
 			{
-				var contentJson = StandardNoteCrypt.DecryptContent(encNote.content, encNote.enc_item_key, dat.SessionData);
+				var contentJson = StandardNoteCrypt.DecryptContent(encNote.content, encNote.enc_item_key, encNote.auth_hash, dat.SessionData);
 
 				Logger.Debug(
 					StandardNotePlugin.Name, 
@@ -921,7 +921,7 @@ namespace AlephNote.Plugins.StandardNote
 			ContentTag content;
 			try
 			{
-				var contentJson = StandardNoteCrypt.DecryptContent(encTag.content, encTag.enc_item_key, dat.SessionData);
+				var contentJson = StandardNoteCrypt.DecryptContent(encTag.content, encTag.enc_item_key, encTag.auth_hash, dat.SessionData);
 
 				Logger.Debug(
 					StandardNotePlugin.Name,

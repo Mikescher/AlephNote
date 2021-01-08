@@ -14,12 +14,12 @@ namespace AlephNote.Plugins.StandardNote
 
 		public class EncryptResult { public string enc_item_key, auth_hash, enc_content; }
 
-		public static string DecryptContent(string encContent, string encItemKey, StandardNoteSessionData sdat)
+		public static string DecryptContent(string encContent, string encItemKey, string authHash, StandardNoteSessionData sdat)
 		{
 			if (encContent.StartsWith("000")) return DecryptContent000(encContent);
-			if (encContent.StartsWith("001")) return DecryptContent001(encContent, encItemKey, authHash, masterMK);
-			if (encContent.StartsWith("002")) return DecryptContent002(encContent, encItemKey, masterMK, masterAK);
-			if (encContent.StartsWith("003")) return DecryptContent003(encContent, encItemKey, masterMK, masterAK);
+			if (encContent.StartsWith("001")) return DecryptContent001(encContent, encItemKey, authHash, sdat.RootKey_MasterKey);
+			if (encContent.StartsWith("002")) return DecryptContent002(encContent, encItemKey, sdat.RootKey_MasterKey, sdat.RootKey_MasterAuthKey);
+			if (encContent.StartsWith("003")) return DecryptContent003(encContent, encItemKey, sdat.RootKey_MasterKey, sdat.RootKey_MasterAuthKey);
 			if (encContent.StartsWith("003")) throw new StandardNoteAPIException("Unsupported encryption scheme 004 in note content");
 			if (encContent.StartsWith("004")) throw new StandardNoteAPIException("Unsupported encryption scheme 004 in note content"); //TODO
 			if (encContent.StartsWith("005")) throw new StandardNoteAPIException("Unsupported encryption scheme 005 in note content");
@@ -181,7 +181,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public static EncryptResult EncryptContent(string content, Guid uuid, StandardNoteSessionData sdat)
 		{
-			if (sdat.Version == "001") return EncryptContent001(content, sdat.RootKey_MasterKey);
+			if (sdat.Version == "001") return EncryptContent001(content,       sdat.RootKey_MasterKey);
 			if (sdat.Version == "002") return EncryptContent002(content, uuid, sdat.RootKey_MasterKey, sdat.RootKey_MasterAuthKey);
 			if (sdat.Version == "003") return EncryptContent003(content, uuid, sdat.RootKey_MasterKey, sdat.RootKey_MasterAuthKey);
 			if (sdat.Version == "004") throw new StandardNoteAPIException("Unsupported encryption scheme 004 in note content");
