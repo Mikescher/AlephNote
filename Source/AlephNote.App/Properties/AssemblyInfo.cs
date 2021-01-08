@@ -17,6 +17,6 @@ using System.Windows;
 
 // Also increase version of default theme (!)
 
-[assembly: AssemblyVersion("1.6.37.0")]
-[assembly: AssemblyFileVersion("1.6.37.0")]
-[assembly: AssemblyInformationalVersion("1.6.37.0-master")]
+[assembly: AssemblyVersion("1.6.38.0")]
+[assembly: AssemblyFileVersion("1.6.38.0")]
+[assembly: AssemblyInformationalVersion("1.6.38.0-master")]
