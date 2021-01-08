@@ -10,7 +10,7 @@
 		<AssemblyName>AlephNote.PluginInterface</AssemblyName>
 		<PackageId>AlephNote.PluginInterface</PackageId>
 		
-		<OutDir>..\..\Bin\$(Configuration)\$(TargetFramework)\</OutDir>
+		<OutDir>..\..\Bin\$(Configuration)\</OutDir>
 	</PropertyGroup>
 
   <ItemGroup>

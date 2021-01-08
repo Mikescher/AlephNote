@@ -10,7 +10,7 @@
 		<GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
 		<GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
 
-		<OutDir>..\..\Bin\$(Configuration)\$(TargetFramework)\</OutDir>
+		<OutDir>..\..\Bin\$(Configuration)\</OutDir>
 	</PropertyGroup>
 
 	<ItemGroup>

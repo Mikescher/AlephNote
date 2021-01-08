@@ -10,7 +10,7 @@
 		<FileVersion>1.2.14.0</FileVersion>
 		<Version>1.2.14.0</Version>
 
-		<OutDir>..\..\..\Bin\$(Configuration)\$(TargetFramework)\Plugins\</OutDir>
+		<OutDir>..\..\..\Bin\$(Configuration)\Plugins\</OutDir>
 
 		<RootNamespace>AlephNote.Plugins.Nextcloud</RootNamespace>
 	</PropertyGroup>
