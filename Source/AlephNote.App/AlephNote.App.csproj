@@ -24,17 +24,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ContentWithTargetPath Include="Resources\themes\alt_iconset.zip"        CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\alt_iconset.zip" />
-    <ContentWithTargetPath Include="Resources\themes\solarized-dark.xml"     CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\solarized-dark.xml" />
-    <ContentWithTargetPath Include="Resources\themes\solarized-light.xml"    CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\solarized-light.xml" />
-    <ContentWithTargetPath Include="Resources\themes\default.xml"            CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\default.xml" />
-    <ContentWithTargetPath Include="Resources\themes\monokai-neo.xml"        CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\monokai-neo.xml" />
+    <ContentWithTargetPath Include="Resources\themes\alt_iconset.zip" CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\alt_iconset.zip" />
+    <ContentWithTargetPath Include="Resources\themes\solarized-dark.xml" CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\solarized-dark.xml" />
+    <ContentWithTargetPath Include="Resources\themes\solarized-light.xml" CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\solarized-light.xml" />
+    <ContentWithTargetPath Include="Resources\themes\default.xml" CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\default.xml" />
+    <ContentWithTargetPath Include="Resources\themes\monokai-neo.xml" CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\monokai-neo.xml" />
     <ContentWithTargetPath Include="Resources\themes\highcontrast-white.xml" CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\highcontrast-white.xml" />
     <ContentWithTargetPath Include="Resources\themes\highcontrast-black.xml" CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\highcontrast-black.xml" />
-    <ContentWithTargetPath Include="Resources\themes\compact-sidebar.xml"    CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\compact-sidebar.xml" />
-    <ContentWithTargetPath Include="Resources\themes\wide-sidebar.xml"       CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\wide-sidebar.xml" />
-    <ContentWithTargetPath Include="Resources\themes\no-scrollbars.xml"      CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\no-scrollbars.xml" />
-    <ContentWithTargetPath Include="Resources\themes\stachybotrys.zip"       CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\stachybotrys.zip" />
+    <ContentWithTargetPath Include="Resources\themes\compact-sidebar.xml" CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\compact-sidebar.xml" />
+    <ContentWithTargetPath Include="Resources\themes\wide-sidebar.xml" CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\wide-sidebar.xml" />
+    <ContentWithTargetPath Include="Resources\themes\no-scrollbars.xml" CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\no-scrollbars.xml" />
+    <ContentWithTargetPath Include="Resources\themes\stachybotrys.zip" CopyToOutputDirectory="PreserveNewest" TargetPath="Themes\stachybotrys.zip" />
   </ItemGroup>
 
   <ItemGroup>
@@ -84,17 +84,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DiffPlex"                    Version="1.4.4" />
-    <PackageReference Include="Extended.Wpf.Toolkit"        Version="3.6.0" />
-    <PackageReference Include="Hardcodet.NotifyIcon.Wpf"    Version="1.0.8" />
-    <PackageReference Include="jacobslusser.ScintillaNET"   Version="3.6.3" />
-    <PackageReference Include="Microsoft.NETCore.Platforms" Version="3.0.0" />
-    <PackageReference Include="NETStandard.Library"         Version="2.0.3" />
-    <PackageReference Include="Newtonsoft.Json"             Version="12.0.1" />
-    <PackageReference Include="Ookii.Dialogs"               Version="1.0" />
-    <PackageReference Include="System.Numerics.Vectors"     Version="4.5.0" />
-    <PackageReference Include="System.Xml.XDocument"        Version="4.3.0" />
-    <PackageReference Include="WPFToolkit"                  Version="3.5.50211.1" />
+    <PackageReference Include="DiffPlex" Version="1.6.3" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.0.2" />
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.0.8" />
+    <PackageReference Include="jacobslusser.ScintillaNET" Version="3.6.3" />
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="5.0.0" />
+    <PackageReference Include="NETStandard.Library" Version="2.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Ookii.Dialogs.Wpf" Version="3.1.0" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+    <PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
+    <PackageReference Include="WPFToolkit" Version="3.5.50211.1" />
   </ItemGroup>
 
 </Project>

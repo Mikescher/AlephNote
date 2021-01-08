@@ -32,7 +32,7 @@
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageReference>
 
-		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.6.0">
+		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0">
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageReference>
 
