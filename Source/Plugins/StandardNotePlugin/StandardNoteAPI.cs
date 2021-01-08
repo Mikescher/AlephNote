@@ -275,11 +275,9 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				logger.Debug(StandardNotePlugin.Name, $"AutParams[version:{apiparams.version}, identifier:{apiparams.identifier}, pw_nonce:{apiparams.pw_nonce}]");
 
-				var seed = StandardNoteCrypt.RandomSeed(32);
+				 var salt = StandardNoteCrypt.SHA256Bytes(string.Join(":", apiparams.identifier, apiparams.pw_nonce)).Take(128 / 8).ToArray();
 
-				var salt = StandardNoteCrypt.SHA256(string.Join(":", apiparams.identifier, seed));
-
-				var derivedKey = ANCrypt.Argon2(Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(salt), 5, 64 * 1024, 64);
+				var derivedKey = ANCrypt.Argon2(Encoding.UTF8.GetBytes(uip), salt, 5, 64 * 1024, 64);
 
 				var masterKey      = EncodingConverter.ByteToHexBitFiddleLowercase(derivedKey.Skip(00).Take(32).ToArray());
 				var serverPassword = EncodingConverter.ByteToHexBitFiddleLowercase(derivedKey.Skip(32).Take(32).ToArray());

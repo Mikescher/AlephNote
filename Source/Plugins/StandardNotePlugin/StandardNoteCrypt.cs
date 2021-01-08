@@ -152,12 +152,21 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		public static string SHA256(string data)
+		public static string SHA256Hex(string data)
 		{
-			using(var sha = System.Security.Cryptography.SHA256.Create())
+			using(var sha = SHA256.Create())
 			{
 				var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(data));
 				return EncodingConverter.ByteToHexBitFiddleLowercase(hash);
+			}
+		}
+
+		public static byte[] SHA256Bytes(string data)
+		{
+			using (var sha = SHA256.Create())
+			{
+				var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(data));
+				return hash;
 			}
 		}
 

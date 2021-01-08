@@ -18,17 +18,9 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Isopoh.Cryptography.Argon2" Version="1.1.10">
-      <ExcludeAssets>runtime</ExcludeAssets>
-    </PackageReference>
-    
-		<PackageReference Include="System.Xml.XDocument" Version="4.3.0">
-			<ExcludeAssets>runtime</ExcludeAssets>
-		</PackageReference>
-		
-		<PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.3.0">
-			<ExcludeAssets>runtime</ExcludeAssets>
-		</PackageReference>
+		<PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.2.1" />
+		<PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
+		<PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.3.0" />
 	</ItemGroup>
 
 </Project>

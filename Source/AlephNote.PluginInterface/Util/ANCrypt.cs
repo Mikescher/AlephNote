@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Konscious.Security.Cryptography;
 
 namespace AlephNote.PluginInterface.Util
 {
@@ -6,7 +6,15 @@ namespace AlephNote.PluginInterface.Util
     {
         public static byte[] Argon2(byte[] password, byte[] salt, int iterations, int memory, int outputLength)
         {
-            return null;
+            var argon2 = new Argon2id(password)
+            {
+                DegreeOfParallelism = 1,
+                MemorySize = memory,
+                Iterations = iterations,
+                Salt = salt,
+            };
+            
+            return argon2.GetBytes(outputLength);
         }
     }
 }
