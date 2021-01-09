@@ -20,6 +20,7 @@ namespace AlephNote.Plugins.StandardNote
 		private readonly AlephLogger _logger;
 
 		private StandardNoteAPI.SyncResult _syncResult = null;
+		private bool _immediateResync = false;
 		private List<Guid> _lastUploadBatch = new List<Guid>();
 
 		public readonly HierarchyEmulationConfig HConfig;
@@ -91,6 +92,8 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			StandardNoteAPI.Logger = _logger;
 
+			_immediateResync = false;
+
 			var data = (StandardNoteData)idata;
 
 			using (var web = CreateAuthenticatedClient(data))
@@ -133,14 +136,17 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		public override void FinishSync()
+		public override void FinishSync(out bool immediateResync)
 		{
+			immediateResync = _immediateResync;
+
 			_syncResult = null;
 		}
 
-		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, ConflictResolutionStrategy strategy)
+		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, out bool keepNoteRemoteDirtyWithConflict, ConflictResolutionStrategy strategy)
 		{
 			var note = (StandardFileNote) inote;
+			keepNoteRemoteDirtyWithConflict = false;
 
 			var item_saved = _syncResult.saved_notes.FirstOrDefault(n => n.ID == note.ID);
 			if (item_saved != null)
@@ -162,14 +168,51 @@ namespace AlephNote.Plugins.StandardNote
 			var item_syncconflict = _syncResult.syncconflict_notes.FirstOrDefault(n => n.servernote != null && n.servernote.ID == note.ID);
 			if (item_syncconflict != default)
 			{
-				conflict = item_syncconflict.servernote;
-				return RemoteUploadResult.Conflict;
+				var conf = item_syncconflict.servernote;
+
+				if (strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.UseClientCreateConflictFile)
+                {
+					conflict = conf;
+
+					// note needs to be uploaded again, because this time server returned [conflict] and did not apply data
+					keepNoteRemoteDirtyWithConflict = true;
+
+					// update mdate, so we don't get a conflict next time and we upload to new (client) note
+					note.RawModificationDate = item_syncconflict.servernote.ModificationDate;
+
+					// trigger another sync after this one (to upload actual/new client note)
+					_immediateResync = true;
+
+					return RemoteUploadResult.Conflict;
+				}
+				else if (strategy == ConflictResolutionStrategy.UseServerVersion || strategy == ConflictResolutionStrategy.UseServerCreateConflictFile)
+				{
+					conflict = inote;
+					inote = conf;
+
+					_immediateResync = false;
+
+					return RemoteUploadResult.Conflict;
+				}
+				else if (strategy == ConflictResolutionStrategy.ManualMerge)
+				{
+					conflict = inote;
+					inote = conf;
+
+					_immediateResync = false;
+
+					return RemoteUploadResult.Conflict;
+				}
+				else
+				{
+					throw new Exception("Unknown ConflictResolutionStrategy");
+				}
 			}
 
 			var item_uuidconflict = _syncResult.uuidconflict_notes.FirstOrDefault(n => n.servernote != null && n.servernote.ID == note.ID);
 			if (item_uuidconflict != default)
 			{
-				throw new Exception($"Could not upload note {inote.UniqueName} due to an UUID conflict"); // you're fucked!
+				throw new Exception($"Could not upload note {note.UniqueName} due to an UUID conflict"); // you're fucked!
 			}
 
 			conflict = null;

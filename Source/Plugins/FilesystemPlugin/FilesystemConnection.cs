@@ -32,9 +32,10 @@ namespace AlephNote.Plugins.Filesystem
 			_logger.Debug(FilesystemPlugin.Name, string.Format("Found {0} note files in directory scan", _syncScan.Count));
 		}
 
-		public override void FinishSync()
+		public override void FinishSync(out bool immediateResync)
 		{
 			_syncScan = null;
+			immediateResync = false;
 		}
 
 		public override bool NeedsUpload(INote inote)
@@ -68,9 +69,10 @@ namespace AlephNote.Plugins.Filesystem
 			return remote.IsLocked != note.IsLocked || remote.ModificationDate > note.ModificationDate;
 		}
 
-		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, ConflictResolutionStrategy strategy)
+		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, out bool keepNoteRemoteDirtyWithConflict, ConflictResolutionStrategy strategy)
 		{
 			FilesystemNote note = (FilesystemNote)inote;
+			keepNoteRemoteDirtyWithConflict = false;
 
 			var path = note.GetPath(_config);
 
@@ -91,19 +93,41 @@ namespace AlephNote.Plugins.Filesystem
 				var conf = ReadNoteFromPath(note.PathRemote);
 				if (conf.ModificationDate > note.ModificationDate)
 				{
-					conflict = conf;
-					if (strategy == ConflictResolutionStrategy.UseClientCreateConflictFile || strategy == ConflictResolutionStrategy.UseClientVersion || strategy == ConflictResolutionStrategy.ManualMerge)
+					if (strategy == ConflictResolutionStrategy.UseClientCreateConflictFile || strategy == ConflictResolutionStrategy.UseClientVersion)
 					{
+						var oldPath = note.PathRemote;
+
+						conflict = conf;
+						WriteNoteToPath(note, path);
+						ANFileSystemUtil.DeleteFileAndFolderIfEmpty(FilesystemPlugin.Name, _logger, _config.Folder, oldPath);
+						note.PathRemote = path;
+						return RemoteUploadResult.Conflict;
+					}
+					else if (strategy == ConflictResolutionStrategy.UseServerCreateConflictFile || strategy == ConflictResolutionStrategy.UseServerVersion)
+					{
+						conflict = note;
+						((FilesystemNote)conflict).PathRemote = path;
+
+						inote = conf;
+						note = (FilesystemNote)inote;
+						note.PathRemote = path;
+
+						return RemoteUploadResult.Conflict;
+					}
+					else if (strategy == ConflictResolutionStrategy.ManualMerge)
+					{
+						conflict = conf;
+
 						WriteNoteToPath(note, path);
 						ANFileSystemUtil.DeleteFileAndFolderIfEmpty(FilesystemPlugin.Name, _logger, _config.Folder, note.PathRemote);
 						note.PathRemote = path;
+
 						return RemoteUploadResult.Conflict;
 					}
 					else
-					{
-						note.PathRemote = path;
-						return RemoteUploadResult.Conflict;
-					}
+                    {
+						throw new Exception("Unknown ConflictResolutionStrategy");
+                    }
 				}
 				else
 				{
@@ -119,18 +143,33 @@ namespace AlephNote.Plugins.Filesystem
 				var conf = ReadNoteFromPath(path);
 				if (conf.ModificationDate > note.ModificationDate)
 				{
-					conflict = conf;
 					if (strategy == ConflictResolutionStrategy.UseClientCreateConflictFile || strategy == ConflictResolutionStrategy.UseClientVersion)
 					{
+						conflict = conf;
 						WriteNoteToPath(note, path);
 						if (note.PathRemote != "") ANFileSystemUtil.DeleteFileAndFolderIfEmpty(FilesystemPlugin.Name, _logger, _config.Folder, note.PathRemote);
 						note.PathRemote = path;
 						return RemoteUploadResult.Conflict;
 					}
-					else
+					else if (strategy == ConflictResolutionStrategy.UseServerCreateConflictFile || strategy == ConflictResolutionStrategy.UseServerVersion)
 					{
+						conflict = note;
+
+						inote = conf;
+						note = (FilesystemNote)inote;
+						note.PathRemote = path;
+
+						return RemoteUploadResult.Conflict;
+					}
+					else if (strategy == ConflictResolutionStrategy.ManualMerge)
+					{
+						conflict = conf;
 						note.PathRemote = path;
 						return RemoteUploadResult.Conflict;
+					}
+					else
+					{
+						throw new Exception("Unknown ConflictResolutionStrategy");
 					}
 				}
 				else

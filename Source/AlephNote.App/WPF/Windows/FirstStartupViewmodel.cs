@@ -274,7 +274,7 @@ namespace AlephNote.WPF.Windows
 
 			}
 			Application.Current.Dispatcher.Invoke(() => { SyncInfoText = "Finish synchronization"; });
-			conn.FinishSync();
+			conn.FinishSync(out var _);
 
 			return Tuple.Create(data, resultNotes.ToList(), resultErrors.Count, fullCount);
 		}

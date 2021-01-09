@@ -48,7 +48,7 @@ namespace AlephNote.Common.Repository
 			_repo = repository;
 			_listener = synclistener.ToList();
 
-			_conflictStrategy = ConflictResolutionStrategyHelper.ToInterfaceType(settings.ConflictResolution);
+			_conflictStrategy                    = ConflictResolutionStrategyHelper.ToInterfaceType(settings.ConflictResolution);
 			_noteDownloadEnableMultithreading    = repository.SupportsDownloadMultithreading;
 			_noteDownloadParallelismLevel        = settings.NoteDownloadParallelismLevel;
 			_noteDownloadParallelismThreshold    = settings.NoteDownloadParallelismThreshold;
@@ -84,7 +84,8 @@ namespace AlephNote.Common.Repository
 					_isSyncing = true;
 					{
 						_comChannel.Reset();
-						DoSync();
+
+						DoSync(false);
 					}
 					_isSyncing = false;
 				}
@@ -101,13 +102,15 @@ namespace AlephNote.Common.Repository
 			}
 		}
 
-		private void DoSync()
+		private void DoSync(bool isImmediateResync)
 		{
-			_log.Info("Sync", "Starting remote synchronization");
+			_log.Info("Sync", $"Starting remote synchronization (immediate={isImmediateResync})");
 
 			List<Tuple<string, Exception>> errors = new List<Tuple<string, Exception>>();
 
 			_dispatcher.BeginInvoke(() => { foreach (var l in _listener) l.StartSync(); });
+
+			bool doImmediateResync=false;
 
 			try
 			{
@@ -150,7 +153,7 @@ namespace AlephNote.Common.Repository
 
 					DownloadNewNotes(allNotes, errors);
 				}
-				_repo.Connection.FinishSync();
+				_repo.Connection.FinishSync(out doImmediateResync);
 
 				_repo.WriteSyncData(data);
 			}
@@ -173,6 +176,19 @@ namespace AlephNote.Common.Repository
 			}
 
 			_log.Info("Sync", "Finished remote synchronization");
+
+			if (doImmediateResync)
+			{
+				if (isImmediateResync)
+				{
+					_log.Warn("Sync", "Sync triggered an immediate resync. This was preventeed because past sync event was already immediate (prevent endless sync)");
+				}
+				else
+				{
+					_log.Info("Sync", "Sync triggered an immediate resync. Next sync will be executed now.");
+					DoSync(true);
+				}
+			}
 		}
 
 		private void UploadNotes(IReadOnlyCollection<Tuple<INote, INote>> notesToUpload, IEnumerable<Tuple<INote, INote>> notesToResetRemoteDirty, ICollection<Tuple<string, Exception>> errors)
@@ -207,7 +223,7 @@ namespace AlephNote.Common.Repository
 						});
 					}
 
-					var result = _repo.Connection.UploadNoteToRemote(ref clonenote, out var conflictnote, _conflictStrategy);
+					var result = _repo.Connection.UploadNoteToRemote(ref clonenote, out var conflictnote, out var keepNoteRemoteDirtyWithConflict, _conflictStrategy);
 
 					switch (result)
 					{
@@ -236,7 +252,7 @@ namespace AlephNote.Common.Repository
 
 						case RemoteUploadResult.Conflict:
 							_log.Warn("Sync", "Uploading note " + clonenote.UniqueName + " resulted in conflict");
-							ResolveUploadConflict(realnote, clonenote, conflictnote);
+							ResolveUploadConflict(realnote, clonenote, conflictnote, keepNoteRemoteDirtyWithConflict);
 							break;
 
 						default:
@@ -283,7 +299,7 @@ namespace AlephNote.Common.Repository
 		/// <param name="realnote">The real note in the repository (owned by UI Thread)</param>
 		/// <param name="clonenote">The new note data</param>
 		/// <param name="conflictnote">The conflicting note</param>
-		private void ResolveUploadConflict(INote realnote, INote clonenote, INote conflictnote)
+		private void ResolveUploadConflict(INote realnote, INote clonenote, INote conflictnote, bool keepNoteRemoteDirty)
 		{
 			switch (_conflictStrategy)
 			{
@@ -293,7 +309,9 @@ namespace AlephNote.Common.Repository
 						if (realnote.IsLocalSaved)
 						{
 							realnote.OnAfterUpload(clonenote);
-							realnote.ResetRemoteDirty("Upload conflict was solved by [UseClientVersion]");
+							if (!keepNoteRemoteDirty) realnote.ResetRemoteDirty("Upload conflict was solved by [UseClientVersion]");
+							else                      realnote.SetRemoteDirty("Upload conflict was solved by [UseClientVersion] (but keepNoteRemoteDirty)");
+
 							_repo.SaveNote(realnote);
 
 							_log.Warn("Sync", "Resolve conflict: UseClientVersion");
@@ -310,7 +328,9 @@ namespace AlephNote.Common.Repository
 						realnote.ApplyUpdatedData(clonenote);
 						realnote.TriggerOnChanged(true);
 						realnote.SetLocalDirty("Upload conflict was solved by [UseServerVersion]");
-						realnote.ResetRemoteDirty("Upload conflict was solved by [UseServerVersion]");
+						if (!keepNoteRemoteDirty) realnote.ResetRemoteDirty("Upload conflict was solved by [UseServerVersion]");
+						else                      realnote.SetRemoteDirty("Upload conflict was solved by [UseServerVersion] (but keepNoteRemoteDirty)");
+
 						_repo.SaveNote(realnote);
 
 						_log.Warn("Sync", "Resolve conflict: UseServerVersion");
@@ -322,7 +342,9 @@ namespace AlephNote.Common.Repository
 						if (realnote.IsLocalSaved)
 						{
 							realnote.OnAfterUpload(clonenote);
-							realnote.ResetRemoteDirty("Upload conflict was solved by [UseClientCreateConflictFile]");
+							if (!keepNoteRemoteDirty) realnote.ResetRemoteDirty("Upload conflict was solved by [UseClientCreateConflictFile]");
+							else                      realnote.SetRemoteDirty("Upload conflict was solved by [UseClientCreateConflictFile] (but keepNoteRemoteDirty)");
+
 							_repo.SaveNote(realnote);
 						}
 						else
@@ -346,7 +368,9 @@ namespace AlephNote.Common.Repository
 						realnote.ApplyUpdatedData(clonenote);
 						realnote.TriggerOnChanged(true);
 						realnote.SetLocalDirty("Upload conflict was solved by [UseServerCreateConflictFile]");
-						realnote.ResetRemoteDirty("Upload conflict was solved by [UseServerCreateConflictFile]");
+						if (!keepNoteRemoteDirty) realnote.ResetRemoteDirty("Upload conflict was solved by [UseServerCreateConflictFile]");
+						else                      realnote.SetRemoteDirty("Upload conflict was solved by [UseServerCreateConflictFile] (but keepNoteRemoteDirty)");
+
 						_repo.SaveNote(realnote);
 
 						var conflict = _repo.CreateNewNote(conflictnote.Path);
@@ -365,7 +389,9 @@ namespace AlephNote.Common.Repository
 						if (realnote.IsLocalSaved)
 						{
 							realnote.OnAfterUpload(clonenote);
-							realnote.ResetRemoteDirty("Upload conflict was solved by [ManualMerge]");
+							if (!keepNoteRemoteDirty) realnote.ResetRemoteDirty("Upload conflict was solved by [ManualMerge]");
+							else                      realnote.SetRemoteDirty("Upload conflict was solved by [ManualMerge] (but keepNoteRemoteDirty)");
+
 							_repo.SaveNote(realnote);
 						}
 						else

@@ -63,10 +63,11 @@ namespace AlephNote.Plugins.Nextcloud
 			}
 		}
 
-		public override void FinishSync()
+		public override void FinishSync(out bool immediateResync)
 		{
 			_data = null;
 			remoteNotes = null;
+			immediateResync = false;
 		}
 
 		public override bool NeedsUpload(INote inote)
@@ -107,8 +108,10 @@ namespace AlephNote.Plugins.Nextcloud
 				.ToList();
 		}
 
-		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, ConflictResolutionStrategy strategy)
+		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, out bool keepNoteRemoteDirtyWithConflict, ConflictResolutionStrategy strategy)
 		{
+			keepNoteRemoteDirtyWithConflict = false;
+
 			using (var web = CreateAuthenticatedClient())
 			{
 				var note = (NextcloudNote)inote;

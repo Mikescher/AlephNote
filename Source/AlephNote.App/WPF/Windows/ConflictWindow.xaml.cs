@@ -66,6 +66,9 @@ namespace AlephNote.WPF.Windows
 				if (!note.Tags.UnorderedCollectionEquals(_dataLeft.Item3)) note.Tags.Synchronize(_dataLeft.Item3);
 				if (note.Path != _dataLeft.Item4) note.Path = _dataLeft.Item4;
 
+				note.SetRemoteDirty("Data updated in ConflictWindow [TakeLeft]");
+				_repo.SyncNow();
+
 				Close();
 			}
 			catch (Exception ex)
@@ -90,6 +93,9 @@ namespace AlephNote.WPF.Windows
 				if (note.Title != _dataRight.Item2) note.Title = _dataRight.Item2;
 				if (!note.Tags.UnorderedCollectionEquals(_dataRight.Item3)) note.Tags.Synchronize(_dataRight.Item3);
 				if (note.Path != _dataRight.Item4) note.Path = _dataRight.Item4;
+
+				note.SetRemoteDirty("Data updated in ConflictWindow [Take Right]");
+				_repo.SyncNow();
 
 				Close();
 			}
@@ -123,6 +129,9 @@ namespace AlephNote.WPF.Windows
 				conflict.IsConflictNote = true;
 				_repo.SaveNote(conflict);
 
+				note.SetRemoteDirty("Data updated in ConflictWindow [Take Left With Conflict]");
+				_repo.SyncNow();
+
 				Close();
 			}
 			catch (Exception ex)
@@ -154,6 +163,9 @@ namespace AlephNote.WPF.Windows
 				conflict.Tags.Synchronize(_dataLeft.Item3);
 				conflict.IsConflictNote = true;
 				_repo.SaveNote(conflict);
+
+				note.SetRemoteDirty("Data updated in ConflictWindow [Take Right With Conflict]");
+				_repo.SyncNow();
 
 				Close();
 			}
