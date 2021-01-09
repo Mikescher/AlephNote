@@ -32,7 +32,9 @@ namespace AlephNote.Plugins.StandardNote
 		private DateTimeOffset _creationDate; // The "real" CreationDate of the StandardNotes API
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
 
-		private DateTimeOffset _rawModificationDate = DateTimeOffset.Now; // The "real" ModificationDate of the StandardNotes API - cannot be chaned by us mere mortals and is used for sync
+		// The "real" ModificationDate of the StandardNotes API - cannot be chaned by us mere mortals and is used for sync
+		// Is also _not_ changed if we do client changes - only updates _after_ an sync
+		private DateTimeOffset _rawModificationDate = DateTimeOffset.Now;
 		public DateTimeOffset RawModificationDate { get { return _rawModificationDate; } set { _rawModificationDate = value; OnPropertyChanged(); } }
 
 		private DateTimeOffset? _clientUpdatedAt; // Additional ModificationDate used by some official StandardNotes clients (not 100% sure why)
@@ -433,7 +435,7 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			var dtnow = DateTimeOffset.Now;
 
-			RawModificationDate  = dtnow;
+			//RawModificationDate  = dtnow; // must only be updated from server (as sync result)
 			ClientUpdatedAt      = dtnow;
 			NoteModificationDate = dtnow;
 

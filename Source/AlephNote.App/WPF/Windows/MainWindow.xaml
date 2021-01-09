@@ -141,10 +141,11 @@
 				<MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Create 10 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="10" />
 				<MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Create 100 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="100" />
 				<Separator/>
-				<MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Compare Notes" Command="{Binding DebugNoteDiffCommand}" />
-				<Separator/>
-				<MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Serialize Settings" Command="{Binding DebugSerializeSettingsCommand}" />
-				<MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Serialize CurrentNote" Command="{Binding DebugSerializeNoteCommand}" />
+                <MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Compare Notes" Command="{Binding DebugNoteDiffCommand}" /> 
+                <Separator/>
+                <MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Serialize Settings" Command="{Binding DebugSerializeSettingsCommand}" />
+                <MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Serialize Repository SyncData" Command="{Binding DebugSerializeRepositorySyncDataCommand}" />
+                <MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Serialize CurrentNote" Command="{Binding DebugSerializeNoteCommand}" />
 				<Separator/>
                 <MenuItem Style="{StaticResource SubMenuItemStyle}" Header="NotesViewControl.RefreshView()" Command="{Binding DebugRefreshViewCommand}" />
                 <Separator/>

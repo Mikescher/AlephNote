@@ -25,6 +25,11 @@ namespace AlephNote.Plugins.StandardNote
 		public override bool SupportsUploadMultithreading      => false;
 
 		public const string CURRENT_SCHEMA = "004";
+		
+		// Known API versions:
+		//   - "20161215"
+		//   - "20190520"
+		//   - "20200115"
 		public const string CURRENT_API_VERSION = "20200115";
 
 		private AlephLogger _logger;

@@ -331,7 +331,7 @@ namespace AlephNote.Common.Network
 				
 				LoggerSingleton.Inst.Debug("REST", 
 					$"{ident} SendRequest<GenericTwoWay> [START] ({uri} :: {method})", 
-					$"RequestUri := {uri}\nMethod := {method}\nBody := {body?.GetType()?.FullName ?? "NULL"}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
+					$"RequestUri := {uri}\nMethod := {method}\nBody := {body?.GetType()?.FullName ?? "NULL"}\n{((upload == null) ? "" : CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH))}\n\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
 
 				resp = _client.SendAsync(request).Result;
 
@@ -360,7 +360,7 @@ namespace AlephNote.Common.Network
 					LoggerSingleton.Inst.Warn("REST",
 						$"{ident} SendRequest<GenericTwoWay> [ERRORED] ({uri} :: {method})",
 						$"REST call to '{uri}' [{method}] returned (not-allowed) statuscode {(int)resp.StatusCode} ({resp.StatusCode})\n\n" +
-						$"Send:\r\n{CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH)}\n\n" +
+						$"Send:\n{CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH)}\n\n" +
 						"---------------------\n\n" +
 						$"Recieved:\n{content}");
 
@@ -433,7 +433,7 @@ namespace AlephNote.Common.Network
 				
 				LoggerSingleton.Inst.Debug("REST", 
 					$"{ident} SendRequest<GenericUpload> [START] ({uri} :: {method})", 
-					$"RequestUri := {uri}\nMethod := {method}\nBody := {body?.GetType()?.FullName ?? "NULL"}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
+					$"RequestUri := {uri}\nMethod := {method}\nBody := {body?.GetType()?.FullName ?? "NULL"}\n{((upload == null) ? "" : CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH))}\n\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
 
 				resp = _client.SendAsync(request).Result;
 

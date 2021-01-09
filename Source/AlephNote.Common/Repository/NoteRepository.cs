@@ -358,6 +358,11 @@ namespace AlephNote.Common.Repository
 			SaveAllDirtyNotes();
 		}
 
+		public string GetSyncDataSerialized()
+		{
+			return XHelper.ConvertToStringFormatted(new XDocument(GetSyncData().Serialize()));
+		}
+
 		public IRemoteStorageSyncPersistance GetSyncData()
 		{
 			lock (_lockSaveSyncData)

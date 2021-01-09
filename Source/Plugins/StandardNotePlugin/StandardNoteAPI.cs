@@ -38,12 +38,12 @@ namespace AlephNote.Plugins.StandardNote
 
 		public class APIRequestUser { public string email, password, api; }
 		public class APIRequestSync { public int limit; public List<APIRequestBodyItem> items; public string sync_token, cursor_token, api; }
-		public class APIRequestBodyItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at; public bool deleted; }
+		public class APIRequestBodyItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at, updated_at; public bool deleted; }
 
 		public class APIResultAuthParams { public string identifier; public string pw_nonce; public string version; public string pw_salt; public PasswordAlg pw_alg; public PasswordFunc pw_func; public int pw_cost, pw_key_size; }
 		public class APIResultAuthorize001 { public APIResultUser user; public string token; public byte[] masterkey, masterauthkey; public string version; }
 		public class APIResultAuthorize004 { public APIResultUser user; public APIResultSession session; public APIResultKeyParams key_params; }
-		public class APIResultSync { public List<APIResultItem> retrieved_items, saved_items; public List<APIResultErrorItem> unsaved; public List<APIResultConflictItem> conflicts; public string sync_token, cursor_token; }
+		public class APIResultSync { public List<APIResultItem> retrieved_items, saved_items; public List<APIResultConflictItem> conflicts; public string sync_token, cursor_token; }
 
 		public class APIResultUser { public Guid uuid; public string email; }
 		public class APIResultItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public DateTimeOffset created_at, updated_at; public bool deleted; }
@@ -53,12 +53,12 @@ namespace AlephNote.Plugins.StandardNote
 		public class APIResultSession { public string access_token, refresh_token; public DateTimeOffset access_expiration, refresh_expiration; }
 		public class APIResultKeyParams { public DateTimeOffset created; public string identifier, origination, pw_nonce, version; }
 
-		public class APIRawBodyItem { public Guid uuid; public string content_type, content; public DateTimeOffset created_at; public bool deleted; }
+		public class APIRawBodyItem { public Guid uuid; public string content_type, content; public DateTimeOffset created_at, updated_at; public bool deleted; }
 
 		public class APIBadRequest { public APIError error; }
 		public class APIError { public string message; public int status; }
-		public class SyncResultTag { public Guid uuid; public string title; public bool deleted; public string enc_item_key, item_key; public List<APIResultContentRef> references; }
-		public class SyncResult { public List<StandardFileNote> retrieved_notes, saved_notes, conflict_notes, error_notes, deleted_notes; public List<SyncResultTag> retrieved_tags, saved_tags, unsaved_tags, deleted_tags; }
+		public class SyncResultTag { public Guid uuid; public string title; public bool deleted; public string enc_item_key, item_key; public DateTimeOffset created_at, updated_at; public List<APIResultContentRef> references; }
+		public class SyncResult { public List<StandardFileNote> retrieved_notes, saved_notes, deleted_notes; public List<(StandardFileNote unsavednote, StandardFileNote servernote, string type)> syncconflict_notes, uuidconflict_notes; public List<SyncResultTag> retrieved_tags, saved_tags, deleted_tags; public List<(SyncResultTag unsavedtag, SyncResultTag servertag, string type)> syncconflict_tags, uuidconflict_tags; }
 		public class APIResultContentRef { public Guid uuid; public string content_type; }
 		public class ContentNote { public string title, text; public List<APIResultContentRef> references; public Dictionary<string, Dictionary<string, object>> appData; public bool @protected; public bool hidePreview; }
 		public class ContentTag { public string title; public List<APIResultContentRef> references; }
@@ -143,7 +143,7 @@ namespace AlephNote.Plugins.StandardNote
 
 				return new StandardNoteSessionData
 				{
-					Version = "002",
+					Version = "001",
 					Token = tok.token,
 					RootKey_MasterKey = mk,
 				};
@@ -249,7 +249,7 @@ namespace AlephNote.Plugins.StandardNote
 
 				return new StandardNoteSessionData
 				{
-					Version = "002",
+					Version = "003",
 					Token = tok.token,
 					RootKey_MasterKey = mk,
 					RootKey_MasterAuthKey = ak,
@@ -362,12 +362,6 @@ namespace AlephNote.Plugins.StandardNote
 				PrepareNoteForUpload(web, d, ref items_raw, rmNote, allTags, dat, cfg, true);
 			}
 
-			// Update references on tags (from changed notes)
-			foreach (var upTag in GetTagsInNeedOfUpdate(dat.Tags, notesUpload, notesDelete))
-			{
-				PrepareTagForUpload(web, d, ref items_raw, upTag, dat, false);
-			}
-
 			// Remove unused tags
 			if (cfg.RemEmptyTags)
 			{
@@ -376,15 +370,32 @@ namespace AlephNote.Plugins.StandardNote
 					PrepareTagForUpload(web, d, ref items_raw, rmTag, dat, true);
 				}
 			}
+
+			// Update references on tags (from changed notes)
+			foreach (var upTag in GetTagsInNeedOfUpdate(dat.Tags, notesUpload, notesDelete))
+			{
+				if (items_raw.Any(p => p.uuid == upTag.UUID)) continue; // do not double-send deleted tags
+				PrepareTagForUpload(web, d, ref items_raw, upTag, dat, false);
+			}
 			
 			Logger.Debug(
 				StandardNotePlugin.Name,
 				$"Perform sync request ({items_raw.Count} items send)",
-				"Sent Items (unencrypted):\n\n" +string.Join("\n", items_raw.Select(i => $"{{\n  content_type = {i.content_type}\n  uuid         = {i.uuid}\n  created_at   = {i.created_at}\n  deleted      = {i.deleted}\n  content      =\n{CompactJsonFormatter.FormatJSON(i.content, 2, 1)}\n}}")) );
+				"Sent Items (unencrypted):\n\n" + 
+				string.Join("\n", items_raw.Select(i => 
+					$"{{\n  content_type = {i.content_type}\n"+
+					$"  uuid         = {i.uuid}\n" +
+					$"  created_at   = {i.created_at}\n" +
+					$"  updated_at   = {i.updated_at}\n" +
+					$"  deleted      = {i.deleted}\n" +
+					$"  content      =\n" +
+					$"{CompactJsonFormatter.FormatJSON(i.content, 2, 1)}\n" +
+					$"}}")) );
 
 			var result = GetCursorResult(web, dat, d);
 
 			var syncresult = new SyncResult();
+
 
 			syncresult.retrieved_tags = result
 				.retrieved_items
@@ -406,14 +417,27 @@ namespace AlephNote.Plugins.StandardNote
 				.Select(n => CreateTag(web, n, dat))
 				.ToList();
 
-			syncresult.unsaved_tags = result
-				.unsaved
-				.Where(p => p.item.content_type.ToLower() == "tag")
-				.Select(n => CreateTag(web, n.item, dat))
+			syncresult.syncconflict_tags = result
+				.conflicts
+				.Where(p => p.server_item?.content_type?.ToLower() == "tag")
+				.Where(p => p.type == "sync_conflict")
+				.Select(n => ((n.unsaved_item==null) ? null : CreateTag(web, n.unsaved_item, dat), (n.server_item == null) ? null : CreateTag(web, n.server_item, dat), n.type))
 				.ToList();
 
-			dat.UpdateTags(syncresult.retrieved_tags, syncresult.saved_tags, syncresult.unsaved_tags, syncresult.deleted_tags);
+			if (syncresult.syncconflict_tags.Any()) Logger.Warn(StandardNotePlugin.Name, "Sync returned [sync_conflict] for one or more tags");
+
+			syncresult.uuidconflict_tags = result
+				.conflicts
+				.Where(p => p.server_item?.content_type?.ToLower() == "tag")
+				.Where(p => p.type == "uuid_conflict")
+				.Select(n => ((n.unsaved_item == null) ? null : CreateTag(web, n.unsaved_item, dat), (n.server_item == null) ? null : CreateTag(web, n.server_item, dat), n.type))
+				.ToList();
+
+			if (syncresult.uuidconflict_tags.Any()) Logger.Error(StandardNotePlugin.Name, "Sync returned [uuid_conflict] for one or more tags");
+
+			dat.UpdateTags(syncresult.retrieved_tags, syncresult.saved_tags, syncresult.syncconflict_tags, syncresult.deleted_tags);
 			
+
 			syncresult.retrieved_notes = result
 				.retrieved_items
 				.Where(p => p.content_type.ToLower() == "note")
@@ -434,19 +458,27 @@ namespace AlephNote.Plugins.StandardNote
 				.Select(n => CreateNote(web, conn, n, dat, cfg))
 				.ToList();
 
-			syncresult.conflict_notes = result
-				.unsaved
-				.Where(p => p.item.content_type.ToLower() == "note")
-				.Where(p => p.error.tag == "sync_conflict")
-				.Select(n => CreateNote(web, conn, n.item, dat, cfg)) //TODO real conflicts
+			syncresult.syncconflict_notes = result
+				.conflicts
+				.Where(p => p.server_item?.content_type?.ToLower() == "note")
+				.Where(p => p.type == "sync_conflict")
+				.Select(n => ((n.unsaved_item == null) ? null : CreateNote(web, conn, n.unsaved_item, dat, cfg), (n.server_item == null) ? null : CreateNote(web, conn, n.server_item, dat, cfg), n.type))
 				.ToList();
 
-			syncresult.error_notes = result
-				.unsaved
-				.Where(p => p.item.content_type.ToLower() == "note")
-				.Where(p => p.error.tag != "sync_conflict")
-				.Select(n => CreateNote(web, conn, n.item, dat, cfg))
+			syncresult.uuidconflict_notes = result
+				.conflicts
+				.Where(p => p.server_item?.content_type?.ToLower() == "note")
+				.Where(p => p.type == "uuid_conflict")
+				.Select(n => ((n.unsaved_item == null) ? null : CreateNote(web, conn, n.unsaved_item, dat, cfg), (n.server_item == null) ? null : CreateNote(web, conn, n.server_item, dat, cfg), n.type))
 				.ToList();
+
+
+			var items_unknown_conlict = result.conflicts.Where(p => p.type != "sync_conflict" && p.type != "uuid_conflict").ToList();
+			if (items_unknown_conlict.Any())
+            {
+				Logger.Error(StandardNotePlugin.Name, "Unknown conflict type returned from API", string.Join("\n", items_unknown_conlict.Select(p => p.type)));
+            }
+
 
 			syncresult.retrieved_notes.AddRange(GetMissingNoteUpdates(syncresult.retrieved_tags.Concat(syncresult.saved_tags), dat.Tags, allNotes, syncresult.retrieved_notes));
 
@@ -469,7 +501,7 @@ namespace AlephNote.Plugins.StandardNote
 
 					if (realTag == null) // create new tag
 					{
-						var addtag = new StandardFileTag(noteTag.UUID, noteTag.Title, Enumerable.Repeat(note.ID, 1));
+						var addtag = new StandardFileTag(noteTag.UUID, noteTag.Title, DateTimeOffset.MinValue, DateTimeOffset.MinValue, Enumerable.Repeat(note.ID, 1));
 						allTags.Add(addtag);
 						result.Add(addtag);
 					}
@@ -482,7 +514,7 @@ namespace AlephNote.Plugins.StandardNote
 						else
 						{
 							// tag does not contain ref - update
-							var addtag = new StandardFileTag(realTag.UUID, realTag.Title, realTag.References.Concat(Enumerable.Repeat(note.ID, 1)));
+							var addtag = new StandardFileTag(realTag.UUID, realTag.Title, realTag.CreationDate, realTag.ModificationDate, realTag.References.Concat(Enumerable.Repeat(note.ID, 1)));
 							ReplaceOrAdd(allTags, realTag, addtag);
 							ReplaceOrAdd(result, realTag, addtag);
 						}
@@ -502,7 +534,7 @@ namespace AlephNote.Plugins.StandardNote
 					if (realTag != null && realTag.ContainsReference(note))
 					{
 						// tag does still refrence note - remove ref
-						var addtag = new StandardFileTag(realTag.UUID, realTag.Title, realTag.References.Except(Enumerable.Repeat(note.ID, 1)));
+						var addtag = new StandardFileTag(realTag.UUID, realTag.Title, realTag.CreationDate, realTag.ModificationDate, realTag.References.Except(Enumerable.Repeat(note.ID, 1)));
 						ReplaceOrAdd(allTags, realTag, addtag);
 						ReplaceOrAdd(result, realTag, addtag);
 					}
@@ -530,7 +562,7 @@ namespace AlephNote.Plugins.StandardNote
 						else
 						{
 							// note no longer contains tag - update tag
-							var addtag = new StandardFileTag(tag.UUID, tag.Title, tag.References.Except(Enumerable.Repeat(note.ID, 1)));
+							var addtag = new StandardFileTag(tag.UUID, tag.Title, tag.CreationDate, tag.ModificationDate, tag.References.Except(Enumerable.Repeat(note.ID, 1)));
 							ReplaceOrAdd(allTags, tag, addtag);
 							ReplaceOrAdd(result, tag, addtag);
 						}
@@ -667,7 +699,7 @@ namespace AlephNote.Plugins.StandardNote
 			var masterResult = new APIResultSync
 			{
 				retrieved_items = new List<APIResultItem>(),
-				unsaved = new List<APIResultErrorItem>(),
+				conflicts = new List<APIResultConflictItem>(),
 				saved_items = new List<APIResultItem>()
 			};
 
@@ -677,8 +709,9 @@ namespace AlephNote.Plugins.StandardNote
 				dat.SyncToken = result.sync_token.Trim();
 
 				masterResult.sync_token = result.sync_token;
-				masterResult.unsaved.AddRange(result.unsaved);
 				masterResult.cursor_token = result.cursor_token;
+
+				masterResult.conflicts.AddRange(result.conflicts);
 				masterResult.retrieved_items.AddRange(result.retrieved_items);
 				masterResult.saved_items.AddRange(result.saved_items);
 
@@ -727,7 +760,7 @@ namespace AlephNote.Plugins.StandardNote
 					if (newTag == null)
 					{
 						newTag = new StandardFileTagRef(Guid.NewGuid(), itag.Title);
-						allTags.Add(new StandardFileTag(newTag.UUID, newTag.Title, Enumerable.Repeat(note.ID, 1)));
+						allTags.Add(new StandardFileTag(newTag.UUID, newTag.Title, DateTimeOffset.MinValue, DateTimeOffset.MinValue, Enumerable.Repeat(note.ID, 1)));
 					}
 
 					note.UpgradeTag(itag, newTag);
@@ -750,6 +783,7 @@ namespace AlephNote.Plugins.StandardNote
 				content_type = "Note",
 				uuid         = note.ID,
 				created_at   = note.CreationDate,
+				updated_at   = note.RawModificationDate,
 				enc_item_key = cryptData.enc_item_key,
 				auth_hash    = cryptData.auth_hash,
 				content      = cryptData.enc_content,
@@ -760,6 +794,7 @@ namespace AlephNote.Plugins.StandardNote
 				content_type = "Note",
 				uuid         = note.ID,
 				created_at   = note.CreationDate,
+				updated_at = note.RawModificationDate,
 				content      = jsonContent,
 				deleted      = delete,
 			});
@@ -786,6 +821,8 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				content_type = "Tag",
 				uuid         = tag.UUID.Value,
+				created_at   = tag.CreationDate,
+				updated_at   = tag.ModificationDate,
 				enc_item_key = cryptData.enc_item_key,
 				auth_hash    = cryptData.auth_hash,
 				content      = cryptData.enc_content,
@@ -795,6 +832,8 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				content_type = "Tag",
 				uuid         = tag.UUID.Value,
+				created_at   = tag.CreationDate,
+				updated_at   = tag.ModificationDate,
 				content      = jsonContent,
 				deleted      = delete,
 			});
@@ -910,6 +949,8 @@ namespace AlephNote.Plugins.StandardNote
 				return new SyncResultTag
 				{
 					deleted = encTag.deleted,
+					created_at = encTag.created_at,
+					updated_at = encTag.updated_at,
 					title = "",
 					uuid = encTag.uuid,
 					enc_item_key = encTag.enc_item_key,
@@ -946,6 +987,8 @@ namespace AlephNote.Plugins.StandardNote
 			return new SyncResultTag
 			{
 				deleted      = encTag.deleted,
+				created_at   = encTag.created_at,
+				updated_at   = encTag.updated_at,
 				title        = content.title,
 				uuid         = encTag.uuid,
 				enc_item_key = encTag.enc_item_key,

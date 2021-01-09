@@ -105,17 +105,31 @@ namespace AlephNote.Plugins.StandardNote
 				_lastUploadBatch = upNotes.Select(p => p.ID).ToList();
 
 				_logger.Debug(StandardNotePlugin.Name, "StandardFile sync finished.",
-					string.Format("upload:[notes={8} deleted={9}]" + "\r\n" + "download:[note:[retrieved={0} deleted={1} saved={2} conflicts={3} errors={4}] tags:[retrieved={5} saved={6} unsaved={7}]]",
-					_syncResult.retrieved_notes.Count,
-					_syncResult.deleted_notes.Count,
-					_syncResult.saved_notes.Count,
-					_syncResult.conflict_notes.Count,
-					_syncResult.error_notes.Count,
-					_syncResult.retrieved_tags.Count,
-					_syncResult.saved_tags.Count,
-					_syncResult.unsaved_tags.Count,
-					upNotes.Count,
-					delNotes.Count));
+					$"upload:\n" +
+					$"[\n" +
+					$"    notes   = {upNotes.Count}\n" +
+					$"    deleted = {delNotes.Count}\n" +
+					$"]\n"+
+					$"\n" +
+					$"download:\n"+
+					$"[\n"+
+					$"    note:\n" +
+					$"    [\n" +
+					$"        retrieved      = {_syncResult.retrieved_notes.Count}\n" +
+					$"        deleted        = {_syncResult.deleted_notes.Count}\n" +
+					$"        saved          = {_syncResult.saved_notes.Count}\n" +
+					$"        sync_conflicts = {_syncResult.syncconflict_notes.Count}\n" +
+					$"        uuid_conflicts = {_syncResult.uuidconflict_notes.Count}\n" +
+					$"    ]\n" +
+					$"    tags:\n" +
+					$"    [\n" +
+					$"        retrieved      = {_syncResult.retrieved_tags.Count}\n" +
+					$"        deleted        = {_syncResult.deleted_tags.Count}\n" +
+					$"        saved          = {_syncResult.saved_tags.Count}\n" +
+					$"        sync_conflicts = {_syncResult.syncconflict_tags.Count}\n" +
+					$"        uuid_conflicts = {_syncResult.uuidconflict_tags.Count}\n" +
+					$"    ]\n" +
+					$"]");
 			}
 		}
 
@@ -128,30 +142,34 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			var note = (StandardFileNote) inote;
 
-			if (_syncResult.saved_notes.Any(n => n.ID == note.ID))
+			var item_saved = _syncResult.saved_notes.FirstOrDefault(n => n.ID == note.ID);
+			if (item_saved != null)
 			{
-				note.ApplyUpdatedData(_syncResult.saved_notes.First(n => n.ID == note.ID));
+				note.ApplyUpdatedData(item_saved);
 				conflict = null;
 				return RemoteUploadResult.Uploaded;
 			}
-			
-			if (_syncResult.retrieved_notes.Any(n => n.ID == note.ID))
+
+			var item_retrieved = _syncResult.retrieved_notes.FirstOrDefault(n => n.ID == note.ID);
+			if (item_retrieved != null)
 			{
 				_logger.Warn(StandardNotePlugin.Name, "Uploaded note found in retrieved notes ... upload failed ?");
-				note.ApplyUpdatedData(_syncResult.retrieved_notes.First(n => n.ID == note.ID));
+				note.ApplyUpdatedData(item_retrieved);
 				conflict = null;
 				return RemoteUploadResult.Merged;
 			}
 
-			if (_syncResult.error_notes.Any(n => n.ID == note.ID))
+			var item_syncconflict = _syncResult.syncconflict_notes.FirstOrDefault(n => n.servernote != null && n.servernote.ID == note.ID);
+			if (item_syncconflict != default)
 			{
-				throw new Exception("Could not upload note - server returned note in {unsaved_notes}");
+				conflict = item_syncconflict.servernote;
+				return RemoteUploadResult.Conflict;
 			}
 
-			if (_syncResult.conflict_notes.Any(n => n.ID == note.ID))
+			var item_uuidconflict = _syncResult.uuidconflict_notes.FirstOrDefault(n => n.servernote != null && n.servernote.ID == note.ID);
+			if (item_uuidconflict != default)
 			{
-				conflict = _syncResult.conflict_notes.First(n => n.ID == note.ID);
-				return RemoteUploadResult.Conflict;
+				throw new Exception($"Could not upload note {inote.UniqueName} due to an UUID conflict"); // you're fucked!
 			}
 
 			conflict = null;

@@ -38,12 +38,12 @@ namespace AlephNote.Plugins.StandardNote
             r.Add(XHelper2.TypeNullableDateTimeOffset.ToXElem("AccessExpiration",  data.AccessExpiration));
             r.Add(XHelper2.TypeNullableDateTimeOffset.ToXElem("RefreshExpiration", data.RefreshExpiration));
 
-            r.Add(XHelper2.TypeString.ToXElem("Identifier",        data.Identifier));
-            r.Add(XHelper2.TypeString.ToXElem("PasswordNonce",     data.PasswordNonce));
-            r.Add(XHelper2.TypeNullableDateTimeOffset.ToXElem("ParamsCreated",     data.ParamsCreated));
+            r.Add(XHelper2.TypeString.ToXElem("Identifier",                    data.Identifier));
+            r.Add(XHelper2.TypeString.ToXElem("PasswordNonce",                 data.PasswordNonce));
+            r.Add(XHelper2.TypeNullableDateTimeOffset.ToXElem("ParamsCreated", data.ParamsCreated));
 
             r.Add(XHelper2.TypeString.ToXElem("AccountEmail",      data.AccountEmail));
-            r.Add(XHelper2.TypeNullableGuid.ToXElem("AccountUUID",       data.AccountUUID));
+            r.Add(XHelper2.TypeNullableGuid.ToXElem("AccountUUID", data.AccountUUID));
 
             r.Add(new XElement("RootKey",
                 XHelper2.TypeByteArrayHex.ToXElem("ServerPassword", data.RootKey_ServerPassword),
