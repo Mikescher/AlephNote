@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -136,11 +137,15 @@ namespace AlephNote.Common.Network
 		{
 			try
 			{
-				return JsonConvert.DeserializeObject<TResult>(content, _converter);
+				return JsonConvert.DeserializeObject<TResult>(content, new JsonSerializerSettings()
+				{
+					Converters = _converter,
+					DateParseHandling = DateParseHandling.None
+				});
 			}
 			catch (Exception)
 			{
-				return default(TResult);
+				return default;
 			}
 		}
 
@@ -148,7 +153,8 @@ namespace AlephNote.Common.Network
 		{
 			try
 			{
-				var obj = JObject.Parse(content);
+                JsonReader reader = new JsonTextReader(new StringReader(content)) { DateParseHandling = DateParseHandling.None };
+                var obj = JObject.Load(reader);
 				if (!obj.ContainsKey(key)) return defValue;
 				return obj[key].ToString(Formatting.None);
 			}

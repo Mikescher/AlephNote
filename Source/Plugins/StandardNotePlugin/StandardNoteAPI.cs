@@ -691,6 +691,16 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			var appdata = new Dictionary<string, Dictionary<string, object>>();
 
+            try
+			{
+				if (!string.IsNullOrWhiteSpace(note.RawAppData)) appdata = web.ParseJsonOrNull<Dictionary<string, Dictionary<string, object>>>(note.RawAppData);
+			}
+            catch (Exception e)
+            {
+				Logger.Warn(StandardNotePlugin.Name, "Note contained invalid AppData", $"Note := {note.UniqueName}\nAppData:\n{note.RawAppData}");
+				Logger.Error(StandardNotePlugin.Name, "Note contained invalid AppData - will be resetted on upload", e);
+			}
+
 			SetAppDataBool(appdata, APPDATA_PINNED,          note.IsPinned);
 			SetAppDataBool(appdata, APPDATA_LOCKED,          note.IsLocked);
 			SetAppDataBool(appdata, APPDATA_ARCHIVED,        note.IsArchived);

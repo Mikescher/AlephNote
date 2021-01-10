@@ -479,7 +479,12 @@ namespace AlephNote.Plugins.StandardNote
 
 				n._isPinned              = _isPinned;
 				n._isLocked              = _isLocked;
-				
+				n._isArchived            = _isArchived;
+				n._isProtected           = _isProtected;
+				n._isHidePreview         = _isHidePreview;
+
+				n._rawAppData            = _rawAppData;
+
 				return n;
 			}
 		}
