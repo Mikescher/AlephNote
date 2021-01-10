@@ -27,6 +27,9 @@ namespace AlephNote.Plugins.StandardNote
 	/// https://github.com/standardnotes/docs/blob/main/docs/specification/encryption-004.md
 	///
 	/// https://github.com/jonhadfield/awesome-standard-notes
+	/// 
+	/// https://github.com/standardnotes/syncing-server
+	/// https://github.com/standardnotes/snjs
 	///
 	/// </summary>
 	public static class StandardNoteAPI
@@ -50,8 +53,8 @@ namespace AlephNote.Plugins.StandardNote
 		public class APIResultErrorItem { public APIResultItem item; public APISyncResultError error; }
 		public class APIResultConflictItem { public APIResultItem unsaved_item, server_item; public string type; }
 		public class APISyncResultError { public string tag; }
-		public class APIResultSession { public string access_token, refresh_token; public DateTimeOffset access_expiration, refresh_expiration; }
-		public class APIResultKeyParams { public DateTimeOffset created; public string identifier, origination, pw_nonce, version; }
+		public class APIResultSession { public string access_token, refresh_token; public long access_expiration, refresh_expiration; }
+		public class APIResultKeyParams { public string created; public string identifier, origination, pw_nonce, version; }
 
 		public class APIRawBodyItem { public Guid uuid; public string content_type, content; public DateTimeOffset created_at, updated_at; public bool deleted; }
 
@@ -103,27 +106,7 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				logger.Debug(StandardNotePlugin.Name, $"AuthParams[version:1, pw_func:{apiparams.pw_func}, pw_alg:{apiparams.pw_alg}, pw_cost:{apiparams.pw_cost}, pw_key_size:{apiparams.pw_key_size}]");
 
-				if (apiparams.pw_func != PasswordFunc.pbkdf2) throw new Exception("Unsupported pw_func: " + apiparams.pw_func);
-
-				byte[] bytes;
-
-				if (apiparams.pw_alg == PasswordAlg.sha512)
-				{
-					bytes = PBKDF2.GenerateDerivedKey(apiparams.pw_key_size / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
-				}
-				else if (apiparams.pw_alg == PasswordAlg.sha512)
-				{
-					bytes = PBKDF2.GenerateDerivedKey(apiparams.pw_key_size / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
-				}
-				else
-				{
-					throw new Exception("Unknown pw_alg: " + apiparams.pw_alg);
-				}
-
-				var pw = bytes.Take(bytes.Length / 2).ToArray();
-				var mk = bytes.Skip(bytes.Length / 2).ToArray();
-
-				var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
+				var (pw, mk, reqpw) = StandardNoteCrypt.CreateAuthData001(apiparams, mail, uip);
 
 				APIResultAuthorize001 tok;
 				try
@@ -168,15 +151,8 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				logger.Debug(StandardNotePlugin.Name, $"AutParams[version:2, pw_cost:{apiparams.pw_cost}]");
 
-				if (apiparams.pw_func != PasswordFunc.pbkdf2) throw new Exception("Unknown pw_func: " + apiparams.pw_func);
+				var (pw, mk, ak, reqpw) = StandardNoteCrypt.CreateAuthData002(apiparams, uip);
 
-				byte[] bytes = PBKDF2.GenerateDerivedKey(768 / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
-
-				var pw = bytes.Skip(0 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
-				var mk = bytes.Skip(1 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
-				var ak = bytes.Skip(2 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
-
-				var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
 				APIResultAuthorize001 tok;
 				try
 				{
@@ -221,20 +197,12 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				logger.Debug(StandardNotePlugin.Name, $"AutParams[version:{apiparams.version}, pw_cost:{apiparams.pw_cost}, pw_nonce:{apiparams.pw_nonce}]");
 
-				if (apiparams.pw_cost < 100000) throw new StandardNoteAPIException($"Account pw_cost is too small ({apiparams.pw_cost})");
+				var (pw, mk, ak, reqpw) = StandardNoteCrypt.CreateAuthData003(apiparams, mail, uip);
 
-				var salt = StandardNoteCrypt.SHA256Hex(string.Join(":", mail, "SF", "003", apiparams.pw_cost.ToString(), apiparams.pw_nonce));
-				byte[] bytes = PBKDF2.GenerateDerivedKey(768 / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
-
-				var pw = bytes.Skip(0 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
-				var mk = bytes.Skip(1 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
-				var ak = bytes.Skip(2 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
-
-				var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
 				APIResultAuthorize001 tok;
 				try
 				{
-					tok = web.PostTwoWay<APIResultAuthorize001>(new APIRequestUser { email = mail, password = reqpw, api = "20200115" }, "auth/sign_in");
+					tok = web.PostTwoWay<APIResultAuthorize001>(new APIRequestUser { email = mail, password = reqpw, api = StandardNotePlugin.CURRENT_API_VERSION }, "auth/sign_in");
 				}
 				catch (RestStatuscodeException e1)
 				{
@@ -275,12 +243,7 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				logger.Debug(StandardNotePlugin.Name, $"AutParams[version:{apiparams.version}, identifier:{apiparams.identifier}, pw_nonce:{apiparams.pw_nonce}]");
 
-				 var salt = StandardNoteCrypt.SHA256Bytes(string.Join(":", apiparams.identifier, apiparams.pw_nonce)).Take(128 / 8).ToArray();
-
-				var derivedKey = ANCrypt.Argon2(Encoding.UTF8.GetBytes(uip), salt, 5, 64 * 1024, 64);
-
-				var masterKey      = derivedKey.Skip(00).Take(32).ToArray();
-				var serverPassword = derivedKey.Skip(32).Take(32).ToArray();
+				var (masterKey, serverPassword, reqpw) = StandardNoteCrypt.CreateAuthData004(apiparams, mail, uip);
 
 				try
 				{
@@ -288,22 +251,24 @@ namespace AlephNote.Plugins.StandardNote
 					{ 
 						email    = mail,
 						api      = StandardNotePlugin.CURRENT_API_VERSION,
-						password = EncodingConverter.ByteToHexBitFiddleLowercase(serverPassword),
+						password = reqpw,
 					};
 
 					var result = web.PostTwoWay<APIResultAuthorize004>(request, "auth/sign_in");
 
 					return new StandardNoteSessionData
 					{
+						Version = "004",
+
 						Token        = result.session.access_token,
 						RefreshToken = result.session.refresh_token,
 
-						AccessExpiration  = result.session.access_expiration,
-						RefreshExpiration = result.session.refresh_expiration,
+						AccessExpiration  = (result.session.access_expiration == 0)  ? (DateTimeOffset?)null : DateTimeOffset.FromUnixTimeMilliseconds(result.session.access_expiration),
+						RefreshExpiration = (result.session.refresh_expiration == 0) ? (DateTimeOffset?)null : DateTimeOffset.FromUnixTimeMilliseconds(result.session.refresh_expiration),
 
 						Identifier     = result.key_params.identifier,
 						PasswordNonce  = result.key_params.pw_nonce,
-						ParamsCreated  = result.key_params.created,
+						ParamsCreated  = (result.key_params.created == null || result.key_params.created == "" || result.key_params.created == "0") ? (DateTimeOffset?)null : DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(result.key_params.created)),
 
 						AccountEmail    = result.user.email,
 						AccountUUID     = result.user.uuid,

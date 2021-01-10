@@ -48,7 +48,7 @@ namespace AlephNote.Plugins.StandardNote
 
 					dat.SessionData = StandardNoteAPI.Authenticate(web, _config.Email, _config.Password, _logger);
 
-					_logger.Debug(StandardNotePlugin.Name, $"StandardNoteServer returned token for user {dat.SessionData.Token} (until {dat.SessionData.AccessExpiration:yyyy-MM-dd HH:mm:ss})");
+					_logger.Debug(StandardNotePlugin.Name, $"StandardNoteServer returned token \"{dat.SessionData.Token}\" (until {dat.SessionData.AccessExpiration:yyyy-MM-dd HH:mm:ss})");
 				}
 			}
 			catch (StandardNoteAPIException)

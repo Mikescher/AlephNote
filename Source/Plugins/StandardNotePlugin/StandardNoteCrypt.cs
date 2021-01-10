@@ -20,7 +20,6 @@ namespace AlephNote.Plugins.StandardNote
 			if (encContent.StartsWith("001")) return DecryptContent001(encContent, encItemKey, authHash, sdat.RootKey_MasterKey);
 			if (encContent.StartsWith("002")) return DecryptContent002(encContent, encItemKey, sdat.RootKey_MasterKey, sdat.RootKey_MasterAuthKey);
 			if (encContent.StartsWith("003")) return DecryptContent003(encContent, encItemKey, sdat.RootKey_MasterKey, sdat.RootKey_MasterAuthKey);
-			if (encContent.StartsWith("003")) throw new StandardNoteAPIException("Unsupported encryption scheme 004 in note content");
 			if (encContent.StartsWith("004")) throw new StandardNoteAPIException("Unsupported encryption scheme 004 in note content"); //TODO
 			if (encContent.StartsWith("005")) throw new StandardNoteAPIException("Unsupported encryption scheme 005 in note content");
 			if (encContent.StartsWith("006")) throw new StandardNoteAPIException("Unsupported encryption scheme 006 in note content");
@@ -178,7 +177,6 @@ namespace AlephNote.Plugins.StandardNote
 			return EncodingConverter.ByteToHexBitFiddleLowercase(seed);
 		}
 
-
 		public static EncryptResult EncryptContent(string content, Guid uuid, StandardNoteSessionData sdat)
 		{
 			if (sdat.Version == "001") return EncryptContent001(content,       sdat.RootKey_MasterKey);
@@ -275,6 +273,79 @@ namespace AlephNote.Plugins.StandardNote
 			if (strdata.StartsWith("010")) return "010";
 
 			return "?";
+		}
+
+		public static (byte[] pw, byte[] mk, string reqpw) CreateAuthData001(StandardNoteAPI.APIResultAuthParams apiparams, string mail, string uip)
+        {
+
+			if (apiparams.pw_func != StandardNoteAPI.PasswordFunc.pbkdf2) throw new Exception("Unsupported pw_func: " + apiparams.pw_func);
+
+			byte[] bytes;
+
+			if (apiparams.pw_alg == StandardNoteAPI.PasswordAlg.sha512)
+			{
+				bytes = PBKDF2.GenerateDerivedKey(apiparams.pw_key_size / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+			}
+			else if (apiparams.pw_alg == StandardNoteAPI.PasswordAlg.sha512)
+			{
+				bytes = PBKDF2.GenerateDerivedKey(apiparams.pw_key_size / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+			}
+			else
+			{
+				throw new Exception("Unknown pw_alg: " + apiparams.pw_alg);
+			}
+
+			var pw = bytes.Take(bytes.Length / 2).ToArray();
+			var mk = bytes.Skip(bytes.Length / 2).ToArray();
+
+			var reqpw = EncodingConverter.ByteToHexBitFiddleLowercase(pw);
+
+			return (pw, mk, reqpw);
+		}
+
+		public static (byte[] pw, byte[] mk, byte[] ak, string reqpw) CreateAuthData002(StandardNoteAPI.APIResultAuthParams apiparams, string uip)
+		{
+			if (apiparams.pw_func != StandardNoteAPI.PasswordFunc.pbkdf2) throw new Exception("Unknown pw_func: " + apiparams.pw_func);
+
+			byte[] bytes = PBKDF2.GenerateDerivedKey(768 / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+
+			var pw = bytes.Skip(0 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+			var mk = bytes.Skip(1 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+			var ak = bytes.Skip(2 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+
+			var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
+
+			return (pw, mk, ak, reqpw);
+		}
+
+		public static (byte[] pw, byte[] mk, byte[] ak, string reqpw) CreateAuthData003(StandardNoteAPI.APIResultAuthParams apiparams, string mail, string uip)
+		{
+			if (apiparams.pw_cost < 100000) throw new StandardNoteAPIException($"Account pw_cost is too small ({apiparams.pw_cost})");
+
+			var salt = StandardNoteCrypt.SHA256Hex(string.Join(":", mail, "SF", "003", apiparams.pw_cost.ToString(), apiparams.pw_nonce));
+			byte[] bytes = PBKDF2.GenerateDerivedKey(768 / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+
+			var pw = bytes.Skip(0 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+			var mk = bytes.Skip(1 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+			var ak = bytes.Skip(2 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+
+			var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
+
+			return (pw, mk, ak, reqpw);
+		}
+
+		public static (byte[] mk, byte[] sp, string reqpw) CreateAuthData004(StandardNoteAPI.APIResultAuthParams apiparams, string mail, string uip)
+		{
+			var salt = StandardNoteCrypt.SHA256Bytes(string.Join(":", apiparams.identifier, apiparams.pw_nonce)).Take(128 / 8).ToArray();
+
+			var derivedKey = ANCrypt.Argon2(Encoding.UTF8.GetBytes(uip), salt, 5, 64 * 1024, 64);
+
+			var masterKey = derivedKey.Skip(00).Take(32).ToArray();
+			var serverPassword = derivedKey.Skip(32).Take(32).ToArray();
+
+			var requestPassword = EncodingConverter.ByteToHexBitFiddleLowercase(serverPassword);
+
+			return (masterKey, serverPassword, requestPassword);
 		}
 	}
 }
