@@ -952,19 +952,25 @@ namespace AlephNote.Plugins.StandardNote
 				n.IsHidePreview  = content.hidePreview;
 
 				var refTags = new List<StandardFileTagRef>();
-				foreach (var cref in content.references)
+				foreach (var cref in content.references) // 
 				{
 					if (cref.content_type.ToLower() == "note")
 					{
 						// ignore
 					}
-					else if (dat.Tags.Any(t => t.UUID == cref.uuid))
-					{
-						refTags.Add(new StandardFileTagRef(cref.uuid, dat.Tags.First(t => t.UUID == cref.uuid).Title));
-					}
 					else if (cref.content_type.ToLower() == "tag")
 					{
-						Logger.Warn(StandardNotePlugin.Name, $"Reference to missing tag {cref.uuid} in note {encNote.uuid}");
+						// should no longer happen in current API version.
+						// Tags contain references to notes (not the other way around)
+
+						if (dat.Tags.Any(t => t.UUID == cref.uuid))
+						{
+							refTags.Add(new StandardFileTagRef(cref.uuid, dat.Tags.First(t => t.UUID == cref.uuid).Title));
+						}
+						else
+						{
+							Logger.Warn(StandardNotePlugin.Name, $"Reference to missing tag {cref.uuid} in note {encNote.uuid}");
+						}
 					}
 					else
 					{

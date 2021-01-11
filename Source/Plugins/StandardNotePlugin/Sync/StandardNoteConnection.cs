@@ -100,7 +100,7 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				var localnotes = ilocalnotes.Cast<StandardFileNote>().ToList();
 
-				var upNotes = localnotes.Where(NeedsUploadReal).ToList();
+				var upNotes = localnotes.Where(p => NeedsUploadReal(p, idata)).ToList();
 				var delNotes = localdeletednotes.Cast<StandardFileNote>().ToList();
 				var delTags = data.GetUnusedTags(localnotes.ToList());
 
@@ -296,10 +296,28 @@ namespace AlephNote.Plugins.StandardNote
 			return _lastUploadBatch.Contains(((StandardFileNote)note).ID);
 		}
 		
-		private bool NeedsUploadReal(INote note)
+		private bool NeedsUploadReal(INote inote, IRemoteStorageSyncPersistance idata)
 		{
-			return !note.IsConflictNote && !note.IsRemoteSaved;
+			var note = (StandardFileNote)inote;
+
+			if (note.IsConflictNote) return false;
+
+			if (!note.IsRemoteSaved) return true;
+			if (note.InternalTags.Any(p => NeedsUploadReal(p, idata))) return true;
+
+			return false;
 		}
+
+		private bool NeedsUploadReal(StandardFileTagRef tagref, IRemoteStorageSyncPersistance idata)
+		{
+			var data = (StandardNoteData)idata;
+
+			if (tagref.UUID == null) return true; // contains not-linked tagref
+
+			if (!data.Tags.Any(p => p.UUID == tagref.UUID)) return true; // contains tagref that references missing tag
+
+			return false;
+        }
 
 		public override bool NeedsDownload(INote inote)
 		{

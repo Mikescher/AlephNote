@@ -16,9 +16,8 @@ using System.Text;
 
 namespace AlephNote.Plugins.StandardNote
 {
-	public class StandardFileNote : BasicFlatNote
+    public partial class StandardFileNote : BasicFlatNote
 	{
-		public class StandardFileRef { public Guid UUID; public string Type; }
 
 		private Guid _id;
 		public Guid ID { get { return _id; } set { _id = value; OnPropertyChanged(); } }
@@ -221,8 +220,7 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				_internalTags = XHelper.GetChildOrThrow(input, "Tags").Elements().Select(StandardFileTagRef.Deserialize).ToList();
 
-				_id = XHelper.GetChildValueGUID(input, "ID");
-				ResyncTags();
+				_id                    = XHelper.GetChildValueGUID(input, "ID");
 				_text                  = XHelper.GetChildBase64String(input, "Text");
 				_internaltitle         = XHelper.GetChildValueString(input, "Title");
 				_creationDate          = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
@@ -243,7 +241,9 @@ namespace AlephNote.Plugins.StandardNote
 				_isHidePreview         = XHelper.GetChildValue(input, "IsHidePreview", false);
 				_rawAppData            = XHelper.GetChildValue(input, "RawAppData", "");
 
-				var intref = XHelper.GetChildOrNull(input, "InternalReferences")?.Elements("Ref").Select(x => new StandardFileRef {UUID = XHelper.GetAttributeGuid(x, "UUID"), Type = XHelper.GetAttributeString(x, "Type")}).ToList();
+				ResyncTags();
+
+				var intref = XHelper.GetChildOrNull(input, "InternalReferences")?.Elements("Ref").Select(x => new StandardFileRef(XHelper.GetAttributeGuid(x, "UUID"), XHelper.GetAttributeString(x, "Type"))).ToList();
 				if (intref != null) _internalRef.Synchronize(intref);
 
 				AddPathToInternalTags();
@@ -330,7 +330,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public void SetReferences(List<StandardNoteAPI.APIResultContentRef> refs)
 		{
-			_internalRef.Synchronize(refs.Select(r => new StandardFileRef{UUID = r.uuid, Type = r.content_type}));
+			_internalRef.Synchronize(refs.Select(r => new StandardFileRef(r.uuid, r.content_type)));
 		}
 
 		public override string UniqueName => _id.ToString("N");
@@ -381,13 +381,13 @@ namespace AlephNote.Plugins.StandardNote
 				_clientUpdatedAt       = other.ClientUpdatedAt;
 				_creationDate          = other.CreationDate;
 
-				_internalTags          = other._internalTags.ToList();
-				ResyncTags();
-
 				_text                  = other.Text;
 				_internaltitle         = other.InternalTitle;
 				_contentVersion        = other.ContentVersion;
 				_authHash              = other.AuthHash;
+
+				_internalTags = other._internalTags.ToList();
+				ResyncTags();
 
 				_internalRef.Synchronize(other._internalRef);
 
@@ -456,9 +456,6 @@ namespace AlephNote.Plugins.StandardNote
 
 			using (n.SuppressDirtyChanges())
 			{
-				n._internalTags          = _internalTags.ToList();
-				n.ResyncTags();
-
 				n._text                  = _text;
 				n._internaltitle         = _internaltitle;
 
@@ -476,6 +473,9 @@ namespace AlephNote.Plugins.StandardNote
 				n._authHash              = _authHash;
 
 				n._internalRef.Synchronize(_internalRef);
+
+				n._internalTags = _internalTags.ToList();
+				n.ResyncTags();
 
 				n._isPinned              = _isPinned;
 				n._isLocked              = _isLocked;
@@ -497,12 +497,21 @@ namespace AlephNote.Plugins.StandardNote
 			if (!_hConfig.EmulateSubfolders) return;
 
 			var tag = "[Notes]";
-			if (!_internalTags.Any(p => p.Title == tag)) _internalTags.Insert(0, new StandardFileTagRef(null, tag));
+			if (!_internalTags.Any(p => p.Title == tag))
+            {
+				AlephAppContext.Logger.Trace(StandardNotePlugin.Name, $"Auto-Added tag '{tag}' for NotePath '{Path.Formatted}'", $"Index := {0}\nTag := '{tag}'\nPath := '{Path.StrSerialize()}'\nNote := '{Title}' ({UniqueName})");
+				_internalTags.Insert(0, new StandardFileTagRef(null, tag));
+			}
+
 			int i = 1;
             foreach (var comp in Path.Enumerate())
             {
 				tag += "."+comp;
-				if (!_internalTags.Any(p => p.Title == tag)) _internalTags.Insert(i, new StandardFileTagRef(null, tag));
+				if (!_internalTags.Any(p => p.Title == tag))
+                {
+					AlephAppContext.Logger.Trace(StandardNotePlugin.Name, $"Auto-Added tag '{tag}' for NotePath '{Path.Formatted}'", $"Index := {i}\nTag := '{tag}'\nPath := '{Path.StrSerialize()}'\nNote := '{Title}' ({UniqueName})");
+					_internalTags.Insert(i, new StandardFileTagRef(null, tag));
+				}
 				i++;
 			}
 
