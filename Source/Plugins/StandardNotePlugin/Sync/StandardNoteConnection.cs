@@ -132,6 +132,14 @@ namespace AlephNote.Plugins.StandardNote
 					$"        sync_conflicts = {_syncResult.syncconflict_tags.Count}\n" +
 					$"        uuid_conflicts = {_syncResult.uuidconflict_tags.Count}\n" +
 					$"    ]\n" +
+					$"    items_keys:\n" +
+					$"    [\n" +
+					$"        retrieved      = {_syncResult.retrieved_keys.Count}\n" +
+					$"        deleted        = {_syncResult.deleted_keys.Count}\n" +
+					$"        saved          = {_syncResult.saved_keys.Count}\n" +
+					$"        sync_conflicts = {_syncResult.syncconflict_keys.Count}\n" +
+					$"        uuid_conflicts = {_syncResult.uuidconflict_keys.Count}\n" +
+					$"    ]\n" +
 					$"]");
 			}
 		}

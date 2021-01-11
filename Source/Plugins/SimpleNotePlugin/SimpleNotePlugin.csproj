@@ -16,6 +16,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Properties\**" />
+	  <EmbeddedResource Remove="Properties\**" />
+	  <None Remove="Properties\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj">
 			<Private>false</Private>
 		</ProjectReference>
@@ -33,10 +39,6 @@
 		<PackageReference Include="System.Xml.XDocument" Version="4.3.0">
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageReference>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Properties\" />
 	</ItemGroup>
 
 </Project>

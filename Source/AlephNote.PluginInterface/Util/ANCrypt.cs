@@ -1,4 +1,5 @@
 ﻿using Konscious.Security.Cryptography;
+using Sodium;
 
 namespace AlephNote.PluginInterface.Util
 {
@@ -15,6 +16,16 @@ namespace AlephNote.PluginInterface.Util
             };
             
             return argon2.GetBytes(outputLength);
+        }
+
+        public static byte[] XChaCha20Decrypt(byte[] ciphertext, byte[] nonce, byte[] key, byte[] assocData)
+        {
+            return SecretAeadXChaCha20Poly1305.Decrypt(ciphertext, nonce, key, assocData);
+        }
+
+        public static byte[] XChaCha20Encrypt(byte[] plaintext, byte[] nonce, byte[] key, byte[] assocData)
+        {
+            return SecretAeadXChaCha20Poly1305.Encrypt(plaintext, nonce, key, assocData);
         }
     }
 }

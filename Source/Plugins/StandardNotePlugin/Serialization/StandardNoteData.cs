@@ -16,6 +16,7 @@ namespace AlephNote.Plugins.StandardNote
 		public StandardNoteSessionData SessionData = null;
 
 		public List<StandardFileTag> Tags = new List<StandardFileTag>(); 
+		public List<StandardFileItemsKey> ItemsKeys = new List<StandardFileItemsKey>();
 
 		public XElement Serialize()
 		{
@@ -24,6 +25,7 @@ namespace AlephNote.Plugins.StandardNote
 				TokenToXElem(),
 				StandardNoteSessionData.Serialize("SessionData", SessionData),
 				new XElement("Tags", Tags.Select(t => t.Serialize()).Cast<object>().ToArray()),
+				new XElement("ItemsKeys", ItemsKeys.Select(t => t.Serialize()).Cast<object>().ToArray()),
 			};
 
 			var r = new XElement("data", data);
@@ -40,6 +42,8 @@ namespace AlephNote.Plugins.StandardNote
 			SessionData = StandardNoteSessionData.Deserialize(XHelper.GetChildOrNull(input, "SessionData"));
 
 			Tags = XHelper.GetChildOrThrow(input, "Tags").Elements().Select(StandardFileTag.Deserialize).ToList();
+
+			ItemsKeys = XHelper.GetChildOrNull(input, "ItemsKeys")?.Elements()?.Select(StandardFileItemsKey.Deserialize)?.ToList() ?? new List<StandardFileItemsKey>();
 		}
 
 		public XElement TokenToXElem()
@@ -76,15 +80,28 @@ namespace AlephNote.Plugins.StandardNote
 				else
 				{
 					var r = Tags.FirstOrDefault(p => p.UUID == tag.uuid);
-					if (r != null)
-					{
-						Tags.Remove(r);
-						Tags.Add(new StandardFileTag(tag.uuid, tag.title, tag.created_at, tag.updated_at, tag.references.Where(rf => rf.content_type == "Note").Select(rf => rf.uuid)));
-					}
-					else
-					{
-						Tags.Add(new StandardFileTag(tag.uuid, tag.title, tag.created_at, tag.updated_at, tag.references.Where(rf => rf.content_type == "Note").Select(rf => rf.uuid)));
-					}
+					if (r != null) Tags.Remove(r);
+
+					Tags.Add(new StandardFileTag(tag.uuid, tag.title, tag.created_at, tag.updated_at, tag.references.Where(rf => rf.content_type.ToLower() == "note").Select(rf => rf.uuid), tag.rawappdata));
+				}
+			}
+		}
+
+		public void UpdateKeys(IEnumerable<StandardNoteAPI.SyncResultItemsKey> retrievedKeys, IEnumerable<StandardNoteAPI.SyncResultItemsKey> savedKeys, IEnumerable<(StandardNoteAPI.SyncResultItemsKey unsavedkey, StandardNoteAPI.SyncResultItemsKey serverkey, string type)> conflictKeys, IEnumerable<StandardNoteAPI.SyncResultItemsKey> deletedKeys)
+		{
+			foreach (var itskey in retrievedKeys.Concat(savedKeys).Concat(conflictKeys.Select(p => p.serverkey).Where(p => p != null)).Concat(deletedKeys))
+			{
+				if (itskey.deleted)
+				{
+					var r = ItemsKeys.FirstOrDefault(p => p.UUID == itskey.uuid);
+					if (r != null) ItemsKeys.Remove(r);
+				}
+				else
+				{
+					var r = ItemsKeys.FirstOrDefault(p => p.UUID == itskey.uuid);
+					if (r != null) ItemsKeys.Remove(r);
+
+					ItemsKeys.Add(new StandardFileItemsKey(itskey.uuid, itskey.version, itskey.created_at, itskey.updated_at, itskey.items_key, itskey.isdefault, itskey.rawappdata));
 				}
 			}
 		}

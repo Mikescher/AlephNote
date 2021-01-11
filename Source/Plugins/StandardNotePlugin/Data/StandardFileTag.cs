@@ -17,14 +17,16 @@ namespace AlephNote.Plugins.StandardNote
 		public readonly Guid? UUID;
 		public readonly string Title;
 		public readonly IReadOnlyList<Guid> References;
+		public readonly string RawAppData;
 
-		public StandardFileTag(Guid? id, string title, DateTimeOffset cdate, DateTimeOffset mdate, IEnumerable<Guid> refs)
+		public StandardFileTag(Guid? id, string title, DateTimeOffset cdate, DateTimeOffset mdate, IEnumerable<Guid> refs, string rawAppData)
 		{
-			UUID = id;
-			Title = title;
-			CreationDate = cdate;
+			UUID             = id;
+			Title            = title;
+			CreationDate     = cdate;
 			ModificationDate = mdate;
-			References = refs.ToList();
+			References       = refs.ToList();
+			RawAppData       = rawAppData;
 		}
 
 		public XElement Serialize()
@@ -36,6 +38,7 @@ namespace AlephNote.Plugins.StandardNote
 				new XAttribute("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture)));
 
 			x.Add(new XElement("References", References.Select(r => new XElement("ref", r.ToString("P")))));
+			x.Add(new XElement("AppData", RawAppData));
 
 			return x;
 		}
@@ -47,8 +50,9 @@ namespace AlephNote.Plugins.StandardNote
 			var cdate = XHelper.GetAttributeDateTimeOffsetOrDefault(e, "CreationDate", DateTimeOffset.MinValue);
 			var mdate = XHelper.GetAttributeDateTimeOffsetOrDefault(e, "ModificationDate", DateTimeOffset.Now);
 			var refs  = XHelper.HasChild(e, "References") ? XHelper.GetChildValueStringList(e, "References", "ref").Select(Guid.Parse).ToList() : new List<Guid>();
+			var appd  = XHelper.HasChild(e, "AppData") ? XHelper.GetChildValueString(e, "AppData") : string.Empty;
 
-			return new StandardFileTag(id, txt, cdate, mdate, refs);
+			return new StandardFileTag(id, txt, cdate, mdate, refs, appd);
 		}
 		
 		public override int GetHashCode()
@@ -64,7 +68,11 @@ namespace AlephNote.Plugins.StandardNote
 		public bool Equals(StandardFileTag other)
 		{
 			if (other == null) return false;
-			return UUID == other.UUID && Title == other.Title && References.ListEquals(other.References, (a,b)=>a==b);
+			return 
+				UUID == other.UUID && 
+				Title == other.Title && 
+				RawAppData == other.RawAppData &&
+				References.ListEquals(other.References, (a,b)=>a==b);
 		}
 		
 		public static bool operator ==(StandardFileTag left, StandardFileTag right) => left?.Equals(right) ?? ReferenceEquals(right, null);

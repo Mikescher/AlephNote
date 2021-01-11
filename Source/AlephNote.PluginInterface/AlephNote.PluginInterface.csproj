@@ -19,6 +19,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.2.1" />
+		<PackageReference Include="Sodium.Core" Version="1.2.3" />
 		<PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
 		<PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.3.0" />
 	</ItemGroup>
