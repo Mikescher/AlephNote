@@ -15,13 +15,3 @@ before_build:
 build:
   project: Source\AlephNote.sln
   verbosity: normal
-after_build:
-- cmd: >-
-    cd Data
-
-    call PACKAGE_RELEASE.bat
-
-    cd ..
-artifacts:
-- path: AlephNote.zip
-  name: AlephNote_Archive
