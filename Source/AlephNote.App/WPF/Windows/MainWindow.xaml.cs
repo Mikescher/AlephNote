@@ -867,7 +867,7 @@ namespace AlephNote.WPF.Windows
 
 		public void OnAfterMigrate(Version versionFrom, Version versionTo)
 		{
-			if (versionFrom != default && versionFrom < new Version(1, 7, 1))
+			if (versionFrom != default && versionFrom < new Version(1, 7, 0))
 			{
 				App.Logger.Debug("MainWindow", $"Trigger Migration [[StandardNote.FullResync after 004]] by migration from {versionFrom} to {versionTo}");
 
@@ -890,7 +890,7 @@ namespace AlephNote.WPF.Windows
                 {
 					var r = System.Windows.MessageBox.Show(
 						this,
-						"Due to an update in the StandardNotes API and an accompanying update of the StandardNotes plugin (v1.7.0) it is necessary to do a full resync of your data to prevent synchronization problems.\nThis will clear all your local data and download notes and tags from the StandardNotes server.\nIf all your data is synchronized (which it should always be) this won't change any notes or tags.\n\nIf you con't do that now you can always do the same action later via the menu item [Edit] -> [Delete local data and sync new].",
+						"Due to an update in the StandardNotes API and an accompanying update of the StandardNotes plugin (v1.7.0) it is necessary to do a full resync of your data to prevent synchronization problems.\nThis will clear all your local data and download notes and tags from the StandardNotes server anew.\nIf all your data is synchronized (which it should always be) this won't change any notes or tags.\n\nIf you don't do that now you can always do the same action later via the menu item:\n[Edit] -> [Delete local data and sync new].",
 						"Important Notification about the StandardNotes plugin",
 						MessageBoxButton.OKCancel,
 						MessageBoxImage.Exclamation,
