@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>alpehnote</id>
+    <version>1.7.0</version>
+    <authors>Mikescher</authors>
+
+    <title>AlephNote</title>
+    <owners>Mike Schwörer</owners>
+    
+    <summary>AlephNote is a lightweight note taking client for Simplenote or Standard Notes (or simple local storage)</summary>
+    
+    <description>
+AlephNote is a lightweight note taking client. 
+It supports multiple backends (StandardNote, SimpleNote, NextcloudNotes, local, filesystem) via plugins. 
+It tries to be light on system resources but still give the user lots of customization features. 
+
+## Features
+ - Support for (user defined) themes and icon sets. 
+ - Automatically version control all your notes into a local git repository to ensure a complete change-history and a backup of all your data
+ - (Additionally) synchronize you rnotes into a local directory on sour filesystem, so you can view/edit them with external tools
+ - Emulate a hierachical note structure (putting notes in folder and subfolder) on backends that don't support that (eg Simplenote)
+ - Custom snippets
+ - Fully customizable keyboard shortcuts
+ - Uses Scintilla Editor together with all its features
+</description>
+
+    <tags>standardnote simplenote notetaking productivity opensource </tags>
+    
+    <projectUrl>https://www.mikescher.com/programs/view/AlephNote</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/Mikescher/AlephNote/ba6e555ad81b8db84bd27549421d8189a1df42d1/Source/AlephNote.App/Resources/IconMain.png</iconUrl>
+    <licenseUrl>https://github.com/Mikescher/AlephNote/blob/master/LICENSE</licenseUrl>
+    <packageSourceUrl>https://github.com/Mikescher/AlephNote/tree/master/Chocolatey</packageSourceUrl>
+    <docsUrl>https://github.com/Mikescher/AlephNote/wiki</docsUrl>
+    <releaseNotes>https://github.com/Mikescher/AlephNote/releases</releaseNotes>
+    
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>
