@@ -495,20 +495,28 @@ namespace AlephNote.Plugins.StandardNote
 				Logger.Error(StandardNotePlugin.Name, "Unknown conflict type returned from API", string.Join("\n", items_unknown_conlict.Select(p => p.type)));
             }
 
-			var items_unknown_type = result.retrieved_items.Where(p => 
-				p.content_type?.ToLower() != "note" && 
-				p.content_type?.ToLower() != "tag" &&
-				p.content_type?.ToLower() != "sn|itemskey" &&
-				p.content_type?.ToLower() != "sn|userpreferences" &&     // ignored by AlephNote
-				p.content_type?.ToLower() != "sn|component").ToList();   // ignored by AlephNote
+			var items_unknown_type = result.retrieved_items.Where(p => !IsValidContentType(p.content_type)).ToList();
 			if (items_unknown_type.Any())
 			{
-				Logger.Warn(StandardNotePlugin.Name, "Unknown types returned from API", string.Join("\n", items_unknown_type.Select(p => p.content_type)));
+				Logger.Warn(StandardNotePlugin.Name, "Unknown types returned from API", string.Join("\n", items_unknown_type.Select(p => p.content_type ?? "NULL")));
 			}
 
 			syncresult.retrieved_notes.AddRange(GetMissingNoteUpdates(syncresult.retrieved_tags.Concat(syncresult.saved_tags), dat.Tags, allNotes, syncresult.retrieved_notes));
 
 			return syncresult;
+		}
+
+		private static bool IsValidContentType(string ct)
+        {
+			if (ct == null) return false;
+			if (ct.ToLower() == "note") return true;
+			if (ct.ToLower() == "tag") return true;
+			if (ct.ToLower() == "sn|itemskey") return true;
+
+			if (ct.ToLower().StartsWith("sn|")) return true;   // ignored by AlephNote
+			if (ct.ToLower().StartsWith("sf|")) return true;   // ignored by AlephNote
+
+			return false;
 		}
 
 		private static IEnumerable<StandardFileTag> GetTagsInNeedOfUpdate(List<StandardFileTag> _allTags, List<StandardFileNote> notesUpload, List<StandardFileNote> notesDeleted)
