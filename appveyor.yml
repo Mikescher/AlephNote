@@ -1,5 +1,5 @@
 version: AV_{build}
-image: Visual Studio 2017
+image: Visual Studio 2019
 configuration: Release
 platform: Any CPU
 clone_depth: 1
@@ -19,7 +19,7 @@ after_build:
 - cmd: >-
     cd Data
 
-    call AUTO_BUILD_RELEASE.bat
+    call PACKAGE_RELEASE.bat
 
     cd ..
 artifacts:
