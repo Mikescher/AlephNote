@@ -138,7 +138,7 @@ namespace AlephNote.WPF.Windows
 				t.Start();
 			}
 
-			if (!App.DebugMode && settings.SendAnonStatistics)
+			if (settings.SendAnonStatistics)
 			{
 				var t = new Thread(UploadUsageStatsAsync) { Name = "STATISTICS_UPLOAD" };
 				t.Start();
