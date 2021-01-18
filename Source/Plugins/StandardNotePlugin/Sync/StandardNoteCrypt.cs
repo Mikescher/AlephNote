@@ -297,7 +297,7 @@ namespace AlephNote.Plugins.StandardNote
 
 			var default_items_key = GetDefaultItemsKey(dat);
 
-			var enc_item_key = Encrypt004(rawContent, default_items_key.Key, authenticated_data);
+			var enc_item_key = Encrypt004(item_key, default_items_key.Key, authenticated_data);
 
 			return new EncryptResult
 			{
@@ -314,7 +314,7 @@ namespace AlephNote.Plugins.StandardNote
 
 			var authenticated_data = Convert.ToBase64String(Encoding.UTF8.GetBytes(assocData));
 
-			var ciphertext = ANCrypt.XChaCha20Decrypt(Encoding.UTF8.GetBytes(content), EncodingConverter.StringToByteArrayCaseInsensitive(nonce), key, Encoding.UTF8.GetBytes(authenticated_data));
+			var ciphertext = ANCrypt.XChaCha20Encrypt(Encoding.UTF8.GetBytes(content), EncodingConverter.StringToByteArrayCaseInsensitive(nonce), key, Encoding.UTF8.GetBytes(authenticated_data));
 
 			return string.Join(":", "004", nonce, Convert.ToBase64String(ciphertext), authenticated_data);
         }

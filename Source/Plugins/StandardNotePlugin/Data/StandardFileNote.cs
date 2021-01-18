@@ -186,7 +186,6 @@ namespace AlephNote.Plugins.StandardNote
 				new XElement("Tags", _internalTags.Select(t => t.Serialize()).Cast<object>().ToArray()),
 				new XElement("Text", XHelper.ConvertToC80Base64(_text)),
 				new XElement("Title", _internaltitle),
-				new XElement("__RealModificationDate", XHelper.ToString(ModificationDate)),
 				new XElement("ModificationDate", XHelper.ToString(RawModificationDate)), // is RawModificationDate but xml tag is still <ModificationDate> for compatibiility
 				CreateNullableDateTimeXElem("NoteCreationDate",      NoteCreationDate),
 				CreateNullableDateTimeXElem("NoteModificationDate",  NoteModificationDate),

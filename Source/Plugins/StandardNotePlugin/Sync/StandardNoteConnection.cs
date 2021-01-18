@@ -38,9 +38,13 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			try
 			{
-				if (dat.SessionData == null || dat.SessionData.AccessExpiration > DateTime.Now) dat.SessionData = null;
+				if (dat.SessionData == null || dat.SessionData.AccessExpiration <= DateTime.Now) dat.SessionData = null;
 
-				if (dat.SessionData != null) return;
+				if (dat.SessionData != null)
+				{
+					_logger.Debug(StandardNotePlugin.Name, $"Reusing existing token (until {dat.SessionData.AccessExpiration:yyyy-MM-dd HH:mm})");
+					return;
+				}
 
 				using (var web = CreateJsonRestClient(_proxy, _config.Server))
 				{
