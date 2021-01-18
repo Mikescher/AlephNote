@@ -9,7 +9,7 @@
 		WindowStartupLocation="CenterOwner"
 		d:DataContext="{d:DesignInstance windows:AboutWindowViewmodel}"
 		Icon="/Resources/IconMain.png"
-		Title="About AlephNote" Height="380" Width="320" MinWidth="300" MinHeight="340">
+		Title="About AlephNote" Height="400" Width="320" MinWidth="300" MinHeight="400">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
