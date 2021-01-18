@@ -70,6 +70,10 @@ If checked we remember the current scroll position and cursor position per note.
 When switching between notes, or when restarting the application the scroll/cursor position is kept persistent.
 Can be useful for really long notes or when using only the keyboard for navigation.
 
+[Minimize]
+Minimize the app to the tray bar instead of minimizing to the main taskbar.
+When you minimize the main window it gets removed from the windows taskbar and can be accessed via the tray icons.
+
 [CloseToTray]
 Minimize to tray bar instead of closing the main window.
 You can still close the app via the menu.

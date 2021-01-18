@@ -429,6 +429,7 @@ namespace AlephNote.WPF.Windows
 
 		public void FocusGlobalSearch()
 		{
+			if (Settings.HideSearchBox) return;
 			GlobalSearchBar.Focus();
 		}
 		

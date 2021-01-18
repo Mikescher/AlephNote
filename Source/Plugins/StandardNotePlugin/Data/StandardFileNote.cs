@@ -174,6 +174,8 @@ namespace AlephNote.Plugins.StandardNote
 				if (TagsModificationDate  != null) sb.AppendLine($"Modified (tags): {TagsModificationDate.Value.ToLocalTime():yyyy-MM-dd HH:mm:ss}");
 				if (PathModificationDate  != null) sb.AppendLine($"Modified (path): {PathModificationDate.Value.ToLocalTime():yyyy-MM-dd HH:mm:ss}");
 
+				if (IsConflictNote) sb.AppendLine().AppendLine("(conflict note)");
+
 				return sb.ToString().TrimEnd();
 			}
         }

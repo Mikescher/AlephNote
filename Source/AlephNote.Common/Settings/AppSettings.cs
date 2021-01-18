@@ -561,6 +561,14 @@ namespace AlephNote.Common.Settings
 		public bool RememberHierarchyExpandedState { get { return _rememberHierarchyExpandedState; } set { _rememberHierarchyExpandedState = value; OnPropertyChanged(); } }
 		private bool _rememberHierarchyExpandedState = true;
 
+		[AlephXMLField]
+		public bool HideAddNoteButton { get { return _hideAddNoteButton; } set { _hideAddNoteButton = value; OnPropertyChanged(); } }
+		private bool _hideAddNoteButton = false;
+
+		[AlephXMLField]
+		public bool HideSearchBox { get { return _hideSearchBox; } set { _hideSearchBox = value; OnPropertyChanged(); } }
+		private bool _hideSearchBox = false;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;
@@ -569,7 +577,7 @@ namespace AlephNote.Common.Settings
 		{
 			_path = path;
 		}
-
+		
 		public static AppSettings CreateEmpty(string path)
 		{
 			var r = new AppSettings(path);

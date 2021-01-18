@@ -91,7 +91,9 @@ namespace AlephNote.PluginInterface.Impl
 		{
 			get
 			{
-				return $"Modified: {ModificationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}\nCreated: {CreationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}";
+				var dtt = $"Modified: {ModificationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}\nCreated: {CreationDate.ToLocalTime():yyyy-MM-dd HH:mm:ss}";
+				if (IsConflictNote) dtt += "\n(conflict note)";
+				return dtt;
 			}
 		}
 

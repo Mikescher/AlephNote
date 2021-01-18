@@ -167,7 +167,7 @@
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="1*"/>
-					<ColumnDefinition Width="26"/>
+                    <ColumnDefinition Width="{Binding Settings.HideAddNoteButton, Converter={conv:BoolToGridLength}, ConverterParameter=0;26}"/>
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
@@ -214,6 +214,7 @@
                                           SearchText="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
                                           SearchDelayMode="{Binding Settings.GlobalSearchDelay}" 
                                           NoteCount="{Binding Repository.Notes.Count}"
+										  Visibility="{Binding Settings.HideSearchBox, Converter={conv:BoolToVisibility}, ConverterParameter=Collapsed;Visible}"
                                           x:Name="GlobalSearchBar" />
 
 				<Button Grid.Row="0" Grid.Column="2" Margin="2" Padding="0" FontWeight="Bold" 
@@ -223,6 +224,7 @@
 					BorderThickness="{ext:ThemeBinding 'window.globalsearch.button:border_thickness'}"
 					BorderBrush="{ext:ThemeBinding 'window.globalsearch.button:border'}" 
 					IsEnabled="{Binding Settings.IsReadOnlyMode, Converter={conv:NegateBool}}"
+			        Visibility="{Binding Settings.HideAddNoteButton, Converter={conv:BoolToVisibility}, ConverterParameter=Collapsed;Visible}"
 					Command="{Binding CreateNewNoteCommand}">
 					<Image Source="{ext:ThemeBinding 'plus.png', ResType='ImageSource'}" Margin="2" />
 				</Button>
