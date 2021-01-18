@@ -392,7 +392,7 @@ namespace AlephNote.Common.Settings
 		public bool LockOnMinimize { get { return _lockOnMinimize; } set { _lockOnMinimize = value; OnPropertyChanged(); } }
 		private bool _lockOnMinimize = false;
 
-		[AlephXMLField]
+		[AlephXMLField(IsAdvanced = true)]
 		public bool UpdateToPrerelease { get { return _updateToPrerelease; } set { _updateToPrerelease = value; OnPropertyChanged(); } }
 		private bool _updateToPrerelease = false;
 		
@@ -456,19 +456,19 @@ namespace AlephNote.Common.Settings
 		public bool CaseInsensitiveSort { get { return _caseInsensitiveSort; } set { _caseInsensitiveSort = value; OnPropertyChanged(); } }
 		private bool _caseInsensitiveSort = true;
 		
-		[AlephXMLField]
+		[AlephXMLField(IsAdvanced = true)]
 		public bool SingleInstanceMode { get { return _singleInstanceMode; } set { _singleInstanceMode = value; OnPropertyChanged(); } }
 		private bool _singleInstanceMode = true;
 
-		[AlephXMLField]
+		[AlephXMLField(IsAdvanced = true)]
 		public bool AllowAllLettersInFilename { get { return _allowAllLettersInFilename; } set { _allowAllLettersInFilename = value; OnPropertyChanged(); } }
 		private bool _allowAllLettersInFilename = false;
 
-		[AlephXMLField]
+		[AlephXMLField(IsAdvanced = true)]
 		public bool AllowAllCharactersInFilename { get { return _allowAllCharactersInFilename; } set { _allowAllCharactersInFilename = value; OnPropertyChanged(); } }
 		private bool _allowAllCharactersInFilename = false;
 		
-		[AlephXMLField]
+		[AlephXMLField(IsAdvanced = true)]
 		public URLMatchingMode UsedURLMatcher { get { return _usedURLMatcher; } set { _usedURLMatcher = value; OnPropertyChanged(); } }
 		private URLMatchingMode _usedURLMatcher = URLMatchingMode.Tolerant;
 		int IReadonlyAlephSettings.UsedURLMatchingMode => (int)UsedURLMatcher;
@@ -477,11 +477,11 @@ namespace AlephNote.Common.Settings
 		public bool RememberScrollPerSession { get { return _rememberScrollPerSession; } set { _rememberScrollPerSession = value; OnPropertyChanged(); } }
 		private bool _rememberScrollPerSession = false;
 
-		[AlephXMLField]
+		[AlephXMLField(IsAdvanced=true)]
 		public bool ForceDebugMode { get { return _forceDebugMode; } set { _forceDebugMode = value; OnPropertyChanged(); } }
 		private bool _forceDebugMode = false;
 
-		[AlephXMLField]
+		[AlephXMLField(IsAdvanced = true)]
 		public bool DisableLogger { get { return _disableLogger; } set { _disableLogger = value; OnPropertyChanged(); } }
 		private bool _disableLogger = false;
 		
@@ -529,15 +529,15 @@ namespace AlephNote.Common.Settings
 		public bool SciHexLineNumber { get { return _sciHexLineNumber; } set { _sciHexLineNumber = value; OnPropertyChanged(); } }
 		private bool _sciHexLineNumber = false;
 
-		[AlephXMLField]
+		[AlephXMLField(IsAdvanced = true)]
 		public FocusTarget FocusAfterCreateNote { get { return _focusAfterCreateNote; } set { _focusAfterCreateNote = value; OnPropertyChanged(); } }
 		private FocusTarget _focusAfterCreateNote = FocusTarget.NoteTitle;
 		
-		[AlephXMLField]
+		[AlephXMLField(IsAdvanced = true)]
 		public bool FocusScintillaOnTitleEnter { get { return _focusScintillaOnTitleEnter; } set { _focusScintillaOnTitleEnter = value; OnPropertyChanged(); } }
 		private bool _focusScintillaOnTitleEnter = true;
 		
-		[AlephXMLField]
+		[AlephXMLField(IsAdvanced = true)]
 		public SearchDelayMode GlobalSearchDelay { get { return _globalSearchDelay; } set { _globalSearchDelay = value; OnPropertyChanged(); } }
 		private SearchDelayMode _globalSearchDelay = SearchDelayMode.Auto;
 		
@@ -549,7 +549,7 @@ namespace AlephNote.Common.Settings
 		public bool VerticalMainLayout { get { return _verticalMainLayout; } set { _verticalMainLayout = value; OnPropertyChanged(); } }
 		private bool _verticalMainLayout = false;
 		
-		[AlephXMLField]
+		[AlephXMLField(IsAdvanced = true)]
 		public string UIFontFamily { get { return _uiFontFamily; } set { _uiFontFamily = value; OnPropertyChanged(); } }
 		private string _uiFontFamily = string.Empty;
 
@@ -589,6 +589,12 @@ namespace AlephNote.Common.Settings
 
 			return r;
 		}
+
+		public bool GetAnyAdvancedSettingsChanged(out string diff)
+        {
+			diff = string.Join(";", _serializer.Diff(CreateEmpty(""), this).Where(p => p.Attribute.IsAdvanced).Select(p => p.PropInfo.Name));
+			return diff != "";
+        }
 
 		public void Save()
 		{

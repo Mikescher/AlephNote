@@ -35,6 +35,9 @@ namespace AlephNote.Common.Operations
 			{
 				var rest = new SimpleJsonRest(_settings.CreateProxy(), @"https://mikescher.com");
 
+				var rfmode = (_settings.RawFolderRepoAllowCreation ? "C":"") + (_settings.RawFolderRepoAllowDeletion ? "D" : "") + (_settings.RawFolderRepoAllowModification ? "M" : "");
+				var asmod  = _settings.GetAnyAdvancedSettingsChanged(out var asdiff);
+
 				var response = rest.Get<JsonResponse>(
 					"api/statsping", 
 					$"Name={"AlephNote"}", 
@@ -42,7 +45,16 @@ namespace AlephNote.Common.Operations
 					$"ClientID={_settings.ClientID:D}", 
 					$"ProviderStr={_settings.ActiveAccount.Plugin.DisplayTitleShort.Replace(' ', '_')}", 
 					$"ProviderID={_settings.ActiveAccount.Plugin.GetUniqueID()}",
-					$"NoteCount={_repository.Notes.Count}");
+					$"NoteCount={_repository.Notes.Count}",
+					$"RawFolderRepo={_settings.UseRawFolderRepo}",
+					$"RawFolderRepoMode={rfmode}",
+					$"GitMirror={_settings.DoGitMirror}",
+					$"GitMirrorPush={_settings.GitMirrorDoPush}",
+					$"Theme={_settings.Theme}",
+					$"LaunchOnBoot={_settings.LaunchOnBoot}",
+					$"EmulateHierarchicalStructure={_settings.EmulateHierarchicalStructure}",
+					$"HasEditedAdvancedSettings={asmod}",
+					$"AdvancedSettingsDiff={asdiff}");
 
 				return response.success;
 
