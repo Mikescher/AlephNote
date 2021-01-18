@@ -29,6 +29,7 @@ using AlephNote.WPF.Controls.NotesView;
 using AlephNote.WPF.ScintillaUtil;
 using MSHC.Lang.Collections;
 using Application = System.Windows.Application;
+using MSHC.WPF;
 
 namespace AlephNote.WPF.Windows
 {
@@ -69,6 +70,8 @@ namespace AlephNote.WPF.Windows
 			DataContext = _viewmodel;
 
 			FocusScintillaDelayed(250);
+
+			if (App.IsUpdateMigration) OnAfterMigrate(App.UpdateMigrationFrom, App.UpdateMigrationTo);
 		}
 
 		public IShortcutHandler GetShortcutHandler() => _viewmodel;
@@ -859,6 +862,46 @@ namespace AlephNote.WPF.Windows
 				case FocusTarget.Unchanged:
 				default:
 					return; // Nothing
+			}
+		}
+
+		public void OnAfterMigrate(Version versionFrom, Version versionTo)
+		{
+			if (versionFrom != default && versionFrom < new Version(1, 7, 1))
+			{
+				App.Logger.Debug("MainWindow", $"Trigger Migration [[StandardNote.FullResync after 004]] by migration from {versionFrom} to {versionTo}");
+
+				var guidStandardNotes = Guid.Parse("30d867a4-cbdc-45c5-950a-c119bf2f2845");
+
+				if (Settings.Accounts.Any(a => a.Plugin.GetUniqueID() == guidStandardNotes && a.ID != Settings.ActiveAccount.ID))
+                {
+					System.Windows.MessageBox.Show(
+						this,
+						"It appears you are having one or more accounts that sync with StandardNotes.\nDue to changes with the StandardNotes API it is recommended to do a full resync of your data (via the [Edit] -> [Delete local data and sync new] menu option).\nThis is necessary for all StandardNotes accounts but only for this update. Failing to do so can result in sync problems",
+						"Important Notification about the StandardNotes plugin", 
+						MessageBoxButton.OK, 
+						MessageBoxImage.Exclamation, 
+						MessageBoxResult.OK,
+						System.Windows.MessageBoxOptions.None);
+
+					// we can't auto-FullResync here, because at least one StandardNote account is not active
+                }
+				else if (Settings.ActiveAccount.Plugin.GetUniqueID() == guidStandardNotes)
+                {
+					var r = System.Windows.MessageBox.Show(
+						this,
+						"Due to an update in the StandardNotes API and an accompanying update of the StandardNotes plugin (v1.7.0) it is necessary to do a full resync of your data to prevent synchronization problems.\nThis will clear all your local data and download notes and tags from the StandardNotes server.\nIf all your data is synchronized (which it should always be) this won't change any notes or tags.\n\nIf you con't do that now you can always do the same action later via the menu item [Edit] -> [Delete local data and sync new].",
+						"Important Notification about the StandardNotes plugin",
+						MessageBoxButton.OKCancel,
+						MessageBoxImage.Exclamation,
+						MessageBoxResult.OK,
+						System.Windows.MessageBoxOptions.None);
+					
+					if (r == MessageBoxResult.OK)
+                    {
+						WPFHelper.ExecDelayed(1000, () => { _viewmodel.FullResyncCommand.Execute(null); });
+                    }
+				}
 			}
 		}
 	}
