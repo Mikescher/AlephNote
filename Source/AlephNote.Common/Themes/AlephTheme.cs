@@ -238,28 +238,28 @@ namespace AlephNote.Common.Themes
 
 		public static readonly Tuple<string, Uri>[] RESOURCES =
 		{
-			Tuple.Create("folder_all.png",       new Uri("pack://application:,,,/AlephNote;component/Resources/folder_all.png")       ),
-			Tuple.Create("folder_any.png",       new Uri("pack://application:,,,/AlephNote;component/Resources/folder_any.png")       ),
-			Tuple.Create("folder_none.png",      new Uri("pack://application:,,,/AlephNote;component/Resources/folder_none.png")      ),
-			Tuple.Create("folder_root.png",      new Uri("pack://application:,,,/AlephNote;component/Resources/folder_root.png")      ),
+			Tuple.Create("folder_all.png",       new Uri("pack://application:,,,/AlephNote.App;component/Resources/folder_all.png")       ),
+			Tuple.Create("folder_any.png",       new Uri("pack://application:,,,/AlephNote.App;component/Resources/folder_any.png")       ),
+			Tuple.Create("folder_none.png",      new Uri("pack://application:,,,/AlephNote.App;component/Resources/folder_none.png")      ),
+			Tuple.Create("folder_root.png",      new Uri("pack://application:,,,/AlephNote.App;component/Resources/folder_root.png")      ),
 
-			Tuple.Create("IconGreen.ico",        new Uri("pack://application:,,,/AlephNote;component/Resources/IconGreen.ico")        ),
-			Tuple.Create("IconRed.ico",          new Uri("pack://application:,,,/AlephNote;component/Resources/IconRed.ico")          ),
-			Tuple.Create("IconSync.ico",         new Uri("pack://application:,,,/AlephNote;component/Resources/IconSync.ico")         ),
-			Tuple.Create("IconYellow.ico",       new Uri("pack://application:,,,/AlephNote;component/Resources/IconYellow.ico")       ),
+			Tuple.Create("IconGreen.ico",        new Uri("pack://application:,,,/AlephNote.App;component/Resources/IconGreen.ico")        ),
+			Tuple.Create("IconRed.ico",          new Uri("pack://application:,,,/AlephNote.App;component/Resources/IconRed.ico")          ),
+			Tuple.Create("IconSync.ico",         new Uri("pack://application:,,,/AlephNote.App;component/Resources/IconSync.ico")         ),
+			Tuple.Create("IconYellow.ico",       new Uri("pack://application:,,,/AlephNote.App;component/Resources/IconYellow.ico")       ),
 
-			Tuple.Create("lock.png",             new Uri("pack://application:,,,/AlephNote;component/Resources/lock.png")             ),
-			Tuple.Create("lock_open.png",        new Uri("pack://application:,,,/AlephNote;component/Resources/lock_open.png")        ),
-			Tuple.Create("lock_small.png",       new Uri("pack://application:,,,/AlephNote;component/Resources/lock_small.png")       ),
+			Tuple.Create("lock.png",             new Uri("pack://application:,,,/AlephNote.App;component/Resources/lock.png")             ),
+			Tuple.Create("lock_open.png",        new Uri("pack://application:,,,/AlephNote.App;component/Resources/lock_open.png")        ),
+			Tuple.Create("lock_small.png",       new Uri("pack://application:,,,/AlephNote.App;component/Resources/lock_small.png")       ),
 
-			Tuple.Create("plus.png",             new Uri("pack://application:,,,/AlephNote;component/Resources/plus.png")             ),
-			Tuple.Create("refresh.png",          new Uri("pack://application:,,,/AlephNote;component/Resources/refresh.png")          ),
-			Tuple.Create("star.png",             new Uri("pack://application:,,,/AlephNote;component/Resources/star.png")             ),
-			Tuple.Create("tag.png",              new Uri("pack://application:,,,/AlephNote;component/Resources/tag.png")              ),
+			Tuple.Create("plus.png",             new Uri("pack://application:,,,/AlephNote.App;component/Resources/plus.png")             ),
+			Tuple.Create("refresh.png",          new Uri("pack://application:,,,/AlephNote.App;component/Resources/refresh.png")          ),
+			Tuple.Create("star.png",             new Uri("pack://application:,,,/AlephNote.App;component/Resources/star.png")             ),
+			Tuple.Create("tag.png",              new Uri("pack://application:,,,/AlephNote.App;component/Resources/tag.png")              ),
 
-			Tuple.Create("margin_check_mix.png", new Uri("pack://application:,,,/AlephNote;component/Resources/margin_check_mix.png") ),
-			Tuple.Create("margin_check_off.png", new Uri("pack://application:,,,/AlephNote;component/Resources/margin_check_off.png") ),
-			Tuple.Create("margin_check_on.png",  new Uri("pack://application:,,,/AlephNote;component/Resources/margin_check_on.png")  ),
+			Tuple.Create("margin_check_mix.png", new Uri("pack://application:,,,/AlephNote.App;component/Resources/margin_check_mix.png") ),
+			Tuple.Create("margin_check_off.png", new Uri("pack://application:,,,/AlephNote.App;component/Resources/margin_check_off.png") ),
+			Tuple.Create("margin_check_on.png",  new Uri("pack://application:,,,/AlephNote.App;component/Resources/margin_check_on.png")  ),
 
 		};
 

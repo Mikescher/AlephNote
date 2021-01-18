@@ -196,7 +196,7 @@ namespace AlephNote.Common.Settings
 		public NotePreviewStyle NotePreviewStyle { get { return _notePreviewStyle; } set { _notePreviewStyle = value; OnPropertyChanged(); } }
 		private NotePreviewStyle _notePreviewStyle = NotePreviewStyle.Extended;
 
-		[AlephXMLField]
+		[AlephXMLField(ReconnectRepo=true)]
 		public ConflictResolutionStrategyConfig ConflictResolution { get { return _conflictResolution; } set { _conflictResolution = value; OnPropertyChanged(); } }
 		private ConflictResolutionStrategyConfig _conflictResolution = ConflictResolutionStrategyConfig.UseClientCreateConflictFile;
 

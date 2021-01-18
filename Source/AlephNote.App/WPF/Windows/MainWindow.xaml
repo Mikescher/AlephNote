@@ -4,16 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:windows="clr-namespace:AlephNote.WPF.Windows"
-        xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=CSharpUtils"
+        xmlns:conv="clr-namespace:MSHC.WPF.Converter;assembly=WPFUtils"
         xmlns:locconv="clr-namespace:AlephNote.WPF.Converter"
         xmlns:scinet="clr-namespace:ScintillaNET;assembly=ScintillaNET"
         xmlns:ctrl="clr-namespace:AlephNote.WPF.Controls"
         xmlns:tb="http://www.hardcodet.net/taskbar"
-        xmlns:mext="clr-namespace:MSHC.WPF.MarkupExtensions;assembly=CSharpUtils"
+        xmlns:mext="clr-namespace:MSHC.WPF.MarkupExtensions;assembly=WPFUtils"
         xmlns:util="clr-namespace:AlephNote.WPF.Util"
         xmlns:ext="clr-namespace:AlephNote.WPF.Extensions"
-        xmlns:proxy="clr-namespace:MSHC.WPF.BindingProxies;assembly=CSharpUtils"
-        xmlns:services="clr-namespace:MSHC.WPF.Services;assembly=CSharpUtils"
+        xmlns:proxy="clr-namespace:MSHC.WPF.BindingProxies;assembly=WPFUtils"
+        xmlns:services="clr-namespace:MSHC.WPF.Services;assembly=WPFUtils"
         xmlns:notesView="clr-namespace:AlephNote.WPF.Controls.NotesView"
         mc:Ignorable="d" 
         Icon="/Resources/IconMain.png"
@@ -141,10 +141,11 @@
 				<MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Create 10 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="10" />
 				<MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Create 100 Notes (Lorem Ipsum)" Command="{Binding DebugCreateIpsumNotesCommand}" CommandParameter="100" />
 				<Separator/>
-				<MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Compare Notes" Command="{Binding DebugNoteDiffCommand}" />
-				<Separator/>
-				<MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Serialize Settings" Command="{Binding DebugSerializeSettingsCommand}" />
-				<MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Serialize CurrentNote" Command="{Binding DebugSerializeNoteCommand}" />
+                <MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Compare Notes" Command="{Binding DebugNoteDiffCommand}" /> 
+                <Separator/>
+                <MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Serialize Settings" Command="{Binding DebugSerializeSettingsCommand}" />
+                <MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Serialize Repository SyncData" Command="{Binding DebugSerializeRepositorySyncDataCommand}" />
+                <MenuItem Style="{StaticResource SubMenuItemStyle}" Header="Serialize CurrentNote" Command="{Binding DebugSerializeNoteCommand}" />
 				<Separator/>
                 <MenuItem Style="{StaticResource SubMenuItemStyle}" Header="NotesViewControl.RefreshView()" Command="{Binding DebugRefreshViewCommand}" />
                 <Separator/>

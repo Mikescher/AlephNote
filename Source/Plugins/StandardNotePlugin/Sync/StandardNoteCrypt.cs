@@ -12,15 +12,15 @@ namespace AlephNote.Plugins.StandardNote
 	{
 		private static readonly RandomNumberGenerator RNG = RandomNumberGenerator.Create();
 
-		public class EncryptResult { public string enc_item_key, auth_hash, enc_content; }
+		public class EncryptResult { public string enc_item_key, auth_hash, enc_content; public Guid? items_key_id; }
 
-		public static string DecryptContent(string encContent, string encItemKey, string authHash, byte[] masterMK, byte[] masterAK)
+		public static string DecryptContent(string encContent, string encItemKey, Guid? itemsKeyID, string authHash, StandardNoteData dat)
 		{
 			if (encContent.StartsWith("000")) return DecryptContent000(encContent);
-			if (encContent.StartsWith("001")) return DecryptContent001(encContent, encItemKey, authHash, masterMK);
-			if (encContent.StartsWith("002")) return DecryptContent002(encContent, encItemKey, masterMK, masterAK);
-			if (encContent.StartsWith("003")) return DecryptContent003(encContent, encItemKey, masterMK, masterAK);
-			if (encContent.StartsWith("004")) throw new StandardNoteAPIException("Unsupported encryption scheme 004 in note content");
+			if (encContent.StartsWith("001")) return DecryptContent001(encContent, encItemKey, authHash, dat.SessionData.RootKey_MasterKey);
+			if (encContent.StartsWith("002")) return DecryptContent002(encContent, encItemKey, dat.SessionData.RootKey_MasterKey, dat.SessionData.RootKey_MasterAuthKey);
+			if (encContent.StartsWith("003")) return DecryptContent003(encContent, encItemKey, dat.SessionData.RootKey_MasterKey, dat.SessionData.RootKey_MasterAuthKey);
+			if (encContent.StartsWith("004")) return DecryptContent004(encContent, encItemKey, itemsKeyID, dat);
 			if (encContent.StartsWith("005")) throw new StandardNoteAPIException("Unsupported encryption scheme 005 in note content");
 			if (encContent.StartsWith("006")) throw new StandardNoteAPIException("Unsupported encryption scheme 006 in note content");
 			if (encContent.StartsWith("007")) throw new StandardNoteAPIException("Unsupported encryption scheme 007 in note content");
@@ -71,6 +71,22 @@ namespace AlephNote.Plugins.StandardNote
 			var item_ak = item_key.Substring(item_key.Length / 2, item_key.Length / 2);
 
 			return Decrypt003(encContent, EncodingConverter.StringToByteArrayCaseInsensitive(item_ek), EncodingConverter.StringToByteArrayCaseInsensitive(item_ak));
+		}
+
+		private static string DecryptContent004(string encContent, string encItemKey, Guid? itemsKeyID, StandardNoteData dat)
+		{
+			var keyOuter = dat.SessionData.RootKey_MasterKey;
+			if (itemsKeyID != null)
+            {
+				var itemskey = dat.ItemsKeys.FirstOrDefault(p => p.UUID == itemsKeyID);
+				if (itemskey == null) throw new StandardNoteAPIException($"Could not decrypt item (Key {itemsKeyID} not found)");
+
+				keyOuter = itemskey.Key;
+			}
+			
+			var keyInner = Decrypt004(encItemKey, keyOuter);
+
+			return Decrypt004(encContent, EncodingConverter.StringToByteArrayCaseInsensitive(keyInner));
 		}
 
 		private static string Encrypt002(string string_to_encrypt, Guid uuid, byte[] encryption_key, byte[] auth_key)
@@ -143,6 +159,22 @@ namespace AlephNote.Plugins.StandardNote
 			return Encoding.UTF8.GetString(result);
 		}
 
+		private static string Decrypt004(string encContent, byte[] key)
+		{
+			var split = encContent.Split(':');
+
+			var version = split[0];
+			var nonce = EncodingConverter.StringToByteArrayCaseInsensitive(split[1]);
+			var ciphertext = Convert.FromBase64String(split[2]);
+			var authenticated_data = Encoding.UTF8.GetBytes(split[3]);
+
+			if (version != "004") throw new StandardNoteAPIException($"Version must be 004 to decrypt 004 encrypted item (duh.)");
+
+			var plain = ANCrypt.XChaCha20Decrypt(ciphertext, nonce, key, authenticated_data);
+
+			return Encoding.UTF8.GetString(plain);
+		}
+
 		public static byte[] AuthSHA256(byte[] content, byte[] ak)
 		{
 			using (HMACSHA256 hmac = new HMACSHA256(ak))
@@ -151,22 +183,46 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		public static string SHA256(string data)
+		public static string SHA256Hex(string data)
 		{
-			using(var sha = System.Security.Cryptography.SHA256.Create())
+			using(var sha = SHA256.Create())
 			{
 				var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(data));
 				return EncodingConverter.ByteToHexBitFiddleLowercase(hash);
 			}
 		}
-		
-		public static EncryptResult EncryptContent(string scheme, string content, Guid uuid, byte[] globalMK, byte[] globalAK)
-		{
-			if (scheme == "001") return EncryptContent001(content, globalMK);
-			if (scheme == "002") return EncryptContent002(content, uuid, globalMK, globalAK);
-			if (scheme == "003") return EncryptContent003(content, uuid, globalMK, globalAK);
 
-			throw new Exception("Unsupported encryption scheme: " + scheme);
+		public static byte[] SHA256Bytes(string data)
+		{
+			using (var sha = SHA256.Create())
+			{
+				var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(data));
+				return hash;
+			}
+		}
+
+		public static string RandomSeed(int len)
+		{
+			byte[] seed = new byte[len];
+			RNG.GetBytes(seed);
+
+			return EncodingConverter.ByteToHexBitFiddleLowercase(seed);
+		}
+
+		public static EncryptResult EncryptContent(string content, Guid uuid, StandardNoteData dat)
+		{
+			if (dat.SessionData.Version == "001") return EncryptContent001(content,       dat.SessionData.RootKey_MasterKey);
+			if (dat.SessionData.Version == "002") return EncryptContent002(content, uuid, dat.SessionData.RootKey_MasterKey, dat.SessionData.RootKey_MasterAuthKey);
+			if (dat.SessionData.Version == "003") return EncryptContent003(content, uuid, dat.SessionData.RootKey_MasterKey, dat.SessionData.RootKey_MasterAuthKey);
+			if (dat.SessionData.Version == "004") return EncryptContent004(content, uuid, dat);
+			if (dat.SessionData.Version == "005") throw new StandardNoteAPIException("Unsupported encryption scheme 005 in note content");
+			if (dat.SessionData.Version == "006") throw new StandardNoteAPIException("Unsupported encryption scheme 006 in note content");
+			if (dat.SessionData.Version == "007") throw new StandardNoteAPIException("Unsupported encryption scheme 007 in note content");
+			if (dat.SessionData.Version == "008") throw new StandardNoteAPIException("Unsupported encryption scheme 008 in note content");
+			if (dat.SessionData.Version == "009") throw new StandardNoteAPIException("Unsupported encryption scheme 009 in note content");
+			if (dat.SessionData.Version == "010") throw new StandardNoteAPIException("Unsupported encryption scheme 010 in note content");
+
+			throw new Exception("Unsupported encryption scheme: " + dat.SessionData.Version);
 		}
 
 		private static EncryptResult EncryptContent001(string content, byte[] mk)
@@ -192,7 +248,7 @@ namespace AlephNote.Plugins.StandardNote
 			};
 		}
 
-		private static EncryptResult EncryptContent002(string rawContent, Guid uuid, byte[] masterMK, byte[] masterAK)
+        private static EncryptResult EncryptContent002(string rawContent, Guid uuid, byte[] masterMK, byte[] masterAK)
 		{
 			byte[] itemKey = new byte[512 / 8];
 			RNG.GetBytes(itemKey);
@@ -232,6 +288,52 @@ namespace AlephNote.Plugins.StandardNote
 			};
 		}
 
+		private static EncryptResult EncryptContent004(string rawContent, Guid uuid, StandardNoteData dat)
+		{
+			var item_key = RandomSeed(32);
+			var authenticated_data = $"{{\"u\":\"{uuid:D}\",\"v\":\"004\"}}";
+
+			var encrypted_content = Encrypt004(rawContent, EncodingConverter.StringToByteArrayCaseInsensitive(item_key), authenticated_data);
+
+			var default_items_key = GetDefaultItemsKey(dat);
+
+			var enc_item_key = Encrypt004(item_key, default_items_key.Key, authenticated_data);
+
+			return new EncryptResult
+			{
+				enc_item_key = enc_item_key,
+				enc_content = encrypted_content,
+				auth_hash = null,
+				items_key_id = default_items_key.UUID,
+			};
+		}
+
+		private static string Encrypt004(string content, byte[] key, string assocData)
+        {
+			var nonce = RandomSeed(24);
+
+			var authenticated_data = Convert.ToBase64String(Encoding.UTF8.GetBytes(assocData));
+
+			var ciphertext = ANCrypt.XChaCha20Encrypt(Encoding.UTF8.GetBytes(content), EncodingConverter.StringToByteArrayCaseInsensitive(nonce), key, Encoding.UTF8.GetBytes(authenticated_data));
+
+			return string.Join(":", "004", nonce, Convert.ToBase64String(ciphertext), authenticated_data);
+        }
+
+		private static StandardFileItemsKey GetDefaultItemsKey(StandardNoteData dat)
+		{
+			if (dat.ItemsKeys.Count == 0) throw new StandardNoteAPIException("Could not encrypt item, no items_key in repository");
+
+			if (dat.ItemsKeys.Count == 1) return dat.ItemsKeys[0];
+
+			var def = dat.ItemsKeys.FirstOrDefault(p => p.IsDefault);
+			if (def != null) return def;
+
+			StandardNoteAPI.Logger.Warn(StandardNotePlugin.Name, "No default key for encryption specified (using latest)", $"Keys in storage: {dat.ItemsKeys.Count}");
+
+			var latest = dat.ItemsKeys.OrderBy(p => p.CreationDate).Last();
+			return latest;
+		}
+
 		public static string GetSchemaVersion(string strdata)
 		{
 			if (strdata == null) return "?";
@@ -249,6 +351,79 @@ namespace AlephNote.Plugins.StandardNote
 			if (strdata.StartsWith("010")) return "010";
 
 			return "?";
+		}
+
+		public static (byte[] pw, byte[] mk, string reqpw) CreateAuthData001(StandardNoteAPI.APIResultAuthParams apiparams, string mail, string uip)
+        {
+
+			if (apiparams.pw_func != StandardNoteAPI.PasswordFunc.pbkdf2) throw new Exception("Unsupported pw_func: " + apiparams.pw_func);
+
+			byte[] bytes;
+
+			if (apiparams.pw_alg == StandardNoteAPI.PasswordAlg.sha512)
+			{
+				bytes = PBKDF2.GenerateDerivedKey(apiparams.pw_key_size / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+			}
+			else if (apiparams.pw_alg == StandardNoteAPI.PasswordAlg.sha512)
+			{
+				bytes = PBKDF2.GenerateDerivedKey(apiparams.pw_key_size / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+			}
+			else
+			{
+				throw new Exception("Unknown pw_alg: " + apiparams.pw_alg);
+			}
+
+			var pw = bytes.Take(bytes.Length / 2).ToArray();
+			var mk = bytes.Skip(bytes.Length / 2).ToArray();
+
+			var reqpw = EncodingConverter.ByteToHexBitFiddleLowercase(pw);
+
+			return (pw, mk, reqpw);
+		}
+
+		public static (byte[] pw, byte[] mk, byte[] ak, string reqpw) CreateAuthData002(StandardNoteAPI.APIResultAuthParams apiparams, string uip)
+		{
+			if (apiparams.pw_func != StandardNoteAPI.PasswordFunc.pbkdf2) throw new Exception("Unknown pw_func: " + apiparams.pw_func);
+
+			byte[] bytes = PBKDF2.GenerateDerivedKey(768 / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(apiparams.pw_salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+
+			var pw = bytes.Skip(0 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+			var mk = bytes.Skip(1 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+			var ak = bytes.Skip(2 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+
+			var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
+
+			return (pw, mk, ak, reqpw);
+		}
+
+		public static (byte[] pw, byte[] mk, byte[] ak, string reqpw) CreateAuthData003(StandardNoteAPI.APIResultAuthParams apiparams, string mail, string uip)
+		{
+			if (apiparams.pw_cost < 100000) throw new StandardNoteAPIException($"Account pw_cost is too small ({apiparams.pw_cost})");
+
+			var salt = StandardNoteCrypt.SHA256Hex(string.Join(":", mail, "SF", "003", apiparams.pw_cost.ToString(), apiparams.pw_nonce));
+			byte[] bytes = PBKDF2.GenerateDerivedKey(768 / 8, Encoding.UTF8.GetBytes(uip), Encoding.UTF8.GetBytes(salt), apiparams.pw_cost, PBKDF2.HMACType.SHA512);
+
+			var pw = bytes.Skip(0 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+			var mk = bytes.Skip(1 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+			var ak = bytes.Skip(2 * (bytes.Length / 3)).Take(bytes.Length / 3).ToArray();
+
+			var reqpw = EncodingConverter.ByteToHexBitFiddleUppercase(pw).ToLower();
+
+			return (pw, mk, ak, reqpw);
+		}
+
+		public static (byte[] mk, byte[] sp, string reqpw) CreateAuthData004(StandardNoteAPI.APIResultAuthParams apiparams, string mail, string uip)
+		{
+			var salt = StandardNoteCrypt.SHA256Bytes(string.Join(":", apiparams.identifier, apiparams.pw_nonce)).Take(128 / 8).ToArray();
+
+			var derivedKey = ANCrypt.Argon2(Encoding.UTF8.GetBytes(uip), salt, 5, 64 * 1024, 64);
+
+			var masterKey = derivedKey.Skip(00).Take(32).ToArray();
+			var serverPassword = derivedKey.Skip(32).Take(32).ToArray();
+
+			var requestPassword = EncodingConverter.ByteToHexBitFiddleLowercase(serverPassword);
+
+			return (masterKey, serverPassword, requestPassword);
 		}
 	}
 }

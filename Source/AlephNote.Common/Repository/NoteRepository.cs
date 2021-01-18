@@ -250,6 +250,8 @@ namespace AlephNote.Common.Repository
 
 			var meta = new XElement("meta");
 			meta.Add(new XElement("date", DateTime.Now.ToString("O")));
+			meta.Add(new XElement("modification_date", XHelper.ToString(note.ModificationDate)));
+			meta.Add(new XElement("creation_date", XHelper.ToString(note.CreationDate)));
 			meta.Add(new XElement("provider", _account.Plugin.GetUniqueID().ToString("B")));
 			meta.Add(new XElement("dirty", !note.IsRemoteSaved));
 			meta.Add(new XElement("conflict", note.IsConflictNote));
@@ -356,6 +358,11 @@ namespace AlephNote.Common.Repository
 		public void SaveAll()
 		{
 			SaveAllDirtyNotes();
+		}
+
+		public string GetSyncDataSerialized()
+		{
+			return XHelper.ConvertToStringFormatted(new XDocument(GetSyncData().Serialize()));
 		}
 
 		public IRemoteStorageSyncPersistance GetSyncData()

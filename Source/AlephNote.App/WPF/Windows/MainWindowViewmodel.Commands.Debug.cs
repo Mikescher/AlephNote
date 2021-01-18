@@ -15,14 +15,15 @@ namespace AlephNote.WPF.Windows
 {
 	public partial class MainWindowViewmodel
 	{
-		public ICommand DebugCreateIpsumNotesCommand  => new RelayCommand<string>(s => { DebugCreateIpsumNotes(int.Parse(s)); });
-		public ICommand DebugSerializeSettingsCommand => new RelayCommand(DebugSerializeSettings);
-		public ICommand DebugSerializeNoteCommand     => new RelayCommand(DebugSerializeNote);
-		public ICommand DebugRefreshViewCommand       => new RelayCommand(()=> { Owner.NotesViewControl.RefreshView(true); });
-		public ICommand DebugShowThemeEditorCommand   => new RelayCommand(DebugShowThemeEditor);
-		public ICommand DebugShowDefaultThemeCommand  => new RelayCommand(DebugShowDefaultTheme);
-		public ICommand DebugDiscoThemeCommand        => new RelayCommand(DebugDiscoTheme);
-		public ICommand DebugNoteDiffCommand          => new RelayCommand(DebugNoteDiff);
+		public ICommand DebugCreateIpsumNotesCommand            => new RelayCommand<string>(s => { DebugCreateIpsumNotes(int.Parse(s)); });
+		public ICommand DebugSerializeSettingsCommand           => new RelayCommand(DebugSerializeSettings);
+		public ICommand DebugSerializeRepositorySyncDataCommand => new RelayCommand(DebugSerializeRepositorySyncData);
+		public ICommand DebugSerializeNoteCommand               => new RelayCommand(DebugSerializeNote);
+		public ICommand DebugRefreshViewCommand                 => new RelayCommand(()=> { Owner.NotesViewControl.RefreshView(true); });
+		public ICommand DebugShowThemeEditorCommand             => new RelayCommand(DebugShowThemeEditor);
+		public ICommand DebugShowDefaultThemeCommand            => new RelayCommand(DebugShowDefaultTheme);
+		public ICommand DebugDiscoThemeCommand                  => new RelayCommand(DebugDiscoTheme);
+		public ICommand DebugNoteDiffCommand                    => new RelayCommand(DebugNoteDiff);
 		
 		private void DebugCreateIpsumNotes(int c)
 		{
@@ -46,6 +47,11 @@ namespace AlephNote.WPF.Windows
 		private void DebugSerializeSettings()
 		{
 			DebugTextWindow.Show(Owner, Settings.Serialize(), "Settings.Serialize()");
+		}
+
+		private void DebugSerializeRepositorySyncData()
+		{
+			DebugTextWindow.Show(Owner, Repository.GetSyncDataSerialized(), "Repository.SyncData.Serialize()");
 		}
 
 		private void DebugSerializeNote()

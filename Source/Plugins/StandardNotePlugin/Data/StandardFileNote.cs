@@ -16,9 +16,8 @@ using System.Text;
 
 namespace AlephNote.Plugins.StandardNote
 {
-	public class StandardFileNote : BasicFlatNote
+    public partial class StandardFileNote : BasicFlatNote
 	{
-		public class StandardFileRef { public Guid UUID; public string Type; }
 
 		private Guid _id;
 		public Guid ID { get { return _id; } set { _id = value; OnPropertyChanged(); } }
@@ -32,7 +31,9 @@ namespace AlephNote.Plugins.StandardNote
 		private DateTimeOffset _creationDate; // The "real" CreationDate of the StandardNotes API
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
 
-		private DateTimeOffset _rawModificationDate = DateTimeOffset.Now; // The "real" ModificationDate of the StandardNotes API - cannot be chaned by us mere mortals and is used for sync
+		// The "real" ModificationDate of the StandardNotes API - cannot be chaned by us mere mortals and is used for sync
+		// Is also _not_ changed if we do client changes - only updates _after_ an sync
+		private DateTimeOffset _rawModificationDate = DateTimeOffset.Now;
 		public DateTimeOffset RawModificationDate { get { return _rawModificationDate; } set { _rawModificationDate = value; OnPropertyChanged(); } }
 
 		private DateTimeOffset? _clientUpdatedAt; // Additional ModificationDate used by some official StandardNotes clients (not 100% sure why)
@@ -185,7 +186,6 @@ namespace AlephNote.Plugins.StandardNote
 				new XElement("Tags", _internalTags.Select(t => t.Serialize()).Cast<object>().ToArray()),
 				new XElement("Text", XHelper.ConvertToC80Base64(_text)),
 				new XElement("Title", _internaltitle),
-				new XElement("__RealModificationDate", XHelper.ToString(ModificationDate)),
 				new XElement("ModificationDate", XHelper.ToString(RawModificationDate)), // is RawModificationDate but xml tag is still <ModificationDate> for compatibiility
 				CreateNullableDateTimeXElem("NoteCreationDate",      NoteCreationDate),
 				CreateNullableDateTimeXElem("NoteModificationDate",  NoteModificationDate),
@@ -219,8 +219,7 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				_internalTags = XHelper.GetChildOrThrow(input, "Tags").Elements().Select(StandardFileTagRef.Deserialize).ToList();
 
-				_id = XHelper.GetChildValueGUID(input, "ID");
-				ResyncTags();
+				_id                    = XHelper.GetChildValueGUID(input, "ID");
 				_text                  = XHelper.GetChildBase64String(input, "Text");
 				_internaltitle         = XHelper.GetChildValueString(input, "Title");
 				_creationDate          = XHelper.GetChildValueDateTimeOffset(input, "CreationDate");
@@ -241,7 +240,9 @@ namespace AlephNote.Plugins.StandardNote
 				_isHidePreview         = XHelper.GetChildValue(input, "IsHidePreview", false);
 				_rawAppData            = XHelper.GetChildValue(input, "RawAppData", "");
 
-				var intref = XHelper.GetChildOrNull(input, "InternalReferences")?.Elements("Ref").Select(x => new StandardFileRef {UUID = XHelper.GetAttributeGuid(x, "UUID"), Type = XHelper.GetAttributeString(x, "Type")}).ToList();
+				ResyncTags();
+
+				var intref = XHelper.GetChildOrNull(input, "InternalReferences")?.Elements("Ref").Select(x => new StandardFileRef(XHelper.GetAttributeGuid(x, "UUID"), XHelper.GetAttributeString(x, "Type"))).ToList();
 				if (intref != null) _internalRef.Synchronize(intref);
 
 				AddPathToInternalTags();
@@ -328,7 +329,7 @@ namespace AlephNote.Plugins.StandardNote
 
 		public void SetReferences(List<StandardNoteAPI.APIResultContentRef> refs)
 		{
-			_internalRef.Synchronize(refs.Select(r => new StandardFileRef{UUID = r.uuid, Type = r.content_type}));
+			_internalRef.Synchronize(refs.Select(r => new StandardFileRef(r.uuid, r.content_type)));
 		}
 
 		public override string UniqueName => _id.ToString("N");
@@ -379,13 +380,13 @@ namespace AlephNote.Plugins.StandardNote
 				_clientUpdatedAt       = other.ClientUpdatedAt;
 				_creationDate          = other.CreationDate;
 
-				_internalTags          = other._internalTags.ToList();
-				ResyncTags();
-
 				_text                  = other.Text;
 				_internaltitle         = other.InternalTitle;
 				_contentVersion        = other.ContentVersion;
 				_authHash              = other.AuthHash;
+
+				_internalTags = other._internalTags.ToList();
+				ResyncTags();
 
 				_internalRef.Synchronize(other._internalRef);
 
@@ -433,7 +434,7 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			var dtnow = DateTimeOffset.Now;
 
-			RawModificationDate  = dtnow;
+			//RawModificationDate  = dtnow; // must only be updated from server (as sync result)
 			ClientUpdatedAt      = dtnow;
 			NoteModificationDate = dtnow;
 
@@ -454,9 +455,6 @@ namespace AlephNote.Plugins.StandardNote
 
 			using (n.SuppressDirtyChanges())
 			{
-				n._internalTags          = _internalTags.ToList();
-				n.ResyncTags();
-
 				n._text                  = _text;
 				n._internaltitle         = _internaltitle;
 
@@ -475,9 +473,17 @@ namespace AlephNote.Plugins.StandardNote
 
 				n._internalRef.Synchronize(_internalRef);
 
+				n._internalTags = _internalTags.ToList();
+				n.ResyncTags();
+
 				n._isPinned              = _isPinned;
 				n._isLocked              = _isLocked;
-				
+				n._isArchived            = _isArchived;
+				n._isProtected           = _isProtected;
+				n._isHidePreview         = _isHidePreview;
+
+				n._rawAppData            = _rawAppData;
+
 				return n;
 			}
 		}
@@ -490,12 +496,21 @@ namespace AlephNote.Plugins.StandardNote
 			if (!_hConfig.EmulateSubfolders) return;
 
 			var tag = "[Notes]";
-			if (!_internalTags.Any(p => p.Title == tag)) _internalTags.Insert(0, new StandardFileTagRef(null, tag));
+			if (!_internalTags.Any(p => p.Title == tag))
+            {
+				AlephAppContext.Logger.Trace(StandardNotePlugin.Name, $"Auto-Added tag '{tag}' for NotePath '{Path.Formatted}'", $"Index := {0}\nTag := '{tag}'\nPath := '{Path.StrSerialize()}'\nNote := '{Title}' ({UniqueName})");
+				_internalTags.Insert(0, new StandardFileTagRef(null, tag));
+			}
+
 			int i = 1;
             foreach (var comp in Path.Enumerate())
             {
 				tag += "."+comp;
-				if (!_internalTags.Any(p => p.Title == tag)) _internalTags.Insert(i, new StandardFileTagRef(null, tag));
+				if (!_internalTags.Any(p => p.Title == tag))
+                {
+					AlephAppContext.Logger.Trace(StandardNotePlugin.Name, $"Auto-Added tag '{tag}' for NotePath '{Path.Formatted}'", $"Index := {i}\nTag := '{tag}'\nPath := '{Path.StrSerialize()}'\nNote := '{Title}' ({UniqueName})");
+					_internalTags.Insert(i, new StandardFileTagRef(null, tag));
+				}
 				i++;
 			}
 

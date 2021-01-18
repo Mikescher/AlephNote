@@ -90,12 +90,13 @@ namespace AlephNote.Plugins.Evernote
 			remoteDirty = false;
 		}
 
-		public override void FinishSync()
+		public override void FinishSync(out bool immediateResync)
 		{
 			if (remoteDirty) _data.SyncStateUpdateCount = nsClient.getSyncState(_token).UpdateCount;
 
 			_data = null;
 			bucket = null;
+			immediateResync = false;
 		}
 
 		public override bool NeedsUpload(INote inote)
@@ -138,9 +139,10 @@ namespace AlephNote.Plugins.Evernote
 				.ToList();
 		}
 
-		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, ConflictResolutionStrategy strategy)
+		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, out bool keepNoteRemoteDirtyWithConflict, ConflictResolutionStrategy strategy)
 		{
 			var note = (EvernoteNote)inote;
+			keepNoteRemoteDirtyWithConflict = false;
 
 			var remote = bucket.Notes.FirstOrDefault(p => Guid.Parse(p.Guid) == note.ID);
 

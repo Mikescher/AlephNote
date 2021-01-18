@@ -90,9 +90,10 @@ namespace AlephNote.Plugins.SimpleNote
 			}
 		}
 
-		public override void FinishSync()
+		public override void FinishSync(out bool immediateResync)
 		{
 			buckets = null;
+			immediateResync = false;
 		}
 
 		public override bool NeedsUpload(INote inote)
@@ -181,8 +182,10 @@ namespace AlephNote.Plugins.SimpleNote
 				.ToList();
 		}
 
-		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, ConflictResolutionStrategy strategy)
+		public override RemoteUploadResult UploadNoteToRemote(ref INote inote, out INote conflict, out bool keepNoteRemoteDirtyWithConflict, ConflictResolutionStrategy strategy)
 		{
+			keepNoteRemoteDirtyWithConflict = false;
+
 			using (var web = CreateAuthenticatedClient())
 			{
 				var note = (SimpleNote) inote;

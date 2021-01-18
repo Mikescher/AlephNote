@@ -1,3 +1,6 @@
 [submodule "Source\\External\\CSharpUtils"]
 	path = Source/External/CSharpUtils
 	url = https://github.com/Mikescher/CSharpUtils.git
+[submodule "Source\\External\\libsodium-core"]
+	path = Source\\External\\libsodium-core
+	url = https://github.com/Mikescher/libsodium-core.git

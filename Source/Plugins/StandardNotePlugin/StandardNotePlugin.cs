@@ -2,6 +2,7 @@
 using AlephNote.PluginInterface.Impl;
 using AlephNote.PluginInterface.Util;
 using MSHC.WPF.MVVM;
+using MSHC.WPFStub;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,13 @@ namespace AlephNote.Plugins.StandardNote
 		public override bool SupportsNewDownloadMultithreading => false;
 		public override bool SupportsUploadMultithreading      => false;
 
-		public const string CURRENT_SCHEMA = "003";
+		public const string CURRENT_SCHEMA = "004";
+		
+		// Known API versions:
+		//   - "20161215"
+		//   - "20190520"
+		//   - "20200115"
+		public const string CURRENT_API_VERSION = "20200115";
 
 		private AlephLogger _logger;
 
@@ -34,7 +41,7 @@ namespace AlephNote.Plugins.StandardNote
 
         public override List<UICommand> DebugCommands => base.DebugCommands.Concat(new List<UICommand>
                 {
-                    new UICommand("Set custom creation dates (if unset) to server creation date", new RelayCommand<INoteRepository>((repo) =>
+                    new UICommand("Set custom creation dates (if unset) to server creation date", new SimpleCommand<INoteRepository>((repo) =>
                     {
                         foreach (var n in repo.EnumerateNotes().Cast<StandardFileNote>())
                         {
@@ -42,7 +49,7 @@ namespace AlephNote.Plugins.StandardNote
                         }
                     })),
 
-                    new UICommand("Set custom modification dates (if unset) to server modification date", new RelayCommand<INoteRepository>((repo) =>
+                    new UICommand("Set custom modification dates (if unset) to server modification date", new SimpleCommand<INoteRepository>((repo) =>
                     {
                         foreach (var n in repo.EnumerateNotes().Cast<StandardFileNote>())
                         {
@@ -53,7 +60,22 @@ namespace AlephNote.Plugins.StandardNote
                             if (n.PathModificationDate  == null) n.PathModificationDate  = n.ClientUpdatedAt ?? n.RawModificationDate;
                         }
                     })),
-                }).ToList();
+
+					new UICommand("Clear Auth Token (fore new sign_in)", new SimpleCommand<INoteRepository>((repo) =>
+					{
+						var d = (StandardNoteData)repo.GetSyncData();
+						d.SessionData = null;
+						repo.WriteSyncData(d);
+					})),
+
+					new UICommand("Clear Sync Token (fore new sync re-start from beginning)", new SimpleCommand<INoteRepository>((repo) =>
+					{
+						var d = (StandardNoteData)repo.GetSyncData();
+						d.SyncToken = null;
+						repo.WriteSyncData(d);
+					})),
+
+				}).ToList();
 
 
         public override void Init(AlephLogger logger)

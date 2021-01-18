@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net46</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 
 		<AssemblyName>FilesystemPlugin</AssemblyName>
 		<PackageId>FilesystemPlugin</PackageId>
@@ -10,38 +10,35 @@
 		<FileVersion>1.2.14.0</FileVersion>
 		<Version>1.2.14.0</Version>
 
-		<OutDir>..\..\..\Bin\$(Configuration)\$(TargetFramework)\Plugins\</OutDir>
+		<OutDir>..\..\..\Bin\$(Configuration)\Plugins\</OutDir>
 
 		<RootNamespace>AlephNote.Plugins.Filesystem</RootNamespace>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Properties\**" />
+	  <EmbeddedResource Remove="Properties\**" />
+	  <None Remove="Properties\**" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj">
 			<Private>false</Private>
 		</ProjectReference>
 
-		<ProjectReference Include="..\..\External\CSharpUtils\CSharpUtils.csproj"> <!-- This is only here to prevent CSharpUtils.dll in the /Plugins/ directory  -->
+		<ProjectReference Include="..\..\External\CSharpUtils\LanguageUtils\LanguageUtils.csproj"> <!-- This is only here to prevent LanguageUtils.dll in the /Plugins/ directory  -->
 			<Private>false</Private>
 		</ProjectReference>
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.6.0">
+		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0">
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageReference>
 
 		<PackageReference Include="System.Xml.XDocument" Version="4.3.0">
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageReference>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="System" />
-		<Reference Include="Microsoft.CSharp" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Properties\" />
 	</ItemGroup>
 
 </Project>

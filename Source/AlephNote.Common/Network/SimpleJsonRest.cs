@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -136,11 +137,15 @@ namespace AlephNote.Common.Network
 		{
 			try
 			{
-				return JsonConvert.DeserializeObject<TResult>(content, _converter);
+				return JsonConvert.DeserializeObject<TResult>(content, new JsonSerializerSettings()
+				{
+					Converters = _converter,
+					DateParseHandling = DateParseHandling.None
+				});
 			}
 			catch (Exception)
 			{
-				return default(TResult);
+				return default;
 			}
 		}
 
@@ -148,7 +153,8 @@ namespace AlephNote.Common.Network
 		{
 			try
 			{
-				var obj = JObject.Parse(content);
+                JsonReader reader = new JsonTextReader(new StringReader(content)) { DateParseHandling = DateParseHandling.None };
+                var obj = JObject.Load(reader);
 				if (!obj.ContainsKey(key)) return defValue;
 				return obj[key].ToString(Formatting.None);
 			}
@@ -331,7 +337,7 @@ namespace AlephNote.Common.Network
 				
 				LoggerSingleton.Inst.Debug("REST", 
 					$"{ident} SendRequest<GenericTwoWay> [START] ({uri} :: {method})", 
-					$"RequestUri := {uri}\nMethod := {method}\nBody := {body?.GetType()?.FullName ?? "NULL"}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
+					$"RequestUri := {uri}\nMethod := {method}\nBody := {body?.GetType()?.FullName ?? "NULL"}\n{((upload == null) ? "" : CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH))}\n\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
 
 				resp = _client.SendAsync(request).Result;
 
@@ -360,7 +366,7 @@ namespace AlephNote.Common.Network
 					LoggerSingleton.Inst.Warn("REST",
 						$"{ident} SendRequest<GenericTwoWay> [ERRORED] ({uri} :: {method})",
 						$"REST call to '{uri}' [{method}] returned (not-allowed) statuscode {(int)resp.StatusCode} ({resp.StatusCode})\n\n" +
-						$"Send:\r\n{CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH)}\n\n" +
+						$"Send:\n{CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH)}\n\n" +
 						"---------------------\n\n" +
 						$"Recieved:\n{content}");
 
@@ -433,7 +439,7 @@ namespace AlephNote.Common.Network
 				
 				LoggerSingleton.Inst.Debug("REST", 
 					$"{ident} SendRequest<GenericUpload> [START] ({uri} :: {method})", 
-					$"RequestUri := {uri}\nMethod := {method}\nBody := {body?.GetType()?.FullName ?? "NULL"}\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
+					$"RequestUri := {uri}\nMethod := {method}\nBody := {body?.GetType()?.FullName ?? "NULL"}\n{((upload == null) ? "" : CompactJsonFormatter.FormatJSON(upload, LOG_FMT_DEPTH))}\n\nHeaders :=\n[\n{string.Join("\n", _headers.Select(h => $"    {h.Key} => '{h.Value}'"))}\n]");
 
 				resp = _client.SendAsync(request).Result;
 

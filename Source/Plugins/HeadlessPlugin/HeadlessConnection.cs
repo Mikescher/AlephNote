@@ -11,9 +11,9 @@ namespace AlephNote.Plugins.Headless
 			// ok
 		}
 
-		public override void FinishSync()
+		public override void FinishSync(out bool immediateResync)
 		{
-			//
+			immediateResync = false;
 		}
 
 		public override bool NeedsUpload(INote note)
@@ -47,9 +47,10 @@ namespace AlephNote.Plugins.Headless
 			return RemoteDownloadResult.UpToDate;
 		}
 
-		public override RemoteUploadResult UploadNoteToRemote(ref INote note, out INote conflict, ConflictResolutionStrategy strategy)
+		public override RemoteUploadResult UploadNoteToRemote(ref INote note, out INote conflict, out bool keepNoteRemoteDirtyWithConflict, ConflictResolutionStrategy strategy)
 		{
 			conflict = null;
+			keepNoteRemoteDirtyWithConflict = false;
 			return RemoteUploadResult.UpToDate;
 		}
 	}

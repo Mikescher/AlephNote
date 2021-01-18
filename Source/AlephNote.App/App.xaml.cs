@@ -45,11 +45,6 @@ namespace AlephNote
 		public static Version UpdateMigrationFrom;
 		public static Version UpdateMigrationTo;
 		
-		public App()
-		{
-			//NOP
-		}
-
 		private void Application_Startup(object sender, StartupEventArgs suea)
 		{
             try

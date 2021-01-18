@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net46</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 		
 		<AssemblyName>AlephNote.Common</AssemblyName>
 		<PackageId>AlephNote.Common</PackageId>
@@ -10,7 +10,7 @@
 		<GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
 		<GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
 
-		<OutDir>..\..\Bin\$(Configuration)\$(TargetFramework)\</OutDir>
+		<OutDir>..\..\Bin\$(Configuration)\</OutDir>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -18,14 +18,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="Microsoft.CSharp" />
-		<Reference Include="System.IO.Compression" />
-		<Reference Include="System.Net" />
-		<Reference Include="System.Net.Http" />
+		<PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.2.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 	</ItemGroup>
 
 </Project>

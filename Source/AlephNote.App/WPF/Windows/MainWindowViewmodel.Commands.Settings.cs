@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using AlephNote.Common.Settings.Types;
 using AlephNote.Common.Util;
-using AlephNote.Properties;
 using MSHC.WPF.MVVM;
 
 namespace AlephNote.WPF.Windows
