@@ -3,10 +3,15 @@
 
 cd ..
 
-del AlephNote.zip
+if exist AlephNote.zip del AlephNote.zip
 
 cd Bin
-cd Release
+
+if exist Package rd /S /Q Package
+
+xcopy Release\ Package\ /s /e /y
+
+cd Package
 
 rmdir de /S /Q
 rmdir es /S /Q
@@ -21,6 +26,8 @@ rmdir zh-Hans /S /Q
 rmdir cs-CZ /S /Q
 rmdir ja-JP /S /Q
 
+rename AlephNote.App.exe AlephNote.exe
+
 del /q *.pdb
 del /q *.vshost.exe
 del /q *.manifest
@@ -28,6 +35,7 @@ del /q *.xml
 del /q *.deps.json
 del /q *.config
 if exist .notes rd /S /Q .notes
+
 cd Plugins
 del /q *.pdb
 del /q *.vshost.exe
@@ -45,7 +53,7 @@ if exist AlephNote.zip del AlephNote.zip
 
 cd Data
 
-7za.exe a .\..\AlephNote.zip .\..\Bin\Release\*
+7za.exe a .\..\AlephNote.zip .\..\Bin\Package\*
 
 @REM ================ FINISHED ================
 
