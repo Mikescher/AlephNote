@@ -44,7 +44,9 @@ namespace AlephNote
 		public static bool IsUpdateMigration = false;
 		public static Version UpdateMigrationFrom;
 		public static Version UpdateMigrationTo;
-		
+
+		public static Mutex singleInstanceMutex;
+
 		private void Application_Startup(object sender, StartupEventArgs suea)
 		{
             try
@@ -78,10 +80,10 @@ namespace AlephNote
 
 			if (Args.Contains("debug")) DebugMode = true;
 
-			UpdateMigrationFrom = Args.GetVersionDefault("migration_from", default(Version));
-			UpdateMigrationTo   = Args.GetVersionDefault("migration_to", default(Version));
+			UpdateMigrationFrom = Args.GetVersionDefault("migration_from", default);
+			UpdateMigrationTo   = Args.GetVersionDefault("migration_to", default);
 
-			IsUpdateMigration = (UpdateMigrationFrom != default(Version)) && (UpdateMigrationTo != default(Version)) && Args.Contains("updated");
+			IsUpdateMigration = (UpdateMigrationFrom != default) && (UpdateMigrationTo != default) && Args.Contains("updated");
 
 #if DEBUG
 			DebugMode = true;
@@ -125,16 +127,16 @@ namespace AlephNote
 
 			if (settings.SingleInstanceMode)
 			{
-				var mtx = new Mutex(true, "AlephNoteApp_"+settings.ClientID);
-				if (!mtx.WaitOne(TimeSpan.Zero, true))
+				singleInstanceMutex = new Mutex(true, "AlephNoteApp_"+settings.ClientID, out var createdNew);
+				if (!createdNew)
 				{
-					
-					NativeMethods.PostMessage(
-						(IntPtr)NativeMethods.HWND_BROADCAST,
-						NativeMethods.WM_SHOWME,
-						IntPtr.Zero,
-						IntPtr.Zero);
+					singleInstanceMutex.Dispose();
 
+					// This displays all AlephNote instances (and sends the message to fucking everyone), thats not really nice...
+					// I'll leave it as an future exercise to only send WM_SHOWME to AN instances with the same ClientID
+					NativeMethods.PostMessage((IntPtr)NativeMethods.HWND_BROADCAST, NativeMethods.WM_SHOWME, IntPtr.Zero, IntPtr.Zero);
+
+					this.Shutdown(0);
 					return;
 				}
 			}
