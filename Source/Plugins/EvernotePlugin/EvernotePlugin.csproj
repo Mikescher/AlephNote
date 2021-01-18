@@ -6,9 +6,9 @@
 		<AssemblyName>EvernotePlugin</AssemblyName>
 		<PackageId>EvernotePlugin</PackageId>
 
-		<AssemblyVersion>0.0.0.17</AssemblyVersion>
-		<FileVersion>0.0.0.17</FileVersion>
-		<Version>0.0.0.17</Version>
+		<AssemblyVersion>0.0.0.18</AssemblyVersion>
+		<FileVersion>0.0.0.18</FileVersion>
+		<Version>0.0.0.18</Version>
 
 		<DefineConstants>NETFX_CORE</DefineConstants>
 
@@ -29,6 +29,10 @@
 		</ProjectReference>
 
 		<ProjectReference Include="..\..\External\CSharpUtils\LanguageUtils\LanguageUtils.csproj"> <!-- This is only here to prevent LanguageUtils.dll in the /Plugins/ directory  -->
+			<Private>false</Private>
+		</ProjectReference>
+
+		<ProjectReference Include="..\..\External\libsodium-core\src\Sodium.Core\Sodium.Core.csproj"> <!-- This is only here to prevent LanguageUtils.dll in the /Plugins/ directory  -->
 			<Private>false</Private>
 		</ProjectReference>
 	</ItemGroup>

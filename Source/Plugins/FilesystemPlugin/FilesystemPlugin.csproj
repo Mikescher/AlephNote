@@ -6,9 +6,9 @@
 		<AssemblyName>FilesystemPlugin</AssemblyName>
 		<PackageId>FilesystemPlugin</PackageId>
 
-		<AssemblyVersion>1.2.14.0</AssemblyVersion>
-		<FileVersion>1.2.14.0</FileVersion>
-		<Version>1.2.14.0</Version>
+		<AssemblyVersion>1.2.15.0</AssemblyVersion>
+		<FileVersion>1.2.15.0</FileVersion>
+		<Version>1.2.15.0</Version>
 
 		<OutDir>..\..\..\Bin\$(Configuration)\Plugins\</OutDir>
 
@@ -27,6 +27,10 @@
 		</ProjectReference>
 
 		<ProjectReference Include="..\..\External\CSharpUtils\LanguageUtils\LanguageUtils.csproj"> <!-- This is only here to prevent LanguageUtils.dll in the /Plugins/ directory  -->
+			<Private>false</Private>
+		</ProjectReference>
+
+		<ProjectReference Include="..\..\External\libsodium-core\src\Sodium.Core\Sodium.Core.csproj"> <!-- This is only here to prevent LanguageUtils.dll in the /Plugins/ directory  -->
 			<Private>false</Private>
 		</ProjectReference>
 	</ItemGroup>
