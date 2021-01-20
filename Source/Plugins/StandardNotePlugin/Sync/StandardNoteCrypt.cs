@@ -17,9 +17,9 @@ namespace AlephNote.Plugins.StandardNote
 		public static string DecryptContent(string encContent, string encItemKey, Guid? itemsKeyID, string authHash, StandardNoteData dat)
 		{
 			if (encContent.StartsWith("000")) return DecryptContent000(encContent);
-			if (encContent.StartsWith("001")) return DecryptContent001(encContent, encItemKey, authHash, dat.SessionData.RootKey_MasterKey);
-			if (encContent.StartsWith("002")) return DecryptContent002(encContent, encItemKey, dat.SessionData.RootKey_MasterKey, dat.SessionData.RootKey_MasterAuthKey);
-			if (encContent.StartsWith("003")) return DecryptContent003(encContent, encItemKey, dat.SessionData.RootKey_MasterKey, dat.SessionData.RootKey_MasterAuthKey);
+			if (encContent.StartsWith("001")) return DecryptContent001(encContent, encItemKey, authHash, dat);
+			if (encContent.StartsWith("002")) return DecryptContent002(encContent, encItemKey, dat);
+			if (encContent.StartsWith("003")) return DecryptContent003(encContent, encItemKey, dat);
 			if (encContent.StartsWith("004")) return DecryptContent004(encContent, encItemKey, itemsKeyID, dat);
 			if (encContent.StartsWith("005")) throw new StandardNoteAPIException("Unsupported encryption scheme 005 in note content");
 			if (encContent.StartsWith("006")) throw new StandardNoteAPIException("Unsupported encryption scheme 006 in note content");
@@ -33,11 +33,40 @@ namespace AlephNote.Plugins.StandardNote
 
 		private static string DecryptContent000(string encContent)
 		{
+			StandardNoteAPI.Logger.Trace(StandardNotePlugin.Name, "Decrypt content with schema [000]", encContent);
+
 			return Encoding.UTF8.GetString(Convert.FromBase64String(encContent));
 		}
 
-		private static string DecryptContent001(string encContent, string encItemKey, string authHash, byte[] masterkey)
+		private static string DecryptContent001(string encContent, string encItemKey, string authHash, StandardNoteData dat)
 		{
+			StandardNoteAPI.Logger.TraceExt(StandardNotePlugin.Name, "Decrypt content with schema [001]", 
+				("encContent", encContent),
+				("encItemKey", encItemKey),
+				("authHash", authHash));
+
+			byte[] masterkey;
+
+			if (dat.SessionData.Version == "001" || dat.SessionData.Version == "002" || dat.SessionData.Version == "003")
+			{
+				masterkey = dat.SessionData.RootKey_MasterKey;
+
+				StandardNoteAPI.Logger.Trace(StandardNotePlugin.Name, "Use masterkey from session");
+			}
+			else
+			{
+				var itemskey = dat.ItemsKeys.FirstOrDefault(p => p.Version == "001");
+				if (itemskey == null) throw new StandardNoteAPIException($"Could not decrypt item (Key for 002 not found)");
+
+				StandardNoteAPI.Logger.TraceExt(StandardNotePlugin.Name, $"Found itemskey: {itemskey.UUID}",
+					("itemskey.IsDefault", itemskey.IsDefault.ToString()),
+					("itemskey.Version", itemskey.Version),
+					("itemskey.Key", EncodingConverter.ByteToHexBitFiddleLowercase(itemskey.Key)),
+					("itemskey.AuthKey", EncodingConverter.ByteToHexBitFiddleLowercase(itemskey.AuthKey)));
+
+				masterkey = itemskey.Key;
+			}
+
 			var itemKey = EncodingConverter.StringToByteArrayCaseInsensitive(Encoding.ASCII.GetString(AESEncryption.DecryptCBC256(Convert.FromBase64String(encItemKey), masterkey, new byte[16])));
 
 			var ek = itemKey.Take(itemKey.Length / 2).ToArray();
@@ -53,9 +82,40 @@ namespace AlephNote.Plugins.StandardNote
 			return Encoding.UTF8.GetString(c);
 		}
 
-		private static string DecryptContent002(string encContent, string encItemKey, byte[] masterMK, byte[] masterAK)
+		private static string DecryptContent002(string encContent, string encItemKey, StandardNoteData dat)
 		{
+			StandardNoteAPI.Logger.TraceExt(StandardNotePlugin.Name, "Decrypt content with schema [002]",
+				("encContent", encContent),
+				("encItemKey", encItemKey));
+
+			byte[] masterMK;
+			byte[] masterAK;
+
+			if (dat.SessionData.Version == "002" || dat.SessionData.Version == "003")
+			{
+				masterMK = dat.SessionData.RootKey_MasterKey;
+				masterAK = dat.SessionData.RootKey_MasterAuthKey;
+
+				StandardNoteAPI.Logger.Trace(StandardNotePlugin.Name, "Use key/authkey from session");
+			}
+			else
+			{
+				var itemskey = dat.ItemsKeys.FirstOrDefault(p => p.Version == "002");
+				if (itemskey == null) throw new StandardNoteAPIException($"Could not decrypt item (Key for 002 not found)");
+
+				StandardNoteAPI.Logger.TraceExt(StandardNotePlugin.Name, $"Found itemskey: {itemskey.UUID}",
+					("itemskey.IsDefault", itemskey.IsDefault.ToString()),
+					("itemskey.Version", itemskey.Version),
+					("itemskey.Key", EncodingConverter.ByteToHexBitFiddleLowercase(itemskey.Key)),
+					("itemskey.AuthKey", EncodingConverter.ByteToHexBitFiddleLowercase(itemskey.AuthKey)));
+
+				masterMK = itemskey.Key;
+				masterAK = itemskey.AuthKey;
+			}
+
 			var item_key = Decrypt002(encItemKey, masterMK, masterAK);
+
+			StandardNoteAPI.Logger.Trace(StandardNotePlugin.Name, "item_key decrypted", $"item_key := '{item_key}'");
 
 			var item_ek = item_key.Substring(0, item_key.Length / 2);
 			var item_ak = item_key.Substring(item_key.Length / 2, item_key.Length / 2);
@@ -63,9 +123,40 @@ namespace AlephNote.Plugins.StandardNote
 			return Decrypt002(encContent, EncodingConverter.StringToByteArrayCaseInsensitive(item_ek), EncodingConverter.StringToByteArrayCaseInsensitive(item_ak));
 		}
 
-		private static string DecryptContent003(string encContent, string encItemKey, byte[] masterMK, byte[] masterAK)
+		private static string DecryptContent003(string encContent, string encItemKey, StandardNoteData dat)
 		{
+			StandardNoteAPI.Logger.TraceExt(StandardNotePlugin.Name, "Decrypt content with schema [002]",
+				("encContent", encContent),
+				("encItemKey", encItemKey));
+
+			byte[] masterMK;
+			byte[] masterAK;
+
+			if (dat.SessionData.Version == "001" || dat.SessionData.Version == "002" || dat.SessionData.Version == "003")
+			{
+				masterMK = dat.SessionData.RootKey_MasterKey;
+				masterAK = dat.SessionData.RootKey_MasterAuthKey;
+
+				StandardNoteAPI.Logger.Trace(StandardNotePlugin.Name, "Use key/authkey from session");
+			}
+			else
+			{
+				var itemskey = dat.ItemsKeys.FirstOrDefault(p => p.Version == "003");
+				if (itemskey == null) throw new StandardNoteAPIException($"Could not decrypt item (Key for 002 not found)");
+
+				StandardNoteAPI.Logger.TraceExt(StandardNotePlugin.Name, $"Found itemskey: {itemskey.UUID}",
+					("itemskey.IsDefault", itemskey.IsDefault.ToString()),
+					("itemskey.Version", itemskey.Version),
+					("itemskey.Key", EncodingConverter.ByteToHexBitFiddleLowercase(itemskey.Key)),
+					("itemskey.AuthKey", EncodingConverter.ByteToHexBitFiddleLowercase(itemskey.AuthKey)));
+
+				masterMK = itemskey.Key;
+				masterAK = itemskey.AuthKey;
+			}
+
 			var item_key = Decrypt003(encItemKey, masterMK, masterAK);
+
+			StandardNoteAPI.Logger.Trace(StandardNotePlugin.Name, "item_key decrypted", $"item_key := '{item_key}'");
 
 			var item_ek = item_key.Substring(0, item_key.Length / 2);
 			var item_ak = item_key.Substring(item_key.Length / 2, item_key.Length / 2);
@@ -75,11 +166,21 @@ namespace AlephNote.Plugins.StandardNote
 
 		private static string DecryptContent004(string encContent, string encItemKey, Guid? itemsKeyID, StandardNoteData dat)
 		{
+			StandardNoteAPI.Logger.TraceExt(StandardNotePlugin.Name, "Decrypt content with schema [002]",
+				("encContent", encContent),
+				("encItemKey", encItemKey),
+				("itemsKeyID", itemsKeyID?.ToString() ?? "NULL"));
+
 			var keyOuter = dat.SessionData.RootKey_MasterKey;
 			if (itemsKeyID != null)
             {
 				var itemskey = dat.ItemsKeys.FirstOrDefault(p => p.UUID == itemsKeyID);
 				if (itemskey == null) throw new StandardNoteAPIException($"Could not decrypt item (Key {itemsKeyID} not found)");
+
+				StandardNoteAPI.Logger.TraceExt(StandardNotePlugin.Name, $"Found itemskey: {itemskey.UUID}",
+					("itemskey.IsDefault", itemskey.IsDefault.ToString()),
+					("itemskey.Version", itemskey.Version),
+					("itemskey.Key", EncodingConverter.ByteToHexBitFiddleLowercase(itemskey.Key)));
 
 				keyOuter = itemskey.Key;
 			}
@@ -130,7 +231,24 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				var string_to_auth = $"{version}:{uuid}:{IV}:{ciphertext}";
 				var local_auth_hash = EncodingConverter.ByteToHexBitFiddleLowercase(AuthSHA256(Encoding.UTF8.GetBytes(string_to_auth), auth_key));
-				if (local_auth_hash.ToUpper() != auth_hash.ToUpper()) throw new Exception("Item auth-hash mismatch");
+
+				if (local_auth_hash.ToUpper() != auth_hash.ToUpper())
+				{
+					StandardNoteAPI.Logger.Warn(StandardNotePlugin.Name, "AuthHash verification failed",
+						$"local_auth_hash := '{local_auth_hash}'\nauth_hash := '{auth_hash}'");
+
+					throw new Exception("Item auth-hash mismatch");
+				}
+				else
+				{
+					StandardNoteAPI.Logger.TraceExt(StandardNotePlugin.Name, "AuthHash verified",
+						("local_auth_hash", local_auth_hash),
+						("auth_hash", auth_hash));
+				}
+			} 
+			else
+			{
+				StandardNoteAPI.Logger.Warn(StandardNotePlugin.Name, "AuthHash verification skipped (no auth_key)");
 			}
 
 			var result = AESEncryption.DecryptCBC256(Convert.FromBase64String(ciphertext), encryption_key, EncodingConverter.StringToByteArrayCaseInsensitive(IV));
@@ -151,7 +269,24 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				var string_to_auth = $"{version}:{uuid}:{IV}:{ciphertext}";
 				var local_auth_hash = EncodingConverter.ByteToHexBitFiddleLowercase(AuthSHA256(Encoding.UTF8.GetBytes(string_to_auth), auth_key));
-				if (local_auth_hash.ToUpper() != auth_hash.ToUpper()) throw new Exception("Item auth-hash mismatch");
+
+				if (local_auth_hash.ToUpper() != auth_hash.ToUpper())
+				{
+					StandardNoteAPI.Logger.Warn(StandardNotePlugin.Name, "AuthHash verification failed",
+						$"local_auth_hash := '{local_auth_hash}'\nauth_hash := '{auth_hash}'");
+
+					throw new Exception("Item auth-hash mismatch");
+				}
+				else
+				{
+					StandardNoteAPI.Logger.TraceExt(StandardNotePlugin.Name, "AuthHash verified",
+						("local_auth_hash", local_auth_hash),
+						("auth_hash", auth_hash));
+				}
+			}
+            else
+			{
+				StandardNoteAPI.Logger.Warn(StandardNotePlugin.Name, "AuthHash verification skipped (no auth_key)");
 			}
 
 			var result = AESEncryption.DecryptCBC256(Convert.FromBase64String(ciphertext), encryption_key, EncodingConverter.StringToByteArrayCaseInsensitive(IV));

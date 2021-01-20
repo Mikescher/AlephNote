@@ -61,12 +61,12 @@ namespace AlephNote.Plugins.StandardNote
 		public class APIBadRequest { public APIError error; }
 		public class APIError { public string message; public int status; }
 		public class SyncResultTag { public Guid uuid; public string title; public bool deleted; public string enc_item_key, item_key; public DateTimeOffset created_at, updated_at; public string rawappdata; public List<APIResultContentRef> references; }
-		public class SyncResultItemsKey { public Guid uuid; public string version; public bool deleted; public string enc_item_key; public byte[] items_key; public DateTimeOffset created_at, updated_at; public bool isdefault; public string rawappdata; public List<APIResultContentRef> references; }
+		public class SyncResultItemsKey { public Guid uuid; public string version; public bool deleted; public string enc_item_key; public byte[] items_key, auth_key; public DateTimeOffset created_at, updated_at; public bool isdefault; public string rawappdata; public List<APIResultContentRef> references; }
 		public class SyncResult { public List<StandardFileNote> retrieved_notes, saved_notes, deleted_notes; public List<(StandardFileNote unsavednote, StandardFileNote servernote, string type)> syncconflict_notes, uuidconflict_notes; public List<SyncResultTag> retrieved_tags, saved_tags, deleted_tags; public List<(SyncResultTag unsavedtag, SyncResultTag servertag, string type)> syncconflict_tags, uuidconflict_tags; public List<SyncResultItemsKey> retrieved_keys, saved_keys, deleted_keys; public List<(SyncResultItemsKey unsavedkey, SyncResultItemsKey serverkey, string type)> syncconflict_keys, uuidconflict_keys; }
 		public class APIResultContentRef { public Guid uuid; public string content_type; }
 		public class ContentNote { public string title, text; public List<APIResultContentRef> references; public Dictionary<string, Dictionary<string, object>> appData; public bool @protected; public bool hidePreview; }
 		public class ContentTag { public string title; public List<APIResultContentRef> references; public Dictionary<string, Dictionary<string, object>> appData; }
-		public class ContentItemsKey { public string itemsKey, version; public bool isDefault; public List<APIResultContentRef> references; public Dictionary<string, Dictionary<string, object>> appData; }
+		public class ContentItemsKey { public string itemsKey, version, dataAuthenticationKey; public bool isDefault; public List<APIResultContentRef> references; public Dictionary<string, Dictionary<string, object>> appData; }
 		// ReSharper restore All
 #pragma warning restore 0649
 
@@ -1126,6 +1126,7 @@ namespace AlephNote.Plugins.StandardNote
 				enc_item_key = encKey.enc_item_key,
 
 				items_key    = EncodingConverter.StringToByteArrayCaseInsensitive(content.itemsKey),
+				auth_key     = string.IsNullOrWhiteSpace(content.dataAuthenticationKey) ? null : EncodingConverter.StringToByteArrayCaseInsensitive(content.dataAuthenticationKey),
 				version      = content.version,
 				references   = content.references,
 				rawappdata   = appDataContentString,

@@ -101,7 +101,7 @@ namespace AlephNote.Plugins.StandardNote
 					var r = ItemsKeys.FirstOrDefault(p => p.UUID == itskey.uuid);
 					if (r != null) ItemsKeys.Remove(r);
 
-					ItemsKeys.Add(new StandardFileItemsKey(itskey.uuid, itskey.version, itskey.created_at, itskey.updated_at, itskey.items_key, itskey.isdefault, itskey.rawappdata));
+					ItemsKeys.Add(new StandardFileItemsKey(itskey.uuid, itskey.version, itskey.created_at, itskey.updated_at, itskey.items_key, itskey.auth_key, itskey.isdefault, itskey.rawappdata));
 				}
 			}
 		}

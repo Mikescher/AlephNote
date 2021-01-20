@@ -18,17 +18,19 @@ namespace AlephNote.Plugins.StandardNote
         public readonly DateTimeOffset ModificationDate; // raw modification date from SN API
 
         public readonly byte[] Key;
+        public readonly byte[] AuthKey;
 		public readonly bool IsDefault;
 
 		public readonly string RawAppData;
 
-		public StandardFileItemsKey(Guid uuid, string version, DateTimeOffset creationDate, DateTimeOffset modificationDate, byte[] key, bool isdefault, string appdata)
+		public StandardFileItemsKey(Guid uuid, string version, DateTimeOffset creationDate, DateTimeOffset modificationDate, byte[] key, byte[] authkey, bool isdefault, string appdata)
         {
             UUID             = uuid;
 			Version          = version;
             CreationDate     = creationDate;
             ModificationDate = modificationDate;
 			Key              = key;
+			AuthKey          = authkey;
 			IsDefault        = isdefault;
 			RawAppData       = appdata;
 		}
@@ -38,6 +40,7 @@ namespace AlephNote.Plugins.StandardNote
 			var x = new XElement("itemskey",
 				new XAttribute("ID", UUID.ToString("P")),
 				new XAttribute("Version", Version),
+				new XAttribute("AuthKey", EncodingConverter.ByteToHexBitFiddleUppercase(AuthKey ?? new byte[0])),
 				new XAttribute("Default", IsDefault),
 				new XAttribute("CreationDate", CreationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture)),
 				new XAttribute("ModificationDate", ModificationDate.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture)),
@@ -56,8 +59,11 @@ namespace AlephNote.Plugins.StandardNote
 			var mdate   = XHelper.GetAttributeDateTimeOffsetOrDefault(e, "ModificationDate", DateTimeOffset.Now);
 			var appdata = XHelper.GetAttributeString(e, "AppData");
 			var key     = EncodingConverter.StringToByteArrayCaseInsensitive(e.Value);
+			var authkey = EncodingConverter.StringToByteArrayCaseInsensitive(XHelper.GetAttributeStringOrDefault(e, "AuthKey", ""));
 
-			return new StandardFileItemsKey(id, version, cdate, mdate, key, defKey, appdata);
+			if (authkey.Length == 0) authkey = null;
+
+			return new StandardFileItemsKey(id, version, cdate, mdate, key, authkey, defKey, appdata);
 		}
 
 		public override int GetHashCode()
