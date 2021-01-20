@@ -51,7 +51,7 @@ namespace AlephNote.Log
 			Log(new LogEvent(LogEventType.Trace, src, text, longtext));
 		}
 		
-		public override void TraceExt(string src, string text, params Tuple<string, string>[] longtexts)
+		public override void TraceExt(string src, string text, params (string, string)[] longtexts)
 		{
 			var pad = longtexts.Length == 0 ? 0 : longtexts.Max(l => l.Item1.Length);
 			Log(new LogEvent(LogEventType.Trace, src, text, string.Join("\n", longtexts.Select(txt => txt.Item1.PadRight(pad, ' ') + " = " + txt.Item2))));
