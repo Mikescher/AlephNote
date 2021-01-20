@@ -359,7 +359,7 @@ namespace AlephNote.Plugins.StandardNote
 					$"{CompactJsonFormatter.FormatJSON(i.content, 2, 1)}\n" +
 					$"}}")) );
 
-			var result = GetCursorResult(web, dat, d);
+			var result = GetCursorResult(web, dat, d, true);
 
 			var syncresult = new SyncResult();
 
@@ -504,6 +504,77 @@ namespace AlephNote.Plugins.StandardNote
 			syncresult.retrieved_notes.AddRange(GetMissingNoteUpdates(syncresult.retrieved_tags.Concat(syncresult.saved_tags), dat.Tags, allNotes, syncresult.retrieved_notes));
 
 			return syncresult;
+		}
+
+		public static void SyncToEnsureItemsKeys(ISimpleJsonRest web, StandardNoteConnection conn, StandardNoteConfig cfg, StandardNoteData dat)
+		{
+			APIRequestSync d1 = new APIRequestSync();
+			d1.api = StandardNotePlugin.CURRENT_API_VERSION;
+			d1.cursor_token = null;
+			d1.sync_token = null;
+			d1.limit = 150;
+			d1.items = new List<APIRequestBodyItem>();
+
+			Logger.Debug(StandardNotePlugin.Name, $"Perform (items_key's download only) sync request");
+
+			var result1 = GetCursorResult(web, dat, d1, false);
+			
+			var keys = result1
+				.retrieved_items
+				.Where(p => p.content_type.ToLower() == "sn|itemskey")
+				.Where(p => !p.deleted)
+				.Select(n => CreateItemsKey(web, n, dat))
+				.ToList();
+
+			if (keys.Any(p => p.version == StandardNotePlugin.CURRENT_SCHEMA))
+			{
+				dat.UpdateKeys(keys, new List<SyncResultItemsKey>(), new List<(StandardNoteAPI.SyncResultItemsKey unsavedkey, StandardNoteAPI.SyncResultItemsKey serverkey, string type)>(), new List<SyncResultItemsKey>());
+				Logger.Info(StandardNotePlugin.Name, $"Succesfully downloaded items_key");
+				return;
+			}
+			else
+			{
+				Logger.Info(StandardNotePlugin.Name, $"No items_key downloaded - creating our own");
+			}
+
+			APIRequestSync d2 = new APIRequestSync();
+			d2.api = StandardNotePlugin.CURRENT_API_VERSION;
+			d2.cursor_token = null;
+			d2.sync_token = null;
+			d2.limit = 150;
+			d2.items = new List<APIRequestBodyItem>();
+
+			var items_raw2 = new List<APIRawBodyItem>();
+
+			var newkey = CreateNewItemsKey();
+			PrepareItemsKeyForUpload(web, d2, ref items_raw2, newkey, true, dat, cfg, false);
+
+			Logger.Debug(
+				StandardNotePlugin.Name,
+				$"Perform (items_key's upload new) sync request",
+				"Sent Items (unencrypted):\n\n" +
+				string.Join("\n", items_raw2.Select(i =>
+					$"{{\n  content_type = {i.content_type}\n" +
+					$"  uuid         = {i.uuid}\n" +
+					$"  created_at   = {i.created_at}\n" +
+					$"  updated_at   = {i.updated_at}\n" +
+					$"  deleted      = {i.deleted}\n" +
+					$"  content      =\n" +
+					$"{CompactJsonFormatter.FormatJSON(i.content, 2, 1)}\n" +
+					$"}}")));
+
+			var result2 = GetCursorResult(web, dat, d1, false);
+
+			if (keys.Any(p => p.version == StandardNotePlugin.CURRENT_SCHEMA))
+			{
+				dat.UpdateKeys(keys, new List<SyncResultItemsKey>(), new List<(StandardNoteAPI.SyncResultItemsKey unsavedkey, StandardNoteAPI.SyncResultItemsKey serverkey, string type)>(), new List<SyncResultItemsKey>());
+				Logger.Info(StandardNotePlugin.Name, $"Succesfully uploaded items_key");
+				return;
+			}
+			else
+			{
+				throw new StandardNoteAPIException("No useful items_key in repoitory and creating new one failed");
+			}
 		}
 
 		private static bool IsValidContentType(string ct)
@@ -728,7 +799,7 @@ namespace AlephNote.Plugins.StandardNote
 			return result.DistinctBy(n => n.ID);
 		}
 
-		private static APIResultSync GetCursorResult(ISimpleJsonRest web, StandardNoteData dat, APIRequestSync d)
+		private static APIResultSync GetCursorResult(ISimpleJsonRest web, StandardNoteData dat, APIRequestSync d, bool updateSyncToken)
 		{
 			var masterResult = new APIResultSync
 			{
@@ -740,7 +811,7 @@ namespace AlephNote.Plugins.StandardNote
 			for (;;)
 			{
 				var result = web.PostTwoWay<APIResultSync>(d, "items/sync");
-				dat.SyncToken = result.sync_token.Trim();
+				if (updateSyncToken) dat.SyncToken = result.sync_token.Trim();
 
 				masterResult.sync_token = result.sync_token;
 				masterResult.cursor_token = result.cursor_token;
@@ -900,6 +971,57 @@ namespace AlephNote.Plugins.StandardNote
 				updated_at   = tag.ModificationDate,
 				content      = jsonContent,
 				deleted      = delete,
+			});
+		}
+
+		private static void PrepareItemsKeyForUpload(ISimpleJsonRest web, APIRequestSync body, ref List<APIRawBodyItem> bodyraw, StandardFileItemsKey itemskey, bool isdefault, StandardNoteData dat, StandardNoteConfig cfg, bool delete)
+		{
+			var appdata = new Dictionary<string, Dictionary<string, object>>();
+
+			try
+			{
+				if (!string.IsNullOrWhiteSpace(itemskey.RawAppData)) appdata = web.ParseJsonOrNull<Dictionary<string, Dictionary<string, object>>>(itemskey.RawAppData);
+			}
+			catch (Exception e)
+			{
+				Logger.Warn(StandardNotePlugin.Name, "ItemsKey contained invalid AppData", $"items_key := {itemskey.UUID}\nAppData:\n{itemskey.RawAppData}");
+				Logger.Error(StandardNotePlugin.Name, "ItemsKey contained invalid AppData - will be resetted on upload", e);
+			}
+
+			var objContent = new ContentItemsKey
+			{
+				itemsKey = EncodingConverter.ByteToHexBitFiddleLowercase(itemskey.Key),
+				version = itemskey.Version,
+				dataAuthenticationKey = (itemskey.AuthKey == null || itemskey.AuthKey.Length == 0) ? null : EncodingConverter.ByteToHexBitFiddleLowercase(itemskey.Key),
+				isDefault = isdefault,
+				references = new List<APIResultContentRef>(),
+				appData = appdata,
+			};
+
+			var jsonContent = web.SerializeJson(objContent);
+
+			var cryptData = StandardNoteCrypt.EncryptContent(jsonContent, itemskey.UUID, dat);
+
+			body.items.Add(new APIRequestBodyItem
+			{
+				content_type = "SN|ItemsKey",
+				uuid = itemskey.UUID,
+				created_at = itemskey.CreationDate,
+				updated_at = itemskey.ModificationDate,
+				enc_item_key = cryptData.enc_item_key,
+				auth_hash = cryptData.auth_hash,
+				content = cryptData.enc_content,
+				items_key_id = cryptData.items_key_id,
+				deleted = delete,
+			});
+			bodyraw.Add(new APIRawBodyItem
+			{
+				content_type = "SN|ItemsKey",
+				uuid = itemskey.UUID,
+				created_at = itemskey.CreationDate,
+				updated_at = itemskey.ModificationDate,
+				content = jsonContent,
+				deleted = delete,
 			});
 		}
 
@@ -1133,6 +1255,18 @@ namespace AlephNote.Plugins.StandardNote
 				isdefault    = content.isDefault,
 			};
 		}
+
+		private static StandardFileItemsKey CreateNewItemsKey()
+        {
+			return new StandardFileItemsKey(
+				Guid.NewGuid(), 
+				StandardNotePlugin.CURRENT_SCHEMA, 
+				DateTimeOffset.MinValue, DateTimeOffset.MinValue, 
+				StandardNoteCrypt.RandomKey(32), 
+				null, 
+				true, 
+				StandardNotePlugin.CURRENT_SCHEMA);
+        }
 
 		private static bool GetAppDataBool(Dictionary<string, Dictionary<string, object>> appData, Tuple<string, string> path, bool defValue)
 		{

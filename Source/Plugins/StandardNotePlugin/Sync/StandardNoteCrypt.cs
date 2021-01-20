@@ -344,6 +344,14 @@ namespace AlephNote.Plugins.StandardNote
 			return EncodingConverter.ByteToHexBitFiddleLowercase(seed);
 		}
 
+		public static byte[] RandomKey(int len)
+		{
+			byte[] bin = new byte[len];
+			RNG.GetBytes(bin);
+
+			return bin;
+		}
+
 		public static EncryptResult EncryptContent(string content, Guid uuid, StandardNoteData dat)
 		{
 			if (dat.SessionData.Version == "001") return EncryptContent001(content,       dat.SessionData.RootKey_MasterKey);
@@ -430,7 +438,7 @@ namespace AlephNote.Plugins.StandardNote
 
 			var encrypted_content = Encrypt004(rawContent, EncodingConverter.StringToByteArrayCaseInsensitive(item_key), authenticated_data);
 
-			var default_items_key = GetDefaultItemsKey(dat);
+			var default_items_key = GetDefaultItemsKey(dat, "004");
 
 			var enc_item_key = Encrypt004(item_key, default_items_key.Key, authenticated_data);
 
@@ -454,18 +462,18 @@ namespace AlephNote.Plugins.StandardNote
 			return string.Join(":", "004", nonce, Convert.ToBase64String(ciphertext), authenticated_data);
         }
 
-		private static StandardFileItemsKey GetDefaultItemsKey(StandardNoteData dat)
+		private static StandardFileItemsKey GetDefaultItemsKey(StandardNoteData dat, string version)
 		{
-			if (dat.ItemsKeys.Count == 0) throw new StandardNoteAPIException("Could not encrypt item, no items_key in repository");
+			if (dat.ItemsKeys.Where(p => p.Version == version).Count() == 0) throw new StandardNoteAPIException("Could not encrypt item, no items_key in repository");
 
-			if (dat.ItemsKeys.Count == 1) return dat.ItemsKeys[0];
+			if (dat.ItemsKeys.Where(p => p.Version == version).Count() == 1) return dat.ItemsKeys.Single(p => p.Version == version);
 
-			var def = dat.ItemsKeys.FirstOrDefault(p => p.IsDefault);
+			var def = dat.ItemsKeys.FirstOrDefault(p => p.Version == version && p.IsDefault);
 			if (def != null) return def;
 
 			StandardNoteAPI.Logger.Warn(StandardNotePlugin.Name, "No default key for encryption specified (using latest)", $"Keys in storage: {dat.ItemsKeys.Count}");
 
-			var latest = dat.ItemsKeys.OrderBy(p => p.CreationDate).Last();
+			var latest = dat.ItemsKeys.Where(p => p.Version == version).OrderBy(p => p.CreationDate).Last();
 			return latest;
 		}
 

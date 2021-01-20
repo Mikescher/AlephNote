@@ -108,6 +108,12 @@ namespace AlephNote.Plugins.StandardNote
 				var delNotes = localdeletednotes.Cast<StandardFileNote>().ToList();
 				var delTags = data.GetUnusedTags(localnotes.ToList());
 
+				if (int.Parse(data.SessionData.Version) >= 4 && !data.ItemsKeys.Any(p => p.Version == data.SessionData.Version))
+                {
+					_logger.Warn(StandardNotePlugin.Name, "Repository doesn't have any matching items_key's - trying to get one");
+					StandardNoteAPI.SyncToEnsureItemsKeys(web, this, _config, data);
+				}
+
 				_syncResult = StandardNoteAPI.Sync(web, this, _config, data, localnotes, upNotes, delNotes, delTags);
 				_lastUploadBatch = upNotes.Select(p => p.ID).ToList();
 
