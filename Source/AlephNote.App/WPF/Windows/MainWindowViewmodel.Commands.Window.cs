@@ -26,7 +26,7 @@ namespace AlephNote.WPF.Windows
 		public ICommand ShowAboutCommand               => new RelayCommand(ShowAbout);
 		public ICommand ShowLogCommand                 => new RelayCommand(ShowLog);
 		public ICommand SaveAndSyncCommand             => new RelayCommand(SaveAndSync);
-		public ICommand FullResyncCommand              => new RelayCommand(FullResync);
+		public ICommand FullResyncCommand              => new RelayCommand(_ => FullResync(true));
 		public ICommand FullUploadCommand              => new RelayCommand(FullUpload);
 		public ICommand ManuallyCheckForUpdatesCommand => new RelayCommand(ManuallyCheckForUpdates);
 		public ICommand HideCommand                    => new RelayCommand(HideMainWindow);
@@ -151,13 +151,15 @@ namespace AlephNote.WPF.Windows
 			}
 		}
 
-		private void FullResync()
+		public void FullResync(bool ask)
 		{
 			if (Repository.ProviderUID == Guid.Parse("37de6de1-26b0-41f5-b252-5e625d9ecfa3")) return; // no full resync in headless
 
 			try
 			{
-				if (MessageBox.Show(Owner, "Do you really want to delete all local data and download the server data?", "Full resync?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+				if (ask && MessageBox.Show(Owner, "Do you really want to delete all local data and download the server data?", "Full resync?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+
+				App.Logger.Info("Main", "Deleting local data and executing a full re-download of remote state");
 
 				Repository.Shutdown(false);
 
@@ -183,7 +185,9 @@ namespace AlephNote.WPF.Windows
 			{
 				if (MessageBox.Show(Owner, "Do you really want to trigger a full upload of your local data?\nNormally this should never be necessary, because modified notes will be automatically marked as dirty and uploaded", "Full upload?", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
 
-                foreach (var n in Repository.Notes) n.SetDirty(null);
+				App.Logger.Info("Main", "Forcing a full re-upload of local state to remote");
+
+				foreach (var n in Repository.Notes) n.SetDirty(null);
 
 				Repository.SyncNow();
 			}

@@ -77,6 +77,8 @@ namespace AlephNote.Common.Repository
 		{
 			_running = true;
 
+			Thread.Sleep(5*1000); // 5 secs initial delay
+
 			for (;;)
 			{
 				lock (_syncobj)

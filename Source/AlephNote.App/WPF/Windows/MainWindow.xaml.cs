@@ -867,27 +867,39 @@ namespace AlephNote.WPF.Windows
 
 		public void OnAfterMigrate(Version versionFrom, Version versionTo)
 		{
-			if (versionFrom != default && versionFrom < new Version(1, 7, 0))
+            #region 1.7.0
+            if (versionFrom != default && versionFrom < new Version(1, 7, 0))
 			{
-				App.Logger.Debug("MainWindow", $"Trigger Migration [[StandardNote.FullResync after 004]] by migration from {versionFrom} to {versionTo}");
+				App.Logger.Info("MainWindow", $"Trigger Migration [[StandardNote.FullResync after 004]] by migration from {versionFrom} to {versionTo}");
 
 				var guidStandardNotes = Guid.Parse("30d867a4-cbdc-45c5-950a-c119bf2f2845");
 
-				if (Settings.Accounts.Any(a => a.Plugin.GetUniqueID() == guidStandardNotes && a.ID != Settings.ActiveAccount.ID))
-                {
+				if (Settings.ActiveAccount.Plugin.GetUniqueID() == guidStandardNotes && Settings.Accounts.Count(p => p.Plugin.GetUniqueID() == guidStandardNotes) == 1 && _viewmodel.Repository.Notes.All(n => n.IsLocalSaved && n.IsRemoteSaved))
+				{
+					// Best case, the only SN account is active and all notes are saved & synced
+
+					WPFHelper.ExecDelayed(100, () => { _viewmodel.FullResync(false); });
+				}
+				else if (Settings.ActiveAccount.Plugin.GetUniqueID() == guidStandardNotes && _viewmodel.Repository.Notes.All(n => n.IsLocalSaved && n.IsRemoteSaved))
+				{
+					// Medium case, the active account is SN and all notes are saved & synced, but there exist other SN accounts
+
+					WPFHelper.ExecDelayed(100, () => { _viewmodel.FullResync(false); });
+
 					System.Windows.MessageBox.Show(
 						this,
 						"It appears you are having one or more accounts that sync with StandardNotes.\nDue to changes with the StandardNotes API it is recommended to do a full resync of your data (via the [Edit] -> [Delete local data and sync new] menu option).\nThis is necessary for all StandardNotes accounts but only for this update. Failing to do so can result in sync problems",
-						"Important Notification about the StandardNotes plugin", 
-						MessageBoxButton.OK, 
-						MessageBoxImage.Exclamation, 
+						"Important Notification about the StandardNotes plugin",
+						MessageBoxButton.OK,
+						MessageBoxImage.Exclamation,
 						MessageBoxResult.OK,
 						System.Windows.MessageBoxOptions.None);
 
-					// we can't auto-FullResync here, because at least one StandardNote account is not active
-                }
+				}
 				else if (Settings.ActiveAccount.Plugin.GetUniqueID() == guidStandardNotes)
-                {
+				{
+					// Bad case, the active account is SN, but some notes are not synced
+
 					var r = System.Windows.MessageBox.Show(
 						this,
 						"Due to an update in the StandardNotes API and an accompanying update of the StandardNotes plugin (v1.7.0) it is necessary to do a full resync of your data to prevent synchronization problems.\nThis will clear all your local data and download notes and tags from the StandardNotes server anew.\nIf all your data is synchronized (which it should always be) this won't change any notes or tags.\n\nIf you don't do that now you can always do the same action later via the menu item:\n[Edit] -> [Delete local data and sync new].",
@@ -896,12 +908,26 @@ namespace AlephNote.WPF.Windows
 						MessageBoxImage.Exclamation,
 						MessageBoxResult.OK,
 						System.Windows.MessageBoxOptions.None);
-					
+
 					if (r == MessageBoxResult.OK)
-                    {
+					{
 						WPFHelper.ExecDelayed(1000, () => { _viewmodel.FullResyncCommand.Execute(null); });
-                    }
+					}
 				}
+				else if (Settings.Accounts.Any(p => p.Plugin.GetUniqueID() == guidStandardNotes))
+				{
+					// There are some SN accounts - but they are not active
+
+					System.Windows.MessageBox.Show(
+						this,
+						"It appears you are having one or more accounts that sync with StandardNotes.\nDue to changes with the StandardNotes API it is recommended to do a full resync of your data (via the [Edit] -> [Delete local data and sync new] menu option).\nThis is necessary for all StandardNotes accounts but only for this update. Failing to do so can result in sync problems",
+						"Important Notification about the StandardNotes plugin",
+						MessageBoxButton.OK,
+						MessageBoxImage.Exclamation,
+						MessageBoxResult.OK,
+						System.Windows.MessageBoxOptions.None);
+				}
+				#endregion
 			}
 		}
 	}
