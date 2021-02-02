@@ -1,6 +1,7 @@
 @ECHO OFF
 @REM ================ BUILD ================
 
+cd "%~dp0"
 cd ..
 
 if exist AlephNote.zip del AlephNote.zip
