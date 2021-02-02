@@ -1,28 +1,43 @@
 @ECHO OFF
 @REM ================ BUILD ================
 
-echo "[cd . ->] %cd%"
-
-cd "%~dp0"
-echo "[cd ~dp0 ->] %cd%"
-
-cd ..
-echo "[cd .. ->] %cd%"
-
-if exist AlephNote.zip del AlephNote.zip
+echo "[pwd] %cd%"
 
 echo.
 
+echo "cd ~dp0"
+cd "%~dp0"
+echo "[pwd] %cd%"
+echo.
+
+echo "cd .."
+cd ..
+echo "[pwd] %cd%"
+echo.
+
+echo "del AlephNote.zip"
+if exist AlephNote.zip del AlephNote.zip
+echo.
+
+echo "cd Bin"
 cd Bin
-echo "[cd Bin ->] %cd%"
+echo "[pwd] %cd%"
+echo.
 
+echo "rd Package"
 if exist Package rd /S /Q Package
+echo.
 
+echo "xcopy Release Package"
 xcopy Release\ Package\ /s /e /y
+echo.
 
+echo "cd Package"
 cd Package
-echo "[cd Package ->] %cd%"
+echo "[pwd] %cd%"
+echo.
 
+echo "rmdir [language dirs]"
 rmdir de /S /Q
 rmdir es /S /Q
 rmdir fr /S /Q
@@ -35,43 +50,69 @@ rmdir sv /S /Q
 rmdir zh-Hans /S /Q
 rmdir cs-CZ /S /Q
 rmdir ja-JP /S /Q
+echo.
 
+echo "rename AlephNote.exe"
 rename AlephNote.App.exe AlephNote.exe
+echo.
 
+echo "del symbols"
 del /q *.pdb
 del /q *.vshost.exe
 del /q *.manifest
 del /q *.xml
 del /q *.deps.json
 del /q *.config
+echo.
+
+echo "rd .notes"
 if exist .notes rd /S /Q .notes
+echo.
 
+echo "cd Plugins"
 cd Plugins
-echo "[cd Plugins ->] %cd%"
+echo "[pwd] %cd%"
+echo.
 
+echo "del symbols"
 del /q *.pdb
 del /q *.vshost.exe
 del /q *.manifest
 del /q *.xml
 del /q *.deps.json
+echo.
+
+echo "cd .."
 cd ..
+echo "[pwd] %cd%"
+echo.
 
 @REM ================ PACKAGE ================
 
+echo "cd .."
 cd ..
-echo "[cd .. ->] %cd%"
-cd ..
-echo "[cd .. ->] %cd%"
+echo "[pwd] %cd%"
+echo.
 
+echo "cd .."
+cd ..
+echo "[pwd] %cd%"
+echo.
+
+
+echo "del AlephNote.zip"
 if exist AlephNote.zip del AlephNote.zip
+echo.
 
 cd Data
 echo "[cd Data ->] %cd%"
 
 7za.exe a .\..\AlephNote.zip .\..\Bin\Package\*
 
+echo "cd .."
 cd ..
-echo "[cd .. ->] %cd%"
+echo "[pwd] %cd%"
+echo.
 
 @REM ================ FINISHED ================
 

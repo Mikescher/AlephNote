@@ -29,7 +29,8 @@ artifacts:
     name: AlephNote.zip
     
 deploy:
-  description: '[AppVeyor Release Draft]'
+  release: '[AppVeyor Release Draft]'
+  description: '\n## Features\n\n - \n\n## Bugfixes\n\n - \n\n## Tasks\n\n - \n\n## Plugins\n\nPlugins included by default:\n~~~\nFilesystemPlugin   v\nHeadlessPlugin     v\nNextcloudPlugin    v\nSimpleNotePlugin   v\nStandardNotePlugin v\n~~~'
   provider: GitHub
   auth_token:
     secure: 2/0Qj0uJ46O+KOsn2ZZh6/8fvxf0dXNV7R8Gx3Az0z9keyPmwJBF52hUMe8Tgchk
