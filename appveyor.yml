@@ -24,6 +24,10 @@ after_build:
 - cmd: >-
     DATA\PACKAGE_RELEASE.bat
 
+artifacts:
+  - path: AlephNote.zip
+    name: AlephNote.zip
+    
 deploy:
   description: '[AppVeyor Release Draft]'
   provider: GitHub
