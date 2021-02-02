@@ -199,10 +199,12 @@ namespace AlephNote.Plugins.StandardNote
 					keepNoteRemoteDirtyWithConflict = true;
 
 					// update mdate, so we don't get a conflict next time and we upload to new (client) note
-					note.RawModificationDate = item_syncconflict.servernote.ModificationDate;
+					note.RawModificationDate = item_syncconflict.servernote.RawModificationDate;
 
 					// trigger another sync after this one (to upload actual/new client note)
 					_immediateResync = true;
+
+					_logger.Debug(StandardNotePlugin.Name, $"Manually patch mdate in conflicting note due to {strategy}", $"ID := {note.ID}\nRawModificationDate := {note.RawModificationDate}")
 
 					return RemoteUploadResult.Conflict;
 				}
