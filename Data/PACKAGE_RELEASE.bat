@@ -1,27 +1,27 @@
 @ECHO OFF
 @REM ================ BUILD ================
 
-echo "[cd ->] %cd%"
+echo "[cd . ->] %cd%"
 
 cd "%~dp0"
-echo "[cd ->] %cd%"
+echo "[cd ~dp0 ->] %cd%"
 
 cd ..
-echo "[cd ->] %cd%"
+echo "[cd .. ->] %cd%"
 
 if exist AlephNote.zip del AlephNote.zip
 
 echo.
 
 cd Bin
-echo "[cd ->] %cd%"
+echo "[cd Bin ->] %cd%"
 
 if exist Package rd /S /Q Package
 
 xcopy Release\ Package\ /s /e /y
 
 cd Package
-echo "[cd ->] %cd%"
+echo "[cd Package ->] %cd%"
 
 rmdir de /S /Q
 rmdir es /S /Q
@@ -47,7 +47,8 @@ del /q *.config
 if exist .notes rd /S /Q .notes
 
 cd Plugins
-echo "[cd ->] %cd%"
+echo "[cd Plugins ->] %cd%"
+
 del /q *.pdb
 del /q *.vshost.exe
 del /q *.manifest
@@ -58,19 +59,19 @@ cd ..
 @REM ================ PACKAGE ================
 
 cd ..
-echo "[cd ->] %cd%"
+echo "[cd .. ->] %cd%"
 cd ..
-echo "[cd ->] %cd%"
+echo "[cd .. ->] %cd%"
 
 if exist AlephNote.zip del AlephNote.zip
 
 cd Data
-echo "[cd ->] %cd%"
+echo "[cd Data ->] %cd%"
 
 7za.exe a .\..\AlephNote.zip .\..\Bin\Package\*
 
 cd ..
-echo "[cd ->] %cd%"
+echo "[cd .. ->] %cd%"
 
 @REM ================ FINISHED ================
 
