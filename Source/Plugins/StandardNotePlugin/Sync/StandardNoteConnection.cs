@@ -46,6 +46,7 @@ namespace AlephNote.Plugins.StandardNote
 						_logger.Debug(StandardNotePlugin.Name, $"Reusing existing token (until {dat.SessionData.AccessExpiration:yyyy-MM-dd HH:mm})", dat.SessionData.Token);
 					else
 						_logger.Debug(StandardNotePlugin.Name, $"Reusing existing token (no expiration)", dat.SessionData.Token);
+
 					return;
 				}
 
@@ -103,58 +104,80 @@ namespace AlephNote.Plugins.StandardNote
 
 			var data = (StandardNoteData)idata;
 
-			using (var web = CreateAuthenticatedClient(data))
-			{
-				var localnotes = ilocalnotes.Cast<StandardFileNote>().ToList();
+			try
+            {
+				using (var web = CreateAuthenticatedClient(data))
+				{
+					var localnotes = ilocalnotes.Cast<StandardFileNote>().ToList();
 
-				var upNotes = localnotes.Where(p => NeedsUploadReal(p, idata)).ToList();
-				var delNotes = localdeletednotes.Cast<StandardFileNote>().ToList();
-				var delTags = data.GetUnusedTags(localnotes.ToList());
+					var upNotes = localnotes.Where(p => NeedsUploadReal(p, idata)).ToList();
+					var delNotes = localdeletednotes.Cast<StandardFileNote>().ToList();
+					var delTags = data.GetUnusedTags(localnotes.ToList());
 
-				if (int.Parse(data.SessionData.Version) >= 4 && !data.ItemsKeys.Any(p => p.Version == data.SessionData.Version))
+					if (int.Parse(data.SessionData.Version) >= 4 && !data.ItemsKeys.Any(p => p.Version == data.SessionData.Version))
+					{
+						_logger.Warn(StandardNotePlugin.Name, "Repository doesn't have any matching items_key's - trying to get one");
+						StandardNoteAPI.SyncToEnsureItemsKeys(web, this, _config, data);
+					}
+
+					_syncResult = StandardNoteAPI.Sync(web, this, _config, data, localnotes, upNotes, delNotes, delTags);
+					_lastUploadBatch = upNotes.Select(p => p.ID).ToList();
+
+					_logger.Debug(StandardNotePlugin.Name, "StandardFile sync finished.",
+						$"upload:\n" +
+						$"[\n" +
+						$"    notes   = {upNotes.Count}\n" +
+						$"    deleted = {delNotes.Count}\n" +
+						$"]\n"+
+						$"\n" +
+						$"download:\n"+
+						$"[\n"+
+						$"    note:\n" +
+						$"    [\n" +
+						$"        retrieved      = {_syncResult.retrieved_notes.Count}\n" +
+						$"        deleted        = {_syncResult.deleted_notes.Count}\n" +
+						$"        saved          = {_syncResult.saved_notes.Count}\n" +
+						$"        sync_conflicts = {_syncResult.syncconflict_notes.Count}\n" +
+						$"        uuid_conflicts = {_syncResult.uuidconflict_notes.Count}\n" +
+						$"    ]\n" +
+						$"    tags:\n" +
+						$"    [\n" +
+						$"        retrieved      = {_syncResult.retrieved_tags.Count}\n" +
+						$"        deleted        = {_syncResult.deleted_tags.Count}\n" +
+						$"        saved          = {_syncResult.saved_tags.Count}\n" +
+						$"        sync_conflicts = {_syncResult.syncconflict_tags.Count}\n" +
+						$"        uuid_conflicts = {_syncResult.uuidconflict_tags.Count}\n" +
+						$"    ]\n" +
+						$"    items_keys:\n" +
+						$"    [\n" +
+						$"        retrieved      = {_syncResult.retrieved_keys.Count}\n" +
+						$"        deleted        = {_syncResult.deleted_keys.Count}\n" +
+						$"        saved          = {_syncResult.saved_keys.Count}\n" +
+						$"        sync_conflicts = {_syncResult.syncconflict_keys.Count}\n" +
+						$"        uuid_conflicts = {_syncResult.uuidconflict_keys.Count}\n" +
+						$"    ]\n" +
+						$"]");
+					}
+			}
+			catch (RestStatuscodeException e)
+            {
+				if (e.StatusCode == 401)
                 {
-					_logger.Warn(StandardNotePlugin.Name, "Repository doesn't have any matching items_key's - trying to get one");
-					StandardNoteAPI.SyncToEnsureItemsKeys(web, this, _config, data);
+					_logger.Warn(StandardNotePlugin.Name, 
+						"Reset Token (401 statuscode)",
+						$"Exception    := {e.GetType()}\n" +
+						$"Message      := {e.Message}\n" +
+						$"Source       := {e.Source}\n" +
+						$"StatusCode   := {e.StatusCode}\n" +
+						$"StatusPhrase := {e.StatusPhrase}\n" +
+						$"StackTrace   := \n{e.StackTrace}\n" +
+						$"HTTPContent  := \n{e.HTTPContent}\n");
+
+					data.SessionData = null;
 				}
 
-				_syncResult = StandardNoteAPI.Sync(web, this, _config, data, localnotes, upNotes, delNotes, delTags);
-				_lastUploadBatch = upNotes.Select(p => p.ID).ToList();
-
-				_logger.Debug(StandardNotePlugin.Name, "StandardFile sync finished.",
-					$"upload:\n" +
-					$"[\n" +
-					$"    notes   = {upNotes.Count}\n" +
-					$"    deleted = {delNotes.Count}\n" +
-					$"]\n"+
-					$"\n" +
-					$"download:\n"+
-					$"[\n"+
-					$"    note:\n" +
-					$"    [\n" +
-					$"        retrieved      = {_syncResult.retrieved_notes.Count}\n" +
-					$"        deleted        = {_syncResult.deleted_notes.Count}\n" +
-					$"        saved          = {_syncResult.saved_notes.Count}\n" +
-					$"        sync_conflicts = {_syncResult.syncconflict_notes.Count}\n" +
-					$"        uuid_conflicts = {_syncResult.uuidconflict_notes.Count}\n" +
-					$"    ]\n" +
-					$"    tags:\n" +
-					$"    [\n" +
-					$"        retrieved      = {_syncResult.retrieved_tags.Count}\n" +
-					$"        deleted        = {_syncResult.deleted_tags.Count}\n" +
-					$"        saved          = {_syncResult.saved_tags.Count}\n" +
-					$"        sync_conflicts = {_syncResult.syncconflict_tags.Count}\n" +
-					$"        uuid_conflicts = {_syncResult.uuidconflict_tags.Count}\n" +
-					$"    ]\n" +
-					$"    items_keys:\n" +
-					$"    [\n" +
-					$"        retrieved      = {_syncResult.retrieved_keys.Count}\n" +
-					$"        deleted        = {_syncResult.deleted_keys.Count}\n" +
-					$"        saved          = {_syncResult.saved_keys.Count}\n" +
-					$"        sync_conflicts = {_syncResult.syncconflict_keys.Count}\n" +
-					$"        uuid_conflicts = {_syncResult.uuidconflict_keys.Count}\n" +
-					$"    ]\n" +
-					$"]");
-			}
+				throw;
+            }
 		}
 
 		public override void FinishSync(out bool immediateResync)
