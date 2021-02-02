@@ -1,25 +1,33 @@
-﻿using AlephNote.PluginInterface;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Xml.Linq;
 using AlephNote.PluginInterface.Util;
-using AlephNote.WPF.Dialogs;
-using AlephNote.WPF.Windows;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace AlephNote.Log
 {
 	public class EventLogger : BasicWPFLogger
 	{
 		private readonly ObservableCollection<LogEvent> events = new ObservableCollection<LogEvent>();
+		private readonly ConcurrentQueue<LogEvent> backlog = new ConcurrentQueue<LogEvent>();
 
 		private void Log(LogEvent e)
 		{
-			var curr = Application.Current;
+#if DEBUG
+            //Console.Out.WriteLine($"[{e.Type}]===== {e.Source} =====");
+            //Console.Out.WriteLine(e.Text);
+            //if (!string.IsNullOrWhiteSpace(e.LongText)) Console.Out.WriteLine();
+            //if (!string.IsNullOrWhiteSpace(e.LongText)) Console.Out.WriteLine(e.LongText);
+            //Console.Out.WriteLine("===============");
+            //Console.Out.WriteLine();
+#endif
 
+            lock (backlog) backlog.Enqueue(e);
+
+			var curr = Application.Current;
 			if (curr == null)
 			{
 				Console.Error.WriteLine("Could not Log event ... Application.Current == null");
@@ -30,22 +38,18 @@ namespace AlephNote.Log
 				return;
 			}
 
-			#if DEBUG
-			//Console.Out.WriteLine($"[{e.Type}]===== {e.Source} =====");
-			//Console.Out.WriteLine(e.Text);
-			//if (!string.IsNullOrWhiteSpace(e.LongText)) Console.Out.WriteLine();
-			//if (!string.IsNullOrWhiteSpace(e.LongText)) Console.Out.WriteLine(e.LongText);
-			//Console.Out.WriteLine("===============");
-			//Console.Out.WriteLine();
-			#endif
-
 			var disp = curr.Dispatcher;
 
 			if (disp.CheckAccess())
-				events.Add(e);
+				EmptyQueue();
 			else
-				disp.BeginInvoke(new Action(() => events.Add(e)));
+				disp.BeginInvoke(new Action(() => EmptyQueue()));
 		}
+
+		private void EmptyQueue() // run in dispatcher
+        {
+            while (backlog.TryDequeue(out var e)) events.Add(e);
+        }
 
 		public override void Trace(string src, string text, string longtext = null)
 		{
