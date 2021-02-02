@@ -356,7 +356,7 @@ namespace AlephNote.Plugins.StandardNote
 					$"  updated_at   = {i.updated_at}\n" +
 					$"  deleted      = {i.deleted}\n" +
 					$"  content      =\n" +
-					$"{CompactJsonFormatter.FormatJSON(i.content, 2, 1)}\n" +
+					$"{CompactJsonFormatter.FormatJSON(i.content, 3, 1)}\n" +
 					$"}}")) );
 
 			var result = GetCursorResult(web, dat, d, true);
@@ -560,7 +560,7 @@ namespace AlephNote.Plugins.StandardNote
 					$"  updated_at   = {i.updated_at}\n" +
 					$"  deleted      = {i.deleted}\n" +
 					$"  content      =\n" +
-					$"{CompactJsonFormatter.FormatJSON(i.content, 2, 1)}\n" +
+					$"{CompactJsonFormatter.FormatJSON(i.content, 3, 1)}\n" +
 					$"}}")));
 
 			var result2 = GetCursorResult(web, dat, d1, false);

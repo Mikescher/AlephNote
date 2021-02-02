@@ -16,7 +16,7 @@ namespace AlephNote.Common.Network
 {
 	public class SimpleJsonRest : ISimpleJsonRest
 	{
-		private const int LOG_FMT_DEPTH = 3;
+		private const int LOG_FMT_DEPTH = 4;
 
 		private readonly HttpClient _client;
 		private readonly Uri _host;

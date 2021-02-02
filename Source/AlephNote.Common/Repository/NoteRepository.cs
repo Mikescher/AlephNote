@@ -191,7 +191,7 @@ namespace AlephNote.Common.Repository
 			note.SetDirty("Set newly created note to dirty");
 			SaveNote(note);
 
-			_logger.Info("Repository", "New Note created");
+			_logger.Info("Repository", $"New Note created ({note.UniqueName})");
 
 			return note;
 		}

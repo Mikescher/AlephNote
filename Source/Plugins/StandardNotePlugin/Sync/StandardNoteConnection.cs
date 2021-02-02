@@ -42,7 +42,10 @@ namespace AlephNote.Plugins.StandardNote
 
 				if (dat.SessionData != null)
 				{
-					_logger.Debug(StandardNotePlugin.Name, $"Reusing existing token (until {dat.SessionData.AccessExpiration:yyyy-MM-dd HH:mm})");
+					if (dat.SessionData.AccessExpiration != null)
+						_logger.Debug(StandardNotePlugin.Name, $"Reusing existing token (until {dat.SessionData.AccessExpiration:yyyy-MM-dd HH:mm})", dat.SessionData.Token);
+					else
+						_logger.Debug(StandardNotePlugin.Name, $"Reusing existing token (no expiration)", dat.SessionData.Token);
 					return;
 				}
 
