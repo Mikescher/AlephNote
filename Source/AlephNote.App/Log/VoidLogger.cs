@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
 
@@ -25,9 +26,9 @@ namespace AlephNote.Log
 			return "{{void}}";
 		}
 
-		public override void Import(XDocument xdoc)
+		public override List<LogEvent> ReadExport(XDocument xdoc)
 		{
-			// nothing to export
+			return new List<LogEvent>(); // no import!
 		}
 		
 		public override void Clear()

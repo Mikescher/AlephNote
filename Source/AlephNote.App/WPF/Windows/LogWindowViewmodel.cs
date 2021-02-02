@@ -54,7 +54,21 @@ namespace AlephNote.WPF.Windows
             foreach (var src in events.Select(p => p.Source).Distinct()) if (!Filters.Contains(src)) Filters.Add(src);
 		}
 
-        private void OnLogEvent(object sender, NotifyCollectionChangedEventArgs e)
+		public LogWindowViewmodel(LogWindow lw, IEnumerable<LogEvent> eventsOverride)
+		{
+			_parent = lw;
+
+			var events = new ObservableCollection<LogEvent>(eventsOverride);
+
+			var source = (ListCollectionView)CollectionViewSource.GetDefaultView(events);
+			source.Filter = p => Filter((LogEvent)p);
+			LogView = source;
+
+			Filters.Add("[All]");
+			foreach (var src in events.Select(p => p.Source).Distinct()) if (!Filters.Contains(src)) Filters.Add(src);
+		}
+
+		private void OnLogEvent(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (e.NewItems != null) foreach (var src in e.NewItems.Cast<LogEvent>().Select(p => p.Source).Distinct()) if (!Filters.Contains(src)) Filters.Add(src);
 

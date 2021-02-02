@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using AlephNote.PluginInterface.Util;
 using AlephNote.WPF.Dialogs;
 using AlephNote.WPF.Windows;
+using System.Collections.Generic;
 
 namespace AlephNote.Log
 {
@@ -94,13 +95,14 @@ namespace AlephNote.Log
 			return XHelper.ConvertToStringFormatted(doc);
 		}
 
-		public override void Import(XDocument xdoc)
+		public override List<LogEvent> ReadExport(XDocument xdoc)
 		{
-			events.Clear();
+			var result = new List<LogEvent>();
 			foreach (var elem in xdoc.Root?.Elements("event") ?? Enumerable.Empty<XElement>())
 			{
-				events.Add(LogEvent.Deserialize(elem));
+				result.Add(LogEvent.Deserialize(elem));
 			}
+			return result;
 		}
 
 		public override void Clear()

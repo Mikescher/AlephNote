@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Xml.Linq;
@@ -61,7 +62,7 @@ namespace AlephNote.Log
 		}
 		
 		public abstract string Export();
-		public abstract void Import(XDocument xdoc);
+		public abstract List<LogEvent> ReadExport(XDocument xdoc);
 		public abstract void Clear();
 		public abstract ObservableCollection<LogEvent> GetEventSource();
 	}
