@@ -8,6 +8,8 @@ before_build:
 - cmd: >-
     git submodule update --recursive --init
 
+    git clean -fdx
+
     cd Source
 
     nuget restore

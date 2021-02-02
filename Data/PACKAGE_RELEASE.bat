@@ -58,4 +58,3 @@ cd Data
 @REM ================ FINISHED ================
 
 echo "Finished successfully"
-PAUSE
