@@ -29,7 +29,7 @@ if exist Package rd /S /Q Package
 echo.
 
 echo "xcopy Release Package"
-xcopy Release\ Package\ /s /e /y
+xcopy /s /i Release Package
 echo.
 
 echo "cd Package"
@@ -104,10 +104,14 @@ echo "del AlephNote.zip"
 if exist AlephNote.zip del AlephNote.zip
 echo.
 
+echo "cd Data"
 cd Data
 echo "[cd Data ->] %cd%"
+echo.
 
+echo "7za AlephNote.zip"
 7za.exe a .\..\AlephNote.zip .\..\Bin\Package\*
+echo.
 
 echo "cd .."
 cd ..
