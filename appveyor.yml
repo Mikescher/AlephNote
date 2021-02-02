@@ -3,6 +3,7 @@ image: Visual Studio 2019
 configuration: Release
 platform: Any CPU
 clone_depth: 1
+
 before_build:
 - cmd: >-
     git submodule update --recursive --init
@@ -12,6 +13,23 @@ before_build:
     nuget restore
 
     cd ..
+    
 build:
   project: Source\AlephNote.sln
-  verbosity: normal
+  verbosity: minimal
+
+after_build:
+- cmd: >-
+    DATA\PACKAGE_RELEASE.bat
+
+deploy:
+  description: '[AppVeyor Release Draft]'
+  provider: GitHub
+  auth_token:
+    secure: 2/0Qj0uJ46O+KOsn2ZZh6/8fvxf0dXNV7R8Gx3Az0z9keyPmwJBF52hUMe8Tgchk
+  artifact: AlephNote.zip
+  draft: true
+  prerelease: false
+  on:
+    branch: master
+    APPVEYOR_REPO_TAG: true

@@ -204,7 +204,7 @@ namespace AlephNote.Plugins.StandardNote
 					// trigger another sync after this one (to upload actual/new client note)
 					_immediateResync = true;
 
-					_logger.Debug(StandardNotePlugin.Name, $"Manually patch mdate in conflicting note due to {strategy}", $"ID := {note.ID}\nRawModificationDate := {note.RawModificationDate}")
+					_logger.Debug(StandardNotePlugin.Name, $"Manually patch mdate in conflicting note due to {strategy}", $"ID := {note.ID}\nRawModificationDate := {note.RawModificationDate}");
 
 					return RemoteUploadResult.Conflict;
 				}
