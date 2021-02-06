@@ -490,7 +490,7 @@
 								<TextBlock Grid.Row="3" Grid.Column="0" Margin="5" Text="Theme Version:" Grid.ColumnSpan="2" />
 								<TextBox   Grid.Row="3" Grid.Column="3" Margin="5" Grid.ColumnSpan="2" Text="{Binding SelectedTheme.Version, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
 
-								<TextBlock Grid.Row="4" Grid.Column="0" Margin="5" Text="Theme Compatbility:" Grid.ColumnSpan="2" />
+								<TextBlock Grid.Row="4" Grid.Column="0" Margin="5" Text="Theme Compatibility:" Grid.ColumnSpan="2" />
 								<TextBox   Grid.Row="4" Grid.Column="3" Margin="5" Grid.ColumnSpan="2" Text="{Binding SelectedTheme.Compatibility, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
 
 							</Grid>
