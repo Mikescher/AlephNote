@@ -14,6 +14,12 @@
 	</PropertyGroup>
 
   <ItemGroup>
+    <!-- Sodium.Core references libsodium.dll, which needs vcredist-2015. In case the user does not have it installed we simply ship vcruntime140.dll with AlephNote -->
+    <!-- see https://github.com/Mikescher/AlephNote/issues/187 -->
+    <ContentWithTargetPath Include="Libraries\vcruntime140.dll" TargetPath="vcruntime140.dll" CopyToOutputDirectory="PreserveNewest"/>
+  </ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="..\External\CSharpUtils\LanguageUtils\LanguageUtils.csproj" />
     <ProjectReference Include="..\External\libsodium-core\src\Sodium.Core\Sodium.Core.csproj" />
   </ItemGroup>
