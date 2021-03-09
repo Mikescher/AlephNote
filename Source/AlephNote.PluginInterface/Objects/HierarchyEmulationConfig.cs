@@ -55,6 +55,7 @@ namespace AlephNote.PluginInterface.Util
 				if (escape)
 				{
 					b.Append(str[i]);
+					escape = false;
 					continue;
 				}
 				else
@@ -63,9 +64,14 @@ namespace AlephNote.PluginInterface.Util
 					{
 						if (EscapeChar.ToString() == SeperatorString && i+1 < str.Length && !str.Substring(i+1).StartsWith(SeperatorString))
 						{
+							// special case: EscapeChar == SeparatorChar
+							// We handle "somehing\\something" as an escaped '\'
+							// And "somehing\something" as Seperator
+
 							i += SeperatorString.Length - 1;
 							yield return b.ToString();
 							b.Clear();
+							escape = false;
 							continue;
 						}
 						else
@@ -81,6 +87,7 @@ namespace AlephNote.PluginInterface.Util
 							i += SeperatorString.Length - 1;
 							yield return b.ToString();
 							b.Clear();
+							escape = false;
 							continue;
 						}
 						else
