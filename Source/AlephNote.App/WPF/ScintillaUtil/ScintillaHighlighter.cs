@@ -397,7 +397,7 @@ namespace AlephNote.WPF.ScintillaUtil
 			int end = pos;
 
 			while (start>0 && text[start-1] != '\n') start--;
-			while (end<text.Length-1 && text[end] != '\n' && text[end] != '\r') end++;
+			while (end<text.Length && text[end] != '\n' && text[end] != '\r') end++;
 
 			return Tuple.Create(text.Substring(start, end-start), start, end-start);
 		}
