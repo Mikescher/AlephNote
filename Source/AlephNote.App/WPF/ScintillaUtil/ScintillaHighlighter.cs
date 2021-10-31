@@ -99,6 +99,7 @@ namespace AlephNote.WPF.ScintillaUtil
 		{
 			Tuple.Create(' ', ListHighlightValue.FALSE),
 			Tuple.Create('_', ListHighlightValue.FALSE),
+			Tuple.Create('.', ListHighlightValue.FALSE),
 
 			Tuple.Create('x', ListHighlightValue.TRUE),
 			Tuple.Create('X', ListHighlightValue.TRUE),
