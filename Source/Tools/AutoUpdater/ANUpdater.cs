@@ -14,6 +14,7 @@ namespace AlephNote.AutoUpdater
 		private static readonly string[] FILEPATTERN =
 		{
 			"AlephNote.exe",
+			"AlephNote.exe.config",
 			"*.dll",
 			"Plugins/*.dll",
 			"Themes/*.xml",

@@ -25,6 +25,7 @@ echo "[pwd] %cd%"
 echo.
 
 echo "rd Package"
+if exist Package echo "(exists)"
 if exist Package rd /S /Q Package
 echo.
 
@@ -85,6 +86,10 @@ echo.
 echo "cd .."
 cd ..
 echo "[pwd] %cd%"
+echo.
+
+echo "copy AlephNote.exe.config"
+copy ..\..\Data\AlephNote.exe.config .
 echo.
 
 @REM ================ PACKAGE ================
