@@ -384,7 +384,7 @@ namespace AlephNote.Plugins.StandardNote
 			syncresult.saved_keys = result
 				.saved_items
 				.Where(p => p.content_type.ToLower() == "sn|itemskey")
-				.Select(n => CreateItemsKey(web, n, dat))
+				.Select(n => CreateItemsKey(web, PatchSavedItem(n, d), dat))
 				.ToList();
 
 			syncresult.syncconflict_keys = result
@@ -428,7 +428,7 @@ namespace AlephNote.Plugins.StandardNote
 			syncresult.saved_tags = result
 				.saved_items
 				.Where(p => p.content_type.ToLower() == "tag")
-				.Select(n => CreateTag(web, n, dat))
+				.Select(n => CreateTag(web, PatchSavedItem(n, d), dat))
 				.ToList();
 
 			syncresult.syncconflict_tags = result
@@ -466,13 +466,13 @@ namespace AlephNote.Plugins.StandardNote
 				.saved_items
 				.Where(p => p.content_type.ToLower() == "note")
 				.Where(p => p.deleted)
-				.Select(n => CreateNote(web, conn, n, dat, cfg))
+				.Select(n => CreateNote(web, conn, PatchSavedItem(n, d), dat, cfg))
 				.ToList();
 
 			syncresult.saved_notes = result
 				.saved_items
 				.Where(p => p.content_type.ToLower() == "note")
-				.Select(n => CreateNote(web, conn, n, dat, cfg))
+				.Select(n => CreateNote(web, conn, PatchSavedItem(n, d), dat, cfg))
 				.ToList();
 
 			syncresult.syncconflict_notes = result
@@ -1025,6 +1025,29 @@ namespace AlephNote.Plugins.StandardNote
 			});
 		}
 
+		private static APIResultItem PatchSavedItem(APIResultItem responseItem, APIRequestSync req)
+        {
+            foreach (var syncItem in req.items)
+            {
+				if (syncItem.uuid == responseItem.uuid)
+				{
+					return new APIResultItem()
+					{ 
+						uuid = syncItem.uuid,
+						content_type = syncItem.content_type,
+						content = syncItem.content,
+						enc_item_key = syncItem.enc_item_key,
+						auth_hash = syncItem.auth_hash,
+						items_key_id = syncItem.items_key_id,
+						created_at = syncItem.created_at,
+						updated_at = responseItem.updated_at,
+						deleted = syncItem.deleted,
+					};
+				}
+			}
+			throw new StandardNoteAPIException($"Cannot patch saved item {responseItem.uuid} - no matching item in request");
+		}
+		
 		private static StandardFileNote CreateNote(ISimpleJsonRest web, StandardNoteConnection conn, APIResultItem encNote, StandardNoteData dat, StandardNoteConfig cfg)
 		{
 			if (encNote.deleted)
