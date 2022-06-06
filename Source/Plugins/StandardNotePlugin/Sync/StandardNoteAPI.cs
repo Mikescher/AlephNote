@@ -606,7 +606,7 @@ namespace AlephNote.Plugins.StandardNote
 
 					if (realTag == null) // create new tag
 					{
-						var addtag = new StandardFileTag(noteTagRef.UUID, noteTagRef.Title, DateTimeOffset.MinValue, DateTimeOffset.MinValue, Enumerable.Repeat(note.ID, 1), string.Empty);
+						var addtag = new StandardFileTag(noteTagRef.UUID, noteTagRef.Title, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, Enumerable.Repeat(note.ID, 1), string.Empty);
 						allTags.Add(addtag);
 						result.Add(addtag);
 					}
@@ -876,7 +876,7 @@ namespace AlephNote.Plugins.StandardNote
 					{
 						// Tag does not exist - create new
 						newTag = new StandardFileTagRef(Guid.NewGuid(), itag.Title);
-						allTags.Add(new StandardFileTag(newTag.UUID, newTag.Title, DateTimeOffset.MinValue, DateTimeOffset.MinValue, Enumerable.Repeat(note.ID, 1), string.Empty));
+						allTags.Add(new StandardFileTag(newTag.UUID, newTag.Title, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, Enumerable.Repeat(note.ID, 1), string.Empty));
 						note.UpgradeTag(itag, newTag);
 					} 
 					else
@@ -1202,7 +1202,7 @@ namespace AlephNote.Plugins.StandardNote
 				throw new StandardNoteAPIException("Cannot decrypt note with local masterkey", e);
 			}
 
-			return new SyncResultTag
+			var t = new SyncResultTag
 			{
 				deleted      = encTag.deleted,
 				created_at   = encTag.created_at,
@@ -1213,6 +1213,11 @@ namespace AlephNote.Plugins.StandardNote
 				references   = content.references,
 				rawappdata   = appDataContentString,
 			};
+
+			if (t.created_at == DateTimeOffset.MinValue) t.created_at = DateTimeOffset.FromUnixTimeMilliseconds(0);
+			if (t.updated_at == DateTimeOffset.MinValue) t.updated_at = DateTimeOffset.FromUnixTimeMilliseconds(0);
+
+			return t;
 		}
 
 		private static SyncResultItemsKey CreateItemsKey(ISimpleJsonRest web, APIResultItem encKey, StandardNoteData dat)
@@ -1284,7 +1289,7 @@ namespace AlephNote.Plugins.StandardNote
 			return new StandardFileItemsKey(
 				Guid.NewGuid(), 
 				StandardNotePlugin.CURRENT_SCHEMA, 
-				DateTimeOffset.MinValue, DateTimeOffset.MinValue, 
+				DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, 
 				StandardNoteCrypt.RandomKey(32), 
 				null, 
 				true, 

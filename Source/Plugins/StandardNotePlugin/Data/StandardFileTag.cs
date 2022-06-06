@@ -47,7 +47,7 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			var id    = XHelper.GetAttributeNGuid(e, "ID");
 			var txt   = XHelper.GetAttributeString(e, "Title");
-			var cdate = XHelper.GetAttributeDateTimeOffsetOrDefault(e, "CreationDate", DateTimeOffset.MinValue);
+			var cdate = XHelper.GetAttributeDateTimeOffsetOrDefault(e, "CreationDate", DateTimeOffset.FromUnixTimeMilliseconds(0));
 			var mdate = XHelper.GetAttributeDateTimeOffsetOrDefault(e, "ModificationDate", DateTimeOffset.Now);
 			var refs  = XHelper.HasChild(e, "References") ? XHelper.GetChildValueStringList(e, "References", "ref").Select(Guid.Parse).ToList() : new List<Guid>();
 			var appd  = XHelper.HasChild(e, "AppData") ? XHelper.GetChildValueString(e, "AppData") : string.Empty;

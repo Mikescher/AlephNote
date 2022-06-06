@@ -55,7 +55,7 @@ namespace AlephNote.Plugins.StandardNote
 			var id      = XHelper.GetAttributeGuid(e, "ID");
 			var version = XHelper.GetAttributeString(e, "Version");
 			var defKey  = XHelper.GetAttributeBool(e, "Default");
-			var cdate   = XHelper.GetAttributeDateTimeOffsetOrDefault(e, "CreationDate", DateTimeOffset.MinValue);
+			var cdate   = XHelper.GetAttributeDateTimeOffsetOrDefault(e, "CreationDate", DateTimeOffset.FromUnixTimeMilliseconds(0));
 			var mdate   = XHelper.GetAttributeDateTimeOffsetOrDefault(e, "ModificationDate", DateTimeOffset.Now);
 			var appdata = XHelper.GetAttributeString(e, "AppData");
 			var key     = EncodingConverter.StringToByteArrayCaseInsensitive(e.Value);

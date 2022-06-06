@@ -28,7 +28,7 @@ namespace AlephNote.Plugins.Filesystem
 		private string _pathRemote = "";
 		public string PathRemote { get { return _pathRemote; } set { _pathRemote = value; OnPropertyChanged(); } }
 
-		private DateTimeOffset _creationDate = DateTimeOffset.MinValue;
+		private DateTimeOffset _creationDate = DateTimeOffset.FromUnixTimeMilliseconds(0);
 		public override DateTimeOffset CreationDate { get { return _creationDate; } set { _creationDate = value; OnPropertyChanged(); } }
 
 		private DateTimeOffset _modificationDate = DateTimeOffset.Now;

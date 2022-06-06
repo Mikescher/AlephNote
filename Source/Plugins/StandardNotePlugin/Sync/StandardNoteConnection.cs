@@ -93,7 +93,7 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			DateTimeOffset o;
 			if (DateTimeOffset.TryParse(value, out o)) return o;
-			return DateTimeOffset.MinValue;
+			return DateTimeOffset.FromUnixTimeMilliseconds(0);
 		}
 
 		public override void StartSync(IRemoteStorageSyncPersistance idata, List<INote> ilocalnotes, List<INote> localdeletednotes)
