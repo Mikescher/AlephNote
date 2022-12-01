@@ -32,14 +32,16 @@ namespace AlephNote.Plugins.StandardNote
 
 		private const int ID_EMAIL         = 6251;
 		private const int ID_PASSWORD      = 6252;
-		private const int ID_SERVER        = 6253;
+		private const int ID_SYNCSERVER    = 6253;
+		private const int ID_APISERVER     = 6258;
 		private const int ID_REMTAGS       = 6255;
 		private const int ID_HIERARCHYTAGS = 6256;
 		private const int ID_MDATESOURCE   = 6257;
 
 		public string      Email                  = string.Empty;
 		public string      Password               = string.Empty;
-		public string      Server                 = @"https://sync.standardnotes.org";
+		public string      SyncServer             = @"https://sync.standardnotes.org";
+		public string      APIServer              = @"https://api.standardnotes.com";
 		public bool        RemEmptyTags           = true;
 		public bool        CreateHierarchyTags    = false;
 		public MDateSource ModificationDateSource = MDateSource.Metadata;
@@ -50,7 +52,8 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				new XElement("Email", Email),
 				new XElement("Password", Encrypt(Password, opt)),
-				new XElement("Server", Server),
+				new XElement("Server", SyncServer),
+				new XElement("APIServer", APIServer),
 				new XElement("RemEmptyTags", RemEmptyTags),
 				new XElement("CreateHierarchyTags", CreateHierarchyTags),
 				new XElement("ModificationDateSource", ModificationDateSource),
@@ -68,7 +71,8 @@ namespace AlephNote.Plugins.StandardNote
 
 			Email                  = XHelper.GetChildValue(input, "Email", Email);
 			Password               = Decrypt(XHelper.GetChildValue(input, "Password", string.Empty), opt);
-			Server                 = XHelper.GetChildValue(input, "Server", Server);
+			SyncServer             = XHelper.GetChildValue(input, "Server", SyncServer);
+			APIServer              = XHelper.GetChildValue(input, "APIServer", APIServer);
 			RemEmptyTags           = XHelper.GetChildValue(input, "RemEmptyTags", RemEmptyTags);
 			CreateHierarchyTags    = XHelper.GetChildValue(input, "CreateHierarchyTags", CreateHierarchyTags);
 			ModificationDateSource = XHelper.GetChildValue(input, "ModificationDateSource", ModificationDateSource);
@@ -78,7 +82,8 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			yield return DynamicSettingValue.CreateText(ID_EMAIL, "Email", Email);
 			yield return DynamicSettingValue.CreatePassword(ID_PASSWORD, "Password", Password);
-			yield return DynamicSettingValue.CreateText(ID_SERVER, "Host", Server);
+			yield return DynamicSettingValue.CreateText(ID_SYNCSERVER, "Sync Server", SyncServer);
+			yield return DynamicSettingValue.CreateText(ID_APISERVER, "API Server", APIServer);
 			yield return DynamicSettingValue.CreateCheckbox(ID_REMTAGS, "Delete unused tags", RemEmptyTags, "RemEmptyTags");
 			yield return DynamicSettingValue.CreateEnumCombobox(ID_MDATESOURCE, "Source for modification date", ModificationDateSource, "ModificationDateSource");
 			yield return DynamicSettingValue.CreateCheckbox(ID_HIERARCHYTAGS, "Create folder tags", CreateHierarchyTags, "CreateHierarchyTags");
@@ -89,7 +94,8 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			if (id == ID_EMAIL)       Email                  = value;
 			if (id == ID_PASSWORD)    Password               = value;
-			if (id == ID_SERVER)      Server                 = value;
+			if (id == ID_SYNCSERVER)  SyncServer             = value;
+			if (id == ID_APISERVER)   APIServer              = value;
 		}
 
 		public void SetProperty(int id, bool value)
@@ -115,7 +121,8 @@ namespace AlephNote.Plugins.StandardNote
 
 			if (this.Email                  != other.Email)                  return false;
 			if (this.Password               != other.Password)               return false;
-			if (this.Server                 != other.Server)                 return false;
+			if (this.SyncServer             != other.SyncServer)             return false;
+			if (this.APIServer              != other.APIServer)              return false;
 			if (this.RemEmptyTags           != other.RemEmptyTags)           return false;
 			if (this.CreateHierarchyTags    != other.CreateHierarchyTags)    return false;
 			if (this.ModificationDateSource != other.ModificationDateSource) return false;
@@ -129,7 +136,8 @@ namespace AlephNote.Plugins.StandardNote
 			{
 				Email                  = this.Email,
 				Password               = this.Password,
-				Server                 = this.Server,
+				SyncServer             = this.SyncServer,
+				APIServer              = this.APIServer,
 				RemEmptyTags           = this.RemEmptyTags,
 				CreateHierarchyTags    = this.CreateHierarchyTags,
 				ModificationDateSource = this.ModificationDateSource,

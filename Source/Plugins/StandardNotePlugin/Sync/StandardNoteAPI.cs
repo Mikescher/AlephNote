@@ -39,10 +39,11 @@ namespace AlephNote.Plugins.StandardNote
 		public enum PasswordAlg { sha512, sha256 }
 		public enum PasswordFunc { pbkdf2 }
 
-		public class APIRequestUser { public string email, password, api; }
+		public class APIRequestUser { public string email, password, api, code_verifier; public bool ephemeral; }
 		public class APIRequestSync { public int limit; public List<APIRequestBodyItem> items; public string sync_token, cursor_token, api; }
 		public class APIRequestBodyItem { public Guid uuid; public string content_type, content, enc_item_key, auth_hash; public Guid? items_key_id; public DateTimeOffset created_at, updated_at; public bool deleted; }
 
+		public class APIRequestParams { public string email, api, code_challenge;  }
 		public class APIResultAuthParams { public string identifier; public string pw_nonce; public string version; public string pw_salt; public PasswordAlg pw_alg; public PasswordFunc pw_func; public int pw_cost, pw_key_size; }
 		public class APIResultAuthorize001 { public APIResultUser user; public string token; public byte[] masterkey, masterauthkey; public string version; }
 		public class APIResultAuthorize004 { public APIResultUser user; public APIResultSession session; public APIResultKeyParams key_params; }
@@ -84,14 +85,14 @@ namespace AlephNote.Plugins.StandardNote
 
 		public static AlephLogger Logger;
 
-		public static StandardNoteSessionData Authenticate(ISimpleJsonRest web, string mail, string password, AlephLogger logger)
+		public static StandardNoteSessionData Authenticate(ISimpleJsonRest webSync, ISimpleJsonRest webAPI, string mail, string password, AlephLogger logger)
 		{
-			var apiparams = web.Get<APIResultAuthParams>("auth/params", "email=" + WebUtility.UrlEncode(mail), "api=" + StandardNotePlugin.CURRENT_API_VERSION);
+			var apiparams = webSync.Get<APIResultAuthParams>("auth/params", "email=" + WebUtility.UrlEncode(mail), "api=" + StandardNotePlugin.CURRENT_API_VERSION);
 
-			if (apiparams.version == "001") return Authenticate001(web, apiparams, mail, password, logger);
-			if (apiparams.version == "002") return Authenticate002(web, apiparams, mail, password, logger);
-			if (apiparams.version == "003") return Authenticate003(web, apiparams, mail, password, logger);
-			if (apiparams.version == "004") return Authenticate004(web, apiparams, mail, password, logger);
+			if (apiparams.version == "001") return Authenticate001(webSync, apiparams, mail, password, logger);
+			if (apiparams.version == "002") return Authenticate002(webSync, apiparams, mail, password, logger);
+			if (apiparams.version == "003") return Authenticate003(webSync, apiparams, mail, password, logger);
+			if (apiparams.version == "004") return Authenticate004_v2(webSync, webAPI, apiparams, mail, password, logger);
 			if (apiparams.version == "005") throw new StandardNoteAPIException("Unsupported encryption scheme 005 in auth-params");
 			if (apiparams.version == "006") throw new StandardNoteAPIException("Unsupported encryption scheme 006 in auth-params");
 			if (apiparams.version == "007") throw new StandardNoteAPIException("Unsupported encryption scheme 007 in auth-params");
@@ -239,7 +240,7 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		private static StandardNoteSessionData Authenticate004(ISimpleJsonRest web, APIResultAuthParams apiparams, string mail, string uip, AlephLogger logger)
+		private static StandardNoteSessionData Authenticate004_v1(ISimpleJsonRest web, APIResultAuthParams apiparams, string mail, string uip, AlephLogger logger)
 		{
 			try
 			{
@@ -249,14 +250,99 @@ namespace AlephNote.Plugins.StandardNote
 
 				try
 				{
-					var request = new APIRequestUser 
-					{ 
-						email    = mail,
-						api      = StandardNotePlugin.CURRENT_API_VERSION,
+					var request = new APIRequestUser
+					{
+						email = mail,
+						api = StandardNotePlugin.CURRENT_API_VERSION,
 						password = reqpw,
 					};
 
 					var result = web.PostTwoWay<APIResultAuthorize004>(request, "auth/sign_in");
+
+					return new StandardNoteSessionData
+					{
+						Version = "004",
+
+						Token = result.session.access_token,
+						RefreshToken = result.session.refresh_token,
+
+						AccessExpiration = (result.session.access_expiration == 0) ? (DateTimeOffset?)null : DateTimeOffset.FromUnixTimeMilliseconds(result.session.access_expiration),
+						RefreshExpiration = (result.session.refresh_expiration == 0) ? (DateTimeOffset?)null : DateTimeOffset.FromUnixTimeMilliseconds(result.session.refresh_expiration),
+
+						Identifier = result.key_params.identifier,
+						PasswordNonce = result.key_params.pw_nonce,
+						ParamsCreated = (result.key_params.created == null || result.key_params.created == "" || result.key_params.created == "0") ? (DateTimeOffset?)null : DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(result.key_params.created)),
+
+						AccountEmail = result.user.email,
+						AccountUUID = result.user.uuid,
+
+						RootKey_MasterKey = masterKey,
+						RootKey_ServerPassword = serverPassword,
+					};
+				}
+				catch (RestStatuscodeException e1)
+				{
+					if (e1.StatusCode / 100 == 4 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
+					{
+						var req = web.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
+						if (req != null) throw new StandardNoteAPIException($"Server returned status {e1.StatusCode}.\nMessage: '{req.error.message}'", e1);
+					}
+
+					throw;
+				}
+			}
+			catch (RestException)
+			{
+				throw;
+			}
+			catch (StandardNoteAPIException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				throw new StandardNoteAPIException("Authentification with StandardNoteAPI failed.", e);
+			}
+		}
+
+		private static StandardNoteSessionData Authenticate004_v2(ISimpleJsonRest webSync, ISimpleJsonRest webAPI, APIResultAuthParams apiparams, string mail, string uip, AlephLogger logger)
+		{
+			try
+			{
+				logger.Debug(StandardNotePlugin.Name, $"AutParams[version:{apiparams.version}, identifier:{apiparams.identifier}, pw_nonce:{apiparams.pw_nonce}]");
+
+				var codeVerifier = StandardNoteCrypt.RandomSeed(256 / 8);
+
+				logger.Debug(StandardNotePlugin.Name, $"CodeVerifier := '{codeVerifier}'");
+
+				var codeChallenge = Convert.ToBase64String(StandardNoteCrypt.SHA256Bytes(codeVerifier));
+
+				logger.Debug(StandardNotePlugin.Name, $"CodeChallenge := '{codeChallenge}'");
+
+				var paramsRequest = new APIRequestParams
+				{
+					email = mail,
+					api = StandardNotePlugin.CURRENT_API_VERSION,
+					code_challenge = codeChallenge,
+				};
+
+				var apiparams2 = webAPI.PostTwoWay<APIResultAuthParams>(paramsRequest, "v2/login-params");
+
+
+				var (masterKey, serverPassword, reqpw) = StandardNoteCrypt.CreateAuthData004(apiparams, mail, uip);
+
+				try
+				{
+					var request = new APIRequestUser 
+					{ 
+						email         = mail,
+						api           = StandardNotePlugin.CURRENT_API_VERSION,
+						password      = reqpw,
+						code_verifier = codeVerifier,
+						ephemeral     = false,
+					};
+
+					var result = webAPI.PostTwoWay<APIResultAuthorize004>(request, "v2/login");
 
 					return new StandardNoteSessionData
 					{
@@ -283,7 +369,7 @@ namespace AlephNote.Plugins.StandardNote
 				{
 					if (e1.StatusCode / 100 == 4 && !string.IsNullOrWhiteSpace(e1.HTTPContent))
 					{
-						var req = web.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
+						var req = webAPI.ParseJsonOrNull<APIBadRequest>(e1.HTTPContent);
 						if (req != null) throw new StandardNoteAPIException($"Server returned status {e1.StatusCode}.\nMessage: '{req.error.message}'", e1);
 					}
 

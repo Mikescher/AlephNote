@@ -50,13 +50,16 @@ namespace AlephNote.Plugins.StandardNote
 					return;
 				}
 
-				using (var web = CreateJsonRestClient(_proxy, _config.Server))
+				using (var webSync = CreateJsonRestClient(_proxy, _config.SyncServer))
 				{
-					_logger.Debug(StandardNotePlugin.Name, "Requesting token from StandardNoteServer");
+					using (var webAPI = CreateJsonRestClient(_proxy, _config.APIServer))
+					{
+						_logger.Debug(StandardNotePlugin.Name, "Requesting token from StandardNoteServer");
 
-					dat.SessionData = StandardNoteAPI.Authenticate(web, _config.Email, _config.Password, _logger);
+						dat.SessionData = StandardNoteAPI.Authenticate(webSync, webAPI, _config.Email, _config.Password, _logger);
 
-					_logger.Debug(StandardNotePlugin.Name, $"StandardNoteServer returned token \"{dat.SessionData.Token}\" (until {dat.SessionData.AccessExpiration:yyyy-MM-dd HH:mm:ss})");
+						_logger.Debug(StandardNotePlugin.Name, $"StandardNoteServer returned token \"{dat.SessionData.Token}\" (until {dat.SessionData.AccessExpiration:yyyy-MM-dd HH:mm:ss})");
+					}
 				}
 			}
 			catch (StandardNoteAPIException)
@@ -77,7 +80,7 @@ namespace AlephNote.Plugins.StandardNote
 		{
 			RefreshToken(dat);
 
-			var client = CreateJsonRestClient(_proxy, _config.Server);
+			var client = CreateJsonRestClient(_proxy, _config.SyncServer);
 			client.AddHeader("Authorization", "Bearer " + dat.SessionData.Token);
 			client.AddDTOConverter(ConvertToDTO, ConvertFromDTO);
 
