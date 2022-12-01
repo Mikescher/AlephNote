@@ -45,8 +45,10 @@ namespace AlephNote.Plugins.StandardNote
 
 		public class APIRequestParams { public string email, api, code_challenge;  }
 		public class APIResultAuthParams { public string identifier; public string pw_nonce; public string version; public string pw_salt; public PasswordAlg pw_alg; public PasswordFunc pw_func; public int pw_cost, pw_key_size; }
+		public class APIResultAuthParams_v2 { public APIResultAuthParams data; }
 		public class APIResultAuthorize001 { public APIResultUser user; public string token; public byte[] masterkey, masterauthkey; public string version; }
 		public class APIResultAuthorize004 { public APIResultUser user; public APIResultSession session; public APIResultKeyParams key_params; }
+		public class APIResultAuthorize004_v2 { public APIResultAuthorize004 data; }
 		public class APIResultSync { public List<APIResultItem> retrieved_items, saved_items; public List<APIResultConflictItem> conflicts; public string sync_token, cursor_token; }
 
 		public class APIResultUser { public Guid uuid; public string email; }
@@ -305,18 +307,15 @@ namespace AlephNote.Plugins.StandardNote
 			}
 		}
 
-		private static StandardNoteSessionData Authenticate004_v2(ISimpleJsonRest webSync, ISimpleJsonRest webAPI, APIResultAuthParams apiparams, string mail, string uip, AlephLogger logger)
+		private static StandardNoteSessionData Authenticate004_v2(ISimpleJsonRest webSync, ISimpleJsonRest webAPI, APIResultAuthParams apiparams1, string mail, string uip, AlephLogger logger)
 		{
 			try
 			{
-				logger.Debug(StandardNotePlugin.Name, $"AutParams[version:{apiparams.version}, identifier:{apiparams.identifier}, pw_nonce:{apiparams.pw_nonce}]");
+				logger.Debug(StandardNotePlugin.Name, $"AutParams[version:{apiparams1.version}, identifier:{apiparams1.identifier}, pw_nonce:{apiparams1.pw_nonce}]");
 
-				var codeVerifier = StandardNoteCrypt.RandomSeed(256 / 8);
+				var (codeVerifier, codeChallenge) = StandardNoteCrypt.GeneratePKCE();
 
-				logger.Debug(StandardNotePlugin.Name, $"CodeVerifier := '{codeVerifier}'");
-
-				var codeChallenge = Convert.ToBase64String(StandardNoteCrypt.SHA256Bytes(codeVerifier));
-
+				logger.Debug(StandardNotePlugin.Name, $"CodeVerifier  := '{codeVerifier}'");
 				logger.Debug(StandardNotePlugin.Name, $"CodeChallenge := '{codeChallenge}'");
 
 				var paramsRequest = new APIRequestParams
@@ -326,10 +325,10 @@ namespace AlephNote.Plugins.StandardNote
 					code_challenge = codeChallenge,
 				};
 
-				var apiparams2 = webAPI.PostTwoWay<APIResultAuthParams>(paramsRequest, "v2/login-params");
+				var apiparams2 = webAPI.PostTwoWay<APIResultAuthParams_v2>(paramsRequest, "v2/login-params").data;
 
 
-				var (masterKey, serverPassword, reqpw) = StandardNoteCrypt.CreateAuthData004(apiparams, mail, uip);
+				var (masterKey, serverPassword, reqpw) = StandardNoteCrypt.CreateAuthData004(apiparams2, mail, uip);
 
 				try
 				{
@@ -339,10 +338,10 @@ namespace AlephNote.Plugins.StandardNote
 						api           = StandardNotePlugin.CURRENT_API_VERSION,
 						password      = reqpw,
 						code_verifier = codeVerifier,
-						ephemeral     = false,
+						ephemeral     = true,
 					};
 
-					var result = webAPI.PostTwoWay<APIResultAuthorize004>(request, "v2/login");
+					var result = webAPI.PostTwoWay<APIResultAuthorize004_v2>(request, "v2/login").data;
 
 					return new StandardNoteSessionData
 					{

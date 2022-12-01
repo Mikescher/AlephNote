@@ -352,6 +352,22 @@ namespace AlephNote.Plugins.StandardNote
 			return bin;
 		}
 
+		public static (string, string) GeneratePKCE()
+		{
+			var codeVerifier = RandomSeed(256 / 8);
+
+			var cc1 = SHA256Bytes(codeVerifier);
+			var cc2 = EncodingConverter.ByteToHexBitFiddleLowercase(cc1);
+			var cc3 = Encoding.UTF8.GetBytes(cc2);
+
+			var codeChallenge = Convert.ToBase64String(cc3)
+				.Replace('+', '-')
+				.Replace('/', '_')
+				.Replace("=", "");
+
+			return (codeVerifier, codeChallenge);
+		}
+
 		public static EncryptResult EncryptContent(string content, Guid uuid, StandardNoteData dat)
 		{
 			if (dat.SessionData.Version == "001") return EncryptContent001(content,       dat.SessionData.RootKey_MasterKey);
