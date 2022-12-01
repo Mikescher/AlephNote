@@ -6,9 +6,9 @@
 		<AssemblyName>StandardNotePlugin</AssemblyName>
 		<PackageId>StandardNotePlugin</PackageId>
 
-		<AssemblyVersion>1.7.6.0</AssemblyVersion>
-		<FileVersion>1.7.6.0</FileVersion>
-		<Version>1.7.6.0</Version>
+		<AssemblyVersion>1.7.7.0</AssemblyVersion>
+		<FileVersion>1.7.7.0</FileVersion>
+		<Version>1.7.7.0</Version>
 
 		<OutDir>..\..\..\Bin\$(Configuration)\Plugins\</OutDir>
 

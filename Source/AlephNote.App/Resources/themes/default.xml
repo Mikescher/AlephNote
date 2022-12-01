@@ -13,8 +13,8 @@ Repository: https://github.com/Mikescher/AlephNote
 <theme>
 	<meta>
 		<name>Default</name>
-		<version>1.7.12</version>
-		<compatibility>1.7.12</compatibility>
+		<version>1.7.13</version>
+		<compatibility>1.7.13</compatibility>
 		<author>Mike Schwörer</author>
 		<type>default</type>
 	</meta>
