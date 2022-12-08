@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AlephNote.PluginInterface
 {
@@ -6,6 +7,7 @@ namespace AlephNote.PluginInterface
 	{
 		void StartSync(IRemoteStorageSyncPersistance data, List<INote> localnotes, List<INote> localdeletednotes);
 		void FinishSync(out bool immediateResync);
+		void OnAfterSyncError(INoteRepository repo, Exception e);
 
 		bool NeedsUpload(INote note);
 		bool NeedsDownload(INote note);
@@ -16,5 +18,5 @@ namespace AlephNote.PluginInterface
 		RemoteDownloadResult UpdateNoteFromRemote(INote note);
 		INote DownloadNote(string id, out bool success);
 		void DeleteNote(INote note);
-	}
+    }
 }

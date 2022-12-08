@@ -25,5 +25,10 @@ namespace AlephNote.PluginInterface.Impl
 		{
 			return SimpleJsonRestWrapper(proxy, host);
 		}
+
+		public virtual void OnAfterSyncError(INoteRepository repo, Exception e)
+        {
+			// Do nothing
+        }
 	}
 }

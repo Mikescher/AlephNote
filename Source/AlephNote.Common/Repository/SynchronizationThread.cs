@@ -161,11 +161,13 @@ namespace AlephNote.Common.Repository
 			}
 			catch (RestException e)
 			{
-				errors.Add(Tuple.Create<string, Exception>("Execption while syncing notes: " + e.ShortMessage, e));
+				errors.Add(Tuple.Create<string, Exception>("Exception while syncing notes: " + e.ShortMessage, e));
+				_repo.Connection.OnAfterSyncError(_repo, e);
 			}
 			catch (Exception e)
 			{
-				errors.Add(Tuple.Create("Execption while syncing notes: " + e.Message, e));
+				errors.Add(Tuple.Create("Exception while syncing notes: " + e.Message, e));
+				_repo.Connection.OnAfterSyncError(_repo, e);
 			}
 
 			if (errors.Any())

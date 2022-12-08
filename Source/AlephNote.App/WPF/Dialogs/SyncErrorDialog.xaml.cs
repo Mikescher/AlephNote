@@ -25,7 +25,7 @@ namespace AlephNote.WPF.Windows
 			var dlg = new SyncErrorDialog();
 
 			dlg.ErrorMessage.Text = e.Message;
-			dlg.ErrorTrace.Text = FormatExecption(e);
+			dlg.ErrorTrace.Text = FormatException(e);
 			
 			SetOwnerSafe(owner, dlg);
 
@@ -57,7 +57,7 @@ namespace AlephNote.WPF.Windows
 			
 			dlg.CbSupress.Visibility = isconnerror ? Visibility.Visible : Visibility.Collapsed;
 			dlg.ErrorMessage.Text = string.Join(Environment.NewLine, messages);
-			dlg.ErrorTrace.Text = string.Join(split, exceptions.Select(FormatExecption));
+			dlg.ErrorTrace.Text = string.Join(split, exceptions.Select(FormatException));
 			
 			SetOwnerSafe(owner, dlg);
 
@@ -86,7 +86,7 @@ namespace AlephNote.WPF.Windows
 			}
 		}
 
-		private static string FormatExecption(Exception e)
+		private static string FormatException(Exception e)
 		{
 			const string DELIMITER = " ---> ";
 
