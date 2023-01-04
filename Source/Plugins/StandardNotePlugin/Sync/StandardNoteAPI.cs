@@ -338,7 +338,7 @@ namespace AlephNote.Plugins.StandardNote
 						api           = StandardNotePlugin.CURRENT_API_VERSION,
 						password      = reqpw,
 						code_verifier = codeVerifier,
-						ephemeral     = true,
+						ephemeral     = false,
 					};
 
 					var result = webAPI.PostTwoWay<APIResultAuthorize004_v2>(request, "v2/login").data;
