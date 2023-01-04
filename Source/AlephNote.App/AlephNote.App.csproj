@@ -16,9 +16,9 @@
     <AssemblyProduct>AlephNote.App</AssemblyProduct>
     <AssemblyCopyright>Copyright © 2021</AssemblyCopyright>
 
-    <AssemblyVersion>1.7.14.0</AssemblyVersion>
-    <AssemblyFileVersion>1.7.14.0</AssemblyFileVersion>
-    <AssemblyInformationalVersion>1.7.14.0-master</AssemblyInformationalVersion>
+    <AssemblyVersion>1.7.15.0</AssemblyVersion>
+    <AssemblyFileVersion>1.7.15.0</AssemblyFileVersion>
+    <AssemblyInformationalVersion>1.7.15.0-master</AssemblyInformationalVersion>
 
     <OutDir>..\..\Bin\$(Configuration)\</OutDir>
   </PropertyGroup>
