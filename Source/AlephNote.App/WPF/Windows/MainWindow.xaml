@@ -65,10 +65,12 @@
 				<ctrl:AutoActionMenuItem Header="Duplicate Note"            AlephAction="DuplicateNote"        Settings="{Binding Settings}" />
 				<ctrl:AutoActionMenuItem Header="Pin / Unpin Note"          AlephAction="PinUnpinNote"         Settings="{Binding Settings}" />
 				<ctrl:AutoActionMenuItem Header="Lock / Unlock Note"        AlephAction="LockUnlockNote"       Settings="{Binding Settings}" />
-				<ctrl:AutoActionMenuItem Header="Export Note"               AlephAction="ExportNote"           Settings="{Binding Settings}" />
-				<ctrl:AutoActionMenuItem Header="Delete Note"               AlephAction="DeleteNote"           Settings="{Binding Settings}" />
-				<Separator />
-				<ctrl:AutoActionMenuItem Header="Exit"                      AlephAction="AppExit"              Settings="{Binding Settings}"  />
+                <ctrl:AutoActionMenuItem Header="Export Note"               AlephAction="ExportNote"           Settings="{Binding Settings}" />
+                <ctrl:AutoActionMenuItem Header="Delete Note"               AlephAction="DeleteNote"           Settings="{Binding Settings}" />
+                <Separator />
+                <ctrl:AutoActionMenuItem Header="Export all as Markdown + Front Matter" AlephAction="ExportFrontmatter" Settings="{Binding Settings}" />
+                <Separator />
+                <ctrl:AutoActionMenuItem Header="Exit"                      AlephAction="AppExit"              Settings="{Binding Settings}"  />
 			</MenuItem>
 			<MenuItem Header="_Edit">
 				<ctrl:AutoActionMenuItem Header="Settings" AlephAction="ShowSettings" Settings="{Binding Settings}"  />

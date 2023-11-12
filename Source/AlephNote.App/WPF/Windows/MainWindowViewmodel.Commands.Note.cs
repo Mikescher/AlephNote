@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using MSHC.Lang.Collections;
 using Ookii.Dialogs.Wpf;
 using ScintillaNET;
+using System.Web;
 
 namespace AlephNote.WPF.Windows
 {
@@ -30,7 +31,8 @@ namespace AlephNote.WPF.Windows
 		public ICommand DuplicateNoteCommand              => new RelayCommand(DuplicateNote);
 		public ICommand PinUnpinNoteCommand               => new RelayCommand(PinUnpinNote);
 		public ICommand LockUnlockNoteCommand             => new RelayCommand(LockUnlockNote);
-		public ICommand InsertHyperlinkCommand            => new RelayCommand(InsertHyperlink);
+        public ICommand ExportFrontmatterCommand          => new RelayCommand(ExportFrontmatter);
+        public ICommand InsertHyperlinkCommand            => new RelayCommand(InsertHyperlink);
 		public ICommand InsertFilelinkCommand             => new RelayCommand(InsertFilelink);
 		public ICommand InsertNotelinkCommand             => new RelayCommand(InsertNotelink);
 		public ICommand InsertMaillinkCommand             => new RelayCommand(InsertMaillink);
@@ -247,7 +249,59 @@ namespace AlephNote.WPF.Windows
 			}
 		}
 
-		private void AddTagToNote(string t)
+        private void ExportFrontmatter()
+		{
+            if (SelectedNote == null) return;
+
+            var dialog = new VistaFolderBrowserDialog();
+            if (!(dialog.ShowDialog() ?? false)) return;
+
+            try
+            {
+				var tnow = DateTime.UtcNow;
+
+                var directory = dialog.SelectedPath;
+                foreach (var note in Repository.Notes)
+                {
+					var subpath = note.Path.Enumerate().Select(p => ANFilenameHelper.StripStringForFilename(p)).ToArray();
+
+                    var filename = ANFilenameHelper.StripStringForFilename(note.Title) + ".md";
+
+                    var filedir = Path.Combine((new string[] { directory }).AsEnumerable().Concat(subpath).ToArray());
+
+					Directory.CreateDirectory(filedir);
+
+                    var filedest = Path.Combine((new string[] { directory }).AsEnumerable().Concat(subpath).Concat(new string[] { filename }).ToArray());
+
+                    var mdfm = "---\n";
+                    mdfm += $"id: {note.UniqueName}\n";
+                    mdfm += $"title: {note.Title}\n";
+                    mdfm += $"updated: {note.ModificationDate.ToUniversalTime():yyyy-MM-dd HH:mm:ss}Z\n";
+                    mdfm += $"created: {note.CreationDate.ToUniversalTime():yyyy-MM-dd HH:mm:ss}Z\n";
+                    mdfm += $"exported: {tnow.ToUniversalTime():yyyy-MM-dd HH:mm:ss}Z\n";
+                    mdfm += $"locked: {note.IsLocked.ToString().ToLower()}\n";
+                    mdfm += $"pinned: {note.IsPinned.ToString().ToLower()}\n";
+                    mdfm += $"conflict: {note.IsConflictNote.ToString().ToLower()}\n";
+                    mdfm += $"tags: [{string.Join(", ", note.Tags.Select(p => '"' + HttpUtility.JavaScriptStringEncode(p) + '"'))}]\n";
+                    mdfm += $"path: [{string.Join(", ", note.Path.Enumerate().Select(p => '"' + HttpUtility.JavaScriptStringEncode(p) + '"'))}]\n";
+                    mdfm += $"---\n";
+                    mdfm += $"\n";
+                    mdfm += note.Text;
+
+					if (File.Exists(filedest)) { throw new Exception($"File {filedest} already exists"); }
+
+                    File.WriteAllText(filedest, mdfm, Encoding.UTF8);
+                }
+            }
+            catch (Exception e)
+            {
+                App.Logger.Error("Main", "Could not write to file", e);
+                ExceptionDialog.Show(Owner, "Could not write to file", e, string.Empty);
+            }
+        }
+			
+
+        private void AddTagToNote(string t)
 		{
 			if (SelectedNote == null) return;
 			if (Settings.IsReadOnlyMode) return;

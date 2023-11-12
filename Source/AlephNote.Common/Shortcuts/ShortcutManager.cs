@@ -55,6 +55,7 @@ namespace AlephNote.Common.Shortcuts
 			AddCommand(ASS.Window,     "DuplicateNote",                    h => h.DuplicateNoteCommand,                    "Create a new note as a copy of the current note",          ActionModifier.AccessControl);
 			AddCommand(ASS.Window,     "PinUnpinNote",                     h => h.PinUnpinNoteCommand,                     "Pin the note to the top (or un-pin the note)",             ActionModifier.AccessControl);
 			AddCommand(ASS.Window,     "LockUnlockNote",                   h => h.LockUnlockNoteCommand,                   "Lock/Unlock the note (prevent editing)",                   ActionModifier.AccessControl);
+			AddCommand(ASS.Window,     "ExportFrontmatter",                h => h.ExportFrontmatterCommand,                "Export all notes as markdown files");
 
 			AddCommand(ASS.NoteEdit,   "InsertHyperlink",                  h => h.InsertHyperlinkCommand,                  "Insert a Hyperlink",              ActionModifier.AccessControl);
 			AddCommand(ASS.NoteEdit,   "InsertFilelink",                   h => h.InsertFilelinkCommand,                   "Insert a link to a local file",   ActionModifier.AccessControl);

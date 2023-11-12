@@ -17,7 +17,8 @@ namespace AlephNote.Common.Shortcuts
 		ICommand DuplicateNoteCommand { get; }
 		ICommand PinUnpinNoteCommand { get; }
 		ICommand LockUnlockNoteCommand { get; }
-		ICommand InsertHyperlinkCommand { get; }
+        ICommand ExportFrontmatterCommand { get; }
+        ICommand InsertHyperlinkCommand { get; }
 		ICommand InsertFilelinkCommand { get; }
 		ICommand InsertNotelinkCommand { get; }
 		ICommand InsertMaillinkCommand { get; }

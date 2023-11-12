@@ -16,9 +16,9 @@
     <AssemblyProduct>AlephNote.App</AssemblyProduct>
     <AssemblyCopyright>Copyright © 2021</AssemblyCopyright>
 
-    <AssemblyVersion>1.7.15.0</AssemblyVersion>
-    <AssemblyFileVersion>1.7.15.0</AssemblyFileVersion>
-    <AssemblyInformationalVersion>1.7.15.0-master</AssemblyInformationalVersion>
+    <AssemblyVersion>1.7.16.0</AssemblyVersion>
+    <AssemblyFileVersion>1.7.16.0</AssemblyFileVersion>
+    <AssemblyInformationalVersion>1.7.16.0-master</AssemblyInformationalVersion>
 
     <OutDir>..\..\Bin\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -95,6 +95,10 @@
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
     <PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
     <PackageReference Include="WPFToolkit" Version="3.5.50211.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Web" />
   </ItemGroup>
 
 </Project>
