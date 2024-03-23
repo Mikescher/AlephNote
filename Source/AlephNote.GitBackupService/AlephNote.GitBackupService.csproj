@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AlephNote.Common\AlephNote.Common.csproj" />
+      <ProjectReference Include="..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj" />
+      <ProjectReference Include="..\External\CSharpUtils\LanguageUtils\LanguageUtils.csproj" />
+      <ProjectReference Include="..\External\libsodium-core\src\Sodium.Core\Sodium.Core.csproj" />
+    </ItemGroup>
+
+</Project>

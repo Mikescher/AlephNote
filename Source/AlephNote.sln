@@ -51,6 +51,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFUtils", "External\CSharp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sodium.Core", "External\libsodium-core\src\Sodium.Core\Sodium.Core.csproj", "{8DC00C35-DCF5-458E-9D9D-6A6A601D59F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlephNote.GitBackupService", "AlephNote.GitBackupService\AlephNote.GitBackupService.csproj", "{6E29F322-EC72-40BF-9CC1-47DA5A018B7C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,10 @@ Global
 		{8DC00C35-DCF5-458E-9D9D-6A6A601D59F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DC00C35-DCF5-458E-9D9D-6A6A601D59F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DC00C35-DCF5-458E-9D9D-6A6A601D59F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E29F322-EC72-40BF-9CC1-47DA5A018B7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E29F322-EC72-40BF-9CC1-47DA5A018B7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E29F322-EC72-40BF-9CC1-47DA5A018B7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E29F322-EC72-40BF-9CC1-47DA5A018B7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
