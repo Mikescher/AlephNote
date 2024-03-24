@@ -1,10 +1,11 @@
-using AlephNote.Common.Plugins;
+using AlephNote.Common.Network;
 using AlephNote.Common.Repository;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
 using AlephNote.Common.Themes;
 using AlephNote.Common.Util;
-using AlephNote.PluginInterface;
+using AlephNote.PluginInterface.AppContext;
+using AlephNote.PluginInterface.Impl;
 using CommandLine;
 
 namespace AlephNote.GitBackupService;
@@ -16,6 +17,12 @@ public class CLIOptions
 
     [Option("repository-path", Required = true)]
     public string RepoPath { get; set; } = null!;
+
+    [Option("log-path", Required = true)]
+    public string LogPath { get; set; } = null!;
+
+    [Option("scn", Required = true)]
+    public bool DoSCN { get; set; } = true;
 }
 
 public class Service
@@ -28,7 +35,8 @@ public class Service
     
     public bool Init(string[] args)
     {
-        LoggerSingleton.Register(new Logger());
+        var logger = new Logger();
+        LoggerSingleton.Register(logger);
         
         LoggerSingleton.Inst.Info("Service-Init", "Parsing arguments");
 
@@ -38,6 +46,10 @@ public class Service
            foreach (var err in cliOpts.Errors) LoggerSingleton.Inst.Error("Service-Init", err.ToString());
            return false;
        }
+
+       cliOpts.Value.LogPath = cliOpts.Value.LogPath.Replace("{now}", DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss"));
+       logger.LogPath = cliOpts.Value.LogPath;
+       logger.SendSCN = cliOpts.Value.DoSCN;
        
        this.settingsPath = cliOpts.Value.SettingsPath;
        this.repoPath = cliOpts.Value.RepoPath;
@@ -49,7 +61,7 @@ public class Service
 
         if (!File.Exists(settingsPath))
         {
-            LoggerSingleton.Inst.Error("Service-Init", $"Settings ${settingsPath} not found");
+            LoggerSingleton.Inst.Error("Service-Init", $"Settings-File {settingsPath} not found");
             return false;
         }
         
@@ -57,8 +69,10 @@ public class Service
         
         Console.WriteLine();
 
+        BasicRemoteConnection.SimpleJsonRestWrapper = (p, h) => new SimpleJsonRest(p, h);
+
         PluginManagerSingleton.Register(new PluginMan());
-        ThemeManager.Register(new ThemeCache());
+        //ThemeManager.Register(new ThemeCache());
         
         Console.WriteLine();
 
@@ -76,6 +90,12 @@ public class Service
             LoggerSingleton.Inst.Error("Service", "Failed to load settings", e);
             return false;
         }
+        
+        Console.WriteLine();
+
+        LoggerSingleton.Inst.Info("Service-Init", "Init context");
+
+        AlephAppContext.Init(new ServiceContext(settings));
         
         Console.WriteLine();
         

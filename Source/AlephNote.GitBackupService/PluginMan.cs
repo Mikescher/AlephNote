@@ -1,5 +1,6 @@
 using AlephNote.Common.Network;
 using AlephNote.Common.Plugins;
+using AlephNote.Common.Util;
 using AlephNote.PluginInterface;
 using AlephNote.Plugins.Evernote;
 using AlephNote.Plugins.Filesystem;
@@ -23,6 +24,14 @@ public class PluginMan: IPluginManager
     };
 
     public IEnumerable<IRemotePlugin> LoadedPlugins => _plugins;
+
+    public PluginMan()
+    {
+        foreach (var p in _plugins)
+        {
+            p.Init(LoggerSingleton.Inst);
+        }
+    }
     
     public void LoadPlugins(string baseDirectory)
     {
