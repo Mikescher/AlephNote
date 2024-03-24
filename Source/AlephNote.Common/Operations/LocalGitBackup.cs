@@ -386,7 +386,15 @@ namespace AlephNote.Common.Operations
 				lock (_gitAccessLock)
 				{
 					var o1 = ProcessHelper.ProcExecute("git", "add .", repoPath);
-					LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git add]", o1.ToString());
+					if (o1.ExitCode != 0)
+					{
+						LoggerSingleton.Inst.Error("LocalGitMirror", "git mirror [git add] failed", o1.ToString());
+						return false;
+					}
+					else
+					{
+						LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git add]", o1.ToString());
+					}
 
 					var o2 = ProcessHelper.ProcExecute("git", "status", repoPath);
 					LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git status]", o2.ToString());
@@ -405,12 +413,28 @@ namespace AlephNote.Common.Operations
 						"# Hostname: " + System.Environment.MachineName + "\n";
 
 					var o3 = ProcessHelper.ProcExecute("git", $"commit -a --allow-empty --message=\"{msg}\" --author=\"{firstname} {lastname} <{mail}>\"", repoPath);
-					LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git commit]", o3.ToString());
+					if (o3.ExitCode != 0)
+					{
+						LoggerSingleton.Inst.Error("LocalGitMirror", "git mirror [git commit] failed", o3.ToString());
+						return false;
+					}
+					else
+					{
+						LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git commit]", o3.ToString());
+					}
 
 					if (pushremote)
 					{
 						var o4 = ProcessHelper.ProcExecute("git", "push", repoPath);
-						LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git push]", o4.ToString());
+						if (o4.ExitCode != 0)
+						{
+							LoggerSingleton.Inst.Error("LocalGitMirror", "git mirror [git push] failed", o4.ToString());
+							return false;
+						}
+						else
+						{
+							LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git push]", o4.ToString());
+						}
 					}
 
 					LoggerSingleton.Inst.Info("LocalGitMirror", "Local git mirror updated" + (pushremote ? " (+ pushed)":""));

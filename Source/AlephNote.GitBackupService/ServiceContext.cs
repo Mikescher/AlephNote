@@ -26,7 +26,7 @@ public class ServiceContext : IAlephAppContext
 
     public Tuple<int, int, int, int> GetAppVersion()
     {
-        return Tuple.Create(1, 0, 0, 0);
+        return Tuple.Create(1, 0, 1, 0);
     }
 
     public bool IsDebugMode { get; set; } = false;

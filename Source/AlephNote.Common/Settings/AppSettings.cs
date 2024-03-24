@@ -789,7 +789,7 @@ namespace AlephNote.Common.Settings
 		private static string GetExePath()
 		{
 			var p = System.Reflection.Assembly.GetExecutingAssembly().Location;
-			if (!p.ToLower().EndsWith(".exe")) p = Path.Combine(Path.GetDirectoryName(p), "AlephNote.exe");
+			if (!p.ToLower().EndsWith(".exe")) p = Path.Combine(Path.GetDirectoryName(p) ?? "", "AlephNote.exe");
 			return p;
 		}
 
