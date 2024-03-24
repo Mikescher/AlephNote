@@ -569,6 +569,10 @@ namespace AlephNote.Common.Settings
 		public bool HideSearchBox { get { return _hideSearchBox; } set { _hideSearchBox = value; OnPropertyChanged(); } }
 		private bool _hideSearchBox = false;
 
+		[AlephXMLField(IsAdvanced = true)]
+		public bool SyncDownloadOnly { get { return _syncDownloadOnly; } set { _syncDownloadOnly = value; OnPropertyChanged(); } }
+		private bool _syncDownloadOnly = false;
+
 		private static readonly AlephXMLSerializer<AppSettings> _serializer = new AlephXMLSerializer<AppSettings>("configuration");
 
 		private readonly string _path;

@@ -29,6 +29,8 @@ namespace AlephNote.Common.Repository
 		private readonly bool _noteUploadEnableMultithreading;
 		private readonly int _noteUploadParallelismLevel;
 		private readonly int _noteUploadParallelismThreshold;
+		
+		private readonly bool _downloadOnly;
 
 		private int _delay;
 
@@ -58,6 +60,7 @@ namespace AlephNote.Common.Repository
 			_noteUploadEnableMultithreading      = repository.SupportsUploadMultithreading;
 			_noteUploadParallelismLevel          = settings.NoteUploadParallelismLevel;
 			_noteUploadParallelismThreshold      = settings.NoteUploadParallelismThreshold;
+			_downloadOnly                        = settings.SyncDownloadOnly;
 
 			_dispatcher = disp;
 			_comChannel = new ManualResetEvent(false);
@@ -124,6 +127,17 @@ namespace AlephNote.Common.Repository
 				{
 					allNotes = _repo.Notes.Select(p => Tuple.Create(p, p.Clone())).ToList();
 					notesToDelete = _repo.LocalDeletedNotes.ToList();
+
+					if (_downloadOnly)
+					{
+						allNotes = allNotes.Select(p =>
+						{
+							p.Item2.ResetRemoteDirty("Reset note remote-dirty due to _downloadOnly");
+							p.Item2.ResetLocalDirty("Reset note remote-dirty due to _downloadOnly");
+							return Tuple.Create(p.Item1, p.Item2);
+						}).ToList();
+						notesToDelete.Clear();
+					}
 				});
 
 				_log.Info(
@@ -136,8 +150,11 @@ namespace AlephNote.Common.Repository
 				{
 					// plugin says 'upload'
 					var notesToUpload     = allNotes.Where(p => _repo.Connection.NeedsUpload(p.Item2)).ToList();
+					if (_downloadOnly) notesToUpload.Clear();
+					
 					// plugin says 'download'
 					var notesToDownload   = allNotes.Where(p => _repo.Connection.NeedsDownload(p.Item2)).ToList();
+					
 					// we think 'upload', but provider doesn't say so
 					var notesToResetDirty = allNotes.Where(p => !p.Item2.IsRemoteSaved && !notesToUpload.Contains(p)).ToList();
 

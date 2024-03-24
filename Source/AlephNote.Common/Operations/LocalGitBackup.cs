@@ -17,6 +17,9 @@ namespace AlephNote.Common.Operations
 {
 	public static class LocalGitBackup
 	{
+		public static string CommitMessageHeader = "Automatic Mirroring of AlephNote notes";
+		public static string CommitMessageProgName = "AlephNote";
+		
 		private static readonly object _gitAccessLock = new object();
 
 		private class AugmentedNote { public INote Note; public string RelativePath; public string Content; }
@@ -393,12 +396,13 @@ namespace AlephNote.Common.Operations
 						return false;
 					}
 					var msg =
-						"Automatic Mirroring of AlephNote notes" + "\n" +
+						CommitMessageHeader + "\n" +
 						"" + "\n" +
-						"# AlephNote Version: " + $"{AlephAppContext.AppVersion.Item1}.{AlephAppContext.AppVersion.Item2}.{AlephAppContext.AppVersion.Item3}.{AlephAppContext.AppVersion.Item4}" + "\n" +
+						"# "+CommitMessageProgName+" Version: " + $"{AlephAppContext.AppVersion.Item1}.{AlephAppContext.AppVersion.Item2}.{AlephAppContext.AppVersion.Item3}.{AlephAppContext.AppVersion.Item4}" + "\n" +
 						"# Timestamp(UTC): " + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + "\n" +
 						"# Provider: " + provname + "\n" +
-						"# Provider (ID): " + provid + "\n";
+						"# Provider (ID): " + provid + "\n" +
+						"# Hostname: " + System.Environment.MachineName + "\n";
 
 					var o3 = ProcessHelper.ProcExecute("git", $"commit -a --allow-empty --message=\"{msg}\" --author=\"{firstname} {lastname} <{mail}>\"", repoPath);
 					LoggerSingleton.Inst.Debug("LocalGitMirror", "git mirror [git commit]", o3.ToString());

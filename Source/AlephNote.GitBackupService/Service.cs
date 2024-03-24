@@ -1,4 +1,5 @@
 using AlephNote.Common.Network;
+using AlephNote.Common.Operations;
 using AlephNote.Common.Repository;
 using AlephNote.Common.Settings;
 using AlephNote.Common.Settings.Types;
@@ -84,8 +85,9 @@ public class Service
             settings.DisableLogger = false;
             settings.UseRawFolderRepo = false;
             settings.ConflictResolution = ConflictResolutionStrategyConfig.UseServerVersion;
+            settings.SyncDownloadOnly = true;           
         }
-        catch (Exception e)
+        catch (Exception e)     
         {
             LoggerSingleton.Inst.Error("Service", "Failed to load settings", e);
             return false;
@@ -96,6 +98,9 @@ public class Service
         LoggerSingleton.Inst.Info("Service-Init", "Init context");
 
         AlephAppContext.Init(new ServiceContext(settings));
+
+        LocalGitBackup.CommitMessageHeader = "Automatic Mirroring via Service";
+        LocalGitBackup.CommitMessageProgName = "GitBackupService";
         
         Console.WriteLine();
         
