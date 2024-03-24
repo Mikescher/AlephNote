@@ -12,6 +12,16 @@
       <ProjectReference Include="..\AlephNote.PluginInterface\AlephNote.PluginInterface.csproj" />
       <ProjectReference Include="..\External\CSharpUtils\LanguageUtils\LanguageUtils.csproj" />
       <ProjectReference Include="..\External\libsodium-core\src\Sodium.Core\Sodium.Core.csproj" />
+      <ProjectReference Include="..\Plugins\EvernotePlugin\EvernotePlugin.csproj" />
+      <ProjectReference Include="..\Plugins\FilesystemPlugin\FilesystemPlugin.csproj" />
+      <ProjectReference Include="..\Plugins\HeadlessPlugin\HeadlessPlugin.csproj" />
+      <ProjectReference Include="..\Plugins\NextcloudPlugin\NextcloudPlugin.csproj" />
+      <ProjectReference Include="..\Plugins\SimpleNotePlugin\SimpleNotePlugin.csproj" />
+      <ProjectReference Include="..\Plugins\StandardNotePlugin\StandardNotePlugin.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CommandLineParser" Version="2.9.1" />
     </ItemGroup>
 
 </Project>

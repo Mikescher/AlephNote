@@ -12,6 +12,7 @@ using MSHC.Network;
 using MSHC.Serialization;
 using System.Globalization;
 using AlephNote.PluginInterface.Util;
+using MSHC.Lang.Extensions;
 
 namespace AlephNote.Plugins.StandardNote
 {
